@@ -105,6 +105,147 @@ function sanitizeHexColorInput(value) {
   return `#${hex}`;
 }
 
+function hexToRgb(hex) {
+  const color = normalizeHexColor(hex);
+  if (!color) return null;
+  return {
+    r: parseInt(color.slice(1, 3), 16),
+    g: parseInt(color.slice(3, 5), 16),
+    b: parseInt(color.slice(5, 7), 16),
+  };
+}
+
+function rgbToHex({ r, g, b }) {
+  return `#${[r, g, b].map(value => clamp(Math.round(value), 0, 255).toString(16).padStart(2, '0')).join('')}`;
+}
+
+function rgbToHsl({ r, g, b }) {
+  const red = r / 255;
+  const green = g / 255;
+  const blue = b / 255;
+  const max = Math.max(red, green, blue);
+  const min = Math.min(red, green, blue);
+  const lightness = (max + min) / 2;
+
+  if (max === min) {
+    return { h: 0, s: 0, l: lightness };
+  }
+
+  const delta = max - min;
+  const saturation = lightness > 0.5 ? delta / (2 - max - min) : delta / (max + min);
+  let hue = 0;
+  if (max === red) hue = (green - blue) / delta + (green < blue ? 6 : 0);
+  if (max === green) hue = (blue - red) / delta + 2;
+  if (max === blue) hue = (red - green) / delta + 4;
+  return { h: hue / 6, s: saturation, l: lightness };
+}
+
+function hslToRgb({ h, s, l }) {
+  if (s === 0) {
+    const value = l * 255;
+    return { r: value, g: value, b: value };
+  }
+
+  const hueToRgb = (p, q, t) => {
+    let nextT = t;
+    if (nextT < 0) nextT += 1;
+    if (nextT > 1) nextT -= 1;
+    if (nextT < 1 / 6) return p + (q - p) * 6 * nextT;
+    if (nextT < 1 / 2) return q;
+    if (nextT < 2 / 3) return p + (q - p) * (2 / 3 - nextT) * 6;
+    return p;
+  };
+
+  const q = l < 0.5 ? l * (1 + s) : l + s - l * s;
+  const p = 2 * l - q;
+  return {
+    r: hueToRgb(p, q, h + 1 / 3) * 255,
+    g: hueToRgb(p, q, h) * 255,
+    b: hueToRgb(p, q, h - 1 / 3) * 255,
+  };
+}
+
+function hexToHsl(hex) {
+  const rgb = hexToRgb(hex);
+  return rgb ? rgbToHsl(rgb) : null;
+}
+
+function hslToHex(hsl) {
+  return rgbToHex(hslToRgb(hsl));
+}
+
+function isRecolorableHsl(hsl) {
+  return hsl && hsl.s >= 0.12 && hsl.l > 0.08 && hsl.l < 0.96;
+}
+
+function getHtmlPaletteColors(html) {
+  const matches = String(html || '').match(/#[0-9a-f]{6}\b/gi) || [];
+  return [...new Set(matches.map(color => normalizeHexColor(color)).filter(Boolean))];
+}
+
+function inferMarkupPaletteColor(html) {
+  const palette = getHtmlPaletteColors(html)
+    .map(color => ({ color, hsl: hexToHsl(color) }))
+    .filter(({ hsl }) => isRecolorableHsl(hsl))
+    .sort((a, b) => (b.hsl.s * (1 - Math.abs(b.hsl.l - 0.5))) - (a.hsl.s * (1 - Math.abs(a.hsl.l - 0.5))));
+  return palette[0]?.color || '#0070c8';
+}
+
+function recolorHexForPalette(hex, targetColor) {
+  const sourceHsl = hexToHsl(hex);
+  const targetHsl = hexToHsl(targetColor);
+  if (!isRecolorableHsl(sourceHsl) || !targetHsl) return normalizeHexColor(hex) || hex;
+
+  const saturation = clamp(sourceHsl.s * 0.35 + targetHsl.s * 0.65, 0.14, 0.9);
+  const lightness = clamp(sourceHsl.l, 0.12, 0.93);
+  return hslToHex({ h: targetHsl.h, s: saturation, l: lightness });
+}
+
+function recolorMarkupHtml(html, targetColor) {
+  return String(html || '').replace(/#[0-9a-f]{6}\b/gi, color => recolorHexForPalette(color, targetColor));
+}
+
+function mixHexColor(color, mixColor, amount) {
+  const base = hexToRgb(color);
+  const mix = hexToRgb(mixColor);
+  if (!base || !mix) return color;
+  return rgbToHex({
+    r: base.r + (mix.r - base.r) * amount,
+    g: base.g + (mix.g - base.g) * amount,
+    b: base.b + (mix.b - base.b) * amount,
+  });
+}
+
+function getMarkupPaletteVars(color) {
+  const base = normalizeHexColor(color) || '#0070c8';
+  return {
+    '--markup-primary': base,
+    '--markup-primary-soft': mixHexColor(base, '#ffffff', 0.84),
+    '--markup-primary-tint': mixHexColor(base, '#ffffff', 0.93),
+    '--markup-border': mixHexColor(base, '#64748b', 0.72),
+  };
+}
+
+function getMarkupPaletteStyleText(color) {
+  return Object.entries(getMarkupPaletteVars(color))
+    .map(([name, value]) => `${name}:${value}`)
+    .join(';');
+}
+
+function getMarkupPaletteClass(item) {
+  return `klic-palette-${String(item?.id || 'default').replace(/[^a-z0-9_-]/gi, '').slice(0, 12) || 'default'}`;
+}
+
+function getMarkupPaletteCss(color, className) {
+  const vars = getMarkupPaletteStyleText(color);
+  return `.${className}{${vars}}`;
+}
+
+function getMarkupDisplayHtml(item) {
+  if (!item) return '';
+  return recolorMarkupHtml(item.html, item.paletteColor || inferMarkupPaletteColor(item.html));
+}
+
 function getFont(item) {
   const style = item.italic ? 'italic' : 'normal';
   const weight = item.bold ? '700' : '400';
@@ -139,7 +280,7 @@ function createInitialTextForm() {
   };
 }
 
-function MarkupRenderContent({ html, isEditing, onInput, onMouseDown, onBlur }) {
+function MarkupRenderContent({ html, paletteClassName, isEditing, onInput, onMouseDown, onBlur }) {
   const contentRef = useRef(null);
 
   useEffect(() => {
@@ -157,7 +298,7 @@ function MarkupRenderContent({ html, isEditing, onInput, onMouseDown, onBlur }) 
   return (
     <div
       ref={contentRef}
-      className="canvas-markup-content markup-render"
+      className={`canvas-markup-content markup-render ${paletteClassName || ''}`}
       contentEditable={isEditing}
       suppressContentEditableWarning
       onInput={event => onInput(event.currentTarget.innerHTML)}
@@ -200,11 +341,13 @@ function CanvasEditorPage() {
   const [iconForm, setIconForm] = useState({ value: '', size: 64, x: 400, y: 300 });
   const [imageForm, setImageForm] = useState({ image: null, width: 200, height: 200, x: 400, y: 300 });
   const [markupForm, setMarkupForm] = useState(createInitialMarkupForm);
+  const [markupColorInput, setMarkupColorInput] = useState('#0070c8');
 
   const activeItem = items.find(item => item.id === activeId);
   const editingTextItem = editingTextId ? items.find(item => item.id === editingTextId && item.type === 'text') : null;
   const markupItems = items.filter(item => item.type === 'markup');
   const activeMarkupItem = activeItem?.type === 'markup' ? activeItem : markupItems[0];
+  const activeMarkupColor = activeMarkupItem?.paletteColor || inferMarkupPaletteColor(activeMarkupItem?.html);
   const contextMenuItem = contextMenu ? items.find(item => item.id === contextMenu.itemId) : null;
   const selectedMarkupTemplates = MARKUP_TEMPLATES[markupForm.category] || [];
   const selectedCanvasTemplates = templateCategory === 'all'
@@ -385,6 +528,11 @@ function CanvasEditorPage() {
   }, [editingTextItem?.id]);
 
   useEffect(() => {
+    if (!activeMarkupItem) return;
+    setMarkupColorInput(activeMarkupColor);
+  }, [activeMarkupItem?.id, activeMarkupColor]);
+
+  useEffect(() => {
     function closeContextMenu() {
       setContextMenu(null);
     }
@@ -459,6 +607,38 @@ function CanvasEditorPage() {
       return;
     }
     setTextColorInput(textForm.color);
+  }
+
+  function updateActiveMarkupColor(color) {
+    if (!activeMarkupItem) return;
+    const nextColor = normalizeHexColor(color);
+    if (!nextColor) return;
+    setMarkupColorInput(nextColor);
+    setItems(prev => prev.map(item => {
+      if (item.id !== activeMarkupItem.id) return item;
+      return {
+        ...item,
+        paletteColor: nextColor,
+      };
+    }));
+  }
+
+  function updateMarkupColorFromHex(value) {
+    const nextValue = sanitizeHexColorInput(value);
+    setMarkupColorInput(nextValue);
+    const color = normalizeHexColor(nextValue);
+    if (color) {
+      updateActiveMarkupColor(color);
+    }
+  }
+
+  function commitMarkupColorInput() {
+    const color = normalizeHexColor(markupColorInput);
+    if (color) {
+      updateActiveMarkupColor(color);
+      return;
+    }
+    setMarkupColorInput(activeMarkupColor);
   }
 
   function handleCanvasSizeChange(field, value) {
@@ -549,6 +729,7 @@ function CanvasEditorPage() {
 
   function syncMarkupForm(item) {
     if (item?.type !== 'markup') return;
+    setMarkupColorInput(item.paletteColor || inferMarkupPaletteColor(item.html));
     setMarkupForm({
       category: item.category,
       templateId: item.templateId,
@@ -715,6 +896,7 @@ function CanvasEditorPage() {
       templateId: template.id,
       label: template.label,
       html: template.html,
+      paletteColor: inferMarkupPaletteColor(template.html),
       width: markupForm.category === 'table' ? 380 : 340,
       height: markupForm.category === 'process' ? 170 : 190,
       x: canvasSize.width / 2,
@@ -781,7 +963,12 @@ function CanvasEditorPage() {
           return;
         }
       } else {
-        nextItems.push({ ...item, id: crypto.randomUUID(), templateId: template.id });
+        nextItems.push({
+          ...item,
+          id: crypto.randomUUID(),
+          templateId: template.id,
+          ...(item.type === 'markup' ? { paletteColor: item.paletteColor || inferMarkupPaletteColor(item.html) } : {}),
+        });
       }
     }
 
@@ -807,6 +994,7 @@ function CanvasEditorPage() {
       top: `${((item.y - item.height / 2) / canvasSize.height) * 100}%`,
       width: `${(item.width / canvasSize.width) * 100}%`,
       height: `${(item.height / canvasSize.height) * 100}%`,
+      ...getMarkupPaletteVars(item.paletteColor || inferMarkupPaletteColor(item.html)),
     };
   }
 
@@ -1093,16 +1281,19 @@ function CanvasEditorPage() {
 
   async function renderMarkupItemToImage(item, exportSize = getMarkupExportSize(item)) {
     const css = await fetch('/markup_com.css').then(response => response.text());
+    const paletteColor = item.paletteColor || inferMarkupPaletteColor(item.html);
+    const paletteClassName = getMarkupPaletteClass(item);
+    const paletteCss = getMarkupPaletteCss(paletteColor, paletteClassName);
     const wrapper = document.createElement('div');
     wrapper.setAttribute('xmlns', 'http://www.w3.org/1999/xhtml');
-    wrapper.setAttribute('class', 'markup-render');
+    wrapper.setAttribute('class', `markup-render ${paletteClassName}`);
     wrapper.setAttribute('style', `width:${exportSize.width}px;min-height:${exportSize.height}px;padding:12px;box-sizing:border-box;overflow:visible;background:transparent;`);
-    wrapper.innerHTML = item.html;
+    wrapper.innerHTML = getMarkupDisplayHtml(item);
     const content = new XMLSerializer().serializeToString(wrapper);
     const svg = `
 <svg xmlns="http://www.w3.org/2000/svg" width="${exportSize.width}" height="${exportSize.height}">
   <foreignObject width="100%" height="100%">
-    <style xmlns="http://www.w3.org/1999/xhtml"><![CDATA[${css}]]></style>
+    <style xmlns="http://www.w3.org/1999/xhtml"><![CDATA[${css}\n${paletteCss}]]></style>
     ${content}
   </foreignObject>
 </svg>`;
@@ -1317,7 +1508,15 @@ function CanvasEditorPage() {
       alert('저장할 마크업이 없습니다.');
       return;
     }
-    const body = markupItems.map(item => item.html.trim()).filter(Boolean).join('\n\n');
+    const paletteCss = markupItems
+      .map(item => getMarkupPaletteCss(item.paletteColor || inferMarkupPaletteColor(item.html), getMarkupPaletteClass(item)))
+      .join('\n');
+    const body = markupItems
+      .map(item => getMarkupDisplayHtml(item).trim()
+        ? `<div class="markup-render ${getMarkupPaletteClass(item)}">\n${getMarkupDisplayHtml(item).trim()}\n</div>`
+        : '')
+      .filter(Boolean)
+      .join('\n\n');
     const html = `<!DOCTYPE html>
 <html lang="ko">
 <head>
@@ -1325,8 +1524,11 @@ function CanvasEditorPage() {
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>KL캔버스 마크업</title>
   <link rel="stylesheet" href="./markup_com.css">
+  <style>
+${paletteCss}
+  </style>
 </head>
-<body class="markup-render">
+<body>
 ${body}
 </body>
 </html>`;
@@ -1526,6 +1728,27 @@ ${body}
                     </button>
                   ))}
                 </div>
+                {activeMarkupItem && (
+                  <label className="canvas-color-picker canvas-markup-color-picker">
+                    마크업 색상
+                    <span className="canvas-color-control">
+                      <span className="canvas-color-swatch" style={{ backgroundColor: activeMarkupColor }} />
+                      <input type="color" value={activeMarkupColor} onChange={event => updateActiveMarkupColor(event.target.value)} />
+                      <input
+                        className="canvas-color-hex-input"
+                        type="text"
+                        maxLength={7}
+                        inputMode="text"
+                        pattern="#[0-9a-fA-F]{6}"
+                        value={markupColorInput}
+                        onChange={event => updateMarkupColorFromHex(event.target.value)}
+                        onBlur={commitMarkupColorInput}
+                        spellCheck={false}
+                      />
+                    </span>
+                    <span className="canvas-color-hint">선택한 색상 계열로 표, 박스, 강조색을 함께 변경합니다.</span>
+                  </label>
+                )}
               </div>
             )}
           </section>
@@ -1720,6 +1943,7 @@ ${body}
                       onMouseUp={endDrag}
                       onMouseLeave={endDrag}
                     >
+                      <style>{getMarkupPaletteCss(item.paletteColor || inferMarkupPaletteColor(item.html), getMarkupPaletteClass(item))}</style>
                       {item.id === activeId && (
                         <>
                           <button
@@ -1742,7 +1966,8 @@ ${body}
                         </>
                       )}
                       <MarkupRenderContent
-                        html={item.html}
+                        html={getMarkupDisplayHtml(item)}
+                        paletteClassName={getMarkupPaletteClass(item)}
                         isEditing={editingMarkupId === item.id}
                         onInput={html => updateMarkupHtmlById(item.id, html)}
                         onMouseDown={event => {

@@ -692,6 +692,18 @@
   text-transform: lowercase;
 }
 
+.canvas-markup-color-picker {
+  padding-top: 0.75rem;
+  border-top: 0.0625rem solid #e8e8ee;
+}
+
+.canvas-color-hint {
+  color: #64748b;
+  font-size: 0.75rem;
+  font-weight: 400;
+  line-height: 1.45;
+}
+
 .canvas-primary-btn,
 .canvas-actions button {
   width: 100%;

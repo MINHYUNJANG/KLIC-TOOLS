@@ -1,5 +1,7 @@
 .markup-render {
   --markup-primary: #0070c8;
+  --markup-primary-soft: #dbefff;
+  --markup-primary-tint: #f0f8ff;
   --markup-border: #d7dee8;
   --markup-text: #1f2937;
   --markup-muted: #64748b;
@@ -75,14 +77,14 @@
 }
 
 .markup-render .info-table th {
-  background: #eff7ff;
+  background: var(--markup-primary-tint);
   color: #0f172a;
   font-weight: 700;
 }
 
 .markup-render .info-table td:first-child {
   width: 32%;
-  background: #fafcff;
+  background: var(--markup-primary-tint);
   color: #334155;
   font-weight: 700;
 }
@@ -182,8 +184,8 @@
   position: relative;
   padding: 0.65rem 0.5rem;
   border-radius: 999px;
-  background: #eaf5ff;
-  color: #075985;
+  background: var(--markup-primary-soft);
+  color: var(--markup-primary);
   font-weight: 700;
   text-align: center;
 }
@@ -208,13 +210,13 @@
 }
 
 .markup-render .notice-box {
-  border: 0.0625rem solid #fed7aa;
-  background: #fff7ed;
+  border: 0.0625rem solid var(--markup-border);
+  background: var(--markup-primary-tint);
 }
 
 .markup-render .highlight-box {
-  border: 0.0625rem solid #bfdbfe;
-  background: #eff6ff;
+  border: 0.0625rem solid var(--markup-border);
+  background: var(--markup-primary-tint);
 }
 
 .markup-render .notice-box strong,
