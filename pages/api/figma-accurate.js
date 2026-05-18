@@ -74,6 +74,11 @@ async function clearAllBlobs() {
 
 // Figma CDN에서 이미지를 받아 Vercel Blob에 업로드 후 CDN URL 반환
 async function saveImageToBlob(cdnUrl, blobPath) {
+  // Mock 모드: Blob 저장 없이 원본 URL 그대로 반환 (다운로드 시 직접 fetch)
+  if (process.env.FIGMA_MOCK === 'true') {
+    const fileName = blobPath.split('/').pop() + '.jpg';
+    return { url: cdnUrl, fileName };
+  }
   try {
     const controller = new AbortController();
     const timer = setTimeout(() => controller.abort(), 20000);
@@ -127,7 +132,7 @@ export default async function handler(req, res) {
     for (const nid of nodeIds.slice(0, 3)) {
       let nodeData;
       try { nodeData = await getFigmaNodeFull(fileKey, nid); } catch (e) {
-        if (e.message === 'FIGMA_RATE_LIMIT' || e.message === 'FIGMA_TOKEN_INVALID') throw e;
+        if (e.message.startsWith('FIGMA_RATE_LIMIT') || e.message === 'FIGMA_TOKEN_INVALID') throw e;
         console.warn('[노드 조회 실패]', e.message);
         continue;
       }
@@ -224,9 +229,14 @@ export default async function handler(req, res) {
   } catch (e) {
     let detail = e.message;
     let status = 500;
-    if (e.message === 'FIGMA_RATE_LIMIT') {
+    if (e.message.startsWith('FIGMA_RATE_LIMIT')) {
       status = 429;
-      detail = 'Figma API 요청 한도를 초과했습니다. 잠시 후 다시 시도해주세요.';
+      const waitSec = parseInt(e.message.split(':')[1] || '0', 10);
+      const waitStr = waitSec <= 0 ? '잠시'
+        : waitSec < 60 ? `${waitSec}초`
+        : waitSec < 3600 ? `${Math.ceil(waitSec / 60)}분`
+        : `${Math.ceil(waitSec / 3600)}시간`;
+      detail = `Figma API 요청 한도를 초과했습니다. ${waitStr} 후 다시 시도해주세요.`;
     } else if (e.message === 'FIGMA_TOKEN_INVALID') {
       status = 403;
       detail = 'Figma API 토큰이 유효하지 않거나 만료되었습니다. .env.local의 FIGMA_ACCESS_TOKEN을 확인해주세요.';

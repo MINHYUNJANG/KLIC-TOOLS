@@ -1,5 +1,11 @@
 import Groq from 'groq-sdk';
+import { readFileSync } from 'fs';
+import { join } from 'path';
 import { convertFigmaNode } from './figma-converter.js';
+
+function loadMockNode() {
+  return JSON.parse(readFileSync(join(process.cwd(), 'fixtures', 'figma-mock-node.json'), 'utf-8'));
+}
 
 const FIGMA_API = 'https://api.figma.com/v1';
 const NO_VARIANT = new Set(['class-list']);
@@ -93,20 +99,33 @@ function figmaHeaders() {
 }
 
 async function getWithRetry(url, options = {}, maxAttempts = 3) {
+  // 호출자의 AbortSignal은 재시도 대기 중 만료될 수 있으므로 직접 관리
+  const { signal: _unused, ...baseOptions } = options;
+  const RETRY_DELAYS_MS = [5000, 15000];
+
   for (let attempt = 0; attempt < maxAttempts; attempt++) {
-    const resp = await fetch(url, options);
+    const resp = await fetch(url, {
+      ...baseOptions,
+      signal: AbortSignal.timeout(45000),
+    });
+
     if (resp.status === 429) {
-      throw new Error('FIGMA_RATE_LIMIT');
+      const retryAfterSec = parseInt(resp.headers.get('Retry-After') || '0', 10);
+      if (attempt < maxAttempts - 1) {
+        const delay = retryAfterSec > 0
+          ? Math.min(retryAfterSec * 1000, 60000)
+          : (RETRY_DELAYS_MS[attempt] ?? 15000);
+        await new Promise(r => setTimeout(r, delay));
+        continue;
+      }
+      throw new Error(`FIGMA_RATE_LIMIT:${retryAfterSec}`);
     }
-    if (resp.status === 403) {
-      throw new Error('FIGMA_TOKEN_INVALID');
-    }
-    if (resp.status === 401) {
+    if (resp.status === 403 || resp.status === 401) {
       throw new Error('FIGMA_TOKEN_INVALID');
     }
     return resp;
   }
-  throw new Error('FIGMA_RATE_LIMIT');
+  throw new Error('FIGMA_RATE_LIMIT:0');
 }
 
 export function parseFigmaUrl(url) {
@@ -172,6 +191,7 @@ export async function figmaMarkupFast(figmaUrl, templateHtml = '') {
 }
 
 export async function getTopFrameIds(fileKey) {
+  if (process.env.FIGMA_MOCK === 'true') return ['mock:1'];
   const resp = await getWithRetry(
     `${FIGMA_API}/files/${fileKey}?depth=1`,
     { headers: figmaHeaders(), signal: AbortSignal.timeout(30000) }
@@ -417,6 +437,9 @@ export function collectImageRefs(node, refs = new Set()) {
 }
 
 export async function fetchImageFillUrls(fileKey) {
+  if (process.env.FIGMA_MOCK === 'true') {
+    return { 'mock-ref-001': 'https://picsum.photos/seed/klictools/1040/240' };
+  }
   const cacheKey = `images:${fileKey}`;
   const cached = cacheGet(cacheKey);
   if (cached) return cached;
@@ -446,6 +469,7 @@ function withTimeout(promise, ms, msg) {
 }
 
 export async function getFigmaNodeFull(fileKey, nodeId) {
+  if (process.env.FIGMA_MOCK === 'true') return loadMockNode();
   const cacheKey = `node:${fileKey}:${nodeId}`;
   const cached = cacheGet(cacheKey);
   if (cached) return cached;

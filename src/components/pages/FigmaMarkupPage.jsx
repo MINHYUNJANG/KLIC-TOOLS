@@ -212,7 +212,7 @@ ${htmlResult}
                 <span style={{ fontSize: '0.8125rem', color: '#666' }}>.env.local 파일의 FIGMA_ACCESS_TOKEN 값을 확인해주세요.</span>
               )}
               {error.includes('한도') && (
-                <span style={{ fontSize: '0.8125rem', color: '#666' }}>Figma API 분당 요청 한도에 도달했습니다. 1분 후 다시 시도해주세요.</span>
+                <span style={{ fontSize: '0.8125rem', color: '#666' }}>잠시 후 다시 시도하시거나, 다른 Figma 파일로 테스트해보세요.</span>
               )}
             </div>
           )}
