@@ -272,8 +272,8 @@
 .a11y-source-code {
   flex: 1;
   color: #e2e8f0;
-  white-space: pre;
-  word-break: normal;
+  white-space: pre-wrap;
+  word-break: break-all;
   line-height: 1.65;
 }
 
