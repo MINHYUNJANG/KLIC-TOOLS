@@ -19,12 +19,22 @@ export function extractBoxLines(srcBox) {
 export function mapBodyText(src, tpl, excludePs = new Set()) {
   const tplTxt = tpl.querySelector('.txt-wrap .txt') || tpl.querySelector('.greeting .txt');
   if (!tplTxt) return;
-  const pTags = Array.from(src.querySelectorAll('p:not(.sign)'))
-    .filter(p => !excludePs.has(p))
-    .map(p => p.textContent.trim())
-    .filter(t => t.length > 5);
-  if (pTags.length > 0) {
-    tplTxt.innerHTML = '\n' + pTags.map(p => `<p>${p}</p>`).join('\n') + '\n';
+  const blocks = Array.from(src.querySelectorAll('p, ul'))
+    .filter(el => !excludePs.has(el) && !el.closest('.sign') && !el.closest('.box'))
+    .filter(el => {
+      if (el.tagName === 'UL') return el.querySelectorAll('li').length > 0;
+      return el.textContent.trim().length > 5;
+    });
+  if (blocks.length > 0) {
+    tplTxt.innerHTML = '\n' + blocks.map(el => {
+      if (el.tagName === 'UL') {
+        const lis = Array.from(el.querySelectorAll('li'))
+          .map(li => `<li>${li.textContent.trim()}</li>`)
+          .join('\n');
+        return `<ul class="bu-st1 list">\n${lis}\n</ul>`;
+      }
+      return `<p>${el.textContent.trim()}</p>`;
+    }).join('\n') + '\n';
   }
 }
 
