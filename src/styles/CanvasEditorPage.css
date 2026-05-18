@@ -89,7 +89,7 @@
 .canvas-panel textarea,
 .canvas-panel input,
 .canvas-panel select,
-.canvas-topbar input {
+.canvas-topbar input:not([type="radio"]) {
   width: 100%;
   min-height: 2.5rem;
   padding: 0.625rem 0.75rem;
@@ -104,8 +104,76 @@
 .canvas-panel textarea:focus,
 .canvas-panel input:focus,
 .canvas-panel select:focus,
-.canvas-topbar input:focus {
+.canvas-topbar input:not([type="radio"]):focus {
   border-color: #0070c8;
+}
+
+.canvas-size-warning {
+  display: block;
+  margin-top: 0.25rem;
+  font-size: 0.75rem;
+  color: #dc2626;
+  white-space: nowrap;
+}
+
+.canvas-bgimage-controls {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.canvas-bgimage-controls input[type="file"] {
+  flex: 1;
+  min-width: 0;
+  width: auto;
+}
+
+.canvas-bgimage-clear {
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 1.5rem;
+  height: 1.5rem;
+  padding: 0;
+  border: 0.0625rem solid #d0d0d0;
+  border-radius: 50%;
+  background: #fff;
+  color: #6b7280;
+  font-size: 0.875rem;
+  cursor: pointer;
+  line-height: 1;
+}
+
+.canvas-bgimage-clear:hover {
+  border-color: #ef4444;
+  color: #ef4444;
+}
+
+.canvas-bgimage-mode {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  flex-shrink: 0;
+}
+
+.canvas-bgimage-mode .canvas-bgimage-mode-item {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 0.3rem;
+  font-size: 0.8125rem;
+  font-weight: 500;
+  color: #374151;
+  cursor: pointer;
+  white-space: nowrap;
+}
+
+.canvas-bgimage-mode .canvas-bgimage-mode-item input[type="radio"] {
+  accent-color: #0070c8;
+  width: 0.875rem;
+  height: 0.875rem;
+  cursor: pointer;
 }
 
 .canvas-panel textarea {
@@ -729,12 +797,17 @@
 }
 
 .canvas-topbar {
-  display: grid;
-  grid-template-columns: repeat(4, minmax(9rem, 1fr));
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-start;
   gap: 0.75rem;
   padding: 1rem;
   border: 0.0625rem solid #e8e8ee;
   background: #f7fbff;
+}
+
+.canvas-topbar > label {
+  flex: 1 0 auto;
 }
 
 .canvas-stage {

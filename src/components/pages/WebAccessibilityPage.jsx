@@ -1,4 +1,5 @@
 import { useState, useRef, useCallback, useEffect, useMemo } from 'react';
+import { createPortal } from 'react-dom';
 import { getRemediation, getMessageKo } from '../../utils/w3c-remediation';
 
 function buildMessagesByLine(messages) {
@@ -80,6 +81,7 @@ function toKoreanError(msg) {
 function SourceViewer({ html, messages, onHtmlChange, activeLineNum, translations, aiRemediations }) {
   const [popup, setPopup] = useState(null);
   const closeTimerRef = useRef(null);
+  const isPopupHoveredRef = useRef(false);
   const lineElsRef = useRef(new Map());
 
   const lines = useMemo(() => html.split('\n'), [html]);
@@ -93,6 +95,7 @@ function SourceViewer({ html, messages, onHtmlChange, activeLineNum, translation
   }, [activeLineNum]);
 
   const scheduleClose = useCallback(() => {
+    isPopupHoveredRef.current = false;
     closeTimerRef.current = setTimeout(() => setPopup(null), 150);
   }, []);
 
@@ -101,6 +104,7 @@ function SourceViewer({ html, messages, onHtmlChange, activeLineNum, translation
   }, []);
 
   const openPopup = useCallback((lineNum, e) => {
+    if (isPopupHoveredRef.current) return;
     cancelClose();
     const rect = e.currentTarget.getBoundingClientRect();
     setPopup({ lineNum, top: rect.bottom + 4, left: rect.left + 48 });
@@ -160,12 +164,12 @@ function SourceViewer({ html, messages, onHtmlChange, activeLineNum, translation
         </pre>
       </div>
 
-      {popup && popupMsgs.length > 0 && (
+      {popup && popupMsgs.length > 0 && createPortal(
         <div
           className="a11y-popup"
           style={{ top: popup.top, left: popup.left }}
-          onMouseEnter={cancelClose}
-          onMouseLeave={scheduleClose}
+          onMouseEnter={() => { isPopupHoveredRef.current = true; cancelClose(); }}
+          onMouseLeave={() => { scheduleClose(); }}
         >
           {popupMsgs.map((msg, i) => {
             const type = getMsgType(msg);
@@ -193,7 +197,8 @@ function SourceViewer({ html, messages, onHtmlChange, activeLineNum, translation
               </div>
             );
           })}
-        </div>
+        </div>,
+        document.body
       )}
     </section>
   );

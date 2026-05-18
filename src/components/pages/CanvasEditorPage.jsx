@@ -314,6 +314,7 @@ function CanvasEditorPage() {
   const textEditInputRef = useRef(null);
   const markupItemRefs = useRef({});
   const markupResizeDraftRef = useRef(null);
+  const historyRef = useRef([]);
   const imageInputRef = useRef(null);
   const replaceImageInputRef = useRef(null);
   const bgInputRef = useRef(null);
@@ -325,6 +326,7 @@ function CanvasEditorPage() {
   const [bgColor, setBgColor] = useState('#ffffff');
   const [bgColorInput, setBgColorInput] = useState('#ffffff');
   const [bgImage, setBgImage] = useState(null);
+  const [bgImageMode, setBgImageMode] = useState('fit');
   const [items, setItems] = useState([]);
   const [activeId, setActiveId] = useState(null);
   const [drag, setDrag] = useState(null);
@@ -353,6 +355,10 @@ function CanvasEditorPage() {
   const selectedCanvasTemplates = templateCategory === 'all'
     ? CANVAS_TEMPLATES
     : CANVAS_TEMPLATES.filter(template => (template.category || 'document') === templateCategory);
+
+  function saveSnapshot() {
+    historyRef.current = [...historyRef.current.slice(-49), { items, bgColor, bgImage, canvasSize }];
+  }
 
   function togglePanel(panel) {
     setOpenPanel(current => (current === panel ? null : panel));
@@ -461,10 +467,27 @@ function CanvasEditorPage() {
     ctx.fillRect(0, 0, canvasSize.width, canvasSize.height);
 
     if (bgImage) {
-      const ratio = Math.min(canvasSize.width / bgImage.width, canvasSize.height / bgImage.height);
-      const width = bgImage.width * ratio;
-      const height = bgImage.height * ratio;
-      ctx.drawImage(bgImage, (canvasSize.width - width) / 2, (canvasSize.height - height) / 2, width, height);
+      let drawW, drawH, drawX, drawY;
+      if (bgImageMode === 'fill') {
+        const ratio = Math.max(canvasSize.width / bgImage.width, canvasSize.height / bgImage.height);
+        drawW = bgImage.width * ratio;
+        drawH = bgImage.height * ratio;
+      } else if (bgImageMode === 'center') {
+        drawW = bgImage.width;
+        drawH = bgImage.height;
+      } else {
+        const ratio = Math.min(canvasSize.width / bgImage.width, canvasSize.height / bgImage.height);
+        drawW = bgImage.width * ratio;
+        drawH = bgImage.height * ratio;
+      }
+      drawX = (canvasSize.width - drawW) / 2;
+      drawY = (canvasSize.height - drawH) / 2;
+      ctx.save();
+      ctx.beginPath();
+      ctx.rect(0, 0, canvasSize.width, canvasSize.height);
+      ctx.clip();
+      ctx.drawImage(bgImage, drawX, drawY, drawW, drawH);
+      ctx.restore();
     }
 
     const lastMarkupIndex = items.reduce((lastIndex, item, index) => (item.type === 'markup' ? index : lastIndex), -1);
@@ -514,7 +537,7 @@ function CanvasEditorPage() {
     });
   }
 
-  useEffect(drawCanvas, [canvasSize, bgColor, bgImage, items, activeId, workspaceTab, editingTextId]);
+  useEffect(drawCanvas, [canvasSize, bgColor, bgImage, bgImageMode, items, activeId, workspaceTab, editingTextId]);
 
   useEffect(() => {
     if (document.fonts?.ready) document.fonts.ready.then(drawCanvas);
@@ -564,7 +587,6 @@ function CanvasEditorPage() {
   function updateBgColor(color) {
     setBgColor(color);
     setBgColorInput(color);
-    setBgImage(null);
   }
 
   function updateBgColorFromHex(value) {
@@ -573,8 +595,14 @@ function CanvasEditorPage() {
     const color = normalizeHexColor(nextValue);
     if (color) {
       setBgColor(color);
-      setBgImage(null);
     }
+  }
+
+  function clearBgImage() {
+    saveSnapshot();
+    setBgImage(null);
+    setBgImageMode('fit');
+    if (bgInputRef.current) bgInputRef.current.value = '';
   }
 
   function commitBgColorInput() {
@@ -791,6 +819,7 @@ function CanvasEditorPage() {
   }
 
   function addText() {
+    saveSnapshot();
     const item = {
       id: crypto.randomUUID(),
       type: 'text',
@@ -809,6 +838,7 @@ function CanvasEditorPage() {
   }
 
   function addIcon() {
+    saveSnapshot();
     if (!iconForm.value) {
       alert('추가할 아이콘을 선택해주세요.');
       return;
@@ -827,6 +857,7 @@ function CanvasEditorPage() {
   }
 
   function addImage() {
+    saveSnapshot();
     if (!imageForm.image) {
       alert('추가할 이미지를 선택해주세요.');
       return;
@@ -889,6 +920,7 @@ function CanvasEditorPage() {
   }
 
   function addMarkup(template) {
+    saveSnapshot();
     const item = {
       id: crypto.randomUUID(),
       type: 'markup',
@@ -972,6 +1004,7 @@ function CanvasEditorPage() {
       }
     }
 
+    saveSnapshot();
     setItems(nextItems);
     setCanvasSize(nextCanvasSize);
     setCanvasSizeForm({ width: String(nextCanvasSize.width), height: String(nextCanvasSize.height) });
@@ -1000,6 +1033,7 @@ function CanvasEditorPage() {
 
   function deleteItemById(id) {
     if (!id) return;
+    saveSnapshot();
     setItems(prev => prev.filter(item => item.id !== id));
     setActiveId(current => (current === id ? null : current));
     setDrag(current => (current?.id === id ? null : current));
@@ -1012,6 +1046,7 @@ function CanvasEditorPage() {
 
   function bringItemToFront(id) {
     if (!id) return;
+    saveSnapshot();
     setItems(prev => {
       const target = prev.find(item => item.id === id);
       if (!target) return prev;
@@ -1023,6 +1058,7 @@ function CanvasEditorPage() {
 
   function sendItemToBack(id) {
     if (!id) return;
+    saveSnapshot();
     setItems(prev => {
       const target = prev.find(item => item.id === id);
       if (!target) return prev;
@@ -1152,6 +1188,7 @@ function CanvasEditorPage() {
 
     const resizeItem = getActiveResizeItemAtPosition(pos.x, pos.y);
     if (resizeItem) {
+      saveSnapshot();
       setDrag({
         mode: 'resize',
         id: resizeItem.id,
@@ -1172,6 +1209,7 @@ function CanvasEditorPage() {
       setEditingMarkupId(null);
       return;
     }
+    saveSnapshot();
     setActiveId(item.id);
     setEditingTextId(null);
     setTextEditStyle(null);
@@ -1186,6 +1224,7 @@ function CanvasEditorPage() {
     event.preventDefault();
     event.stopPropagation();
     const pos = getCanvasPosition(event);
+    saveSnapshot();
     setActiveId(item.id);
     syncFormFromItem(item);
     setDrag({ mode: 'move', id: item.id, offsetX: pos.x - item.x, offsetY: pos.y - item.y });
@@ -1209,6 +1248,7 @@ function CanvasEditorPage() {
     event.preventDefault();
     event.stopPropagation();
     const pos = getCanvasPosition(event);
+    saveSnapshot();
     setActiveId(item.id);
     markupResizeDraftRef.current = {
       id: item.id,
@@ -1397,9 +1437,33 @@ function CanvasEditorPage() {
 
   useEffect(() => {
     function handleKeyDown(event) {
+      if (isEditableTarget(event.target)) return;
+
+      if ((event.ctrlKey || event.metaKey) && event.key === 'z' && !event.shiftKey) {
+        event.preventDefault();
+        const history = historyRef.current;
+        if (history.length === 0) return;
+        const snapshot = history[history.length - 1];
+        historyRef.current = history.slice(0, -1);
+        setItems(snapshot.items);
+        setBgColor(snapshot.bgColor);
+        setBgColorInput(snapshot.bgColor);
+        setBgImage(snapshot.bgImage);
+        setCanvasSize(snapshot.canvasSize);
+        setCanvasSizeForm({
+          width: String(snapshot.canvasSize.width),
+          height: String(snapshot.canvasSize.height),
+        });
+        setActiveId(null);
+        setEditingTextId(null);
+        setTextEditStyle(null);
+        setEditingMarkupId(null);
+        setDrag(null);
+        return;
+      }
+
       if (!activeItem) return;
       if (!['ArrowUp', 'ArrowDown', 'ArrowLeft', 'ArrowRight', 'Delete', 'Backspace', 'Escape'].includes(event.key)) return;
-      if (isEditableTarget(event.target)) return;
 
       event.preventDefault();
       if (event.key === 'Escape') {
@@ -1542,12 +1606,15 @@ ${body}
   }
 
   function resetCanvas() {
+    saveSnapshot();
     setCanvasSize(DEFAULT_SIZE);
     setCanvasSizeForm({
       width: String(DEFAULT_SIZE.width),
       height: String(DEFAULT_SIZE.height),
     });
     updateBgColor('#ffffff');
+    setBgImage(null);
+    setBgImageMode('fit');
     setItems([]);
     setActiveId(null);
     setEditingTextId(null);
@@ -1811,6 +1878,9 @@ ${body}
                 onChange={event => handleCanvasSizeChange('width', event.target.value)}
                 onBlur={() => commitCanvasSize('width')}
               />
+              {canvasSizeForm.width !== '' && Number(canvasSizeForm.width) < 100 && (
+                <span className="canvas-size-warning">100부터 입력 가능합니다</span>
+              )}
             </label>
             <label>
               세로
@@ -1821,6 +1891,9 @@ ${body}
                 onChange={event => handleCanvasSizeChange('height', event.target.value)}
                 onBlur={() => commitCanvasSize('height')}
               />
+              {canvasSizeForm.height !== '' && Number(canvasSizeForm.height) < 100 && (
+                <span className="canvas-size-warning">100부터 입력 가능합니다</span>
+              )}
             </label>
             <label className="canvas-color-picker">
               배경색
@@ -1842,7 +1915,39 @@ ${body}
             </label>
             <label>
               배경 이미지
-              <input ref={bgInputRef} type="file" accept="image/*" onChange={event => loadImageFile(event.target.files[0], setBgImage)} />
+              <div className="canvas-bgimage-controls">
+                <input ref={bgInputRef} type="file" accept="image/*" onChange={event => { saveSnapshot(); loadImageFile(event.target.files[0], setBgImage); }} />
+                {bgImage && (
+                  <>
+                    <button
+                      type="button"
+                      className="canvas-bgimage-clear"
+                      onClick={clearBgImage}
+                      aria-label="배경 이미지 삭제"
+                    >
+                      <i className="ri-close-line" aria-hidden="true" />
+                    </button>
+                    <div className="canvas-bgimage-mode" role="group" aria-label="배경 이미지 표시 방식">
+                      {[
+                        { value: 'fit', label: '맞춤' },
+                        { value: 'fill', label: '채우기' },
+                        { value: 'center', label: '가운데' },
+                      ].map(({ value, label }) => (
+                        <label key={value} className="canvas-bgimage-mode-item">
+                          <input
+                            type="radio"
+                            name="bgImageMode"
+                            value={value}
+                            checked={bgImageMode === value}
+                            onChange={() => setBgImageMode(value)}
+                          />
+                          {label}
+                        </label>
+                      ))}
+                    </div>
+                  </>
+                )}
+              </div>
             </label>
           </div>
 
