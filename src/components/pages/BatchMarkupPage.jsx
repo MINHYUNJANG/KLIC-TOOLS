@@ -110,8 +110,14 @@ ${bodyContent}
 
 function resizeIframe(iframe) {
   if (!iframe?.contentDocument?.body) return;
-  iframe.style.height = '0';
-  iframe.style.height = iframe.contentDocument.body.scrollHeight + 'px';
+  const doc = iframe.contentDocument;
+  const height = Math.max(
+    doc.body.scrollHeight,
+    doc.body.offsetHeight,
+    doc.documentElement.scrollHeight,
+    doc.documentElement.offsetHeight
+  );
+  iframe.style.height = height + 'px';
 }
 
 // ─── 템플릿 미리보기 (선택 시 즉시 표시) ─────────────────────
@@ -146,7 +152,7 @@ function TemplatePreview({ template }) {
 }
 
 // ─── 결과 아이템 ──────────────────────────────────────────────
-function ResultItem({ item, index, onCopy, copiedKey }) {
+function ResultItem({ item, index, onCopy, onEdit, copiedKey }) {
   const [view, setView] = useState('preview');
   const iframeRef = useRef(null);
 
@@ -205,7 +211,7 @@ function ResultItem({ item, index, onCopy, copiedKey }) {
         <div className="bm-item-body">
           {view === 'preview'
             ? <iframe ref={iframeRef} className="bm-item-frame" title="미리보기" sandbox="allow-same-origin allow-scripts" />
-            : <textarea className="crawl-textarea bm-item-code" value={item.result} readOnly spellCheck={false} aria-label="적용된 마크업 소스" />
+            : <textarea className="crawl-textarea bm-item-code" value={item.result} onChange={e => onEdit(index, e.target.value)} spellCheck={false} aria-label="적용된 마크업 소스" />
           }
         </div>
       )}
@@ -274,6 +280,10 @@ export default function BatchMarkupPage() {
       setProgress({ done: i + 1, total: parsed.length });
     }
     setRunning(false);
+  }
+
+  function handleEdit(index, value) {
+    updateItem(index, { result: value });
   }
 
   function handleCopy(text, key) {
@@ -391,7 +401,7 @@ export default function BatchMarkupPage() {
             {items.length === 0
               ? <TemplatePreview template={activeTemplate} />
               : items.map((item, i) => (
-                  <ResultItem key={i} item={item} index={i} onCopy={handleCopy} copiedKey={copiedKey} />
+                  <ResultItem key={i} item={item} index={i} onCopy={handleCopy} onEdit={handleEdit} copiedKey={copiedKey} />
                 ))
             }
           </div>
