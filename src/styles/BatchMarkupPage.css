@@ -2,7 +2,7 @@
 .bm-page {
   display: flex;
   flex-direction: column;
-  height: calc(100dvh - 4rem - 3.6875rem);
+  /* height: calc(100dvh - 4rem - 3.6875rem); */
   max-width: 100rem;
   width: 100%;
   margin: 0 auto;
