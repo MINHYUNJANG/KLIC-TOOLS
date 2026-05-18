@@ -122,14 +122,8 @@ export default async function handler(req, res) {
     let allCdnUrls = {};
     try { allCdnUrls = await fetchImageFillUrls(fileKey); } catch { /* 계속 진행 */ }
 
-    // 신규 프로젝트 시작 시 이전 Blob 이미지 전체 삭제
-    await clearAllBlobs();
-
-    const allHtml = [], allCss = [], allJsx = [];
-    const savedImages = [];
-    const blobUrls = {}; // fileName → CDN URL 맵 (다운로드용)
-    let imgIdx = 0;
-
+    // ── Pass 1: 노드 데이터 전체 조회 (429 시 여기서 중단, 이전 이미지 보존) ──
+    const nodeDataList = [];
     for (const nid of nodeIds.slice(0, 3)) {
       let nodeData;
       try { nodeData = await getFigmaNodeFull(fileKey, nid); } catch (e) {
@@ -137,8 +131,20 @@ export default async function handler(req, res) {
         console.warn('[노드 조회 실패]', e.message);
         continue;
       }
-      if (!nodeData) continue;
+      if (nodeData) nodeDataList.push(nodeData);
+    }
+    if (!nodeDataList.length) throw new Error('마크업 생성에 실패했습니다.');
 
+    // API 성공 확인 후 이전 이미지 삭제 → 새 이미지 업로드 시작
+    await clearAllBlobs();
+
+    // ── Pass 2: 이미지 업로드 + 마크업 변환 ──────────────────────────────────
+    const allHtml = [], allCss = [], allJsx = [];
+    const savedImages = [];
+    const blobUrls = {};
+    let imgIdx = 0;
+
+    for (const nodeData of nodeDataList) {
       const imageNodeMap = {};
       const bgImageUrls = {};
       const refCache = {};
@@ -196,7 +202,7 @@ export default async function handler(req, res) {
         }
       });
 
-      // ③ 마크업 변환 (imageNodeMap, bgImageUrls에 Blob CDN URL이 담김)
+      // ③ 마크업 변환
       const result = convertFigmaNode(nodeData, markup_type, bgImageUrls, new Set(), imageNodeMap);
 
       if (markup_type === 'react') {
@@ -207,8 +213,6 @@ export default async function handler(req, res) {
         allCss.push(result.css);
       }
     }
-
-    if (!allHtml.length && !allJsx.length) throw new Error('마크업 생성에 실패했습니다.');
 
     const finalResult = { css: allCss.join('\n\n'), frame_count: allHtml.length || allJsx.length };
     if (markup_type === 'react') finalResult.jsx = allJsx.join('\n\n');
