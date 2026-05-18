@@ -99,7 +99,8 @@ function figmaHeaders() {
 }
 
 async function getWithRetry(url, options = {}, maxAttempts = 3) {
-  // 호출자의 AbortSignal은 재시도 대기 중 만료될 수 있으므로 직접 관리
+  // Vercel 환경에서는 대기 없이 즉시 실패 (함수 타임아웃 방지)
+  const isVercel = process.env.VERCEL === '1';
   const { signal: _unused, ...baseOptions } = options;
   const RETRY_DELAYS_MS = [5000, 15000];
 
@@ -111,7 +112,7 @@ async function getWithRetry(url, options = {}, maxAttempts = 3) {
 
     if (resp.status === 429) {
       const retryAfterSec = parseInt(resp.headers.get('Retry-After') || '0', 10);
-      if (attempt < maxAttempts - 1) {
+      if (!isVercel && attempt < maxAttempts - 1) {
         const delay = retryAfterSec > 0
           ? Math.min(retryAfterSec * 1000, 60000)
           : (RETRY_DELAYS_MS[attempt] ?? 15000);
