@@ -1,9 +1,23 @@
+import { parseMarkup, extractBoxLines, mapBodyText, mapSign } from '../utils/templateMapping.js';
+
 export default [
   {
     id: 'greeting-tyA',
     category: '인사말',
     label: '인사말 tyA',
     desc: '슬로건 리드 + 스크롤 배경텍스트형',
+    applyMapping(sourceMarkup, templateCode) {
+      const { src, tpl } = parseMarkup(sourceMarkup, templateCode);
+      const srcBox = src.querySelector('.greeting .box');
+      const lines = extractBoxLines(srcBox);
+      const joined = lines.length > 0 ? lines.join('<br>') : (srcBox?.textContent.trim() || '');
+      const tplLeadP = tpl.querySelector('.lead-wrap .inner > p');
+      if (tplLeadP && joined) tplLeadP.innerHTML = joined;
+      const boxPs = srcBox ? new Set(Array.from(srcBox.querySelectorAll('p'))) : new Set();
+      mapBodyText(src, tpl, boxPs);
+      mapSign(src, tpl);
+      return tpl.body.innerHTML;
+    },
     code: `<div class="greeting tyA"><!-- 이미지 있을 시 'ty-img' 추가 -->
   <div class="lead-wrap">
     <!-- 이미지 있을 시 -->
@@ -39,6 +53,18 @@ export default [
     category: '인사말',
     label: '인사말 tyB',
     desc: '영문 슬로건 리드 + 텍스트형 (이미지 선택)',
+    applyMapping(sourceMarkup, templateCode) {
+      const { src, tpl } = parseMarkup(sourceMarkup, templateCode);
+      const srcBox = src.querySelector('.greeting .box');
+      const lines = extractBoxLines(srcBox);
+      const joined = lines.length > 0 ? lines.join('<br>') : (srcBox?.textContent.trim() || '');
+      const tplLeadP = tpl.querySelector('.greeting.tyB .lead-txt > p');
+      if (tplLeadP && joined) tplLeadP.innerHTML = joined;
+      const boxPs = srcBox ? new Set(Array.from(srcBox.querySelectorAll('p'))) : new Set();
+      mapBodyText(src, tpl, boxPs);
+      mapSign(src, tpl);
+      return tpl.body.innerHTML;
+    },
     code: `<div class="greeting tyB"><!-- 이미지 있을 시 'ty-img' 추가 -->
   <div class="container">
     <!-- 이미지 있을 시 -->
@@ -78,6 +104,26 @@ export default [
     category: '인사말',
     label: '인사말 tyC',
     desc: '장식 오브젝트 + 리드문구 + 사진형',
+    applyMapping(sourceMarkup, templateCode) {
+      const { src, tpl } = parseMarkup(sourceMarkup, templateCode);
+      const srcBox = src.querySelector('.greeting .box');
+      const lines = extractBoxLines(srcBox);
+      const tplLeadC = tpl.querySelector('.greeting.tyC .lead-txt');
+      if (tplLeadC) {
+        tplLeadC.innerHTML = lines.length > 0
+          ? '\n' + lines.map(l => `<p>${l}</p>`).join('\n') + '\n'
+          : srcBox ? `\n<p>${srcBox.textContent.trim()}</p>\n` : '';
+      }
+      const tplGreetingC = tpl.querySelector('.greeting.tyC');
+      if (tplGreetingC && !src.querySelector('.greeting img')) {
+        tplGreetingC.querySelector('.img')?.remove();
+        tplGreetingC.classList.remove('ty-img');
+      }
+      const boxPs = srcBox ? new Set(Array.from(srcBox.querySelectorAll('p'))) : new Set();
+      mapBodyText(src, tpl, boxPs);
+      mapSign(src, tpl);
+      return tpl.body.innerHTML;
+    },
     code: `<div class="greeting tyC ty-img"><!-- 이미지 없을 시 'ty-img' 제거 -->
   <div class="container">
     <div class="obj">

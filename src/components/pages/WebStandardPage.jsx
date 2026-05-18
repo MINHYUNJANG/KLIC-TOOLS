@@ -1,4 +1,5 @@
 import { useRef, useState } from 'react';
+import PageHowTo from '../PageHowTo';
 import { getRemediation } from '../../utils/w3c-remediation';
 
 const BROWSERS = [
@@ -412,16 +413,12 @@ export default function WebStandardPage() {
       <section className="audit-page-header">
         <h2 className="crawl-title">웹표준검사</h2>
         <p className="crawl-desc">W3C HTML/CSS 검사와 브라우저별 증적 캡처를 한 번에 생성합니다.</p>
-        <div className="page-how-to" style={{ marginBottom: 0 }}>
-          <div className="page-how-to-copy">
-            <span className="ai-intro-kicker">사용방법</span>
-            <h3>브라우저 1개 이상(최대 5개) 선택 후 검사할 URL을 입력하고 검사를 시작하세요</h3>
-            <p>
-              W3C HTML·CSS 검사 결과에서 오류나 경고가 있을 경우 <strong>항목별 조치방법</strong>이 함께 표시되어 바로 수정에 활용할 수 있습니다.<br />
-              검사가 완료되면 브라우저별 캡처 화면과 W3C 검사 결과를 포함한 <strong>웹표준 증적보고서(.hwpx)</strong>를 다운로드할 수 있습니다.
-            </p>
-          </div>
-        </div>
+        <PageHowTo title="브라우저 1개 이상(최대 5개) 선택 후 검사할 URL을 입력하고 검사를 시작하세요" style={{ marginBottom: 0 }}>
+          <p>
+            W3C HTML·CSS 검사 결과에서 오류나 경고가 있을 경우 <strong>항목별 조치방법</strong>이 함께 표시되어 바로 수정에 활용할 수 있습니다.<br />
+            검사가 완료되면 브라우저별 캡처 화면과 W3C 검사 결과를 포함한 <strong>웹표준 증적보고서(.hwpx)</strong>를 다운로드할 수 있습니다.
+          </p>
+        </PageHowTo>
       </section>
 
       <section className="audit-content">

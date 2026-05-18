@@ -1,4 +1,5 @@
 import { useMemo, useState } from 'react';
+import PageHowTo from '../PageHowTo';
 
 function isValidFigmaUrl(str) {
   return /figma\.com\/(file|design|proto)\/[A-Za-z0-9]+/.test(str);
@@ -150,16 +151,12 @@ ${htmlResult}
       <div className="figma-header">
         <h2 className="crawl-title">피그마 마크업</h2>
         <p className="crawl-desc">Figma URL의 프레임을 분석해 HTML/CSS 또는 React/CSS 마크업을 생성합니다.</p>
-        <div className="page-how-to" style={{ marginBottom: 0 }}>
-          <div className="page-how-to-copy">
-            <span className="ai-intro-kicker">사용방법</span>
-            <h3>Figma 디자인 URL을 붙여넣으면 프레임을 분석해 마크업 코드를 자동 생성합니다</h3>
-            <p>
-              Figma 파일·디자인 공유(share) URL을 입력하고 프로젝트명을 입력한 뒤 출력 형식(HTML 또는 React)을 선택하세요.<br />
-              <strong>생성</strong> 버튼을 누르면 프레임 구조를 분석해 HTML/CSS 또는 JSX/CSS 코드를 만들어 줍니다.
-            </p>
-          </div>
-        </div>
+        <PageHowTo title="Figma 디자인 URL을 붙여넣으면 프레임을 분석해 마크업 코드를 자동 생성합니다" style={{ marginBottom: 0 }}>
+          <p>
+            Figma 파일·디자인 공유(share) URL을 입력하고 프로젝트명을 입력한 뒤 출력 형식(HTML 또는 React)을 선택하세요.<br />
+            <strong>생성</strong> 버튼을 누르면 프레임 구조를 분석해 HTML/CSS 또는 JSX/CSS 코드를 만들어 줍니다.
+          </p>
+        </PageHowTo>
       </div>
 
       <div className="figma-body">

@@ -32,6 +32,7 @@
 }
 
 .page-how-to {
+  position: relative;
   padding: 1.75rem;
   background: #f7fbff;
   border: 0.0625rem solid #d7e8f8;
@@ -42,6 +43,35 @@
   display: flex;
   flex-direction: column;
   gap: 0.75rem;
+}
+
+.page-how-to-head {
+  display: flex;
+  align-items: center;
+}
+
+.page-how-to-toggle {
+  position: absolute;
+  left: 50%;
+  bottom: 0;
+  transform: translate(-50%, 50%);
+  width: 1.5rem;
+  height: 1.5rem;
+  border: 0.0625rem solid #c9dff1;
+  border-radius: 50%;
+  background: #fff;
+  color: #0070c8;
+  cursor: pointer;
+  font-size: 0.875rem;
+  font-weight: 700;
+  line-height: 1;
+  transition: border-color 0.2s, background 0.2s;
+  box-shadow: 0 0.125rem 0.375rem rgba(0, 112, 200, 0.12);
+}
+
+.page-how-to-toggle:hover {
+  border-color: #0070c8;
+  background: #eef6fc;
 }
 
 .page-how-to-copy h3 {
@@ -57,6 +87,12 @@
   font-size: 0.9rem;
   color: #5a6472;
   line-height: 1.75;
+}
+
+.page-how-to-detail {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
 }
 
 /* Form */
