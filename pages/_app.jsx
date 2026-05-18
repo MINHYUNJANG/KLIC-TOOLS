@@ -10,6 +10,8 @@ import '../src/styles/BatchMarkupPage.css';
 import '../src/styles/FigmaMarkupPage.css';
 import '../src/styles/AiIntroPage.css';
 import '../src/styles/WebStandardPage.css';
+import '../src/styles/CanvasEditorPage.css';
+import '../src/styles/WebAccessibilityPage.css';
 
 export default function MyApp({ Component, pageProps }) {
   return <Component {...pageProps} />;

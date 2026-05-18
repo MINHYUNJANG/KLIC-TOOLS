@@ -40,6 +40,17 @@
   margin: 0;
   padding: 0;
 }
+.nav-item {
+  display: flex;
+  align-items: center;
+}
+.nav-item.has-divider::after {
+  content: "";
+  width: 0.0625rem;
+  height: 1rem;
+  margin: 0 0.5rem;
+  background: #ddd;
+}
 .nav-link {
   display: block;
   padding: 0.5rem 1rem;
@@ -133,6 +144,8 @@
   }
   .header-nav.is-open { display: block; }
   .nav-list { flex-direction: column; gap: 0; }
+  .nav-item { display: block; }
+  .nav-item.has-divider::after { display: none; }
   .nav-link { border-radius: 0; padding: 0.75rem 1.5rem; }
   .btn-login { display: none; }
 }

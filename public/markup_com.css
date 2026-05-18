@@ -1,0 +1,228 @@
+.markup-render {
+  --markup-primary: #0070c8;
+  --markup-primary-soft: #dbefff;
+  --markup-primary-tint: #f0f8ff;
+  --markup-border: #d7dee8;
+  --markup-text: #1f2937;
+  --markup-muted: #64748b;
+  color: var(--markup-text);
+  font-family: Pretendard, Arial, sans-serif;
+  font-size: 0.875rem;
+  line-height: 1.55;
+  word-break: keep-all;
+}
+
+.markup-render * {
+  box-sizing: border-box;
+}
+
+.markup-render ul,
+.markup-render ol,
+.markup-render p {
+  margin: 0;
+}
+
+.markup-render li + li,
+.markup-render p + p {
+  margin-top: 0.35rem;
+}
+
+.markup-render .notice-list,
+.markup-render .check-list {
+  display: grid;
+  gap: 0.45rem;
+  padding: 0;
+  list-style: none;
+}
+
+.markup-render .notice-list li,
+.markup-render .check-list li {
+  position: relative;
+  padding-left: 1.1rem;
+}
+
+.markup-render .notice-list li::before {
+  content: "";
+  position: absolute;
+  left: 0.2rem;
+  top: 0.65em;
+  width: 0.35rem;
+  height: 0.35rem;
+  border-radius: 50%;
+  background: var(--markup-primary);
+}
+
+.markup-render .check-list li::before {
+  content: "✓";
+  position: absolute;
+  left: 0;
+  top: 0;
+  color: var(--markup-primary);
+  font-weight: 800;
+}
+
+.markup-render .info-table {
+  width: 100%;
+  border-collapse: collapse;
+  background: #fff;
+  border-top: 0.125rem solid var(--markup-primary);
+  text-align: center;
+}
+
+.markup-render .info-table th,
+.markup-render .info-table td {
+  padding: 0.55rem 0.45rem;
+  border: 0.0625rem solid var(--markup-border);
+  vertical-align: middle;
+}
+
+.markup-render .info-table th {
+  background: var(--markup-primary-tint);
+  color: #0f172a;
+  font-weight: 700;
+}
+
+.markup-render .info-table td:first-child {
+  width: 32%;
+  background: var(--markup-primary-tint);
+  color: #334155;
+  font-weight: 700;
+}
+
+.markup-render .schedule-table {
+  width: 100%;
+  border-collapse: separate;
+  border-spacing: 0 0.45rem;
+  text-align: left;
+}
+
+.markup-render .schedule-table th,
+.markup-render .schedule-table td {
+  padding: 0.65rem 0.75rem;
+  border: none;
+  vertical-align: middle;
+}
+
+.markup-render .schedule-table tr:first-child th {
+  background: #0f172a;
+  color: #fff;
+  font-weight: 800;
+}
+
+.markup-render .schedule-table tr:first-child th:first-child {
+  border-radius: 0.5rem 0 0 0.5rem;
+}
+
+.markup-render .schedule-table tr:first-child th:last-child {
+  border-radius: 0 0.5rem 0.5rem 0;
+}
+
+.markup-render .schedule-table tr:not(:first-child) td {
+  background: #f8fafc;
+  border-top: 0.0625rem solid #e2e8f0;
+  border-bottom: 0.0625rem solid #e2e8f0;
+}
+
+.markup-render .schedule-table tr:not(:first-child) td:first-child {
+  width: 34%;
+  border-left: 0.25rem solid var(--markup-primary);
+  border-radius: 0.5rem 0 0 0.5rem;
+  color: var(--markup-primary);
+  font-weight: 800;
+  text-align: center;
+}
+
+.markup-render .schedule-table tr:not(:first-child) td:last-child {
+  border-right: 0.0625rem solid #e2e8f0;
+  border-radius: 0 0.5rem 0.5rem 0;
+  color: #1f2937;
+  font-weight: 600;
+}
+
+.markup-render .step-list {
+  display: grid;
+  gap: 0.5rem;
+  padding: 0;
+  list-style: none;
+  counter-reset: step;
+}
+
+.markup-render .step-list li {
+  position: relative;
+  min-height: 2rem;
+  padding: 0.35rem 0.5rem 0.35rem 2.4rem;
+  border: 0.0625rem solid var(--markup-border);
+  border-radius: 0.375rem;
+  background: #fff;
+  counter-increment: step;
+}
+
+.markup-render .step-list li::before {
+  content: counter(step);
+  position: absolute;
+  left: 0.5rem;
+  top: 0.35rem;
+  width: 1.35rem;
+  height: 1.35rem;
+  border-radius: 50%;
+  background: var(--markup-primary);
+  color: #fff;
+  font-size: 0.75rem;
+  font-weight: 800;
+  line-height: 1.35rem;
+  text-align: center;
+}
+
+.markup-render .process-flow {
+  display: flex;
+  gap: 0.5rem;
+  align-items: center;
+}
+
+.markup-render .process-flow span {
+  flex: 1;
+  position: relative;
+  padding: 0.65rem 0.5rem;
+  border-radius: 999px;
+  background: var(--markup-primary-soft);
+  color: var(--markup-primary);
+  font-weight: 700;
+  text-align: center;
+}
+
+.markup-render .process-flow span + span::before {
+  content: "";
+  position: absolute;
+  left: -0.42rem;
+  top: 50%;
+  width: 0;
+  height: 0;
+  border-top: 0.3rem solid transparent;
+  border-bottom: 0.3rem solid transparent;
+  border-left: 0.38rem solid var(--markup-primary);
+  transform: translateY(-50%);
+}
+
+.markup-render .notice-box,
+.markup-render .highlight-box {
+  padding: 1rem;
+  border-radius: 0.5rem;
+}
+
+.markup-render .notice-box {
+  border: 0.0625rem solid var(--markup-border);
+  background: var(--markup-primary-tint);
+}
+
+.markup-render .highlight-box {
+  border: 0.0625rem solid var(--markup-border);
+  background: var(--markup-primary-tint);
+}
+
+.markup-render .notice-box strong,
+.markup-render .highlight-box strong {
+  display: block;
+  margin-bottom: 0.35rem;
+  color: #0f172a;
+  font-weight: 800;
+}

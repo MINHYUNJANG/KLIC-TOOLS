@@ -16,13 +16,6 @@
   margin-bottom: 3rem;
 }
 
-.home-reactor {
-  width: 9rem;
-  height: 9rem;
-  margin: 0 auto 1rem;
-  object-fit: contain;
-}
-
 .home-title {
   font-size: 3.75rem;
   line-height: normal;
@@ -31,7 +24,7 @@
   color: #0a1a3a;
   margin: 0 0 0.75rem;
   letter-spacing: -0.03em;
-  text-transform: uppercase;
+  text-transform: none;
 }
 
 .home-subtitle {
@@ -53,7 +46,6 @@
 
 @media (max-width: 36rem) {
   .home-grid { grid-template-columns: 1fr; }
-  .home-reactor { width: 6.5rem; height: 6.5rem; }
   .home-title { font-size: 1.75rem; }
 }
 
@@ -81,8 +73,26 @@
 }
 
 .home-card-icon {
-  font-size: 2rem;
-  line-height: 1;
+  width: 3rem;
+  height: 3rem;
+  border-radius: 0.625rem;
+  background: #eef6fc;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  transition: background-color 0.2s, transform 0.2s;
+}
+
+.home-card-icon img {
+  width: 1.75rem;
+  height: 1.75rem;
+  object-fit: contain;
+  filter: invert(31%) sepia(96%) saturate(1281%) hue-rotate(181deg) brightness(91%) contrast(101%);
+}
+
+.home-card:hover .home-card-icon {
+  background: #dff0fb;
+  transform: translateY(-0.0625rem);
 }
 
 .home-card-title {

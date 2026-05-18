@@ -3,8 +3,8 @@ import { useState } from 'react';
 const navItems = [
   { label: 'URL 크롤링 마크업', href: '#' },
   { label: '콘텐츠 일괄 마크업', href: '#' },
-  { label: '피그마 마크업', href: '#' },
-  { label: 'AI 인트로', href: '#' },
+  { label: '피그마 마크업', href: '#', dividerAfter: true },
+  { label: 'KL캔버스', href: '#', dividerAfter: true },
   { label: '웹표준검사', href: '#' },
   { label: '웹접근성검사', href: '#' },
 ];
@@ -31,7 +31,7 @@ export default function Header({ currentPage, setCurrentPage }) {
             {navItems.map((item) => (
               <li
                 key={item.label}
-                className={`nav-item ${currentPage === item.label ? 'is-active' : ''} ${hoveredItem === item.label ? 'is-active' : ''}`}
+                className={`nav-item ${currentPage === item.label ? 'is-active' : ''} ${hoveredItem === item.label ? 'is-active' : ''} ${item.dividerAfter ? 'has-divider' : ''}`}
                 onMouseEnter={() => setHoveredItem(item.label)}
                 onMouseLeave={() => setHoveredItem(null)}
               >

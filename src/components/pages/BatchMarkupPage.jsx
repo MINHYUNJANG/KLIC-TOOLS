@@ -1,5 +1,6 @@
 import { useState, useRef, useEffect, useCallback } from 'react';
 import { formatHtml } from '../../utils/formatHtml';
+import PageHowTo from '../PageHowTo';
 import greeting from '../../templates/greeting';
 import history from '../../templates/history';
 import principal from '../../templates/principal';
@@ -48,29 +49,12 @@ function extractContent(html, selector = '') {
   return formatHtml(target.innerHTML);
 }
 
-function applyMarkupToTemplate(sourceMarkup, templateCode) {
-  const src = new DOMParser().parseFromString(sourceMarkup, 'text/html');
-  const tpl = new DOMParser().parseFromString(templateCode, 'text/html');
-  src.querySelectorAll('script, style, noscript').forEach(el => el.remove());
-
-  const tplTxt = tpl.querySelector('.txt-wrap .txt') || tpl.querySelector('.greeting .txt');
-  if (tplTxt) {
-    const pTags = Array.from(src.querySelectorAll('p:not(.sign)'))
-      .map(p => p.textContent.trim()).filter(t => t.length > 5);
-    if (pTags.length > 0) {
-      tplTxt.innerHTML = '\n' + pTags.map(p => `<p>${p}</p>`).join('\n') + '\n';
-    }
-  }
-  const srcSign = src.querySelector('.sign');
-  const tplSign = tpl.querySelector('.sign');
-  if (srcSign && tplSign) tplSign.innerHTML = srcSign.innerHTML;
-
-  return tpl.body.innerHTML;
+function applyMarkupToTemplate(sourceMarkup, templateCode, templateId) {
+  const template = TEMPLATES.find(t => t.id === templateId);
+  if (template?.applyMapping) return template.applyMapping(sourceMarkup, templateCode);
+  return templateCode;
 }
 
-function stripScripts(html) {
-  return html.replace(/<script[\s\S]*?<\/script>/gi, '').trim();
-}
 
 async function readApiJson(response) {
   const text = await response.text();
@@ -85,10 +69,7 @@ async function readApiJson(response) {
   }
 }
 
-function buildIframeDoc(bodyContent, extraCssUrls = []) {
-  const extraLinks = extraCssUrls
-    .map(href => `  <link rel="stylesheet" href="${href}">`)
-    .join('\n');
+function buildIframeDoc(bodyContent, previewStyle = '') {
   return `<!DOCTYPE html>
 <html lang="ko">
 <head>
@@ -100,7 +81,7 @@ function buildIframeDoc(bodyContent, extraCssUrls = []) {
   <link rel="stylesheet" href="/con_com.css">
   <link rel="stylesheet" href="/theme.css">
   <link rel="stylesheet" href="/sub_com.css">
-${extraLinks}
+  ${previewStyle ? `<style>${previewStyle}</style>` : ''}
   <script>
     window.addEventListener('error', function (event) {
       if (event.message && event.message.indexOf("reading 'classList'") > -1) {
@@ -126,24 +107,6 @@ ${bodyContent}
 </html>`;
 }
 
-function extractSourceCss(html, baseUrl) {
-  try {
-    const origin = new URL(baseUrl).origin;
-    const doc = new DOMParser().parseFromString(html, 'text/html');
-    return Array.from(doc.querySelectorAll('link[rel="stylesheet"]'))
-      .map(link => {
-        const href = link.getAttribute('href');
-        if (!href) return null;
-        if (href.startsWith('http')) return href;
-        if (href.startsWith('//')) return `https:${href}`;
-        if (href.startsWith('/')) return `${origin}${href}`;
-        return null;
-      })
-      .filter(href => href && href.includes('sub_com'));
-  } catch {
-    return [];
-  }
-}
 
 function resizeIframe(iframe) {
   if (!iframe?.contentDocument?.body) return;
@@ -160,11 +123,15 @@ function TemplatePreview({ template }) {
     const iframe = iframeRef.current;
     const doc = iframe.contentDocument;
     doc.open();
-    doc.write(buildIframeDoc(template.code));
+    doc.write(buildIframeDoc(template.code, template.previewStyle || ''));
     doc.close();
-    iframe.onload = () => resizeIframe(iframe);
-    setTimeout(() => resizeIframe(iframe), 300);
-    setTimeout(() => resizeIframe(iframe), 1000);
+    if (template.previewHeight) {
+      iframe.style.height = template.previewHeight + 'px';
+    } else {
+      iframe.onload = () => resizeIframe(iframe);
+      setTimeout(() => resizeIframe(iframe), 300);
+      setTimeout(() => resizeIframe(iframe), 1000);
+    }
     return () => { iframe.onload = null; };
   }, [template]);
 
@@ -187,14 +154,19 @@ function ResultItem({ item, index, onCopy, copiedKey }) {
     if (view !== 'preview' || !iframeRef.current || !item.result) return;
     const iframe = iframeRef.current;
     const doc = iframe.contentDocument;
+    const tpl = TEMPLATES.find(t => t.id === item.templateId);
     doc.open();
-    doc.write(buildIframeDoc(item.result, item.cssUrls || []));
+    doc.write(buildIframeDoc(item.result, tpl?.previewStyle || ''));
     doc.close();
-    iframe.onload = () => resizeIframe(iframe);
-    setTimeout(() => resizeIframe(iframe), 300);
-    setTimeout(() => resizeIframe(iframe), 1000);
+    if (tpl?.previewHeight) {
+      iframe.style.height = tpl.previewHeight + 'px';
+    } else {
+      iframe.onload = () => resizeIframe(iframe);
+      setTimeout(() => resizeIframe(iframe), 300);
+      setTimeout(() => resizeIframe(iframe), 1000);
+    }
     return () => { iframe.onload = null; };
-  }, [view, item.result, item.cssUrls]);
+  }, [view, item.result, item.templateId]);
 
   return (
     <div className={`bm-item bm-item--${item.status}`}>
@@ -265,11 +237,19 @@ export default function BatchMarkupPage() {
     setItems(prev => prev.map((item, idx) => idx === i ? { ...item, ...patch } : item));
   }, []);
 
+  useEffect(() => {
+    if (!activeTemplate) return;
+    setItems(prev => prev.map(item => {
+      if (item.status !== 'done' || !item.extracted) return item;
+      return { ...item, result: applyMarkupToTemplate(item.extracted, activeTemplate.code, activeTemplate.id), templateId: activeTemplate.id };
+    }));
+  }, [activeTemplate]);
+
   async function handleStart() {
     const parsed = parseInput(input);
     if (parsed.length === 0) return;
     const tplCode = activeTemplate?.code || '';
-    setItems(parsed.map(item => ({ ...item, status: 'pending', result: '', error: '' })));
+    setItems(parsed.map(item => ({ ...item, status: 'pending', result: '', extracted: '', error: '', templateId: activeTemplate?.id || '' })));
     setRunning(true);
     abortRef.current = false;
     setProgress({ done: 0, total: parsed.length });
@@ -286,9 +266,8 @@ export default function BatchMarkupPage() {
         const data = await readApiJson(res);
         if (!res.ok) throw new Error(data.error);
         const extracted = extractContent(data.html, selector);
-        const result = tplCode ? applyMarkupToTemplate(extracted, tplCode) : extracted;
-        const cssUrls = extractSourceCss(data.html, parsed[i].url);
-        updateItem(i, { status: 'done', result, cssUrls });
+        const result = tplCode ? applyMarkupToTemplate(extracted, tplCode, activeTemplate?.id) : extracted;
+        updateItem(i, { status: 'done', result, extracted, templateId: activeTemplate?.id || '' });
       } catch (err) {
         updateItem(i, { status: 'error', error: err.message });
       }
@@ -317,21 +296,15 @@ export default function BatchMarkupPage() {
       {/* ─── 상단 타이틀 ─── */}
       <div className="bm-header">
         <h2 className="crawl-title">콘텐츠 일괄 마크업</h2>
-        <p className="crawl-desc" style={{ margin: 0 }}>
-          학교명과 URL을 붙여넣으면 선택한 템플릿에 내용을 자동으로 적용합니다.
+        <p className="crawl-desc">
+          URL을 붙여넣으면 선택한 템플릿에 내용을 자동으로 적용합니다.
         </p>
-        <div className="page-how-to">
-          <div className="page-how-to-copy">
-            <span className="ai-intro-kicker">사용방법</span>
-            <h3>학교명과 URL을 입력하고 템플릿을 선택하면 콘텐츠를 자동으로 적용합니다</h3>
-            <p>
-              왼쪽에서 카테고리와 템플릿을 선택한 뒤, 오른쪽 입력창에 학교명과 URL을 한 줄씩 붙여넣으세요.
-              탭(Tab)으로 학교명과 URL을 구분하며, 여러 학교를 한 번에 처리할 수 있습니다.
-              <strong>생성</strong> 버튼을 누르면 각 URL의 콘텐츠를 크롤링해 선택한 템플릿에 자동 적용하고,
-              결과를 목록에서 확인하거나 복사해 바로 사용할 수 있습니다.
-            </p>
-          </div>
-        </div>
+        <PageHowTo title="URL을 입력하고 템플릿을 선택하면 콘텐츠 마크업을 자동 적용합니다" style={{ marginBottom: 0 }}>
+          <p>
+            왼쪽에서 카테고리와 템플릿을 선택한 뒤, 오른쪽 입력창에 URL을 붙여넣고 마크업 적용을 시작하면 바로 적용되는 화면을 확인할 수 있습니다.<br />
+            적용된 화면에서 마크업을 바로 확인 및 수정할 수 있고 복사도 가능합니다.
+          </p>
+        </PageHowTo>
       </div>
 
       {/* ─── 하단 2단 ─── */}
@@ -372,7 +345,7 @@ export default function BatchMarkupPage() {
           <div className="bm-form">
             <textarea
               className="bm-url-textarea"
-              placeholder={'학교명\tURL\n서울초등학교\thttps://seoul.es.kr\n부산초등학교\thttps://busan.es.kr'}
+              placeholder={'URL을 입력해주세요.'}
               value={input}
               onChange={e => setInput(e.target.value)}
               disabled={running}
@@ -381,7 +354,7 @@ export default function BatchMarkupPage() {
               <input
                 className="crawl-input crawl-input--selector"
                 type="text"
-                placeholder="CSS 선택자 (선택) — 예: #subContent  /  .greeting"
+                placeholder="CSS 선택자를 입력해주세요. (예: #subContent  /  .greeting)"
                 value={selector}
                 onChange={e => setSelector(e.target.value)}
                 disabled={running}
