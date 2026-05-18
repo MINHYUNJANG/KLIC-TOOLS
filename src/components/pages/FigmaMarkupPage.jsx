@@ -17,10 +17,8 @@ async function readJson(response) {
 export default function FigmaMarkupPage() {
   const [figmaUrl, setFigmaUrl] = useState('');
   const [projectName, setProjectName] = useState('');
-  const [markupType, setMarkupType] = useState('html');
   const [htmlResult, setHtmlResult] = useState('');
   const [cssResult, setCssResult] = useState('');
-  const [jsxResult, setJsxResult] = useState('');
   const [activeTab, setActiveTab] = useState('html');
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
@@ -30,9 +28,8 @@ export default function FigmaMarkupPage() {
   const [blobUrls, setBlobUrls] = useState({});
   const [downloading, setDownloading] = useState(false);
 
-  const isReact = markupType === 'react';
-  const hasResult = isReact ? Boolean(jsxResult || cssResult) : Boolean(htmlResult || cssResult);
-  const currentContent = activeTab === 'css' ? cssResult : activeTab === 'jsx' ? jsxResult : htmlResult;
+  const hasResult = Boolean(htmlResult || cssResult);
+  const currentContent = activeTab === 'css' ? cssResult : htmlResult;
 
   const previewSrcDoc = useMemo(() => `<!DOCTYPE html>
 <html lang="ko">
@@ -49,18 +46,12 @@ ${htmlResult}
 </body>
 </html>`, [htmlResult, cssResult]);
 
-  function resetResult(nextType = markupType) {
+  function resetResult() {
     setHtmlResult('');
     setCssResult('');
-    setJsxResult('');
     setError('');
     setBlobUrls({});
-    setActiveTab(nextType === 'react' ? 'jsx' : 'html');
-  }
-
-  function handleMarkupTypeChange(type) {
-    setMarkupType(type);
-    resetResult(type);
+    setActiveTab('html');
   }
 
   async function handleGenerate() {
@@ -81,21 +72,15 @@ ${htmlResult}
       const response = await fetch('/api/figma-accurate', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ url: figmaUrl.trim(), markup_type: markupType, project_name: projectName.trim() }),
+        body: JSON.stringify({ url: figmaUrl.trim(), markup_type: 'html', project_name: projectName.trim() }),
         signal: AbortSignal.timeout(200000),
       });
       const data = await readJson(response);
       if (!response.ok) throw new Error(data.detail || '피그마 마크업 생성에 실패했습니다.');
 
-      if (markupType === 'react') {
-        setJsxResult(data.jsx || '');
-        setCssResult(data.css || '');
-        setActiveTab('jsx');
-      } else {
-        setHtmlResult(data.html || '');
-        setCssResult(data.css || '');
-        setActiveTab('html');
-      }
+      setHtmlResult(data.html || '');
+      setCssResult(data.css || '');
+      setActiveTab('html');
       if (data.blob_urls) setBlobUrls(data.blob_urls);
     } catch (err) {
       setError(err.name === 'TimeoutError' ? 'Figma 분석 시간이 초과되었습니다.' : err.message);
@@ -112,11 +97,10 @@ ${htmlResult}
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           html: htmlResult,
-          jsx: jsxResult,
           css: cssResult,
           blob_urls: blobUrls,
           project_name: projectName || 'figma-markup',
-          markup_type: markupType,
+          markup_type: 'html',
         }),
       });
       if (!response.ok) throw new Error('다운로드에 실패했습니다.');
@@ -142,7 +126,6 @@ ${htmlResult}
 
   function handleContentChange(value) {
     if (activeTab === 'css') setCssResult(value);
-    else if (activeTab === 'jsx') setJsxResult(value);
     else setHtmlResult(value);
   }
 
@@ -150,11 +133,11 @@ ${htmlResult}
     <div className="figma-page">
       <div className="figma-header">
         <h2 className="crawl-title">피그마 마크업</h2>
-        <p className="crawl-desc">Figma URL의 프레임을 분석해 HTML/CSS 또는 React/CSS 마크업을 생성합니다.</p>
+        <p className="crawl-desc">Figma URL의 프레임을 분석해 HTML/CSS 마크업을 생성합니다.</p>
         <PageHowTo title="Figma 디자인 URL을 붙여넣으면 프레임을 분석해 마크업 코드를 자동 생성합니다" style={{ marginBottom: 0 }}>
           <p>
-            Figma 파일·디자인 공유(share) URL을 입력하고 프로젝트명을 입력한 뒤 출력 형식(HTML 또는 React)을 선택하세요.<br />
-            <strong>생성</strong> 버튼을 누르면 프레임 구조를 분석해 HTML/CSS 또는 JSX/CSS 코드를 만들어 줍니다.
+            Figma 파일·디자인 공유(share) URL을 입력하고 프로젝트명을 입력하세요.<br />
+            <strong>생성</strong> 버튼을 누르면 프레임 구조를 분석해 HTML/CSS 코드를 만들어 줍니다.
           </p>
         </PageHowTo>
       </div>
@@ -171,14 +154,6 @@ ${htmlResult}
               placeholder="프로젝트 이름"
             />
           </label>
-
-          <div className="figma-field">
-            <span>마크업 종류</span>
-            <div className="figma-segment">
-              <button className={markupType === 'html' ? 'is-active' : ''} onClick={() => handleMarkupTypeChange('html')}>HTML</button>
-              <button className={markupType === 'react' ? 'is-active' : ''} onClick={() => handleMarkupTypeChange('react')}>React</button>
-            </div>
-          </div>
 
           <label className="figma-field">
             <span>Figma URL</span>
@@ -228,20 +203,11 @@ ${htmlResult}
             <>
               <div className="figma-result-header">
                 <div className="crawl-tabs">
-                  {isReact ? (
-                    <>
-                      <button className={`crawl-tab ${activeTab === 'jsx' ? 'is-active' : ''}`} onClick={() => setActiveTab('jsx')}>JSX</button>
-                      <button className={`crawl-tab ${activeTab === 'css' ? 'is-active' : ''}`} onClick={() => setActiveTab('css')}>CSS</button>
-                    </>
-                  ) : (
-                    <>
-                      <button className={`crawl-tab ${activeTab === 'html' ? 'is-active' : ''}`} onClick={() => setActiveTab('html')}>HTML</button>
-                      <button className={`crawl-tab ${activeTab === 'css' ? 'is-active' : ''}`} onClick={() => setActiveTab('css')}>CSS</button>
-                    </>
-                  )}
+                  <button className={`crawl-tab ${activeTab === 'html' ? 'is-active' : ''}`} onClick={() => setActiveTab('html')}>HTML</button>
+                  <button className={`crawl-tab ${activeTab === 'css' ? 'is-active' : ''}`} onClick={() => setActiveTab('css')}>CSS</button>
                 </div>
                 <div className="figma-actions">
-                  {!isReact && <button className="crawl-copy-btn" onClick={() => setShowPreview(true)}>미리보기</button>}
+                  <button className="crawl-copy-btn" onClick={() => setShowPreview(true)}>미리보기</button>
                   <button className="crawl-copy-btn" onClick={handleCopy}>{copied ? '복사됨 ✓' : '복사'}</button>
                   <button className="crawl-copy-btn" onClick={handleDownload} disabled={downloading}>
                     {downloading ? '압축 중...' : '다운로드'}
