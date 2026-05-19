@@ -6,6 +6,7 @@ import FigmaMarkupV2Page from './pages/FigmaMarkupV2Page';
 import CanvasEditorPage from './pages/CanvasEditorPage';
 import WebStandardPage from './pages/WebStandardPage';
 import WebAccessibilityPage from './pages/WebAccessibilityPage';
+import AltTextPage from './pages/AltTextPage';
 
 export default function MainContent({ currentPage, setCurrentPage }) {
   if (currentPage === 'URL 크롤링 마크업') return <UrlCrawlMarkup />;
@@ -15,6 +16,7 @@ export default function MainContent({ currentPage, setCurrentPage }) {
   if (currentPage === 'KL캔버스') return <CanvasEditorPage />;
   if (currentPage === '웹표준검사') return <WebStandardPage />;
   if (currentPage === '웹접근성검사') return <WebAccessibilityPage />;
+  if (currentPage === '대체텍스트 생성') return <AltTextPage />;
 
   return <Home setCurrentPage={setCurrentPage} />;
 }

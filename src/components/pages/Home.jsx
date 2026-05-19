@@ -29,6 +29,11 @@ const menuCards = [
     iconSrc: '/icons/dazzle/accessibility.svg',
     desc: '웹 페이지의 웹 접근성 준수 여부를 자동으로 검사합니다. WCAG 및 KWCAG 기준에 따라 항목별 결과와 증적 자료를 자동으로 생성합니다.',
   },
+  {
+    label: '대체텍스트 생성',
+    iconSrc: '/icons/dazzle/image-user.svg',
+    desc: '퍼블리싱으로 구현하기 어려운 이미지 콘텐츠의 URL을 입력하거나 이미지를 업로드하면, AI가 KWCAG 2.1에 맞는 alt 또는 숨김(sr-only) 대체텍스트 마크업을 자동으로 생성합니다.',
+  },
 ];
 
 export default function Home({ setCurrentPage }) {
