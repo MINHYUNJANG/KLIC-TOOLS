@@ -12,7 +12,7 @@ export function parseMarkup(sourceMarkup, templateCode) {
 export function extractBoxLines(srcBox) {
   if (!srcBox) return [];
   return Array.from(srcBox.querySelectorAll('p'))
-    .map(p => p.textContent.trim())
+    .map(p => p.innerHTML.replace(/<(?!\/?strong|\/?br)[^>]*>/gi, '').trim())
     .filter(Boolean);
 }
 
@@ -20,7 +20,7 @@ export function mapBodyText(src, tpl, excludePs = new Set()) {
   const tplTxt = tpl.querySelector('.txt-wrap .txt') || tpl.querySelector('.greeting .txt');
   if (!tplTxt) return;
   const blocks = Array.from(src.querySelectorAll('p, ul'))
-    .filter(el => !excludePs.has(el) && !el.closest('.sign') && !el.closest('.box'))
+    .filter(el => !excludePs.has(el) && !el.closest('.sign') && !el.closest('.box') && !el.closest('.name'))
     .filter(el => {
       if (el.tagName === 'UL') return el.querySelectorAll('li').length > 0;
       return el.textContent.trim().length > 5;
@@ -39,7 +39,7 @@ export function mapBodyText(src, tpl, excludePs = new Set()) {
 }
 
 export function mapSign(src, tpl) {
-  const srcSign = src.querySelector('.sign');
+  const srcSign = src.querySelector('.sign') || src.querySelector('p.name') || src.querySelector('.name');
   const tplSign = tpl.querySelector('.sign');
   if (srcSign && tplSign) tplSign.innerHTML = srcSign.innerHTML;
 }

@@ -1,13 +1,39 @@
 import { parseMarkup } from '../utils/templateMapping.js';
 
+// .date_list ul/li 구조 파싱 → [{ year, items: [{date, text}] }]
+// 예: .history_list > li > .date > ul.date_list > li > span(날짜) + 텍스트
+function parseListSource(src) {
+  const groups = new Map();
+  const order = [];
+  src.querySelectorAll('.date_list li').forEach(li => {
+    const dateSpan = li.querySelector('span');
+    if (!dateSpan) return;
+    const fullDate = dateSpan.textContent.trim();
+    const year = fullDate.match(/\d{4}/)?.[0];
+    if (!year) return;
+    const date = fullDate.replace(/^\d{4}\./, '');
+    const text = [...li.childNodes]
+      .filter(n => n.nodeType === Node.TEXT_NODE)
+      .map(n => n.textContent.trim())
+      .filter(Boolean)
+      .join(' ');
+    if (!text) return;
+    if (!groups.has(year)) { groups.set(year, []); order.push(year); }
+    groups.get(year).push({ date, text });
+  });
+  return order.map(year => ({ year, items: groups.get(year) }));
+}
+
 // dl 또는 table 구조 모두 파싱 → [{ year, items: [{date, text}] }]
 function parseHistorySource(src) {
-  // dl 구조 우선
-  const dls = Array.from(src.querySelectorAll('.history_wrap dl, .history_area dl'))
-    .concat(Array.from(src.querySelectorAll('dl')).filter(dl => dl.querySelector('dt')));
+  // dl 구조 우선 — 특정 래퍼가 있으면 거기서만, 없으면 전체 dl 폴백
+  const specific = Array.from(src.querySelectorAll('.history_wrap dl, .history_area dl'));
+  const dls = specific.length
+    ? specific
+    : Array.from(src.querySelectorAll('dl')).filter(dl => dl.querySelector('dt'));
   if (dls.length) {
     return dls.map(dl => ({
-      year: dl.querySelector('dt')?.textContent.match(/\d+/)?.[0] || '',
+      year: dl.querySelector('dt')?.textContent.match(/\d{4}/)?.[0] || '',
       items: Array.from(dl.querySelectorAll('dd ul li, dd li')).map(li => ({
         date: li.querySelector('strong')?.textContent.trim() || '',
         text: li.querySelector('p')?.textContent.trim()
@@ -19,6 +45,9 @@ function parseHistorySource(src) {
       })),
     })).filter(g => g.year);
   }
+
+  // .date_list ul/li 구조
+  if (src.querySelector('.date_list')) return parseListSource(src);
 
   // .bbs_ListA table 구조 폴백
   return parseTableSource(src);
@@ -122,7 +151,8 @@ export default [
       if (swiperWrapper) {
         swiperWrapper.innerHTML = groups.map(({ year, items }) => {
           const rows = items.map(({ date, text }) =>
-            `  ${date ? `<strong>${date}</strong>` : '<strong></strong>'}\n  ${text ? `<p>${text}</p>` : '<p></p>'}`
+            [date ? `  <strong>${date}</strong>` : '', `  ${text ? `<p>${text}</p>` : '<p></p>'}`]
+              .filter(Boolean).join('\n')
           ).join('\n');
           return `<div class="swiper-slide" data-year="${year}">\n${rows}\n</div>`;
         }).join('\n');
@@ -323,7 +353,7 @@ $(function () {
       return tpl.body.innerHTML;
     },
     code: `<script>
-$(window).on('load', function () {
+$(function () {
   const $win = $(window);
   const $sections = $('.history.tyB .list-wrap > .list[id]');
   const $title = $('.history.tyB .year-title');
