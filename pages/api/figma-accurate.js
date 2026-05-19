@@ -35,6 +35,9 @@ function collectImageFillNodes(node, result = [], skipIds = new Set()) {
 
 async function fetchExportUrls(fileKey, nodeIds) {
   if (!nodeIds.length) return {};
+  if (process.env.FIGMA_MOCK === 'true') {
+    return Object.fromEntries(nodeIds.map((id, i) => [id, `https://picsum.photos/seed/icon${i}/110/110`]));
+  }
   const token = process.env.FIGMA_ACCESS_TOKEN;
   if (!token) return {};
   try {
@@ -124,9 +127,6 @@ export default async function handler(req, res) {
     }
     if (!nodeIds.length) throw new Error('내보낼 프레임을 찾을 수 없습니다. Figma URL에 node-id를 포함해 주세요.');
 
-    let allCdnUrls = {};
-    try { allCdnUrls = await fetchImageFillUrls(fileKey); } catch { /* 계속 진행 */ }
-
     // ── Pass 1: 노드 데이터 전체 조회 (429 시 여기서 중단, 이전 이미지 보존) ──
     const nodeDataList = [];
     for (const nid of nodeIds.slice(0, 3)) {
@@ -139,6 +139,13 @@ export default async function handler(req, res) {
       if (nodeData) nodeDataList.push(nodeData);
     }
     if (!nodeDataList.length) throw new Error('마크업 생성에 실패했습니다.');
+
+    // IMAGE fill이 실제로 있을 때만 CDN URL 조회 (API 호출 절약)
+    const hasImageFills = nodeDataList.some(nd => collectImageRefs(nd).size > 0);
+    let allCdnUrls = {};
+    if (hasImageFills) {
+      try { allCdnUrls = await fetchImageFillUrls(fileKey); } catch { /* 계속 진행 */ }
+    }
 
     // API 성공 확인 후 이전 이미지 삭제 → 새 이미지 업로드 시작
     await clearAllBlobs();
