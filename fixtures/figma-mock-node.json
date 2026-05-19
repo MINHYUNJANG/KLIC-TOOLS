@@ -1,468 +1,273 @@
 {
-  "id": "1:1",
-  "name": "공지사항 섹션 (Mock)",
+  "id": "mock:1",
+  "name": "#15_M_link(50%)",
   "type": "FRAME",
   "visible": true,
-  "absoluteBoundingBox": { "x": 0, "y": 0, "width": 1200, "height": 480 },
-  "layoutMode": "VERTICAL",
-  "paddingTop": 60,
-  "paddingBottom": 60,
-  "paddingLeft": 80,
-  "paddingRight": 80,
-  "itemSpacing": 32,
-  "primaryAxisAlignItems": "MIN",
-  "counterAxisAlignItems": "MIN",
-  "fills": [{ "type": "SOLID", "visible": true, "color": { "r": 0.98, "g": 0.98, "b": 1.0, "a": 1 } }],
+  "absoluteBoundingBox": { "x": 0, "y": 0, "width": 680, "height": 290 },
+  "cornerRadius": 30,
+  "fills": [{ "type": "SOLID", "visible": true, "color": { "r": 1, "g": 1, "b": 1, "a": 1 } }],
   "strokes": [],
-  "cornerRadius": 0,
   "children": [
     {
-      "id": "1:100",
-      "name": "배너 이미지",
-      "type": "RECTANGLE",
-      "visible": true,
-      "absoluteBoundingBox": { "x": 80, "y": 60, "width": 1040, "height": 240 },
-      "cornerRadius": 12,
-      "fills": [{ "type": "IMAGE", "visible": true, "imageRef": "mock-ref-001", "scaleMode": "FILL" }],
-      "strokes": [],
-      "children": []
-    },
-    {
-      "id": "1:2",
-      "name": "섹션 헤더",
+      "id": "mock:2",
+      "name": "top-wrap",
       "type": "FRAME",
       "visible": true,
-      "absoluteBoundingBox": { "x": 80, "y": 60, "width": 1040, "height": 60 },
-      "layoutMode": "HORIZONTAL",
-      "paddingTop": 0,
-      "paddingBottom": 0,
-      "paddingLeft": 0,
-      "paddingRight": 0,
-      "itemSpacing": 16,
-      "primaryAxisAlignItems": "SPACE_BETWEEN",
-      "counterAxisAlignItems": "CENTER",
+      "absoluteBoundingBox": { "x": 0, "y": 0, "width": 680, "height": 35 },
       "fills": [],
       "strokes": [],
       "children": [
         {
-          "id": "1:3",
-          "name": "섹션 제목",
-          "type": "TEXT",
-          "visible": true,
-          "absoluteBoundingBox": { "x": 80, "y": 75, "width": 200, "height": 42 },
-          "characters": "공지사항",
-          "style": {
-            "fontFamily": "Noto Sans KR",
-            "fontSize": 32,
-            "fontWeight": 700,
-            "textAlignHorizontal": "LEFT",
-            "letterSpacing": -0.5
-          },
-          "fills": [{ "type": "SOLID", "visible": true, "color": { "r": 0.1, "g": 0.1, "b": 0.18, "a": 1 } }],
-          "strokes": []
-        },
-        {
-          "id": "1:4",
-          "name": "더보기 버튼",
+          "id": "mock:3",
+          "name": "tit-box",
           "type": "FRAME",
           "visible": true,
-          "absoluteBoundingBox": { "x": 1040, "y": 78, "width": 80, "height": 36 },
-          "layoutMode": "HORIZONTAL",
-          "paddingTop": 8,
-          "paddingBottom": 8,
-          "paddingLeft": 16,
-          "paddingRight": 16,
-          "itemSpacing": 4,
-          "primaryAxisAlignItems": "CENTER",
-          "counterAxisAlignItems": "CENTER",
+          "absoluteBoundingBox": { "x": 0, "y": 0, "width": 194, "height": 29 },
           "fills": [],
-          "strokes": [{ "type": "SOLID", "visible": true, "color": { "r": 0.6, "g": 0.6, "b": 0.65, "a": 1 } }],
-          "strokeWeight": 1,
-          "cornerRadius": 18,
+          "strokes": [],
           "children": [
             {
-              "id": "1:5",
-              "name": "더보기",
+              "id": "mock:4",
+              "name": "icon",
+              "type": "GROUP",
+              "visible": true,
+              "absoluteBoundingBox": { "x": 0, "y": 1, "width": 28, "height": 27 },
+              "fills": [],
+              "strokes": [],
+              "children": []
+            },
+            {
+              "id": "mock:5",
+              "name": "바로가기 서비스",
               "type": "TEXT",
               "visible": true,
-              "absoluteBoundingBox": { "x": 1056, "y": 86, "width": 48, "height": 20 },
-              "characters": "더보기",
+              "absoluteBoundingBox": { "x": 36, "y": 0, "width": 158, "height": 29 },
+              "characters": "바로가기 서비스",
               "style": {
-                "fontFamily": "Noto Sans KR",
-                "fontSize": 14,
-                "fontWeight": 400,
-                "textAlignHorizontal": "CENTER"
+                "fontFamily": "Pretendard",
+                "fontStyle": "Bold",
+                "fontWeight": 700,
+                "fontSize": 24,
+                "textAlignHorizontal": "LEFT",
+                "letterSpacing": 0,
+                "lineHeightPx": 28.64,
+                "lineHeightUnit": "PIXELS"
               },
-              "fills": [{ "type": "SOLID", "visible": true, "color": { "r": 0.45, "g": 0.45, "b": 0.5, "a": 1 } }],
+              "fills": [{ "type": "SOLID", "visible": true, "color": { "r": 0.067, "g": 0.067, "b": 0.067, "a": 1 } }],
               "strokes": []
+            }
+          ]
+        },
+        {
+          "id": "mock:6",
+          "name": "btn-scroll",
+          "type": "FRAME",
+          "visible": true,
+          "absoluteBoundingBox": { "x": 600, "y": 0, "width": 80, "height": 35 },
+          "fills": [],
+          "strokes": [],
+          "children": [
+            {
+              "id": "mock:7",
+              "name": "btn-prev",
+              "type": "FRAME",
+              "visible": true,
+              "absoluteBoundingBox": { "x": 600, "y": 0, "width": 35, "height": 35 },
+              "cornerRadius": 100,
+              "fills": [{ "type": "SOLID", "visible": true, "color": { "r": 1, "g": 1, "b": 1, "a": 1 } }],
+              "strokes": [{ "type": "SOLID", "visible": true, "color": { "r": 0.8, "g": 0.8, "b": 0.8, "a": 1 } }],
+              "strokeWeight": 1,
+              "children": []
+            },
+            {
+              "id": "mock:8",
+              "name": "btn-next",
+              "type": "FRAME",
+              "visible": true,
+              "absoluteBoundingBox": { "x": 645, "y": 0, "width": 35, "height": 35 },
+              "cornerRadius": 100,
+              "fills": [{ "type": "SOLID", "visible": true, "color": { "r": 1, "g": 1, "b": 1, "a": 1 } }],
+              "strokes": [{ "type": "SOLID", "visible": true, "color": { "r": 0.8, "g": 0.8, "b": 0.8, "a": 1 } }],
+              "strokeWeight": 1,
+              "children": []
             }
           ]
         }
       ]
     },
     {
-      "id": "1:6",
-      "name": "공지 목록",
+      "id": "mock:9",
+      "name": "list-group",
       "type": "FRAME",
       "visible": true,
-      "absoluteBoundingBox": { "x": 80, "y": 152, "width": 1040, "height": 268 },
-      "layoutMode": "VERTICAL",
-      "paddingTop": 0,
-      "paddingBottom": 0,
-      "paddingLeft": 0,
-      "paddingRight": 0,
-      "itemSpacing": 0,
+      "absoluteBoundingBox": { "x": 0, "y": 50, "width": 680, "height": 240 },
       "fills": [],
       "strokes": [],
       "children": [
         {
-          "id": "1:7",
-          "name": "공지 아이템 1",
+          "id": "mock:10",
+          "name": "link",
           "type": "FRAME",
           "visible": true,
-          "absoluteBoundingBox": { "x": 80, "y": 152, "width": 1040, "height": 67 },
-          "layoutMode": "HORIZONTAL",
-          "paddingTop": 20,
-          "paddingBottom": 20,
-          "paddingLeft": 0,
-          "paddingRight": 0,
-          "itemSpacing": 20,
-          "primaryAxisAlignItems": "MIN",
-          "counterAxisAlignItems": "CENTER",
+          "absoluteBoundingBox": { "x": 0, "y": 50, "width": 210, "height": 240 },
+          "cornerRadius": 30,
+          "paddingTop": 40,
+          "paddingBottom": 24,
+          "paddingLeft": 24,
+          "paddingRight": 24,
           "fills": [{ "type": "SOLID", "visible": true, "color": { "r": 1, "g": 1, "b": 1, "a": 1 } }],
-          "strokes": [{ "type": "SOLID", "visible": true, "color": { "r": 0.9, "g": 0.9, "b": 0.93, "a": 1 } }],
-          "strokeWeight": 1,
+          "strokes": [],
+          "effects": [
+            {
+              "type": "DROP_SHADOW",
+              "visible": true,
+              "color": { "r": 0, "g": 0, "b": 0, "a": 0.08 },
+              "offset": { "x": 0, "y": 4 },
+              "radius": 20,
+              "spread": 0
+            }
+          ],
           "children": [
             {
-              "id": "1:8",
-              "name": "카테고리 태그",
+              "id": "mock:11",
+              "name": "icon",
               "type": "FRAME",
               "visible": true,
-              "absoluteBoundingBox": { "x": 80, "y": 172, "width": 56, "height": 24 },
-              "layoutMode": "HORIZONTAL",
-              "paddingTop": 4,
-              "paddingBottom": 4,
-              "paddingLeft": 10,
-              "paddingRight": 10,
-              "primaryAxisAlignItems": "CENTER",
-              "counterAxisAlignItems": "CENTER",
-              "fills": [{ "type": "SOLID", "visible": true, "color": { "r": 0.23, "g": 0.47, "b": 0.94, "a": 0.1 } }],
+              "absoluteBoundingBox": { "x": 50, "y": 93, "width": 110, "height": 110 },
+              "fills": [],
               "strokes": [],
-              "cornerRadius": 4,
-              "children": [
-                {
-                  "id": "1:9",
-                  "name": "카테고리명",
-                  "type": "TEXT",
-                  "visible": true,
-                  "absoluteBoundingBox": { "x": 90, "y": 176, "width": 36, "height": 16 },
-                  "characters": "공지",
-                  "style": {
-                    "fontFamily": "Noto Sans KR",
-                    "fontSize": 12,
-                    "fontWeight": 600,
-                    "textAlignHorizontal": "CENTER"
-                  },
-                  "fills": [{ "type": "SOLID", "visible": true, "color": { "r": 0.23, "g": 0.47, "b": 0.94, "a": 1 } }],
-                  "strokes": []
-                }
-              ]
+              "children": []
             },
             {
-              "id": "1:10",
-              "name": "공지 제목",
+              "id": "mock:12",
+              "name": "방과후유치원",
               "type": "TEXT",
               "visible": true,
-              "layoutSizingHorizontal": "FILL",
-              "absoluteBoundingBox": { "x": 156, "y": 172, "width": 800, "height": 24 },
-              "characters": "2024학년도 1학기 수업료 납부 안내",
+              "absoluteBoundingBox": { "x": 53, "y": 223, "width": 104, "height": 24 },
+              "characters": "방과후유치원",
               "style": {
-                "fontFamily": "Noto Sans KR",
-                "fontSize": 16,
-                "fontWeight": 500,
-                "textAlignHorizontal": "LEFT"
+                "fontFamily": "Pretendard",
+                "fontStyle": "SemiBold",
+                "fontWeight": 600,
+                "fontSize": 20,
+                "textAlignHorizontal": "LEFT",
+                "letterSpacing": 0,
+                "lineHeightPx": 23.87,
+                "lineHeightUnit": "PIXELS"
               },
-              "fills": [{ "type": "SOLID", "visible": true, "color": { "r": 0.13, "g": 0.13, "b": 0.18, "a": 1 } }],
-              "strokes": []
-            },
-            {
-              "id": "1:11",
-              "name": "날짜",
-              "type": "TEXT",
-              "visible": true,
-              "absoluteBoundingBox": { "x": 976, "y": 174, "width": 144, "height": 20 },
-              "characters": "2024.03.04",
-              "style": {
-                "fontFamily": "Noto Sans KR",
-                "fontSize": 14,
-                "fontWeight": 400,
-                "textAlignHorizontal": "RIGHT"
-              },
-              "fills": [{ "type": "SOLID", "visible": true, "color": { "r": 0.6, "g": 0.6, "b": 0.65, "a": 1 } }],
+              "fills": [{ "type": "SOLID", "visible": true, "color": { "r": 0.067, "g": 0.067, "b": 0.067, "a": 1 } }],
               "strokes": []
             }
           ]
         },
         {
-          "id": "1:12",
-          "name": "공지 아이템 2",
+          "id": "mock:13",
+          "name": "link",
           "type": "FRAME",
           "visible": true,
-          "absoluteBoundingBox": { "x": 80, "y": 219, "width": 1040, "height": 67 },
-          "layoutMode": "HORIZONTAL",
-          "paddingTop": 20,
-          "paddingBottom": 20,
-          "paddingLeft": 0,
-          "paddingRight": 0,
-          "itemSpacing": 20,
-          "primaryAxisAlignItems": "MIN",
-          "counterAxisAlignItems": "CENTER",
+          "absoluteBoundingBox": { "x": 235, "y": 50, "width": 210, "height": 240 },
+          "cornerRadius": 30,
+          "paddingTop": 40,
+          "paddingBottom": 24,
+          "paddingLeft": 24,
+          "paddingRight": 24,
           "fills": [{ "type": "SOLID", "visible": true, "color": { "r": 1, "g": 1, "b": 1, "a": 1 } }],
-          "strokes": [{ "type": "SOLID", "visible": true, "color": { "r": 0.9, "g": 0.9, "b": 0.93, "a": 1 } }],
-          "strokeWeight": 1,
+          "strokes": [],
+          "effects": [
+            {
+              "type": "DROP_SHADOW",
+              "visible": true,
+              "color": { "r": 0, "g": 0, "b": 0, "a": 0.08 },
+              "offset": { "x": 0, "y": 4 },
+              "radius": 20,
+              "spread": 0
+            }
+          ],
           "children": [
             {
-              "id": "1:13",
-              "name": "카테고리 태그",
+              "id": "mock:14",
+              "name": "icon",
               "type": "FRAME",
               "visible": true,
-              "absoluteBoundingBox": { "x": 80, "y": 239, "width": 56, "height": 24 },
-              "layoutMode": "HORIZONTAL",
-              "paddingTop": 4,
-              "paddingBottom": 4,
-              "paddingLeft": 10,
-              "paddingRight": 10,
-              "primaryAxisAlignItems": "CENTER",
-              "counterAxisAlignItems": "CENTER",
-              "fills": [{ "type": "SOLID", "visible": true, "color": { "r": 0.94, "g": 0.47, "b": 0.1, "a": 0.1 } }],
+              "absoluteBoundingBox": { "x": 285, "y": 93, "width": 110, "height": 110 },
+              "fills": [],
               "strokes": [],
-              "cornerRadius": 4,
-              "children": [
-                {
-                  "id": "1:14",
-                  "name": "카테고리명",
-                  "type": "TEXT",
-                  "visible": true,
-                  "absoluteBoundingBox": { "x": 90, "y": 243, "width": 36, "height": 16 },
-                  "characters": "가정통신",
-                  "style": {
-                    "fontFamily": "Noto Sans KR",
-                    "fontSize": 12,
-                    "fontWeight": 600,
-                    "textAlignHorizontal": "CENTER"
-                  },
-                  "fills": [{ "type": "SOLID", "visible": true, "color": { "r": 0.94, "g": 0.47, "b": 0.1, "a": 1 } }],
-                  "strokes": []
-                }
-              ]
+              "children": []
             },
             {
-              "id": "1:15",
-              "name": "공지 제목",
+              "id": "mock:15",
+              "name": "학습자료실",
               "type": "TEXT",
               "visible": true,
-              "layoutSizingHorizontal": "FILL",
-              "absoluteBoundingBox": { "x": 156, "y": 239, "width": 800, "height": 24 },
-              "characters": "3월 학부모 총회 일정 안내",
+              "absoluteBoundingBox": { "x": 288, "y": 223, "width": 87, "height": 24 },
+              "characters": "학습자료실",
               "style": {
-                "fontFamily": "Noto Sans KR",
-                "fontSize": 16,
-                "fontWeight": 500,
-                "textAlignHorizontal": "LEFT"
+                "fontFamily": "Pretendard",
+                "fontStyle": "SemiBold",
+                "fontWeight": 600,
+                "fontSize": 20,
+                "textAlignHorizontal": "LEFT",
+                "letterSpacing": 0,
+                "lineHeightPx": 23.87,
+                "lineHeightUnit": "PIXELS"
               },
-              "fills": [{ "type": "SOLID", "visible": true, "color": { "r": 0.13, "g": 0.13, "b": 0.18, "a": 1 } }],
-              "strokes": []
-            },
-            {
-              "id": "1:16",
-              "name": "날짜",
-              "type": "TEXT",
-              "visible": true,
-              "absoluteBoundingBox": { "x": 976, "y": 241, "width": 144, "height": 20 },
-              "characters": "2024.03.01",
-              "style": {
-                "fontFamily": "Noto Sans KR",
-                "fontSize": 14,
-                "fontWeight": 400,
-                "textAlignHorizontal": "RIGHT"
-              },
-              "fills": [{ "type": "SOLID", "visible": true, "color": { "r": 0.6, "g": 0.6, "b": 0.65, "a": 1 } }],
+              "fills": [{ "type": "SOLID", "visible": true, "color": { "r": 0.067, "g": 0.067, "b": 0.067, "a": 1 } }],
               "strokes": []
             }
           ]
         },
         {
-          "id": "1:17",
-          "name": "공지 아이템 3",
+          "id": "mock:16",
+          "name": "link",
           "type": "FRAME",
           "visible": true,
-          "absoluteBoundingBox": { "x": 80, "y": 286, "width": 1040, "height": 67 },
-          "layoutMode": "HORIZONTAL",
-          "paddingTop": 20,
-          "paddingBottom": 20,
-          "paddingLeft": 0,
-          "paddingRight": 0,
-          "itemSpacing": 20,
-          "primaryAxisAlignItems": "MIN",
-          "counterAxisAlignItems": "CENTER",
+          "absoluteBoundingBox": { "x": 470, "y": 50, "width": 210, "height": 240 },
+          "cornerRadius": 30,
+          "paddingTop": 40,
+          "paddingBottom": 24,
+          "paddingLeft": 24,
+          "paddingRight": 24,
           "fills": [{ "type": "SOLID", "visible": true, "color": { "r": 1, "g": 1, "b": 1, "a": 1 } }],
-          "strokes": [{ "type": "SOLID", "visible": true, "color": { "r": 0.9, "g": 0.9, "b": 0.93, "a": 1 } }],
-          "strokeWeight": 1,
-          "children": [
+          "strokes": [],
+          "effects": [
             {
-              "id": "1:18",
-              "name": "카테고리 태그",
-              "type": "FRAME",
+              "type": "DROP_SHADOW",
               "visible": true,
-              "absoluteBoundingBox": { "x": 80, "y": 306, "width": 56, "height": 24 },
-              "layoutMode": "HORIZONTAL",
-              "paddingTop": 4,
-              "paddingBottom": 4,
-              "paddingLeft": 10,
-              "paddingRight": 10,
-              "primaryAxisAlignItems": "CENTER",
-              "counterAxisAlignItems": "CENTER",
-              "fills": [{ "type": "SOLID", "visible": true, "color": { "r": 0.15, "g": 0.75, "b": 0.45, "a": 0.1 } }],
-              "strokes": [],
-              "cornerRadius": 4,
-              "children": [
-                {
-                  "id": "1:19",
-                  "name": "카테고리명",
-                  "type": "TEXT",
-                  "visible": true,
-                  "absoluteBoundingBox": { "x": 90, "y": 310, "width": 36, "height": 16 },
-                  "characters": "급식",
-                  "style": {
-                    "fontFamily": "Noto Sans KR",
-                    "fontSize": 12,
-                    "fontWeight": 600,
-                    "textAlignHorizontal": "CENTER"
-                  },
-                  "fills": [{ "type": "SOLID", "visible": true, "color": { "r": 0.1, "g": 0.65, "b": 0.38, "a": 1 } }],
-                  "strokes": []
-                }
-              ]
-            },
-            {
-              "id": "1:20",
-              "name": "공지 제목",
-              "type": "TEXT",
-              "visible": true,
-              "layoutSizingHorizontal": "FILL",
-              "absoluteBoundingBox": { "x": 156, "y": 306, "width": 800, "height": 24 },
-              "characters": "3월 급식 식단표 안내",
-              "style": {
-                "fontFamily": "Noto Sans KR",
-                "fontSize": 16,
-                "fontWeight": 500,
-                "textAlignHorizontal": "LEFT"
-              },
-              "fills": [{ "type": "SOLID", "visible": true, "color": { "r": 0.13, "g": 0.13, "b": 0.18, "a": 1 } }],
-              "strokes": []
-            },
-            {
-              "id": "1:21",
-              "name": "날짜",
-              "type": "TEXT",
-              "visible": true,
-              "absoluteBoundingBox": { "x": 976, "y": 308, "width": 144, "height": 20 },
-              "characters": "2024.02.28",
-              "style": {
-                "fontFamily": "Noto Sans KR",
-                "fontSize": 14,
-                "fontWeight": 400,
-                "textAlignHorizontal": "RIGHT"
-              },
-              "fills": [{ "type": "SOLID", "visible": true, "color": { "r": 0.6, "g": 0.6, "b": 0.65, "a": 1 } }],
-              "strokes": []
+              "color": { "r": 0, "g": 0, "b": 0, "a": 0.08 },
+              "offset": { "x": 0, "y": 4 },
+              "radius": 20,
+              "spread": 0
             }
-          ]
-        },
-        {
-          "id": "1:22",
-          "name": "공지 아이템 4",
-          "type": "FRAME",
-          "visible": true,
-          "absoluteBoundingBox": { "x": 80, "y": 353, "width": 1040, "height": 67 },
-          "layoutMode": "HORIZONTAL",
-          "paddingTop": 20,
-          "paddingBottom": 20,
-          "paddingLeft": 0,
-          "paddingRight": 0,
-          "itemSpacing": 20,
-          "primaryAxisAlignItems": "MIN",
-          "counterAxisAlignItems": "CENTER",
-          "fills": [{ "type": "SOLID", "visible": true, "color": { "r": 1, "g": 1, "b": 1, "a": 1 } }],
-          "strokes": [{ "type": "SOLID", "visible": true, "color": { "r": 0.9, "g": 0.9, "b": 0.93, "a": 1 } }],
-          "strokeWeight": 1,
+          ],
           "children": [
             {
-              "id": "1:23",
-              "name": "카테고리 태그",
+              "id": "mock:17",
+              "name": "icon",
               "type": "FRAME",
               "visible": true,
-              "absoluteBoundingBox": { "x": 80, "y": 373, "width": 56, "height": 24 },
-              "layoutMode": "HORIZONTAL",
-              "paddingTop": 4,
-              "paddingBottom": 4,
-              "paddingLeft": 10,
-              "paddingRight": 10,
-              "primaryAxisAlignItems": "CENTER",
-              "counterAxisAlignItems": "CENTER",
-              "fills": [{ "type": "SOLID", "visible": true, "color": { "r": 0.6, "g": 0.3, "b": 0.9, "a": 0.1 } }],
+              "absoluteBoundingBox": { "x": 520, "y": 93, "width": 110, "height": 110 },
+              "fills": [],
               "strokes": [],
-              "cornerRadius": 4,
-              "children": [
-                {
-                  "id": "1:24",
-                  "name": "카테고리명",
-                  "type": "TEXT",
-                  "visible": true,
-                  "absoluteBoundingBox": { "x": 90, "y": 377, "width": 36, "height": 16 },
-                  "characters": "행사",
-                  "style": {
-                    "fontFamily": "Noto Sans KR",
-                    "fontSize": 12,
-                    "fontWeight": 600,
-                    "textAlignHorizontal": "CENTER"
-                  },
-                  "fills": [{ "type": "SOLID", "visible": true, "color": { "r": 0.5, "g": 0.2, "b": 0.85, "a": 1 } }],
-                  "strokes": []
-                }
-              ]
+              "children": []
             },
             {
-              "id": "1:25",
-              "name": "공지 제목",
+              "id": "mock:18",
+              "name": "교육목표",
               "type": "TEXT",
               "visible": true,
-              "layoutSizingHorizontal": "FILL",
-              "absoluteBoundingBox": { "x": 156, "y": 373, "width": 800, "height": 24 },
-              "characters": "2024학년도 입학식 및 시업식 안내",
+              "absoluteBoundingBox": { "x": 540, "y": 223, "width": 70, "height": 24 },
+              "characters": "교육목표",
               "style": {
-                "fontFamily": "Noto Sans KR",
-                "fontSize": 16,
-                "fontWeight": 500,
-                "textAlignHorizontal": "LEFT"
+                "fontFamily": "Pretendard",
+                "fontStyle": "SemiBold",
+                "fontWeight": 600,
+                "fontSize": 20,
+                "textAlignHorizontal": "LEFT",
+                "letterSpacing": 0,
+                "lineHeightPx": 23.87,
+                "lineHeightUnit": "PIXELS"
               },
-              "fills": [{ "type": "SOLID", "visible": true, "color": { "r": 0.13, "g": 0.13, "b": 0.18, "a": 1 } }],
-              "strokes": []
-            },
-            {
-              "id": "1:26",
-              "name": "날짜",
-              "type": "TEXT",
-              "visible": true,
-              "absoluteBoundingBox": { "x": 976, "y": 375, "width": 144, "height": 20 },
-              "characters": "2024.02.26",
-              "style": {
-                "fontFamily": "Noto Sans KR",
-                "fontSize": 14,
-                "fontWeight": 400,
-                "textAlignHorizontal": "RIGHT"
-              },
-              "fills": [{ "type": "SOLID", "visible": true, "color": { "r": 0.6, "g": 0.6, "b": 0.65, "a": 1 } }],
+              "fills": [{ "type": "SOLID", "visible": true, "color": { "r": 0.067, "g": 0.067, "b": 0.067, "a": 1 } }],
               "strokes": []
             }
           ]

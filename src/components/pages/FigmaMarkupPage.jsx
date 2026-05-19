@@ -36,6 +36,7 @@ export default function FigmaMarkupPage() {
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="stylesheet" href="/basic.css">
 <style>
 html, body { margin: 0; padding: 0; overflow: auto; }
 ${cssResult}

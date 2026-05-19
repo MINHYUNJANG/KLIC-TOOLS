@@ -9,6 +9,7 @@ import {
   collectImageRefs,
 } from '../../lib/figma.js';
 import { convertFigmaNode } from '../../lib/figma-converter.js';
+import { detectTemplate, applyTemplate } from '../../lib/figma-templates.js';
 
 const TIMEOUT_MS = 60000;
 
@@ -214,8 +215,11 @@ export default async function handler(req, res) {
         }
       });
 
-      // ③ 마크업 변환
-      const result = convertFigmaNode(nodeData, markup_type, bgImageUrls, new Set(), imageNodeMap);
+      // ③ 마크업 변환 (템플릿 감지 → 없으면 범용 변환기)
+      const templateKey = markup_type !== 'react' ? detectTemplate(nodeData) : null;
+      const result = templateKey
+        ? applyTemplate(templateKey, nodeData, imageNodeMap, bgImageUrls)
+        : convertFigmaNode(nodeData, markup_type, bgImageUrls, new Set(), imageNodeMap);
 
       if (markup_type === 'react') {
         allJsx.push(result.jsx);
