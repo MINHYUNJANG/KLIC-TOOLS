@@ -10,9 +10,9 @@ const menuCards = [
     desc: 'KLIC 가이드 및 디자인 템플릿을 기반으로, 크롤링된 학교 사이트 콘텐츠가 선택한 서브콘텐츠 템플릿에 자동으로 입혀집니다. 여러 학교를 한 번에 처리해 반복 마크업 작업 시간을 대폭 줄여줍니다.',
   },
   {
-    label: '피그마 마크업',
+    label: 'MCP 마크업',
     iconSrc: '/icons/dazzle/pen-line.svg',
-    desc: '피그마 디자인 파일의 URL을 입력하면 디자인을 분석하여 HTML 마크업을 자동으로 생성합니다. 디자인과 마크업 작업을 동시에 진행할 수 있습니다.',
+    desc: 'Claude 채팅에서 MCP로 추출한 HTML/CSS를 붙여넣어 미리보기·다운로드합니다. Figma API 토큰 없이 MCP 분석 결과를 바로 활용할 수 있습니다.',
   },
   {
     label: 'KL캔버스',

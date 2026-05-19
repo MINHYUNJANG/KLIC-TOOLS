@@ -3,7 +3,7 @@ import { useState } from 'react';
 const navItems = [
   { label: 'URL 크롤링 마크업', href: '#' },
   { label: '콘텐츠 일괄 마크업', href: '#' },
-  { label: '피그마 마크업', href: '#', dividerAfter: true },
+  { label: 'MCP 마크업', href: '#', dividerAfter: true },
   { label: 'KL캔버스', href: '#', dividerAfter: true },
   { label: '웹표준검사', href: '#' },
   { label: '웹접근성검사', href: '#' },

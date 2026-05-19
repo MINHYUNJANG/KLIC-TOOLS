@@ -213,6 +213,9 @@ ${htmlResult}
                   <button className="crawl-copy-btn" onClick={handleDownload} disabled={downloading}>
                     {downloading ? '압축 중...' : '다운로드'}
                   </button>
+                  <button className="crawl-copy-btn bm-reset-btn" onClick={resetResult}>
+                    초기화
+                  </button>
                 </div>
               </div>
 

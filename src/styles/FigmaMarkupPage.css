@@ -131,6 +131,15 @@
   gap: 0.5rem;
 }
 
+.bm-reset-btn {
+  color: #c0392b !important;
+  border-color: #e8b4b0 !important;
+}
+.bm-reset-btn:hover:not(:disabled) {
+  background: #fdf1f0 !important;
+  border-color: #c0392b !important;
+}
+
 .figma-editor {
   flex: 1;
   resize: none;
@@ -150,7 +159,8 @@
 .figma-modal-inner {
   display: flex;
   flex-direction: column;
-  width: min(75rem, 100%);
+  width: 1600px;
+  max-width: calc(100% - 2rem);
   height: min(44rem, 100%);
   background: #fff;
   box-shadow: 0 1rem 2.5rem rgba(0,0,0,0.22);
@@ -191,5 +201,107 @@
   }
   .figma-result-panel {
     min-height: 32rem;
+  }
+}
+
+/* ── MCP 마크업 ─────────────────────────────────────────────── */
+.figma-v2-toolbar {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 1rem;
+  padding: 0.75rem 1.5rem;
+  border-bottom: 0.0625rem solid #e8e8ee;
+  flex-shrink: 0;
+}
+
+/* .figma-v2-convert-btn {
+  background: #1a2a4a;
+  color: #fff;
+} */
+.figma-v2-convert-btn:hover:not(:disabled) {
+  background: #0d1e38;
+  color: #fff;
+}
+
+.figma-v2-css-locked {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #f4f4f6;
+  padding: 1.5rem;
+}
+.figma-v2-css-locked p {
+  font-size: 0.9rem;
+  color: #999;
+  font-weight: bold;
+  text-align: center;
+  line-height: 1.8;
+  margin: 0;
+}
+
+.figma-v2-editors {
+  flex: 1;
+  min-height: 0;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+}
+
+.figma-v2-editor-wrap {
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+  border-right: 0.0625rem solid #e8e8ee;
+}
+.figma-v2-editor-wrap:last-child {
+  border-right: none;
+}
+
+.figma-v2-editor-label {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.5rem;
+  padding: 0.625rem 1rem;
+  background: #f7f7fb;
+  border-bottom: 0.0625rem solid #e8e8ee;
+  flex-shrink: 0;
+  min-height: 50px;
+}
+.figma-v2-editor-label > span:first-child {
+  font-size: 0.8125rem;
+  font-weight: 700;
+  color: #1a2a4a;
+}
+
+.figma-v2-hint {
+  font-size: 0.75rem;
+  color: #999;
+  font-weight: 400;
+}
+
+.figma-v2-textarea {
+  flex: 1;
+  resize: none;
+  border: none;
+  border-radius: 0;
+  font-size: 0.8125rem;
+  line-height: 1.6;
+  padding: 1rem;
+}
+
+@media (max-width: 56rem) {
+  .figma-v2-toolbar {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+  .figma-v2-editors {
+    grid-template-columns: 1fr;
+  }
+  .figma-v2-editor-wrap {
+    border-right: none;
+    border-bottom: 0.0625rem solid #e8e8ee;
+    min-height: 20rem;
   }
 }

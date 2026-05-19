@@ -8,6 +8,7 @@
     "pages/api/screenshot.js": { "maxDuration": 60 },
     "pages/api/extract-urls.js": { "maxDuration": 60 },
     "pages/api/download-hwpx.js": { "maxDuration": 30 },
-    "pages/api/fetch-markup.js": { "maxDuration": 30 }
+    "pages/api/fetch-markup.js": { "maxDuration": 30 },
+    "pages/api/figma-download.js": { "maxDuration": 30 }
   }
 }
