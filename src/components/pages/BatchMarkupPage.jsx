@@ -4,13 +4,10 @@ import PageHowTo from '../PageHowTo';
 import greeting from '../../templates/greeting';
 import history from '../../templates/history';
 // import principal from '../../templates/principal';
-// import symbol from '../../templates/symbol';
+import symbol from '../../templates/symbol';
 
-// ─── 상수 ────────────────────────────────────────────────────
-const TEMPLATES = [...greeting, ...history];
+const TEMPLATES = [...greeting, ...history, ...symbol];
 const CATEGORIES = [...new Set(TEMPLATES.map(t => t.category))];
-
-// ─── 유틸리티 ─────────────────────────────────────────────────
 
 function parseInput(text) {
   return text.split('\n')
@@ -26,11 +23,19 @@ function parseInput(text) {
     .filter(Boolean);
 }
 
-function extractContent(html, selector = '') {
+function extractContent(html, selector = '', baseUrl = '') {
+  const absolutizeImages = (doc) => {
+    if (!baseUrl) return;
+    doc.querySelectorAll('img[src]').forEach(img => {
+      try { img.src = new URL(img.getAttribute('src'), baseUrl).href; } catch {}
+    });
+  };
+
   let doc;
   if (selector.trim()) {
     doc = new DOMParser().parseFromString(html, 'text/html');
     doc.querySelectorAll('script, style, noscript, iframe, svg').forEach(el => el.remove());
+    absolutizeImages(doc);
     const matched = Array.from(doc.querySelectorAll(selector.trim()));
     if (matched.length > 0) {
       matched.forEach(el => {
@@ -45,6 +50,7 @@ function extractContent(html, selector = '') {
   const sourceHtml = match ? match[1].trim() : html;
   doc = new DOMParser().parseFromString(sourceHtml, 'text/html');
   doc.querySelectorAll('script, style, noscript, iframe, svg').forEach(el => el.remove());
+  absolutizeImages(doc);
   const target = doc.querySelector('.greeting') || doc.getElementById('subContent') || doc.body;
   target.querySelectorAll('*').forEach(el => {
     ['style', 'onclick', 'onload', 'onerror'].forEach(attr => el.removeAttribute(attr));
@@ -121,7 +127,6 @@ function resizeIframe(iframe) {
   iframe.style.height = height + 'px';
 }
 
-// ─── 템플릿 미리보기 (선택 시 즉시 표시) ─────────────────────
 function TemplatePreview({ template }) {
   const iframeRef = useRef(null);
 
@@ -152,7 +157,6 @@ function TemplatePreview({ template }) {
   );
 }
 
-// ─── 결과 아이템 ──────────────────────────────────────────────
 function ResultItem({ item, index, onCopy, onEdit, copiedKey }) {
   const [view, setView] = useState('preview');
   const iframeRef = useRef(null);
@@ -183,9 +187,9 @@ function ResultItem({ item, index, onCopy, onEdit, copiedKey }) {
           <span className="bm-item-url">{item.url}</span>
         </div>
         <div className="bm-item-actions">
-          {item.status === 'pending'  && <span className="bm-badge">대기</span>}
-          {item.status === 'loading'  && <span className="bm-badge bm-badge--loading">처리 중…</span>}
-          {item.status === 'error'    && <span className="bm-badge bm-badge--error" title={item.error}>실패</span>}
+          {item.status === 'pending' && <span className="bm-badge">대기</span>}
+          {item.status === 'loading' && <span className="bm-badge bm-badge--loading">처리 중…</span>}
+          {item.status === 'error' && <span className="bm-badge bm-badge--error" title={item.error}>실패</span>}
           {item.status === 'done' && item.result && (
             <>
               <button
@@ -220,7 +224,6 @@ function ResultItem({ item, index, onCopy, onEdit, copiedKey }) {
   );
 }
 
-// ─── 메인 ────────────────────────────────────────────────────
 export default function BatchMarkupPage() {
   // ── state
   const [activeCategory, setActiveCategory] = useState(CATEGORIES[0]);
@@ -233,17 +236,14 @@ export default function BatchMarkupPage() {
   const [copiedKey, setCopiedKey] = useState(null);
   const abortRef = useRef(false);
 
-  // ── 파생값
   const tabsInCategory = TEMPLATES.filter(t => t.category === activeCategory);
-  const doneCount  = items.filter(i => i.status === 'done').length;
+  const doneCount = items.filter(i => i.status === 'done').length;
   const errorCount = items.filter(i => i.status === 'error').length;
 
-  // ── 아이템 단건 업데이트
   const updateItem = useCallback((i, patch) => {
     setItems(prev => prev.map((item, idx) => idx === i ? { ...item, ...patch } : item));
   }, []);
 
-  // ── 이펙트: 템플릿 변경 시 완료 아이템 재적용
   useEffect(() => {
     if (!activeTemplate) return;
     setItems(prev => prev.map(item => {
@@ -255,8 +255,6 @@ export default function BatchMarkupPage() {
       };
     }));
   }, [activeTemplate]);
-
-  // ── 핸들러
 
   function handleCategorySelect(cat) {
     setActiveCategory(cat);
@@ -294,7 +292,7 @@ export default function BatchMarkupPage() {
         if (!res.ok) throw new Error(data.error);
 
         // 2. 콘텐츠 추출 → 템플릿 적용
-        const extracted = extractContent(data.html, selector);
+        const extracted = extractContent(data.html, selector, parsed[i].url);
         const result = tplCode
           ? applyMarkupToTemplate(extracted, tplCode, activeTemplate?.id)
           : extracted;
@@ -326,7 +324,6 @@ export default function BatchMarkupPage() {
     navigator.clipboard.writeText(text);
   }
 
-  // ── 렌더
   return (
     <div className="bm-page">
 
@@ -428,8 +425,8 @@ export default function BatchMarkupPage() {
             {items.length === 0
               ? <TemplatePreview template={activeTemplate} />
               : items.map((item, i) => (
-                  <ResultItem key={i} item={item} index={i} onCopy={handleCopy} onEdit={handleEdit} copiedKey={copiedKey} />
-                ))
+                <ResultItem key={i} item={item} index={i} onCopy={handleCopy} onEdit={handleEdit} copiedKey={copiedKey} />
+              ))
             }
           </div>
         </div>

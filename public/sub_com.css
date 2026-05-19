@@ -455,7 +455,7 @@
 	.symbol.tyA.slide .list-wrap.dis-scroll .h-scroll .box{ width: auto; flex: 1;}
 }
 
-/******* 심볼 : B *******/
+/******* 심볼 : B_1 *******/
 .symbol.tyB.tyB_1{ 
 	--symbol-gap : 3rem;
 	--symbol-font-size : 0.9rem;
@@ -479,7 +479,7 @@
 .symbol.tyB.tyB_1 .box .btn-toggle {display: flex; align-items: center; gap: 0.4rem; height: 1.6rem; border-radius: 0.8rem; padding: 0 0.75rem; border: 1px solid #000; font-size: 0.7rem; font-weight: 500; margin-top: 1rem;}
 .symbol.tyB.tyB_1 .box .btn-toggle::after {content:'\EA4E'; font-family: 'remixicon'; font-size: 1rem; font-weight: 700; transition: all 0.2s;}
 .symbol.tyB.tyB_1 .box .btn-toggle.open::after {transform: rotate(180deg);}
-/* 심볼 : B : 교가 */
+/* 심볼 : B_1 : 교가 */
 .symbol.tyB.tyB_1 .song-wrap {flex-direction: column; align-items: start; margin-top: var(--symbol-gap); padding: var(--symbol-gap) 0;}
 .symbol.tyB.tyB_1 .song-wrap::before {content: ''; position: absolute; top:0; left: 50%; transform: translateX(-50%); width: 100vw; height: 100%; background: #F4F4F4; z-index: -1;}
 .symbol.tyB.tyB_1 .song-wrap .inner {display: flex; align-items: center; width: 100% !important; gap: 2rem calc(var(--symbol-gap) * 2);}
@@ -491,6 +491,45 @@
 .symbol.tyB.tyB_1 .song-wrap .inner .btn-wrap {margin-top: 5rem;}
 .symbol.tyB.tyB_1 .song-wrap .inner .btn-st.sec {background: #fff;}
 
+/******* 심볼 : B_2 *******/
+.symbol.tyB.tyB_2{ 
+	--symbol-gap : 4rem;
+	--symbol-radius : 0.75rem;
+	--symbol-gray-line : #E5E5E5;
+}
+.symbol.tyB.tyB_2 .symbol-sticky h4 { font-size: 2rem; color: #000; text-align: center; margin-bottom: 4rem; }
+.symbol.tyB.tyB_2 .list-wrap { position: relative; padding: 4.5rem 0; }
+.symbol.tyB.tyB_2 .list-wrap::before { position: absolute; top: 0; left: -100vw; width: 200vw; height: 100%; background: #F4F4F4; content: ""; z-index: -1; }
+.symbol.tyB.tyB_2 .list-wrap .box { position: relative; display: flex; align-items: center; gap: var(--symbol-gap); background: #fff; border-radius: 1.25rem; padding: 1.75rem 2rem; overflow: hidden; z-index: 0; }
+.symbol.tyB.tyB_2 .list-wrap .box + .box { margin-top: 3rem; }
+.symbol.tyB.tyB_2 .list-wrap .box::after { position: absolute; bottom: -17px; right: 2.75rem; font-family: 'Montserrat'; font-weight: 600; font-size: 5rem; color: transparent; -webkit-text-stroke: 1px #D9D9D9; line-height: 1; z-index: -1; }
+.symbol.tyB.tyB_2 .list-wrap .box:nth-child(1)::after { content: "01"; }
+.symbol.tyB.tyB_2 .list-wrap .box:nth-child(2)::after { content: "02"; }
+.symbol.tyB.tyB_2 .list-wrap .box:nth-child(3)::after { content: "03"; }
+.symbol.tyB.tyB_2 .list-wrap .box:nth-child(4)::after { content: "04"; }
+.symbol.tyB.tyB_2 .list-wrap .box .img { flex: 50%; height: 14rem; border-radius: var(--symbol-radius); overflow: hidden; }
+.symbol.tyB.tyB_2 .list-wrap .box .img.mark { border: 1px solid var(--symbol-gray-line); }
+.symbol.tyB.tyB_2 .list-wrap .box .img img { width: 100%; height: 100%; object-fit: cover; object-position: top; } 
+.symbol.tyB.tyB_2 .list-wrap .box .inner { flex: 50%; }
+.symbol.tyB.tyB_2 .list-wrap .box .inner h4 {font-size: 1.3rem; font-weight: 700; color: #000;}
+.symbol.tyB.tyB_2 .list-wrap .box .inner h4 span {font-size: 1.1rem; font-weight: 600; margin-left: 1.25rem;}
+.symbol.tyB.tyB_2 .list-wrap .box .inner .text-box {margin-top: 1.5rem; line-height: 1.5rem; font-size: var(--symbol-font-size); display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden; transition: all 0.2s;}
+.symbol.tyB.tyB_2 .text-box.open p {-webkit-line-clamp: unset;}
+.symbol.tyB.tyB_2 .list-wrap .box .btn-toggle {display: flex; align-items: center; gap: 0.4rem; height: 1.6rem; border-radius: 0.8rem; padding: 0 0.75rem; border: 1px solid #000; font-size: 0.7rem; font-weight: 500; margin-top: 1rem;}
+.symbol.tyB.tyB_2 .list-wrap .box .btn-toggle::after {content:'\EA4E'; font-family: 'remixicon'; font-size: 1rem; font-weight: 700; transition: all 0.2s;}
+.symbol.tyB.tyB_2 .list-wrap .box .btn-toggle.open::after {transform: rotate(180deg);}
+/* 심볼 : B_2 : 교가 */
+.symbol.tyB.tyB_2 .song-wrap {display: flex; align-items: center; width: 100% !important; gap: var(--symbol-gap);}
+.symbol.tyB.tyB_2 .song-wrap h5 {font-size: 1rem; font-weight: 700; color: #000;}
+.symbol.tyB.tyB_2 .song-wrap h5:not(:first-child) {margin-top: 2rem;}
+.symbol.tyB.tyB_2 .song-wrap .img { flex-direction: column; height: auto !important; min-height: 31.5rem; padding: 3rem 1rem; background: #fff; border: 1px solid var(--symbol-gray-line);}
+.symbol.tyB.tyB_2 .song-wrap .song-cont { flex: 50%; }
+.symbol.tyB.tyB_2 .song-wrap .song-cont h4 { font-size: 1.3rem; font-weight: 800; color: #000; }
+.symbol.tyB.tyB_2 .song-wrap .song-cont .lyr { margin-top: 2.3rem; }
+.symbol.tyB.tyB_2 .song-wrap .img h5 {text-align: center; margin-bottom: 1.75rem; font-size: 1.1rem; }
+.symbol.tyB.tyB_2 .song-wrap .song-cont p {margin-top: 1rem; -webkit-line-clamp: unset;}
+.symbol.tyB.tyB_2 .song-wrap .btn-wrap {margin-top: 2.3rem;}
+.symbol.tyB.tyB_2 .song-wrap .btn-st.sec {background: #fff;}
 
 /******* 심볼 : C *******/
 .symbol.tyC{ 
@@ -796,12 +835,22 @@
 	.symbol.tyA.slide .list-wrap .box{ flex: 1; width: auto;}
 	.symbol.tyA.slide .h-scroll{ gap: var(--symbol-gap);}
 
-	/******* 심볼 : B *******/
+	/******* 심볼 : B_1 *******/
 	.symbol.tyB.tyB_1 .box {gap: 2rem var(--symbol-gap);}
 	.symbol.tyB.tyB_1 .box .img,
 	.symbol.tyB.tyB_1 .box:not(:first-child) .inner {width: calc(50% - calC(var(--symbol-gap) / 2));}
-	/* 심볼 : B : 교가 */
+	/* 심볼 : B_1B : 교가 */
 	.symbol.tyB.tyB_1 .song-wrap .inner {gap: 2rem var(--symbol-gap);}
+
+	/******* 심볼 : B_2 *******/
+	.symbol.tyB.tyB_2 .list-wrap .box { gap: 2rem; }
+	.symbol.tyB.tyB_2 .list-wrap .box::after { bottom: -10px; font-size: 3rem; }
+	.symbol.tyB.tyB_2 .song-wrap { flex-direction: column; }
+	.symbol.tyB.tyB_2 .song-wrap .img { width: 100%; padding: 1rem; }
+	.symbol.tyB.tyB_2 .song-wrap .img h5 { margin-bottom: 1rem; }
+	.symbol.tyB.tyB_2 .song-wrap .song-cont { flex: none; width: 100%; }
+	.symbol.tyB.tyB_2 .song-wrap .song-cont .lyr { margin-top: 1rem; }
+	.symbol.tyB.tyB_2 .song-wrap h5:not(:first-child) { margin-top: 1rem; }
 	
 	
 	/******* 심볼 : C *******/
@@ -927,6 +976,12 @@
 	/* 심볼 : B : 교가 */
 	.symbol.tyB.tyB_1 .song-wrap .inner .img { width: calc(50% + calc(var(--symbol-gap) / 2)); min-height: 28rem; padding: 2rem 1.5rem;}
 	.symbol.tyB.tyB_1 .song-wrap .inner .btn-wrap {margin-top: 3rem;}
+
+	/******* 심볼 : B_2 *******/
+	.symbol.tyB.tyB_2 .symbol-sticky h4 { font-size: 1.5rem; margin-bottom: 2rem; }
+	.symbol.tyB.tyB_2 .list-wrap { padding: 2rem 0; }
+	.symbol.tyB.tyB_2 .list-wrap .box .img { height: 13rem; }
+	.symbol.tyB.tyB_2 .song-wrap .img { height: auto; min-height: auto; }
 
 	/******* 심볼 : C *******/
 	.symbol.tyC{ 
@@ -1226,6 +1281,12 @@
 	.symbol.tyB.tyB_1 .song-wrap .inner h5 {font-size: 1rem;}
 	.symbol.tyB.tyB_1 .song-wrap .inner .img {padding: 1rem;}
 	.symbol.tyB.tyB_1 .song-wrap .inner .img h5 {margin-bottom: 0;}
+
+	/******* 심볼 : B_2 *******/
+	.symbol.tyB.tyB_2 .list-wrap .box { flex-direction: column; gap: 1rem; padding: 1rem; }
+	.symbol.tyB.tyB_2 .list-wrap .box + .box { margin-top: 1rem; }
+	.symbol.tyB.tyB_2 .list-wrap .box .img { flex: none; width: 100%; }
+	.symbol.tyB.tyB_2 .list-wrap .box .inner .text-box { margin-top: 0.5rem; }
 
 	/******* 심볼 : C *******/
 	.symbol.tyC{ 

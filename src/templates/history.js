@@ -111,7 +111,7 @@ function parseTableSource(src) {
   return order.map(year => ({ year, items: groups.get(year) }));
 }
 
-// 연도 목록을 10년 단위 섹션으로 묶음
+// 연도 목록을 10년 단위 섹션으로 묶음 (tyB용: "XXXX ~ YYYY" 라벨)
 function groupIntoSections(groups) {
   const decadeMap = new Map();
   const decadeOrder = [];
@@ -127,6 +127,22 @@ function groupIntoSections(groups) {
     const max = Math.max(...years);
     const label = i === 0 ? `${max} ~ 현재` : `${min} ~ ${max}`;
     return { label, groups: gs };
+  });
+}
+
+// 연도 목록을 시대 단위로 묶음 (tyC용: "현재", "2010년대", "2000년대 이전" 라벨)
+function groupIntoErasC(groups) {
+  const decadeMap = new Map();
+  const decadeOrder = [];
+  groups.forEach(g => {
+    const year = parseInt(g.year);
+    const key = year < 2000 ? 'pre2000' : String(Math.floor(year / 10) * 10);
+    if (!decadeMap.has(key)) { decadeMap.set(key, []); decadeOrder.push(key); }
+    decadeMap.get(key).push(g);
+  });
+  return decadeOrder.map((key, i) => {
+    const label = i === 0 ? '현재' : key === 'pre2000' ? '2000년대 이전' : `${key}년대`;
+    return { label, groups: decadeMap.get(key) };
   });
 }
 
@@ -595,6 +611,199 @@ $(function () {
             </dd>
           </dl>
         </div>
+      </div>
+    </div>
+  </div>
+</div>`,
+  },
+  {
+    id: 'history-tyC',
+    category: '연혁',
+    label: '연혁 tyC',
+    desc: '스티키 연도 탭 + 스크롤 스파이 + dl 페이드인',
+    applyMapping(sourceMarkup, templateCode) {
+      const { src, tpl } = parseMarkup(sourceMarkup, templateCode);
+      const groups = parseHistorySource(src);
+      if (!groups.length) return templateCode;
+
+      const sections = groupIntoErasC(groups);
+
+      // 탭 재생성
+      const tabUl = tpl.querySelector('.history.tyC .year ul');
+      if (tabUl) {
+        tabUl.innerHTML = sections.map((s, i) =>
+          `<li${i === 0 ? ' class="on"' : ''}><a href="" data-target="history${i + 1}">${s.label}</a></li>`
+        ).join('\n');
+      }
+
+      // list-wrap 재생성
+      const listWrap = tpl.querySelector('.history.tyC .list-wrap');
+      if (listWrap) {
+        listWrap.innerHTML = sections.map((s, i) => {
+          const dlHtml = s.groups.map(({ year, items }) => {
+            const liHtml = items.map(({ date, text }) =>
+              `<li><strong>${date}</strong><div class="inr"><p>${text}</p></div></li>`
+            ).join('\n');
+            return `<dl>\n<dt>${year}</dt>\n<dd>\n<ul>\n${liHtml}\n</ul>\n</dd>\n</dl>`;
+          }).join('\n');
+          return `<div class="list" id="history${i + 1}">\n${dlHtml}\n</div>`;
+        }).join('\n');
+      }
+
+      return tpl.body.innerHTML;
+    },
+    code: `<script>
+$(window).on('load', function () {
+  const $win = $(window);
+  const $sections = $('.history.tyC .list-wrap > .list[id]');
+  const $title = $('.history.tyC .year-title');
+  const $links = $('.history.tyC .year li > a');
+
+  let isClickScrolling = false;
+  let clickTargetId = null;
+
+  $('.history.tyC .year li > a').on('click', function (e) {
+    const targetId = $(this).attr('data-target');
+    const $target = $('#' + targetId);
+    if (!$target.length) return;
+
+    isClickScrolling = true;
+    clickTargetId = targetId;
+
+    $links.parent().removeClass('on');
+    $(this).parent().addClass('on');
+    $title.text($(this).text());
+
+    const targetTop = $target.offset().top - 180;
+    const maxScroll = $(document).height() - $win.height();
+    const finalTop = Math.min(targetTop, maxScroll);
+
+    $('html, body').stop().animate({ scrollTop: finalTop }, 500, function () {
+      isClickScrolling = false;
+      clickTargetId = null;
+      update();
+    });
+    e.preventDefault();
+  });
+
+  let ticking = false;
+  $win.on('scroll', function () {
+    if (!ticking) {
+      requestAnimationFrame(() => { update(); ticking = false; });
+      ticking = true;
+    }
+  });
+
+  function update() {
+    const scrollTop = $win.scrollTop();
+    const winH = $win.height();
+    let currentId = null;
+
+    if (isClickScrolling && clickTargetId) {
+      currentId = clickTargetId;
+    } else {
+      $sections.each(function () {
+        if (scrollTop >= $(this).offset().top - 200) currentId = $(this).attr('id');
+      });
+      if (!currentId && $sections.length) currentId = $sections.first().attr('id');
+      if (scrollTop + winH >= $(document).height() - 5) currentId = $sections.last().attr('id');
+    }
+
+    $links.parent().removeClass('on');
+    $links.each(function () {
+      if ($(this).attr('data-target') == currentId) {
+        $(this).parent().addClass('on');
+        $title.text($(this).text());
+      }
+    });
+
+    $('.history.tyC .list dl').each(function () {
+      const $dl = $(this);
+      const isLast = $dl.is(':last-child');
+      const isPageEnd = scrollTop + winH >= $(document).height() - 5;
+      if (scrollTop + winH * 0.2 >= $dl.offset().top || (isLast && isPageEnd)) {
+        $dl.addClass('active');
+      } else {
+        $dl.removeClass('active');
+      }
+    });
+
+    if (scrollTop + winH >= $(document).height() - 5) {
+      $('.history.tyC .list dl').last().addClass('active');
+    }
+  }
+
+  update();
+});
+<\/script>
+
+<div class="history tyC">
+  <div class="container">
+    <div class="history-sticky">
+      <div class="history-header">
+        <h4><span>History</span></h4>
+        <div class="year">
+          <div class="tab-st cntnts">
+            <ul>
+              <li class="on"><a href="" data-target="history1">현재</a></li>
+              <li><a href="" data-target="history2">2010년대</a></li>
+              <li><a href="" data-target="history3">2000년대</a></li>
+              <li><a href="" data-target="history4">2000년대 이전</a></li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="list-wrap">
+      <div class="list" id="history1">
+        <dl>
+          <dt>2025</dt>
+          <dd>
+            <ul>
+              <li><strong>08.20</strong><div class="inr"><p>학교 연혁 내용이 들어갑니다 학교 연혁 내용이 들어갑니다</p></div></li>
+              <li><strong>08.20</strong><div class="inr"><p>학교 연혁 내용이 들어갑니다 학교 연혁 내용이 들어갑니다</p></div></li>
+            </ul>
+          </dd>
+        </dl>
+        <dl>
+          <dt>2024</dt>
+          <dd>
+            <ul>
+              <li><strong>08.20</strong><div class="inr"><p>학교 연혁 내용이 들어갑니다 학교 연혁 내용이 들어갑니다</p></div></li>
+            </ul>
+          </dd>
+        </dl>
+      </div>
+      <div class="list" id="history2">
+        <dl>
+          <dt>2012</dt>
+          <dd>
+            <ul>
+              <li><strong>08.20</strong><div class="inr"><p>학교 연혁 내용이 들어갑니다 학교 연혁 내용이 들어갑니다</p></div></li>
+            </ul>
+          </dd>
+        </dl>
+      </div>
+      <div class="list" id="history3">
+        <dl>
+          <dt>2002</dt>
+          <dd>
+            <ul>
+              <li><strong>08.20</strong><div class="inr"><p>학교 연혁 내용이 들어갑니다 학교 연혁 내용이 들어갑니다</p></div></li>
+            </ul>
+          </dd>
+        </dl>
+      </div>
+      <div class="list" id="history4">
+        <dl>
+          <dt>1999</dt>
+          <dd>
+            <ul>
+              <li><strong>08.20</strong><div class="inr"><p>학교 연혁 내용이 들어갑니다 학교 연혁 내용이 들어갑니다</p></div></li>
+            </ul>
+          </dd>
+        </dl>
       </div>
     </div>
   </div>
