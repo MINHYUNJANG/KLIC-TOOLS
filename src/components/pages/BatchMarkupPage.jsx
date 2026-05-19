@@ -3,11 +3,14 @@ import { formatHtml } from '../../utils/formatHtml';
 import PageHowTo from '../PageHowTo';
 import greeting from '../../templates/greeting';
 import history from '../../templates/history';
-import principal from '../../templates/principal';
-import symbol from '../../templates/symbol';
+// import principal from '../../templates/principal';
+// import symbol from '../../templates/symbol';
 
-const TEMPLATES = [...greeting, ...history, ...principal, ...symbol];
+// ─── 상수 ────────────────────────────────────────────────────
+const TEMPLATES = [...greeting, ...history];
 const CATEGORIES = [...new Set(TEMPLATES.map(t => t.category))];
+
+// ─── 유틸리티 ─────────────────────────────────────────────────
 
 function parseInput(text) {
   return text.split('\n')
@@ -54,7 +57,6 @@ function applyMarkupToTemplate(sourceMarkup, templateCode, templateId) {
   if (template?.applyMapping) return template.applyMapping(sourceMarkup, templateCode);
   return templateCode;
 }
-
 
 async function readApiJson(response) {
   const text = await response.text();
@@ -106,7 +108,6 @@ ${bodyContent}
 </body>
 </html>`;
 }
-
 
 function resizeIframe(iframe) {
   if (!iframe?.contentDocument?.body) return;
@@ -221,9 +222,9 @@ function ResultItem({ item, index, onCopy, onEdit, copiedKey }) {
 
 // ─── 메인 ────────────────────────────────────────────────────
 export default function BatchMarkupPage() {
+  // ── state
   const [activeCategory, setActiveCategory] = useState(CATEGORIES[0]);
   const [activeTemplate, setActiveTemplate] = useState(TEMPLATES[0]);
-
   const [input, setInput] = useState('');
   const [selector, setSelector] = useState('');
   const [items, setItems] = useState([]);
@@ -232,38 +233,58 @@ export default function BatchMarkupPage() {
   const [copiedKey, setCopiedKey] = useState(null);
   const abortRef = useRef(false);
 
+  // ── 파생값
   const tabsInCategory = TEMPLATES.filter(t => t.category === activeCategory);
+  const doneCount  = items.filter(i => i.status === 'done').length;
+  const errorCount = items.filter(i => i.status === 'error').length;
+
+  // ── 아이템 단건 업데이트
+  const updateItem = useCallback((i, patch) => {
+    setItems(prev => prev.map((item, idx) => idx === i ? { ...item, ...patch } : item));
+  }, []);
+
+  // ── 이펙트: 템플릿 변경 시 완료 아이템 재적용
+  useEffect(() => {
+    if (!activeTemplate) return;
+    setItems(prev => prev.map(item => {
+      if (item.status !== 'done' || !item.extracted) return item;
+      return {
+        ...item,
+        result: applyMarkupToTemplate(item.extracted, activeTemplate.code, activeTemplate.id),
+        templateId: activeTemplate.id,
+      };
+    }));
+  }, [activeTemplate]);
+
+  // ── 핸들러
 
   function handleCategorySelect(cat) {
     setActiveCategory(cat);
     setActiveTemplate(TEMPLATES.find(t => t.category === cat));
   }
 
-  const updateItem = useCallback((i, patch) => {
-    setItems(prev => prev.map((item, idx) => idx === i ? { ...item, ...patch } : item));
-  }, []);
-
-  useEffect(() => {
-    if (!activeTemplate) return;
-    setItems(prev => prev.map(item => {
-      if (item.status !== 'done' || !item.extracted) return item;
-      return { ...item, result: applyMarkupToTemplate(item.extracted, activeTemplate.code, activeTemplate.id), templateId: activeTemplate.id };
-    }));
-  }, [activeTemplate]);
-
   async function handleStart() {
     const parsed = parseInput(input);
     if (parsed.length === 0) return;
+
     const tplCode = activeTemplate?.code || '';
-    setItems(parsed.map(item => ({ ...item, status: 'pending', result: '', extracted: '', error: '', templateId: activeTemplate?.id || '' })));
+    setItems(parsed.map(item => ({
+      ...item,
+      status: 'pending',
+      result: '',
+      extracted: '',
+      error: '',
+      templateId: activeTemplate?.id || '',
+    })));
     setRunning(true);
-    abortRef.current = false;
     setProgress({ done: 0, total: parsed.length });
+    abortRef.current = false;
 
     for (let i = 0; i < parsed.length; i++) {
       if (abortRef.current) break;
       updateItem(i, { status: 'loading' });
       try {
+        // 1. HTML 크롤링
         const res = await fetch('/api/fetch-markup', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
@@ -271,8 +292,13 @@ export default function BatchMarkupPage() {
         });
         const data = await readApiJson(res);
         if (!res.ok) throw new Error(data.error);
+
+        // 2. 콘텐츠 추출 → 템플릿 적용
         const extracted = extractContent(data.html, selector);
-        const result = tplCode ? applyMarkupToTemplate(extracted, tplCode, activeTemplate?.id) : extracted;
+        const result = tplCode
+          ? applyMarkupToTemplate(extracted, tplCode, activeTemplate?.id)
+          : extracted;
+
         updateItem(i, { status: 'done', result, extracted, templateId: activeTemplate?.id || '' });
       } catch (err) {
         updateItem(i, { status: 'error', error: err.message });
@@ -293,13 +319,14 @@ export default function BatchMarkupPage() {
   }
 
   function handleCopyAll() {
-    const text = items.filter(i => i.result).map(i => `<!-- ${i.name} -->\n${i.result}`).join('\n\n');
+    const text = items
+      .filter(i => i.result)
+      .map(i => `<!-- ${i.name} -->\n${i.result}`)
+      .join('\n\n');
     navigator.clipboard.writeText(text);
   }
 
-  const doneCount = items.filter(i => i.status === 'done').length;
-  const errorCount = items.filter(i => i.status === 'error').length;
-
+  // ── 렌더
   return (
     <div className="bm-page">
 
@@ -355,7 +382,7 @@ export default function BatchMarkupPage() {
           <div className="bm-form">
             <textarea
               className="bm-url-textarea"
-              placeholder={'URL을 입력해주세요.'}
+              placeholder="URL을 입력해주세요."
               value={input}
               onChange={e => setInput(e.target.value)}
               disabled={running}

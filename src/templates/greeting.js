@@ -8,12 +8,14 @@ export default [
     desc: '슬로건 리드 + 스크롤 배경텍스트형',
     applyMapping(sourceMarkup, templateCode) {
       const { src, tpl } = parseMarkup(sourceMarkup, templateCode);
-      const srcBox = src.querySelector('.greeting .box');
+      const srcBox = src.querySelector('.box') || src.querySelector('.greeting_top .tit') || src.querySelector('.tit') || src.querySelector('.greeting_top') || null;
       const lines = extractBoxLines(srcBox);
-      const joined = lines.length > 0 ? lines.join('<br>') : (srcBox?.textContent.trim() || '');
+      const joined = lines.length > 0
+        ? lines.join('<br>')
+        : srcBox ? (srcBox.tagName === 'P' ? srcBox.innerHTML.trim() : srcBox.textContent.trim()) : '';
       const tplLeadP = tpl.querySelector('.lead-wrap .inner > p');
       if (tplLeadP && joined) tplLeadP.innerHTML = joined;
-      const boxPs = srcBox ? new Set(Array.from(srcBox.querySelectorAll('p'))) : new Set();
+      const boxPs = srcBox ? new Set([...(srcBox.tagName === 'P' ? [srcBox] : []), ...Array.from(srcBox.querySelectorAll('p'))]) : new Set();
       mapBodyText(src, tpl, boxPs);
       mapSign(src, tpl);
       return tpl.body.innerHTML;
@@ -55,12 +57,14 @@ export default [
     desc: '영문 슬로건 리드 + 텍스트형 (이미지 선택)',
     applyMapping(sourceMarkup, templateCode) {
       const { src, tpl } = parseMarkup(sourceMarkup, templateCode);
-      const srcBox = src.querySelector('.greeting .box');
+      const srcBox = src.querySelector('.box') || src.querySelector('.greeting_top .tit') || src.querySelector('.tit') || src.querySelector('.greeting_top') || null;
       const lines = extractBoxLines(srcBox);
-      const joined = lines.length > 0 ? lines.join('<br>') : (srcBox?.textContent.trim() || '');
+      const joined = lines.length > 0
+        ? lines.join('<br>')
+        : srcBox ? (srcBox.tagName === 'P' ? srcBox.innerHTML.trim() : srcBox.textContent.trim()) : '';
       const tplLeadP = tpl.querySelector('.greeting.tyB .lead-txt > p');
       if (tplLeadP && joined) tplLeadP.innerHTML = joined;
-      const boxPs = srcBox ? new Set(Array.from(srcBox.querySelectorAll('p'))) : new Set();
+      const boxPs = srcBox ? new Set([...(srcBox.tagName === 'P' ? [srcBox] : []), ...Array.from(srcBox.querySelectorAll('p'))]) : new Set();
       mapBodyText(src, tpl, boxPs);
       mapSign(src, tpl);
       return tpl.body.innerHTML;
@@ -106,20 +110,20 @@ export default [
     desc: '장식 오브젝트 + 리드문구 + 사진형',
     applyMapping(sourceMarkup, templateCode) {
       const { src, tpl } = parseMarkup(sourceMarkup, templateCode);
-      const srcBox = src.querySelector('.greeting .box');
+      const srcBox = src.querySelector('.box') || src.querySelector('.greeting_top .tit') || src.querySelector('.tit') || src.querySelector('.greeting_top') || null;
       const lines = extractBoxLines(srcBox);
       const tplLeadC = tpl.querySelector('.greeting.tyC .lead-txt');
       if (tplLeadC) {
         tplLeadC.innerHTML = lines.length > 0
           ? '\n' + lines.map(l => `<p>${l}</p>`).join('\n') + '\n'
-          : srcBox ? `\n<p>${srcBox.textContent.trim()}</p>\n` : '';
+          : srcBox ? `\n<p>${srcBox.tagName === 'P' ? srcBox.innerHTML.trim() : srcBox.textContent.trim()}</p>\n` : '';
       }
       const tplGreetingC = tpl.querySelector('.greeting.tyC');
       if (tplGreetingC && !src.querySelector('.greeting img')) {
         tplGreetingC.querySelector('.img')?.remove();
         tplGreetingC.classList.remove('ty-img');
       }
-      const boxPs = srcBox ? new Set(Array.from(srcBox.querySelectorAll('p'))) : new Set();
+      const boxPs = srcBox ? new Set([...(srcBox.tagName === 'P' ? [srcBox] : []), ...Array.from(srcBox.querySelectorAll('p'))]) : new Set();
       mapBodyText(src, tpl, boxPs);
       mapSign(src, tpl);
       return tpl.body.innerHTML;
