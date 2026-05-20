@@ -20,6 +20,11 @@ const menuCards = [
     desc: '교사와 교직원이 팝업, 비주얼, 가정통신문, 공지 등에 필요한 이미지와 마크업을 손쉽게 만들 수 있도록 돕는 제작 도구입니다.',
   },
   {
+    label: '테이블 변환',
+    iconSrc: '/icons/dazzle/gallery-thumbnails.svg',
+    desc: '복잡한 HTML 테이블 구조를 KLIC 웹 표준에 맞게 자동으로 변환합니다. 병합 셀, 헤더 구조, 스타일 정리 등을 일괄 처리하여 마크업 수작업을 줄여줍니다.',
+  },
+  {
     label: '웹표준검사',
     iconSrc: '/icons/dazzle/hexagon-check.svg',
     desc: '웹 페이지의 웹 표준 준수 여부를 자동으로 검사합니다. 검사 결과와 함께 증적 자료를 자동으로 생성하여 보고서 작성 시간을 줄여줍니다.',
