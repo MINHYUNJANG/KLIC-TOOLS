@@ -63,9 +63,7 @@ export const applyVerticalHeaders = (table, isVerticalHeader) => {
                 chars.forEach((char, idx) => {
                     frag.appendChild(document.createTextNode(char));
                     if (idx < chars.length - 1 || i < textNodes.length - 1) {
-                        const br = document.createElement('br');
-                        br.className = 'vt-br';
-                        frag.appendChild(br);
+                        frag.appendChild(document.createElement('br'));
                     }
                 });
                 txtNode.replaceWith(frag);
@@ -75,7 +73,7 @@ export const applyVerticalHeaders = (table, isVerticalHeader) => {
                 th.innerHTML = th.getAttribute('data-origin-html');
                 th.removeAttribute('data-origin-html');
             } else {
-                th.querySelectorAll('br.vt-br').forEach(br => br.remove());
+                th.querySelectorAll('br').forEach(br => br.remove());
             }
         }
     });
