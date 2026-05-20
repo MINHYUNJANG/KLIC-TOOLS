@@ -543,18 +543,19 @@
 .symbol.tyC .symbol-sticky h4 {width: 100%; font-size: 1.6rem; color: #000; font-weight: 700;}
 .symbol.tyC .box {position:relative; display: flex; gap: 1rem 2rem; align-items: start; flex-direction: column; padding: 2.75rem 0;}
 .symbol.tyC .box h4 {display: none; font-size: 1.4rem; color: #000; font-weight: 700;}
-.symbol.tyC .inner {padding: 0;}
+.symbol.tyC .inner {padding: 0; width: 100%;}
 .symbol.tyC .box + .box {border-top: none;}
 .symbol.tyC .slogan {width: 100%; font-size: 2rem; color: #000; font-weight: 300;}
 .symbol.tyC .slogan strong {font-weight: 700; color: #6600BF;}
-.symbol.tyC .box dl {display: flex; gap: var(--symbol-gap); padding-bottom: var(--symbol-gap); margin-bottom: var(--symbol-gap); border-bottom: 1px dashed var(--symbol-gray-line);}
+.symbol.tyC .list-wrap { width: 100%; }
+.symbol.tyC .box dl {display: flex; gap: var(--symbol-gap); padding-bottom: var(--symbol-gap); margin-bottom: var(--symbol-gap); border-bottom: 1px dashed var(--symbol-gray-line); width: 100%;}
 .symbol.tyC .box dl:last-child {margin-bottom: 0;}
 .symbol.tyC .box dt {width: 40%; max-width: 16rem;}
 .symbol.tyC .box dd {flex: 1;}
-.symbol.tyC .box:not(.song-wrap) .img {width: 100%; height: 11rem; border-radius: var(--symbol-radius); border: 1px solid var(--symbol-gray-line); overflow: hidden; font-size: 0;}
+.symbol.tyC .box:not(.song-wrap) .img {width: 100%; height: 11rem; border-radius: var(--symbol-radius); border: 1px solid var(--symbol-gray-line); overflow: hidden; font-size: 0; }
 .symbol.tyC .box:not(.song-wrap) .img img {width: 100%; height: 100%; object-fit: cover;}
 .symbol.tyC .box h5 {display: flex; align-items: center; gap: 0.8rem; font-size: 1.2rem; color: #000; font-weight: 700; margin: 1rem 0;}
-.symbol.tyC .box h5 span {width: 3.2rem; text-align: center; line-height: 1.85rem; border-radius: 1.5rem; background: #F6F2FF; font-size: 0.9rem; color: #6600BF; font-weight: 600;}
+.symbol.tyC .box h5 span {min-width: 3.2rem; text-align: center; line-height: 1.85rem; border-radius: 1.5rem; background: #F6F2FF; font-size: 0.9rem; color: #6600BF; font-weight: 600; padding: 0 1rem;}
 .symbol.tyC .box p:not(.slogan) {font-size: var(--symbol-font-size);}
 @media (min-width: 1241px){
 	.symbol.tyC .symbol-sticky{ flex: 0 0 29.25%; }

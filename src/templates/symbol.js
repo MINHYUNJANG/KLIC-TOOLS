@@ -46,11 +46,64 @@ function removeSlogan(tpl) {
   tpl.querySelectorAll('.box[data-title="학교 교훈"]').forEach(el => el.remove());
 }
 
+// 소스 교훈 텍스트를 템플릿에 매핑
+function mapSloganText(src, tpl) {
+  const srcEl = src.querySelector('.slogan, [class*="slogan"], [class*="motto"], [class*="gyohun"]');
+  const srcP = srcEl?.querySelector('p');
+  if (!srcP) return;
+  const text = srcP.innerHTML.trim();
+  if (!text) return;
+  const target =
+    tpl.querySelector('.symbol-sticky .slogan p') ||
+    tpl.querySelector('.box[data-title="학교 교훈"] .inner p.slogan') ||
+    tpl.querySelector('.symbol-sticky h4:not([id])') ||
+    tpl.querySelector('.box .inner p.slogan');
+  if (target) target.innerHTML = text;
+}
+
 // 소스에 교가 섹션이 있는지 확인
 function hasSongSection(src) {
-  if (src.querySelector('.song, .song-wrap, [class*="song"]')) return true;
-  return Array.from(src.querySelectorAll('h2, h3, h4, h5'))
-    .some(el => el.textContent.trim().includes('교가'));
+  const byClass = src.querySelector('.song, .song-wrap, [class*="song"]');
+  const byHeading = Array.from(src.querySelectorAll('h2, h3, h4, h5'))
+    .find(el => el.textContent.trim().includes('교가'));
+  console.log('[hasSongSection] byClass:', byClass?.className, '| byHeading:', byHeading?.textContent);
+  return !!(byClass || byHeading);
+}
+
+// 소스 교가 이미지·제목을 템플릿에 매핑
+function mapSongSection(src, tpl) {
+  // 1순위: 클래스명에 song 포함 + img 존재
+  let songEl = Array.from(src.querySelectorAll('[class*="song"], [class*="Song"], [class*="gyoga"]'))
+    .find(el => el.querySelector('img'));
+
+  // 2순위: "교가" 텍스트 제목 근처에서 img 포함 조상 탐색
+  if (!songEl) {
+    const heading = Array.from(src.querySelectorAll('h2, h3, h4, h5'))
+      .find(el => el.textContent.trim().includes('교가'));
+    if (heading) {
+      let el = heading.parentElement;
+      while (el && el.tagName !== 'BODY') {
+        if (el.querySelector('img')) { songEl = el; break; }
+        el = el.parentElement;
+      }
+    }
+  }
+
+  console.log('[mapSongSection] songEl:', songEl?.className);
+  if (!songEl) return;
+
+  const srcImg = songEl.querySelector('img');
+  const tplImg = tpl.querySelector('.song-wrap img');
+  console.log('[mapSongSection] srcImg:', srcImg?.getAttribute('src'), '| tplImg:', !!tplImg);
+
+  if (srcImg && tplImg) {
+    tplImg.setAttribute('src', srcImg.getAttribute('src') || srcImg.src);
+    if (srcImg.alt) tplImg.alt = srcImg.alt;
+  }
+
+  const srcTitle = songEl.querySelector('h3, h2, h4')?.textContent.trim();
+  const tplH5 = tpl.querySelector('.song-wrap .img h5');
+  if (srcTitle && tplH5) tplH5.textContent = srcTitle;
 }
 
 // 공통 box 매핑 (.box > p.img + .inner > h4 + p 구조)
@@ -88,9 +141,16 @@ export default [
     applyMapping(sourceMarkup, templateCode) {
       const { src, tpl } = parseMarkup(sourceMarkup, templateCode);
       const items = parseSymbolSource(src);
-      if (!items.length) return templateCode;
-      mapSymbolBoxes(items, tpl, '.list-wrap', src);
-      if (!hasSloganSection(src)) removeSlogan(tpl);
+      const hasSong = hasSongSection(src);
+      if (!items.length && !hasSong) return templateCode;
+      if (items.length) {
+        mapSymbolBoxes(items, tpl, '.list-wrap', src);
+        if (hasSloganSection(src)) mapSloganText(src, tpl); else removeSlogan(tpl);
+      } else {
+        tpl.querySelectorAll('.list-wrap .box:not(.song-wrap)').forEach(b => b.remove());
+        removeSlogan(tpl);
+      }
+      if (hasSong) mapSongSection(src, tpl);
       return tpl.body.innerHTML;
     },
     code: `<script>
@@ -203,11 +263,18 @@ $(function () {
     applyMapping(sourceMarkup, templateCode) {
       const { src, tpl } = parseMarkup(sourceMarkup, templateCode);
       const items = parseSymbolSource(src);
-      if (!items.length) return templateCode;
-      mapSymbolBoxes(items, tpl, '.h-scroll', src);
-      if (!hasSloganSection(src)) removeSlogan(tpl);
+      const hasSong = hasSongSection(src);
+      if (!items.length && !hasSong) return templateCode;
+      if (items.length) {
+        mapSymbolBoxes(items, tpl, '.h-scroll', src);
+        if (hasSloganSection(src)) mapSloganText(src, tpl); else removeSlogan(tpl);
+      } else {
+        tpl.querySelectorAll('.h-scroll .box').forEach(b => b.remove());
+        removeSlogan(tpl);
+      }
       // 슬라이드형은 song-wrap이 list-wrap 밖에 있음
-      if (!hasSongSection(src)) tpl.querySelectorAll('.box.song-wrap').forEach(el => el.remove());
+      if (hasSong) mapSongSection(src, tpl);
+      else tpl.querySelectorAll('.box.song-wrap').forEach(el => el.remove());
       return tpl.body.innerHTML;
     },
     code: `<script>
@@ -337,25 +404,33 @@ $(function () {
     applyMapping(sourceMarkup, templateCode) {
       const { src, tpl } = parseMarkup(sourceMarkup, templateCode);
       const items = parseSymbolSource(src);
-      if (!items.length) return templateCode;
+      const hasSong = hasSongSection(src);
+      if (!items.length && !hasSong) return templateCode;
       const container = tpl.querySelector('.symbol.tyB');
       if (!container) return templateCode;
-      const refBox = Array.from(container.querySelectorAll('.box:not(.song-wrap)')).find(b => b.querySelector('img'));
       const songWrap = container.querySelector('.box.song-wrap');
-      if (!refBox) return templateCode;
-      Array.from(container.querySelectorAll('.box:not(.song-wrap)')).forEach(b => b.remove());
-      items.forEach(item => {
-        const box = refBox.cloneNode(true);
-        const img = box.querySelector('img');
-        if (img) { img.src = item.src; img.alt = item.alt || item.title + ' 이미지'; }
-        const h4 = box.querySelector('h4');
-        if (h4) h4.textContent = item.title;
-        const p = box.querySelector('.text-box p');
-        if (p) p.innerHTML = item.desc;
-        songWrap ? container.insertBefore(box, songWrap) : container.appendChild(box);
-      });
-      if (!hasSloganSection(src)) removeSlogan(tpl);
-      if (songWrap && !hasSongSection(src)) songWrap.remove();
+      if (items.length) {
+        const sloganBox = Array.from(container.querySelectorAll('.box:not(.song-wrap)')).find(b => !b.querySelector('img'));
+        const refBox = Array.from(container.querySelectorAll('.box:not(.song-wrap)')).find(b => b.querySelector('img'));
+        if (refBox) {
+          Array.from(container.querySelectorAll('.box:not(.song-wrap)')).filter(b => b.querySelector('img')).forEach(b => b.remove());
+          items.forEach(item => {
+            const box = refBox.cloneNode(true);
+            const img = box.querySelector('img');
+            if (img) { img.src = item.src; img.alt = item.alt || item.title + ' 이미지'; }
+            const h4 = box.querySelector('h4');
+            if (h4) h4.textContent = item.title;
+            const p = box.querySelector('.text-box p');
+            if (p) p.innerHTML = item.desc;
+            songWrap ? container.insertBefore(box, songWrap) : container.appendChild(box);
+          });
+        }
+        if (hasSloganSection(src)) mapSloganText(src, tpl); else if (sloganBox) sloganBox.remove();
+      } else {
+        container.querySelectorAll('.box:not(.song-wrap)').forEach(b => b.remove());
+      }
+      if (hasSong) mapSongSection(src, tpl);
+      else if (songWrap) songWrap.remove();
       return tpl.body.innerHTML;
     },
     code: `<script>
@@ -445,9 +520,16 @@ $(function () {
     applyMapping(sourceMarkup, templateCode) {
       const { src, tpl } = parseMarkup(sourceMarkup, templateCode);
       const items = parseSymbolSource(src);
-      if (!items.length) return templateCode;
-      mapSymbolBoxes(items, tpl, '.list-wrap', src);
-      if (!hasSloganSection(src)) removeSlogan(tpl);
+      const hasSong = hasSongSection(src);
+      if (!items.length && !hasSong) return templateCode;
+      if (items.length) {
+        mapSymbolBoxes(items, tpl, '.list-wrap', src);
+        if (hasSloganSection(src)) mapSloganText(src, tpl); else removeSlogan(tpl);
+      } else {
+        tpl.querySelectorAll('.list-wrap .box:not(.song-wrap)').forEach(b => b.remove());
+        removeSlogan(tpl);
+      }
+      if (hasSong) mapSongSection(src, tpl);
       return tpl.body.innerHTML;
     },
     code: `<script>
@@ -536,24 +618,32 @@ $(function () {
     applyMapping(sourceMarkup, templateCode) {
       const { src, tpl } = parseMarkup(sourceMarkup, templateCode);
       const items = parseSymbolSource(src);
-      if (!items.length) return templateCode;
-      // tyC는 .inner > dl 구조
-      const refDl = tpl.querySelector('.box[data-title="학교 상징"] dl');
-      const dlContainer = tpl.querySelector('.box[data-title="학교 상징"] .inner');
-      if (!refDl || !dlContainer) return templateCode;
-      dlContainer.innerHTML = '';
-      items.forEach(item => {
-        const dl = refDl.cloneNode(true);
-        const img = dl.querySelector('img');
-        if (img) { img.src = item.src; img.alt = item.alt || item.title + ' 이미지'; }
-        const h5 = dl.querySelector('h5');
-        if (h5) h5.innerHTML = `<span>${item.title}</span>${item.title}`;
-        const p = dl.querySelector('p');
-        if (p) p.innerHTML = item.desc;
-        dlContainer.appendChild(dl);
-      });
-      if (!hasSloganSection(src)) removeSlogan(tpl);
-      if (!hasSongSection(src)) tpl.querySelectorAll('.box.song-wrap').forEach(el => el.remove());
+      const hasSong = hasSongSection(src);
+      if (!items.length && !hasSong) return templateCode;
+      if (items.length) {
+        // tyC는 .inner > dl 구조
+        const refDl = tpl.querySelector('.box[data-title="학교 상징"] dl');
+        const dlContainer = tpl.querySelector('.box[data-title="학교 상징"] .inner');
+        if (refDl && dlContainer) {
+          dlContainer.innerHTML = '';
+          items.forEach(item => {
+            const dl = refDl.cloneNode(true);
+            const img = dl.querySelector('img');
+            if (img) { img.src = item.src; img.alt = item.alt || item.title + ' 이미지'; }
+            const h5 = dl.querySelector('h5');
+            if (h5) h5.innerHTML = `<span>${item.title}</span>${item.title}`;
+            const p = dl.querySelector('dd p');
+            if (p) p.innerHTML = item.desc;
+            dlContainer.appendChild(dl);
+          });
+        }
+        if (hasSloganSection(src)) mapSloganText(src, tpl); else removeSlogan(tpl);
+      } else {
+        tpl.querySelectorAll('.box[data-title="학교 상징"], .box[data-title="학교 교훈"]').forEach(b => b.remove());
+        removeSlogan(tpl);
+      }
+      if (hasSong) mapSongSection(src, tpl);
+      else tpl.querySelectorAll('.box.song-wrap').forEach(el => el.remove());
       return tpl.body.innerHTML;
     },
     code: `<script>
