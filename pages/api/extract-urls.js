@@ -39,53 +39,36 @@ async function extractUrlsFromNav(pageUrl) {
   }
 
   const $ = cheerio.load(html);
-  const urls = new Set();
+  // url → { text, depth } — 더 깊이 중첩된(자식) 링크를 우선
+  const urlMap = new Map();
   const NAV_SEL = 'nav, #gnb, #lnb, .gnb, .lnb, .nav, .menu, .navigation, header ul, #menu, .top-menu, .site-map';
 
-  $(NAV_SEL).find('a[href]').each((_, a) => {
+  const addLink = (a) => {
     try {
       const href = new URL($(a).attr('href'), pageUrl).href;
       if (href.startsWith(origin) && !href.match(/\.(jpg|jpeg|png|gif|pdf|zip|hwp|docx?)(\?|$)/i)) {
-        urls.add(href);
+        // 하위 링크 텍스트를 제외한 직접 텍스트만 추출
+        const text = $(a).clone().find('a').remove().end().text().replace(/\s+/g, ' ').trim()
+          || $(a).text().replace(/\s+/g, ' ').trim();
+        if (!text) return;
+
+        const depth = $(a).parents().length;
+        const existing = urlMap.get(href);
+        // 처음 발견이거나, 더 깊은 위치(자식 메뉴)면 덮어쓰기
+        if (!existing || depth > existing.depth) {
+          urlMap.set(href, { text, depth });
+        }
       }
     } catch {}
-  });
+  };
 
-  if (urls.size < 5) {
-    $('a[href]').each((_, a) => {
-      try {
-        const href = new URL($(a).attr('href'), pageUrl).href;
-        if (href.startsWith(origin) && !href.match(/\.(jpg|jpeg|png|gif|pdf|zip|hwp|docx?)(\?|$)/i)) {
-          urls.add(href);
-        }
-      } catch {}
-    });
+  $(NAV_SEL).find('a[href]').each((_, a) => addLink(a));
+  if (urlMap.size < 5) {
+    $('a[href]').each((_, a) => addLink(a));
   }
 
-  return [...urls];
-}
-
-async function fetchTitle(url) {
-  try {
-    const res = await fetch(url, {
-      signal: AbortSignal.timeout(5000),
-      headers: { 'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36' },
-    });
-    if (!res.ok) return '';
-    const html = await res.text();
-    const $ = cheerio.load(html);
-    return $('title').first().text().trim().replace(/\s+/g, ' ') || '';
-  } catch { return ''; }
-}
-
-async function fetchTitles(urls, concurrency = 5) {
-  const results = new Array(urls.length).fill('');
-  for (let i = 0; i < urls.length; i += concurrency) {
-    const batch = urls.slice(i, i + concurrency);
-    const titles = await Promise.all(batch.map(fetchTitle));
-    titles.forEach((t, j) => { results[i + j] = t; });
-  }
-  return results;
+  // text만 꺼내서 반환
+  return new Map([...urlMap.entries()].map(([url, { text }]) => [url, text]));
 }
 
 export default async function handler(req, res) {
@@ -93,18 +76,55 @@ export default async function handler(req, res) {
   try {
     const { url } = req.body;
     const origin = new URL(url).origin;
+    const homeUrl = origin + '/';
 
-    let urls = await extractUrlsFromSitemap(origin);
-    let source = 'sitemap';
+    const [sitemapUrls, mapFromInput, mapFromHome] = await Promise.all([
+      extractUrlsFromSitemap(origin),
+      extractUrlsFromNav(url),
+      homeUrl !== url ? extractUrlsFromNav(homeUrl) : Promise.resolve(new Map()),
+    ]);
 
-    if (!urls || urls.length === 0) {
-      urls = await extractUrlsFromNav(url);
+    const navMap = new Map([...mapFromHome, ...mapFromInput]);
+
+    let urlList;
+    let source;
+    if (sitemapUrls && sitemapUrls.length > 0) {
+      urlList = sitemapUrls;
+      source = 'sitemap';
+    } else {
+      urlList = [...navMap.keys()];
       source = 'nav';
     }
 
-    const unique = [...new Set(urls)].slice(0, 200);
-    const titles = await fetchTitles(unique);
-    const items = unique.map((u, i) => ({ url: u, title: titles[i] }));
+    // 로그인·메인 제외 + 중복 제거 (쿼리 파라미터 순서 무관하게 정규화)
+    const seen = new Map();
+    for (const u of urlList) {
+      try {
+        const parsed = new URL(u);
+        const { pathname } = parsed;
+
+        // 로그인 페이지 제외
+        if (/login/i.test(pathname)) continue;
+        // 메인 페이지 제외 (루트 / 또는 /main.do)
+        if (pathname === '/' || pathname === '' || /\/main\.do$/i.test(pathname)) continue;
+        // 게시판 제외
+        if (/board/i.test(pathname)) continue;
+        // 지도 제외
+        if (/map/i.test(pathname)) continue;
+
+        // 쿼리 파라미터를 정렬해서 정규화 (순서가 달라도 같은 URL로 처리)
+        const sortedSearch = [...parsed.searchParams.entries()]
+          .sort(([a], [b]) => a.localeCompare(b))
+          .map(([k, v]) => `${k}=${v}`)
+          .join('&');
+        const key = parsed.origin + pathname + (sortedSearch ? '?' + sortedSearch : '');
+
+        if (!seen.has(key)) seen.set(key, u);
+      } catch {}
+    }
+
+    const unique = [...seen.values()].slice(0, 200);
+    const items = unique.map(u => ({ url: u, title: navMap.get(u) || '' }));
 
     res.json({ items, source, total: items.length });
   } catch (e) {

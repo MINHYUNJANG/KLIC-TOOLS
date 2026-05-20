@@ -85,9 +85,10 @@ const SKIP_KEYWORDS = new Set(['nav', 'header', 'footer', 'aside', 'gnb', 'lnb',
 const NOISE_ID_CLASS = new Set([
   'header', 'footer', 'gnb', 'lnb', 'snb', 'sidebar',
   'nav', 'navigation', 'menu', 'quick', 'banner', 'ad',
-  'location', 'breadcrumb', 'sns', 'snsbox', 'share',
+  'location', 'breadcrumb', 'crumb', 'sns', 'snsbox', 'share',
   'print', 'toolbar', 'util', 'floating', 'popup',
-  'title_bar', 'titlebar',
+  'title_bar', 'titlebar', 'tit_bar', 'titbar',
+  'sub_visual', 'page_head', 'cont_head', 'sub_head',
 ]);
 
 // ─── 헬퍼 ──────────────────────────────────────────────────────
@@ -137,6 +138,17 @@ function removeNoise($) {
     const cls = ($(el).attr('class') || '').toLowerCase();
     if ([...NOISE_ID_CLASS].some(kw => id.includes(kw) || cls.includes(kw))) {
       $(el).remove();
+    }
+  });
+}
+
+// 선택된 요소 내부에서 브레드크럼·유틸 버튼 등 제거
+function removeInnerNoise($, el) {
+  $(el).find('div, nav, ul, ol, p, span, button, a').each((_, child) => {
+    const id = ($(child).attr('id') || '').toLowerCase();
+    const cls = ($(child).attr('class') || '').toLowerCase();
+    if ([...NOISE_ID_CLASS].some(kw => id.includes(kw) || cls.includes(kw))) {
+      $(child).remove();
     }
   });
 }
@@ -386,6 +398,8 @@ export async function crawl(url, selector = '') {
       element = detected;
     }
   }
+
+  removeInnerNoise($, element);
 
   const images = [];
   $(element).find('img').each((_, img) => {

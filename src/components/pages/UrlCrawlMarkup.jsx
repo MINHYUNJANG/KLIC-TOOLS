@@ -1,14 +1,15 @@
 import { useState, useRef, useEffect } from 'react';
 import PageHowTo from '../PageHowTo';
+import { formatHtml } from '../../utils/formatHtml';
+import greeting from '../../templates/greeting';
+import history from '../../templates/history';
+import symbol from '../../templates/symbol';
+
+const ALL_TEMPLATES = [...greeting, ...history, ...symbol];
+const CATEGORY_TEMPLATES = { greeting, history, symbol };
 
 function isValidUrl(str) {
   try { new URL(str); return true; } catch { return false; }
-}
-
-function parseUrlLine(line) {
-  const tab = line.indexOf('\t');
-  if (tab !== -1) return { url: line.slice(0, tab).trim(), title: line.slice(tab + 1).trim() };
-  return { url: line.trim(), title: '' };
 }
 
 function shortLabel(url, title) {
@@ -20,17 +21,8 @@ function shortLabel(url, title) {
   } catch { return url; }
 }
 
-// ─── 단일 결과 뷰어 ──────────────────────────────────────────
-function ResultViewer({ markup, onMarkupChange }) {
-  const [tab, setTab] = useState('code');
-  const [copied, setCopied] = useState(false);
-  const iframeRef = useRef(null);
-
-  useEffect(() => {
-    if (tab === 'preview' && iframeRef.current) {
-      const doc = iframeRef.current.contentDocument;
-      doc.open();
-      doc.write(`<!DOCTYPE html>
+function buildIframeDoc(bodyContent, previewStyle = '') {
+  return `<!DOCTYPE html>
 <html lang="ko">
 <head>
   <meta charset="UTF-8">
@@ -41,6 +33,7 @@ function ResultViewer({ markup, onMarkupChange }) {
   <link rel="stylesheet" href="/con_com.css">
   <link rel="stylesheet" href="/theme.css">
   <link rel="stylesheet" href="/sub_com.css">
+  ${previewStyle ? `<style>${previewStyle}</style>` : ''}
   <script>
     window.addEventListener('error', function (event) {
       if (event.message && event.message.indexOf("reading 'classList'") > -1) {
@@ -60,13 +53,109 @@ function ResultViewer({ markup, onMarkupChange }) {
   <script src="https://cdn.jsdelivr.net/npm/gsap@3.12.5/dist/gsap.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/gsap@3.12.5/dist/ScrollTrigger.min.js"></script>
 </head>
-<body style="padding: 1.5rem 2.5rem;">
-${markup}
+<body style="padding:1.5rem 2.5rem;">
+${bodyContent}
 </body>
-</html>`);
-      doc.close();
+</html>`;
+}
+
+const INNER_NOISE_KEYWORDS = [
+  'header', 'footer', 'gnb', 'lnb', 'snb', 'sidebar',
+  'nav', 'navigation', 'menu', 'quick', 'banner', 'ad',
+  'location', 'breadcrumb', 'crumb', 'sns', 'snsbox', 'share',
+  'print', 'toolbar', 'util', 'floating', 'popup',
+  'title_bar', 'titlebar', 'tit_bar', 'titbar',
+  'sub_visual', 'page_head', 'cont_head', 'sub_head',
+];
+
+function removeInnerNoise(el) {
+  el.querySelectorAll('div, nav, ul, ol, p, span, button, a').forEach(child => {
+    const id = (child.id || '').toLowerCase();
+    const cls = (child.className || '').toLowerCase();
+    if (INNER_NOISE_KEYWORDS.some(kw => id.includes(kw) || cls.includes(kw))) {
+      child.remove();
     }
-  }, [tab, markup]);
+  });
+}
+
+function extractContent(html, selector = '', baseUrl = '') {
+  const absolutizeImages = (doc) => {
+    if (!baseUrl) return;
+    doc.querySelectorAll('img[src]').forEach(img => {
+      try { img.src = new URL(img.getAttribute('src'), baseUrl).href; } catch {}
+    });
+  };
+
+  let doc;
+  if (selector.trim()) {
+    doc = new DOMParser().parseFromString(html, 'text/html');
+    doc.querySelectorAll('script, style, noscript, iframe, svg').forEach(el => el.remove());
+    absolutizeImages(doc);
+    const matched = Array.from(doc.querySelectorAll(selector.trim()));
+    if (matched.length > 0) {
+      matched.forEach(el => {
+        removeInnerNoise(el);
+        el.querySelectorAll('*').forEach(child => {
+          ['style', 'onclick', 'onload', 'onerror'].forEach(attr => child.removeAttribute(attr));
+        });
+      });
+      return formatHtml(matched.map(el => el.outerHTML).join('\n'));
+    }
+  }
+  const match = html.match(/<!--\s*contents\s*-->([\s\S]*?)<!--[^>]*contents[^>]*-->/i);
+  const sourceHtml = match ? match[1].trim() : html;
+  doc = new DOMParser().parseFromString(sourceHtml, 'text/html');
+  doc.querySelectorAll('script, style, noscript, iframe, svg').forEach(el => el.remove());
+  absolutizeImages(doc);
+  const target = doc.querySelector('.greeting') || doc.getElementById('subContent') || doc.body;
+  removeInnerNoise(target);
+  target.querySelectorAll('*').forEach(el => {
+    ['style', 'onclick', 'onload', 'onerror'].forEach(attr => el.removeAttribute(attr));
+  });
+  return formatHtml(target.innerHTML);
+}
+
+function applyMarkupToTemplate(sourceMarkup, templateCode, templateId) {
+  const template = ALL_TEMPLATES.find(t => t.id === templateId);
+  if (template?.applyMapping) return template.applyMapping(sourceMarkup, templateCode);
+  return templateCode;
+}
+
+function resizeIframe(iframe) {
+  if (!iframe?.contentDocument?.body) return;
+  const doc = iframe.contentDocument;
+  const height = Math.max(
+    doc.body.scrollHeight,
+    doc.body.offsetHeight,
+    doc.documentElement.scrollHeight,
+    doc.documentElement.offsetHeight
+  );
+  iframe.style.height = height + 'px';
+}
+
+// ─── 결과 뷰어 ────────────────────────────────────────────────
+function ResultViewer({ markup, onMarkupChange, templateId }) {
+  const [tab, setTab] = useState(templateId ? 'preview' : 'code');
+  const [copied, setCopied] = useState(false);
+  const iframeRef = useRef(null);
+
+  useEffect(() => {
+    if (tab !== 'preview' || !iframeRef.current) return;
+    const tpl = templateId ? ALL_TEMPLATES.find(t => t.id === templateId) : null;
+    const iframe = iframeRef.current;
+    const doc = iframe.contentDocument;
+    doc.open();
+    doc.write(buildIframeDoc(markup, tpl?.previewStyle || ''));
+    doc.close();
+    if (tpl?.previewHeight) {
+      iframe.style.height = tpl.previewHeight + 'px';
+    } else {
+      iframe.onload = () => resizeIframe(iframe);
+      setTimeout(() => resizeIframe(iframe), 300);
+      setTimeout(() => resizeIframe(iframe), 1000);
+    }
+    return () => { iframe.onload = null; };
+  }, [tab, markup, templateId]);
 
   async function handleCopy() {
     await navigator.clipboard.writeText(markup);
@@ -149,59 +238,37 @@ function BatchRetryPanel({ result, onRetry }) {
 
 // ─── 메인 컴포넌트 ───────────────────────────────────────────
 export default function UrlCrawlMarkup() {
-  // 단일 모드
-  const [url, setUrl] = useState('');
-  const [selector, setSelector] = useState('');
-  const [showSelector, setShowSelector] = useState(false);
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState('');
-  const [markup, setMarkup] = useState('');
-
-  // 일괄 모드
-  const [batchMode, setBatchMode] = useState(false);
   const [batchRootUrl, setBatchRootUrl] = useState('');
   const [extracting, setExtracting] = useState(false);
   const [extractError, setExtractError] = useState('');
-  const [extractedUrls, setExtractedUrls] = useState('');
+  const [urlItems, setUrlItems] = useState([]); // { id, url, title, category, templateId, selector }
   const [batchLoading, setBatchLoading] = useState(false);
   const [batchProgress, setBatchProgress] = useState({ done: 0, total: 0 });
-  const [batchResults, setBatchResults] = useState([]); // [{url, html, error}]
+  const [batchResults, setBatchResults] = useState([]);
   const [activeResultIdx, setActiveResultIdx] = useState(0);
 
-  // ─── 단일 마크업 생성 ──────────────────────────────────────
-  async function handleGenerate(selectorOverride) {
-    const sel = selectorOverride ?? selector;
-    if (!url.trim()) { setError('URL을 입력해주세요.'); return; }
-    if (!isValidUrl(url.trim())) { setError('올바른 URL 형식이 아닙니다.'); return; }
-    setLoading(true); setError('');
-    try {
-      const res = await fetch('/api/auto-markup', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ url: url.trim(), selector: sel }),
-      });
-      let data = {};
-      try { data = await res.json(); } catch {}
-      if (!res.ok) {
-        const msg = data.detail || `서버 오류 (${res.status})`;
-        setError(msg);
-        if (msg.includes('셀렉터') || msg.includes('자동으로 감지')) setShowSelector(true);
-        return;
-      }
-      if (!data.html) { setError('마크업 결과가 비어있습니다.'); return; }
-      setMarkup(data.html); setShowSelector(false);
-    } catch (e) {
-      setError(`오류가 발생했습니다: ${e.message}`);
-    } finally {
-      setLoading(false);
-    }
+  // ─── URL 아이템 수정/삭제 ───────────────────────────────────
+  function updateItem(id, field, value) {
+    setUrlItems(prev => prev.map(item => item.id === id ? { ...item, [field]: value } : item));
+  }
+
+  function updateItemCategory(id, category) {
+    const templates = CATEGORY_TEMPLATES[category];
+    const defaultTemplateId = templates?.[0]?.id ?? null;
+    setUrlItems(prev => prev.map(item =>
+      item.id === id ? { ...item, category, templateId: defaultTemplateId, selector: '' } : item
+    ));
+  }
+
+  function removeItem(id) {
+    setUrlItems(prev => prev.filter(item => item.id !== id));
   }
 
   // ─── URL 추출 ─────────────────────────────────────────────
   async function handleExtractUrls() {
     if (!batchRootUrl.trim()) { setExtractError('URL을 입력해주세요.'); return; }
     if (!isValidUrl(batchRootUrl.trim())) { setExtractError('올바른 URL 형식이 아닙니다.'); return; }
-    setExtracting(true); setExtractError(''); setExtractedUrls('');
+    setExtracting(true); setExtractError(''); setUrlItems([]);
     try {
       const res = await fetch('/api/extract-urls', {
         method: 'POST',
@@ -211,8 +278,15 @@ export default function UrlCrawlMarkup() {
       let data = {};
       try { data = await res.json(); } catch {}
       if (!res.ok) { setExtractError(data.detail || `서버 오류 (${res.status})`); return; }
-      const infoPages = data.items.filter(({ url }) => /\/sub\/info\.do(\?|$)/.test(url));
-      setExtractedUrls(infoPages.map(({ url, title }) => title ? `${url}\t${title}` : url).join('\n'));
+      setUrlItems(data.items.map((item, i) => ({
+        id: i,
+        url: item.url,
+        title: item.title || '',
+        category: 'other',
+        templateId: null,
+        selector: '',
+        checked: true,
+      })));
     } catch (e) {
       setExtractError(`오류: ${e.message}`);
     } finally {
@@ -220,31 +294,57 @@ export default function UrlCrawlMarkup() {
     }
   }
 
+  function toggleAllChecked() {
+    const allChecked = urlItems.every(item => item.checked);
+    setUrlItems(prev => prev.map(item => ({ ...item, checked: !allChecked })));
+  }
+
   // ─── 일괄 마크업 생성 ─────────────────────────────────────
   async function handleBatchGenerate() {
-    const lines = extractedUrls.split('\n').map(parseUrlLine).filter(({ url }) => url && isValidUrl(url));
-    if (lines.length === 0) { setExtractError('유효한 URL이 없습니다.'); return; }
+    const validItems = urlItems.filter(({ url, checked }) => checked && url && isValidUrl(url));
+    if (validItems.length === 0) { setExtractError('유효한 URL이 없습니다.'); return; }
     setBatchLoading(true);
     setBatchResults([]);
-    setBatchProgress({ done: 0, total: lines.length });
+    setBatchProgress({ done: 0, total: validItems.length });
     setActiveResultIdx(0);
 
     const results = [];
-    for (let i = 0; i < lines.length; i++) {
-      const { url, title } = lines[i];
+    for (let i = 0; i < validItems.length; i++) {
+      const { url, title, category, templateId, selector: itemSelector } = validItems[i];
+      const tpl = templateId ? ALL_TEMPLATES.find(t => t.id === templateId) : null;
       try {
-        const res = await fetch('/api/auto-markup', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ url, selector: '' }),
-        });
-        let data = {};
-        try { data = await res.json(); } catch {}
-        results.push({ url, title, html: data.html || '', error: res.ok ? null : (data.detail || '실패') });
+        let html = '';
+
+        if (tpl) {
+          // 템플릿 모드: HTML 가져오기 → 콘텐츠 추출 → 템플릿 적용
+          const res = await fetch('/api/fetch-markup', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ url }),
+          });
+          let data = {};
+          try { data = await res.json(); } catch {}
+          if (!res.ok) throw new Error(data.error || '실패');
+          const extracted = extractContent(data.html, itemSelector, url);
+          html = applyMarkupToTemplate(extracted, tpl.code, tpl.id);
+        } else {
+          // 기타 모드: auto-markup
+          const res = await fetch('/api/auto-markup', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ url, selector: '' }),
+          });
+          let data = {};
+          try { data = await res.json(); } catch {}
+          if (!res.ok) throw new Error(data.detail || '실패');
+          html = data.html || '';
+        }
+
+        results.push({ url, title, category, templateId, html, error: null });
       } catch (e) {
-        results.push({ url, title, html: '', error: e.message });
+        results.push({ url, title, category, templateId, html: '', error: e.message });
       }
-      setBatchProgress({ done: i + 1, total: lines.length });
+      setBatchProgress({ done: i + 1, total: validItems.length });
       setBatchResults([...results]);
     }
     setBatchLoading(false);
@@ -258,51 +358,11 @@ export default function UrlCrawlMarkup() {
 
         <PageHowTo title="복사하고자하는 학교의 URL을 붙여넣으면 본문을 자동 크롤링해 KLIC 스타일의 마크업을 즉시 생성합니다">
           <p>
-            default는 단일 모드로 단일모드에서는 복사할 학교의 URL을 붙여넣으면 결과를 바로 확인하고 수정할 수 있습니다.<br />
-            일괄 URL을 체크하면 해당 URL의 사이트맵을 찾아 여러 URL을 한 번에 처리하며, 탭(Tab)으로 구분해서 각 페이지에 맞는 마크업을 한꺼번에 생성합니다.
+            사이트 루트 URL을 입력하면 사이트맵을 찾아 여러 URL을 한 번에 처리하며, 탭(Tab)으로 구분해서 각 페이지에 맞는 마크업을 한꺼번에 생성합니다.
           </p>
         </PageHowTo>
 
-        {/* 일괄 모드 토글 */}
-        <label className="crawl-batch-toggle">
-          <input type="checkbox" checked={batchMode} onChange={e => setBatchMode(e.target.checked)} />
-          <span>일괄 URL 입력</span>
-        </label>
-
-        {/* ─── 단일 모드 ─── */}
-        {!batchMode && (
-          <div className="crawl-form">
-            <div className="crawl-url-row">
-              <input
-                type="url" className="crawl-input"
-                placeholder="https://example.com/page"
-                value={url} onChange={e => setUrl(e.target.value)}
-                onKeyDown={e => e.key === 'Enter' && !loading && handleGenerate()}
-                disabled={loading}
-              />
-              <button className="crawl-btn" onClick={() => handleGenerate()} disabled={loading}>
-                {loading ? <span className="crawl-spinner" /> : '마크업 생성'}
-              </button>
-            </div>
-            {showSelector && (
-              <div className="crawl-selector-row">
-                <input
-                  type="text" className="crawl-input crawl-input--selector"
-                  placeholder="CSS 셀렉터 입력 (예: #content, .article-body)"
-                  value={selector} onChange={e => setSelector(e.target.value)}
-                  onKeyDown={e => e.key === 'Enter' && !loading && handleGenerate(selector)}
-                  disabled={loading} autoFocus
-                />
-                <button className="crawl-btn crawl-btn--retry" onClick={() => handleGenerate(selector)} disabled={loading}>재시도</button>
-              </div>
-            )}
-            {error && <p className="crawl-error">{error}</p>}
-          </div>
-        )}
-
-        {/* ─── 일괄 모드 ─── */}
-        {batchMode && (
-          <div className="crawl-form">
+        <div className="crawl-form">
             <div className="crawl-url-row">
               <input
                 type="url" className="crawl-input"
@@ -317,43 +377,98 @@ export default function UrlCrawlMarkup() {
             </div>
             {extractError && <p className="crawl-error">{extractError}</p>}
 
-            {extractedUrls && (
+            {urlItems.length > 0 && (
               <>
                 <div className="crawl-batch-urls-header">
+                  <label className="crawl-check-all">
+                    <input
+                      type="checkbox"
+                      checked={urlItems.every(item => item.checked)}
+                      onChange={toggleAllChecked}
+                      disabled={batchLoading}
+                    />
+                    <span>전체 선택</span>
+                  </label>
                   <span className="crawl-result-label">
-                    추출된 URL ({extractedUrls.split('\n').filter(u => u.trim()).length}개) — 편집 가능
+                    {urlItems.filter(i => i.checked).length} / {urlItems.length}개 선택
                   </span>
                 </div>
-                <textarea
-                  className="crawl-textarea crawl-textarea--urls"
-                  value={extractedUrls}
-                  onChange={e => setExtractedUrls(e.target.value)}
-                  spellCheck={false}
-                />
-                <button className="crawl-btn crawl-btn--batch" onClick={handleBatchGenerate} disabled={batchLoading}>
+                <div className="url-items-list">
+                  {urlItems.map(item => (
+                    <div key={item.id} className={`url-item-row${item.checked ? '' : ' url-item-row--unchecked'}`}>
+                      <input
+                        type="checkbox"
+                        className="url-item-check"
+                        checked={item.checked}
+                        onChange={e => updateItem(item.id, 'checked', e.target.checked)}
+                        disabled={batchLoading}
+                      />
+                      <div className="url-item-info">
+                        <span className="url-item-title">{item.title || '—'}</span>
+                        <span className="url-item-url">{item.url}</span>
+                      </div>
+                      <select
+                        className="url-item-select"
+                        value={item.category}
+                        onChange={e => updateItemCategory(item.id, e.target.value)}
+                        disabled={batchLoading}
+                      >
+                        <option value="greeting">인사말</option>
+                        <option value="symbol">상징</option>
+                        <option value="history">연혁</option>
+                        <option value="other">기타</option>
+                      </select>
+                      {item.category !== 'other' && CATEGORY_TEMPLATES[item.category] && (
+                        <>
+                          <div className="url-item-type-group">
+                            {CATEGORY_TEMPLATES[item.category].map(tpl => (
+                              <label key={tpl.id} className="url-item-type-label">
+                                <input
+                                  type="radio"
+                                  name={`type-${item.id}`}
+                                  value={tpl.id}
+                                  checked={item.templateId === tpl.id}
+                                  onChange={() => updateItem(item.id, 'templateId', tpl.id)}
+                                  disabled={batchLoading}
+                                />
+                                {tpl.label.replace(/^(인사말|연혁|상징)\s+/, '')}
+                              </label>
+                            ))}
+                          </div>
+                          <input
+                            type="text"
+                            className="crawl-input url-item-selector"
+                            placeholder="CSS 선택자 (예: #subContent)"
+                            value={item.selector}
+                            onChange={e => updateItem(item.id, 'selector', e.target.value)}
+                            disabled={batchLoading}
+                          />
+                        </>
+                      )}
+                      <button
+                        className="url-item-remove"
+                        onClick={() => removeItem(item.id)}
+                        disabled={batchLoading}
+                        title="제거"
+                      >✕</button>
+                    </div>
+                  ))}
+                </div>
+                <button
+                  className="crawl-btn crawl-btn--batch"
+                  onClick={handleBatchGenerate}
+                  disabled={batchLoading || urlItems.every(i => !i.checked)}
+                >
                   {batchLoading
                     ? <><span className="crawl-spinner" /> {batchProgress.done} / {batchProgress.total} 처리 중…</>
-                    : '마크업 생성'}
+                    : `마크업 생성 (${urlItems.filter(i => i.checked).length}개)`}
                 </button>
               </>
             )}
           </div>
-        )}
-
-        {/* ─── 단일 결과 ─── */}
-        {!batchMode && markup && (
-          <ResultViewer markup={markup} onMarkupChange={setMarkup} />
-        )}
-
-        {!batchMode && loading && (
-          <div className="crawl-loading">
-            <span className="crawl-spinner crawl-spinner--lg" />
-            <p>페이지를 크롤링하고 마크업을 생성 중입니다…</p>
-          </div>
-        )}
 
         {/* ─── 일괄 결과 탭 ─── */}
-        {batchMode && batchResults.length > 0 && (
+        {batchResults.length > 0 && (
           <div className="crawl-batch-results">
             <div className="crawl-batch-tabs">
               {batchResults.map((r, i) => (
@@ -384,6 +499,7 @@ export default function UrlCrawlMarkup() {
               ) : (
                 <ResultViewer
                   markup={batchResults[activeResultIdx].html}
+                  templateId={batchResults[activeResultIdx].templateId}
                   onMarkupChange={html => {
                     const next = [...batchResults];
                     next[activeResultIdx] = { ...next[activeResultIdx], html };

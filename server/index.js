@@ -541,32 +541,31 @@ async function extractUrlsFromNav(pageUrl) {
   }
 
   const $ = cheerio.load(html);
-  const urls = new Set();
+  // url → 메뉴명 맵 (처음 발견한 앵커 텍스트 우선)
+  const urlMap = new Map();
 
-  // 네비게이션/메뉴 영역 우선 탐색
-  const NAV_SEL = 'nav, #gnb, #lnb, .gnb, .lnb, .nav, .menu, .navigation, header ul, #menu, .top-menu, .site-map';
-  $(NAV_SEL).find('a[href]').each((_, a) => {
+  const addLink = (a) => {
     try {
       const href = new URL($(a).attr('href'), pageUrl).href;
       if (href.startsWith(origin) && !href.match(/\.(jpg|jpeg|png|gif|pdf|zip|hwp|docx?)(\?|$)/i)) {
-        urls.add(href);
+        if (!urlMap.has(href)) {
+          const text = $(a).text().replace(/\s+/g, ' ').trim();
+          urlMap.set(href, text);
+        }
       }
     } catch {}
-  });
+  };
+
+  // 네비게이션/메뉴 영역 우선 탐색
+  const NAV_SEL = 'nav, #gnb, #lnb, .gnb, .lnb, .nav, .menu, .navigation, header ul, #menu, .top-menu, .site-map';
+  $(NAV_SEL).find('a[href]').each((_, a) => addLink(a));
 
   // 네비게이션에서 충분히 못 찾으면 전체 링크에서 추가
-  if (urls.size < 5) {
-    $('a[href]').each((_, a) => {
-      try {
-        const href = new URL($(a).attr('href'), pageUrl).href;
-        if (href.startsWith(origin) && !href.match(/\.(jpg|jpeg|png|gif|pdf|zip|hwp|docx?)(\?|$)/i)) {
-          urls.add(href);
-        }
-      } catch {}
-    });
+  if (urlMap.size < 5) {
+    $('a[href]').each((_, a) => addLink(a));
   }
 
-  return [...urls];
+  return urlMap;
 }
 
 async function fetchTitle(url) {
@@ -596,18 +595,31 @@ app.post('/api/extract-urls', async (req, res) => {
   try {
     const { url } = req.body;
     const origin = new URL(url).origin;
+    const homeUrl = origin + '/';
 
-    let urls = await extractUrlsFromSitemap(origin);
-    let source = 'sitemap';
+    // 사이트맵과 nav 메뉴명 맵을 항상 병렬로 수집
+    const [sitemapUrls, mapFromInput, mapFromHome] = await Promise.all([
+      extractUrlsFromSitemap(origin),
+      extractUrlsFromNav(url),
+      homeUrl !== url ? extractUrlsFromNav(homeUrl) : Promise.resolve(new Map()),
+    ]);
 
-    if (!urls || urls.length === 0) {
-      urls = await extractUrlsFromNav(url);
+    // nav 결과 병합 (입력 URL 결과 우선)
+    const navMap = new Map([...mapFromHome, ...mapFromInput]);
+
+    let urlList;
+    let source;
+    if (sitemapUrls && sitemapUrls.length > 0) {
+      urlList = sitemapUrls;
+      source = 'sitemap';
+    } else {
+      urlList = [...navMap.keys()];
       source = 'nav';
     }
 
-    const unique = [...new Set(urls)].slice(0, 200);
-    const titles = await fetchTitles(unique);
-    const items = unique.map((u, i) => ({ url: u, title: titles[i] }));
+    const unique = [...new Set(urlList)].slice(0, 200);
+    // nav 맵에 메뉴명이 있으면 우선 사용, 없으면 빈 문자열
+    const items = unique.map(u => ({ url: u, title: navMap.get(u) || '' }));
 
     res.json({ items, source, total: items.length });
   } catch (e) {

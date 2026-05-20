@@ -172,7 +172,7 @@ export async function figmaMarkupFast(figmaUrl, templateHtml = '') {
   const systemPrompt = hasTemplate
     ? '당신은 HTML 마크업 전문가입니다. 아래 HTML 템플릿의 구조와 태그를 그대로 유지하면서, Figma 텍스트 데이터로 내용을 채워 완성된 HTML만 반환하세요. 설명·주석·코드블록 없이 HTML만 출력하세요.'
     : `당신은 HTML 마크업 전문가입니다. 제공된 텍스트를 HTML로 변환합니다.
-규칙: 타이틀 <h2 class="tit1">/<h3 class="tit2">/<h4 class="tit3">, 하위내용 <div class="indent">, 텍스트 <p>, 리스트 <ul class="list_st1">, 순서리스트 <ol class="list_ol1"> 숫자 <span class="num">, 테이블 <div class="tbl_st scroll_gr"><table>, 탭 들여쓰기. HTML만 출력.`;
+규칙: 타이틀 <h2 class="tit1">/<h3 class="tit2">/<h4 class="tit3">, 하위내용 <div class="indent">, 텍스트 <p>, 리스트 <ul class="list_st1">, 순서리스트 <ol class="list_ol1"> 숫자 <span class="num">, 테이블 <div class="tbl-st scroll_gr"><table>, 탭 들여쓰기. HTML만 출력.`;
 
   const figmaText = textLines.join('\n').slice(0, 1200);
   const tmpl = hasTemplate ? templateHtml.slice(0, 1500) : '';
@@ -346,7 +346,7 @@ export async function visionToMarkup(imageBytes, compType = '', variant = '') {
       '   <ol class="list_ol1"></ol>\n' +
       '   숫자는 <span class="num">1</span> 형식으로 작성\n\n' +
       '6. 테이블:\n' +
-      '   <div class="tbl_st scroll_gr">\n' +
+      '   <div class="tbl-st scroll_gr">\n' +
       '     <table>\n' +
       '       <caption>테이블 설명</caption>\n' +
       '       <colgroup><col>...</colgroup>\n' +

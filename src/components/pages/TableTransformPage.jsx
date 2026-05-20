@@ -66,7 +66,7 @@ function StructurePanel({ open, onToggle }) {
                             className="tbl-text"
                             value={config.wrapperClassName}
                             onChange={e => updateConfig('wrapperClassName', e.target.value)}
-                            placeholder="예: tbl_st"
+                            placeholder="예: tbl-st"
                         />
                     </div>
 

@@ -81,7 +81,7 @@ export const HWP_CHAR_MAP = {
 export const HWP_CHAR_REGEX = new RegExp(Object.keys(HWP_CHAR_MAP).join('|'), 'g');
 
 export const UL_NONE_VALUE = '__no_ul__';
-export const TABLE_CLASS_SUGGESTIONS = ['tbl_st scroll_gr', 'tbl_st scroll_wide', 'table', 'table_st', 'tbl_type01'];
+export const TABLE_CLASS_SUGGESTIONS = ['tbl-st scroll_gr', 'tbl-st scroll_wide', 'table', 'table_st', 'tbl_type01'];
 export const UL_CLASS_SUGGESTIONS = ['list_st', 'listTy0'];
 export const OL_OPTIONS = [
     { value: 'decimal-dot', label: '숫자: 1.' },

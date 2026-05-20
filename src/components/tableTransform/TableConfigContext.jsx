@@ -1,7 +1,7 @@
 import React, { createContext, useContext, useReducer, useMemo } from "react";
 
 const initialConfig = {
-    wrapperClassName: 'tbl_st',
+    wrapperClassName: 'tbl-st',
     ulClassName: 'list_st',
     olType: [],
     keepMarker: false,
