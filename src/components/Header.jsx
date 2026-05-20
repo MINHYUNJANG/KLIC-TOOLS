@@ -5,6 +5,7 @@ const navItems = [
   { label: '콘텐츠 일괄 마크업', href: '#' },
   { label: 'MCP 마크업', href: '#', dividerAfter: true },
   { label: 'KL캔버스', href: '#', dividerAfter: true },
+  { label: '테이블 변환', href: '#', dividerAfter: true },
   { label: '웹표준검사', href: '#' },
   { label: '웹접근성검사', href: '#' },
   { label: '대체텍스트 생성', href: '#' },

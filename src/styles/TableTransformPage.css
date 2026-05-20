@@ -1,0 +1,277 @@
+/* ─── 페이지 전체 ───────────────────────────────────────────── */
+.tbl-page {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  min-height: 0;
+  max-width: 100rem;
+  width: 100%;
+  margin: 0 auto;
+  border-left: 1px solid #e2e2ec;
+  border-right: 1px solid #e2e2ec;
+  background: #fff;
+  overflow: hidden;
+}
+
+/* ─── 헤더 ─────────────────────────────────────────────────── */
+.tbl-header {
+  padding: 2.5rem 1.5rem 1.5rem;
+  border-bottom: 0.0625rem solid #e8e8ee;
+  flex-shrink: 0;
+}
+
+.tbl-title {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: #1a2a4a;
+  margin: 0 0 0.5rem;
+}
+
+.tbl-desc {
+  font-size: 0.9375rem;
+  color: #666;
+  margin: 0;
+}
+
+/* ─── 레이아웃 (사이드바 + 에디터) ─────────────────────────── */
+.tbl-layout {
+  display: grid;
+  grid-template-columns: 22rem minmax(0, 1fr);
+  flex: 1;
+  min-height: 1000px;
+  overflow: hidden;
+}
+
+/* ─── 사이드바 ──────────────────────────────────────────────── */
+.tbl-sidebar {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  padding: 1rem;
+  border-right: 0.0625rem solid #e8e8ee;
+  overflow-y: auto;
+}
+
+/* canvas-panel 공통 클래스 재사용 + 테이블 전환 페이지 오버라이드 */
+.tbl-sidebar .canvas-panel {
+  border: 0.0625rem solid #e8e8ee;
+  border-radius: 0.375rem;
+}
+
+.tbl-sidebar .canvas-panel-toggle {
+  font-size: 0.9375rem;
+  padding: 0.875rem 1rem;
+  cursor: pointer;
+  font-family: inherit;
+  border-radius: 0.375rem;
+}
+
+.tbl-sidebar .canvas-panel.is-open .canvas-panel-toggle {
+  border-radius: 0.375rem 0.375rem 0 0;
+}
+
+.tbl-sidebar .canvas-panel-body {
+  padding: 1rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.625rem;
+}
+
+/* ─── 설정 패널 내부 폼 요소 ────────────────────────────────── */
+.tbl-field-label {
+  font-size: 0.8125rem;
+  color: #555;
+  min-width: 4.5rem;
+  flex-shrink: 0;
+  font-weight: 600;
+}
+
+.tbl-row {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+}
+
+.tbl-btn-group {
+  display: flex;
+  gap: 0.25rem;
+}
+
+.tbl-btn-wrap {
+  flex-wrap: wrap;
+}
+
+.tbl-tog {
+  padding: 0.3125rem 0.75rem;
+  border: 0.0625rem solid #d0d0d0;
+  border-radius: 0.25rem;
+  background: #fff;
+  font-size: 0.8125rem;
+  font-family: inherit;
+  cursor: pointer;
+  color: #555;
+  transition: all 0.15s;
+}
+.tbl-tog:hover:not(.is-active) { background: #f4f4f8; border-color: #aaa; }
+.tbl-tog.is-active {
+  background: #edf5ff;
+  border-color: #0070c8;
+  color: #0070c8;
+  font-weight: 600;
+}
+
+.tbl-num {
+  width: 4rem !important;
+  min-height: unset !important;
+  padding: 0.3125rem 0.5rem !important;
+  border: 0.0625rem solid #d0d0d0;
+  border-radius: 0.25rem;
+  font-size: 0.8125rem;
+  font-family: inherit;
+  color: #222;
+  outline: none;
+  transition: border-color 0.2s;
+}
+.tbl-num:focus { border-color: #0070c8; }
+
+.tbl-text {
+  flex: 1 !important;
+  min-height: unset !important;
+  padding: 0.3125rem 0.625rem !important;
+  border: 0.0625rem solid #d0d0d0;
+  border-radius: 0.25rem;
+  font-size: 0.8125rem;
+  font-family: inherit;
+  color: #222;
+  outline: none;
+  transition: border-color 0.2s;
+}
+.tbl-text:focus { border-color: #0070c8; }
+
+
+/* ─── 액션 버튼 (사이드바 하단) ─────────────────────────────── */
+.tbl-actions {
+  margin-top: auto;
+  padding-top: 0.25rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.625rem;
+}
+
+.tbl-action-primary,
+.tbl-action-secondary,
+.tbl-action-reset {
+  width: 100%;
+  min-height: 2.75rem;
+  border: none;
+  border-radius: 0.375rem;
+  font-size: 0.9375rem;
+  font-weight: 700;
+  font-family: inherit;
+  cursor: pointer;
+  transition: background 0.2s, border-color 0.2s, color 0.2s;
+}
+
+.tbl-action-primary {
+  background: #0070c8;
+  color: #fff;
+}
+.tbl-action-primary:hover { background: #005fa8; }
+
+.tbl-action-secondary {
+  background: #3a8fd8;
+  color: #fff;
+}
+.tbl-action-secondary:hover { background: #2e7abf; }
+.tbl-action-secondary.is-copied {
+  background: #2e7d32;
+}
+
+.tbl-action-reset {
+  background: #fff;
+  color: #444;
+  border: 0.0625rem solid #d0d0d0;
+}
+.tbl-action-reset:hover { border-color: #0070c8; color: #0070c8; }
+
+/* ─── 에디터 영역 ───────────────────────────────────────────── */
+.tbl-editor-area {
+  display: flex;
+  flex-direction: column;
+  padding: 1.25rem;
+  overflow: hidden;
+  align-self: stretch;
+}
+
+/* ─── Jodit 에디터 래퍼 ────────────────────────────────────── */
+.tbl-jodit-wrapper {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  height: 100%;
+}
+
+.tbl-jodit-wrapper .jodit-react-container {
+  flex: 1;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+}
+
+.tbl-jodit-wrapper .jodit-container {
+  flex: 1;
+  border-radius: 0.375rem;
+  font-size: 0.875rem;
+  height: 100% !important;
+}
+
+.tbl-jodit-wrapper .jodit-workplace {
+  flex: 1;
+  min-height: 0;
+}
+
+/* ─── 토스트 ─────────────────────────────────────────────────── */
+.tbl-toast {
+  position: fixed;
+  bottom: 2rem;
+  left: 50%;
+  transform: translateX(-50%);
+  background: rgba(0, 0, 0, 0.75);
+  color: #fff;
+  padding: 0.625rem 1.25rem;
+  border-radius: 1.25rem;
+  font-size: 0.8125rem;
+  pointer-events: none;
+  z-index: 999;
+  animation: tbl-fadein 0.2s ease;
+}
+
+@keyframes tbl-fadein {
+  from { opacity: 0; transform: translateX(-50%) translateY(0.5rem); }
+  to   { opacity: 1; transform: translateX(-50%) translateY(0); }
+}
+
+/* ─── 반응형 ─────────────────────────────────────────────────── */
+@media (max-width: 64rem) {
+  .tbl-layout {
+    grid-template-columns: 1fr;
+    overflow-y: auto;
+  }
+
+  .tbl-sidebar {
+    border-right: none;
+    border-bottom: 0.0625rem solid #e8e8ee;
+    overflow-y: visible;
+  }
+
+  .tbl-actions {
+    margin-top: 0;
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+  }
+
+  .tbl-editor-area {
+    min-height: 500px;
+  }
+}

@@ -13,6 +13,7 @@ import '../src/styles/WebStandardPage.css';
 import '../src/styles/CanvasEditorPage.css';
 import '../src/styles/WebAccessibilityPage.css';
 import '../src/styles/AltTextPage.css';
+import '../src/styles/TableTransformPage.css';
 
 export default function MyApp({ Component, pageProps }) {
   return <Component {...pageProps} />;

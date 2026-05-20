@@ -7,6 +7,7 @@ import CanvasEditorPage from './pages/CanvasEditorPage';
 import WebStandardPage from './pages/WebStandardPage';
 import WebAccessibilityPage from './pages/WebAccessibilityPage';
 import AltTextPage from './pages/AltTextPage';
+import TableTransformPage from './pages/TableTransformPage';
 
 export default function MainContent({ currentPage, setCurrentPage }) {
   if (currentPage === 'URL 크롤링 마크업') return <UrlCrawlMarkup />;
@@ -14,6 +15,7 @@ export default function MainContent({ currentPage, setCurrentPage }) {
   if (currentPage === '피그마 마크업') return <FigmaMarkupPage />;
   if (currentPage === 'MCP 마크업') return <FigmaMarkupV2Page />;
   if (currentPage === 'KL캔버스') return <CanvasEditorPage />;
+  if (currentPage === '테이블 변환') return <TableTransformPage />;
   if (currentPage === '웹표준검사') return <WebStandardPage />;
   if (currentPage === '웹접근성검사') return <WebAccessibilityPage />;
   if (currentPage === '대체텍스트 생성') return <AltTextPage />;

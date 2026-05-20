@@ -13,6 +13,8 @@
     "@vercel/blob": "^2.3.3",
     "cheerio": "^1.0.0-rc.12",
     "groq-sdk": "^0.7.0",
+    "jodit-react": "^5.3.21",
+    "js-beautify": "^1.15.4",
     "jszip": "^3.10.1",
     "next": "^15.3.2",
     "playwright-core": "^1.51.0",
