@@ -18,13 +18,16 @@ function applyTableProcessing(html) {
 
     table.removeAttribute('class');
 
-    // div.tbl-st 래핑: 단독 자식인 부모 div가 있으면 재활용, 없으면 새로 생성
+    // div.tbl-st 래핑 보정
     const parent = table.parentElement;
-    if (parent && parent.tagName === 'DIV' && parent.children.length === 1) {
-      parent.className = 'tbl-st';
+    const parentIsTblSt = parent && parent.tagName === 'DIV' && /\btbl-st\b/.test(parent.className || '');
+    if (parentIsTblSt) {
+      // 이미 올바른 wrapper div가 있음 — 클래스 유지 (scroll_gr 포함)
+    } else if (parent && parent.tagName === 'DIV' && parent.children.length === 1) {
+      parent.className = 'tbl-st scroll_gr';
     } else {
       const wrapper = doc.createElement('div');
-      wrapper.className = 'tbl-st';
+      wrapper.className = 'tbl-st scroll_gr';
       table.parentNode.insertBefore(wrapper, table);
       wrapper.appendChild(table);
     }
