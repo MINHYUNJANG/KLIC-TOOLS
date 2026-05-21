@@ -227,23 +227,83 @@ function BatchRetryPanel({ result, onRetry }) {
   const [retryUrl, setRetryUrl] = useState(result.url);
   const [retrySelector, setRetrySelector] = useState(result.selector || '');
   const [loading, setLoading] = useState(false);
+  const [ocrStatus, setOcrStatus] = useState('');
 
   async function handleRetry() {
     if (!retryUrl.trim()) return;
     setLoading(true);
     try {
-      const res = await fetch('/api/auto-markup', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ url: retryUrl.trim(), selector: retrySelector.trim() }),
-      });
-      let data = {};
-      try { data = await res.json(); } catch {}
-      if (!res.ok) {
-        onRetry({ url: retryUrl.trim(), selector: retrySelector.trim(), html: '', error: data.detail || '실패' });
+      let html = '';
+
+      if (result.templateId) {
+        // 템플릿 모드 재시도
+        const tpl = ALL_TEMPLATES.find(t => t.id === result.templateId);
+        if (tpl) {
+          const fetchRes = await fetch('/api/fetch-markup', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ url: retryUrl.trim() }),
+          });
+          let fetchData = {};
+          try { fetchData = await fetchRes.json(); } catch {}
+          if (!fetchRes.ok) throw new Error(fetchData.error || '실패');
+
+          const extracted = extractContent(fetchData.html, retrySelector.trim(), retryUrl.trim());
+
+          if (isImageOnlyContent(extracted)) {
+            const imgUrls = getContentImageUrls(extracted, retryUrl.trim());
+            if (imgUrls.length > 0) {
+              setOcrStatus('이미지 OCR 분석 중…');
+              try {
+                if (tpl.category === '상징') {
+                  const { ocrImageUrl, parseSymbolOcr, buildSyntheticSymbolHtml } = await import('../../utils/ocrSymbol.js');
+                  const ocrText = await ocrImageUrl(imgUrls[0]);
+                  const { items, sloganText } = parseSymbolOcr(ocrText);
+                  html = formatHtml(applyMarkupToTemplate(
+                    items.length > 0 ? buildSyntheticSymbolHtml(items, sloganText) : extracted,
+                    tpl.code, tpl.id
+                  ));
+                } else {
+                  const ocrRes = await fetch('/api/ocr-image', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ imageUrl: imgUrls[0] }),
+                  });
+                  const ocrData = await ocrRes.json();
+                  const ocrText = ocrData.text || '';
+                  if (ocrText.trim()) {
+                    const paragraphs = ocrText.split(/\n+/).map(l => l.trim()).filter(l => l.length > 3).map(l => `<p>${l}</p>`).join('\n');
+                    html = formatHtml(applyMarkupToTemplate(`<div>${paragraphs}</div>`, tpl.code, tpl.id));
+                  } else {
+                    html = formatHtml(applyMarkupToTemplate(extracted, tpl.code, tpl.id));
+                  }
+                }
+              } catch {
+                html = formatHtml(applyMarkupToTemplate(extracted, tpl.code, tpl.id));
+              } finally {
+                setOcrStatus('');
+              }
+            } else {
+              html = formatHtml(applyMarkupToTemplate(extracted, tpl.code, tpl.id));
+            }
+          } else {
+            html = formatHtml(applyMarkupToTemplate(extracted, tpl.code, tpl.id));
+          }
+        }
       } else {
-        onRetry({ url: retryUrl.trim(), selector: retrySelector.trim(), html: data.html || '', error: null });
+        // 기타 모드 재시도 (auto-markup)
+        const res = await fetch('/api/auto-markup', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ url: retryUrl.trim(), selector: retrySelector.trim() }),
+        });
+        let data = {};
+        try { data = await res.json(); } catch {}
+        if (!res.ok) throw new Error(data.detail || '실패');
+        html = data.html || '';
       }
+
+      onRetry({ url: retryUrl.trim(), selector: retrySelector.trim(), html, error: null });
     } catch (e) {
       onRetry({ url: retryUrl.trim(), selector: retrySelector.trim(), html: '', error: e.message });
     } finally {
@@ -253,7 +313,7 @@ function BatchRetryPanel({ result, onRetry }) {
 
   return (
     <div className="crawl-retry-panel">
-      <p className="crawl-error">{result.error}</p>
+      {result.error && <p className="crawl-error">{result.error}</p>}
       <div className="crawl-retry-fields">
         <input
           type="url" className="crawl-input"
@@ -264,13 +324,13 @@ function BatchRetryPanel({ result, onRetry }) {
         <input
           type="text" className="crawl-input crawl-input--selector"
           value={retrySelector} onChange={e => setRetrySelector(e.target.value)}
-          placeholder="CSS 셀렉터 입력 (예: #content, .article-body)"
+          placeholder="CSS 선택자 입력 (예: #content, .article-body)"
           onKeyDown={e => e.key === 'Enter' && !loading && handleRetry()}
           disabled={loading}
           autoFocus
         />
         <button className="crawl-btn crawl-btn--retry" onClick={handleRetry} disabled={loading}>
-          {loading ? <span className="crawl-spinner" /> : '재추출'}
+          {loading ? <><span className="crawl-spinner" />{ocrStatus || ''}</> : '재추출'}
         </button>
       </div>
     </div>
@@ -369,20 +429,44 @@ export default function UrlCrawlMarkup() {
           if (!res.ok) throw new Error(data.error || '실패');
           const extracted = extractContent(data.html, itemSelector, url);
 
-          // 이미지 전용 콘텐츠 + 상징 템플릿 → OCR 자동 시도
-          if (tpl.category === '상징' && isImageOnlyContent(extracted)) {
+          // 이미지 전용 콘텐츠 → OCR 자동 시도
+          if (isImageOnlyContent(extracted)) {
             const imgUrls = getContentImageUrls(extracted, url);
             if (imgUrls.length > 0) {
               setOcrStatus('이미지 OCR 분석 중…');
               try {
-                const { ocrImageUrl, parseSymbolOcr, buildSyntheticSymbolHtml } = await import('../../utils/ocrSymbol.js');
-                const ocrText = await ocrImageUrl(imgUrls[0]);
-                const { items, sloganText } = parseSymbolOcr(ocrText);
-                if (items.length > 0) {
-                  const syntheticHtml = buildSyntheticSymbolHtml(items, sloganText);
-                  html = formatHtml(applyMarkupToTemplate(syntheticHtml, tpl.code, tpl.id));
+                if (tpl.category === '상징') {
+                  // 상징 템플릿: 클라이언트 Tesseract OCR → 상징 파싱
+                  const { ocrImageUrl, parseSymbolOcr, buildSyntheticSymbolHtml } = await import('../../utils/ocrSymbol.js');
+                  const ocrText = await ocrImageUrl(imgUrls[0]);
+                  const { items, sloganText } = parseSymbolOcr(ocrText);
+                  if (items.length > 0) {
+                    const syntheticHtml = buildSyntheticSymbolHtml(items, sloganText);
+                    html = formatHtml(applyMarkupToTemplate(syntheticHtml, tpl.code, tpl.id));
+                  } else {
+                    html = formatHtml(applyMarkupToTemplate(extracted, tpl.code, tpl.id));
+                  }
                 } else {
-                  html = formatHtml(applyMarkupToTemplate(extracted, tpl.code, tpl.id));
+                  // 인사말 등 일반 템플릿: 서버사이드 Groq vision OCR → 단락 변환
+                  const ocrRes = await fetch('/api/ocr-image', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ imageUrl: imgUrls[0] }),
+                  });
+                  const ocrData = await ocrRes.json();
+                  const ocrText = ocrData.text || '';
+                  if (ocrText.trim()) {
+                    const paragraphs = ocrText
+                      .split(/\n+/)
+                      .map(line => line.trim())
+                      .filter(line => line.length > 3)
+                      .map(line => `<p>${line}</p>`)
+                      .join('\n');
+                    const syntheticHtml = `<div>${paragraphs}</div>`;
+                    html = formatHtml(applyMarkupToTemplate(syntheticHtml, tpl.code, tpl.id));
+                  } else {
+                    html = formatHtml(applyMarkupToTemplate(extracted, tpl.code, tpl.id));
+                  }
                 }
               } catch {
                 html = formatHtml(applyMarkupToTemplate(extracted, tpl.code, tpl.id));
@@ -487,31 +571,21 @@ export default function UrlCrawlMarkup() {
                         <option value="other">기타</option>
                       </select>
                       {item.category !== 'other' && CATEGORY_TEMPLATES[item.category] && (
-                        <>
-                          <div className="url-item-type-group">
-                            {CATEGORY_TEMPLATES[item.category].map(tpl => (
-                              <label key={tpl.id} className="url-item-type-label">
-                                <input
-                                  type="radio"
-                                  name={`type-${item.id}`}
-                                  value={tpl.id}
-                                  checked={item.templateId === tpl.id}
-                                  onChange={() => updateItem(item.id, 'templateId', tpl.id)}
-                                  disabled={batchLoading}
-                                />
-                                {tpl.label.replace(/^(인사말|연혁|상징)\s+/, '')}
-                              </label>
-                            ))}
-                          </div>
-                          <input
-                            type="text"
-                            className="crawl-input url-item-selector"
-                            placeholder="CSS 선택자 (예: #subContent)"
-                            value={item.selector}
-                            onChange={e => updateItem(item.id, 'selector', e.target.value)}
-                            disabled={batchLoading}
-                          />
-                        </>
+                        <div className="url-item-type-group">
+                          {CATEGORY_TEMPLATES[item.category].map(tpl => (
+                            <label key={tpl.id} className="url-item-type-label">
+                              <input
+                                type="radio"
+                                name={`type-${item.id}`}
+                                value={tpl.id}
+                                checked={item.templateId === tpl.id}
+                                onChange={() => updateItem(item.id, 'templateId', tpl.id)}
+                                disabled={batchLoading}
+                              />
+                              {tpl.label.replace(/^(인사말|연혁|상징)\s+/, '')}
+                            </label>
+                          ))}
+                        </div>
                       )}
                       <button
                         className="url-item-remove"
@@ -555,7 +629,7 @@ export default function UrlCrawlMarkup() {
               ))}
             </div>
             {batchResults[activeResultIdx] && (
-              batchResults[activeResultIdx].error ? (
+              (batchResults[activeResultIdx].error || !batchResults[activeResultIdx].html?.trim()) ? (
                 <BatchRetryPanel
                   result={batchResults[activeResultIdx]}
                   onRetry={updated => {

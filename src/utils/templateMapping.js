@@ -19,14 +19,43 @@ export function extractBoxLines(srcBox) {
 export function mapBodyText(src, tpl, excludePs = new Set()) {
   const tplTxt = tpl.querySelector('.txt-wrap .txt') || tpl.querySelector('.greeting .txt');
   if (!tplTxt) return;
-  const blocks = Array.from(src.querySelectorAll('p, ul'))
-    .filter(el => !excludePs.has(el) && !el.closest('.sign') && !el.closest('.box') && !el.closest('.name'))
+
+  const BLOCK_TAGS = new Set(['P', 'DIV', 'UL', 'OL', 'TABLE', 'BLOCKQUOTE',
+    'H1', 'H2', 'H3', 'H4', 'H5', 'H6', 'FIGURE', 'SECTION', 'ARTICLE']);
+
+  // 블록 자식 없는 leaf div: <p> 대신 div에 직접 텍스트가 담긴 구조 대응
+  function isLeafDiv(el) {
+    return el.tagName === 'DIV' &&
+      !Array.from(el.children).some(c => BLOCK_TAGS.has(c.tagName));
+  }
+
+  // leaf div → <p> HTML 변환 (<br> 있으면 분리)
+  function divToHtml(el) {
+    if (!el.querySelector('br')) {
+      const text = el.textContent.trim();
+      return text ? `<p>${text}</p>` : '';
+    }
+    return el.innerHTML
+      .split(/<br\s*\/?>/gi)
+      .map(seg => {
+        const text = seg.replace(/<[^>]+>/g, '').replace(/&nbsp;/g, ' ').trim();
+        return text.length > 3 ? `<p>${text}</p>` : '';
+      })
+      .filter(Boolean)
+      .join('\n');
+  }
+
+  const blocks = Array.from(src.querySelectorAll('p, ul, div'))
     .filter(el => {
+      if (el.tagName === 'DIV' && !isLeafDiv(el)) return false;
+      if (excludePs.has(el)) return false;
+      if (el.closest('.sign') || el.closest('.box') || el.closest('.name')) return false;
       const text = el.textContent.trim();
       if (/^(HOME|홈|메인)\s*[>▶›»·]/i.test(text)) return false;
       if (el.tagName === 'UL') return el.querySelectorAll('li').length > 0;
       return text.length > 5;
     });
+
   if (blocks.length > 0) {
     tplTxt.innerHTML = '\n' + blocks.map(el => {
       if (el.tagName === 'UL') {
@@ -35,6 +64,7 @@ export function mapBodyText(src, tpl, excludePs = new Set()) {
           .join('\n');
         return `<ul class="bu-st1 list">\n${lis}\n</ul>`;
       }
+      if (el.tagName === 'DIV') return divToHtml(el);
       return `<p>${el.textContent.trim()}</p>`;
     }).join('\n') + '\n';
   }

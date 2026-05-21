@@ -36,7 +36,7 @@ export default [
         : srcBox ? (srcBox.tagName === 'P' ? srcBox.innerHTML.trim() : srcBox.textContent.trim()) : '';
       const tplLeadP = tpl.querySelector('.lead-wrap .inner > p');
       if (tplLeadP && joined) tplLeadP.innerHTML = joined;
-      const boxPs = srcBox ? new Set([...(srcBox.tagName === 'P' ? [srcBox] : []), ...Array.from(srcBox.querySelectorAll('p'))]) : new Set();
+      const boxPs = srcBox ? new Set([srcBox, ...Array.from(srcBox.querySelectorAll('p, div'))]) : new Set();
       mapBodyText(src, tpl, boxPs);
       mapSign(src, tpl);
       return tpl.body.innerHTML;
@@ -85,7 +85,7 @@ export default [
         : srcBox ? (srcBox.tagName === 'P' ? srcBox.innerHTML.trim() : srcBox.textContent.trim()) : '';
       const tplLeadP = tpl.querySelector('.greeting.tyB .lead-txt > p');
       if (tplLeadP && joined) tplLeadP.innerHTML = joined;
-      const boxPs = srcBox ? new Set([...(srcBox.tagName === 'P' ? [srcBox] : []), ...Array.from(srcBox.querySelectorAll('p'))]) : new Set();
+      const boxPs = srcBox ? new Set([srcBox, ...Array.from(srcBox.querySelectorAll('p, div'))]) : new Set();
       mapBodyText(src, tpl, boxPs);
       mapSign(src, tpl);
       return tpl.body.innerHTML;
@@ -144,7 +144,7 @@ export default [
         tplGreetingC.querySelector('.img')?.remove();
         tplGreetingC.classList.remove('ty-img');
       }
-      const boxPs = srcBox ? new Set([...(srcBox.tagName === 'P' ? [srcBox] : []), ...Array.from(srcBox.querySelectorAll('p'))]) : new Set();
+      const boxPs = srcBox ? new Set([srcBox, ...Array.from(srcBox.querySelectorAll('p, div'))]) : new Set();
       mapBodyText(src, tpl, boxPs);
       mapSign(src, tpl);
       return tpl.body.innerHTML;

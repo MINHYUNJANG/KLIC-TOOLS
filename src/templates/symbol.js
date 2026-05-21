@@ -90,12 +90,9 @@ function parseSymbolSource(src) {
   );
   if (items.length) return items.map(extractSymbolItem);
 
-  // 구조 5: 키워드(교표/교기/교화/교목) heading 기반 탐지
-  const symbolHeadings = Array.from(src.querySelectorAll('h2, h3, h4, h5, dt, strong, b')).filter(h =>
-    SYMBOL_ITEM_KEYWORDS.some(kw => {
-      const t = h.textContent.trim();
-      return t === kw || t.startsWith(kw);
-    })
+  // 구조 5: 키워드(교표/교기/교화/교목) heading 기반 탐지 (th 포함, includes 매칭)
+  const symbolHeadings = Array.from(src.querySelectorAll('h2, h3, h4, h5, dt, strong, b, th')).filter(h =>
+    SYMBOL_ITEM_KEYWORDS.some(kw => h.textContent.trim().includes(kw))
   );
   if (symbolHeadings.length) {
     const blocks = symbolHeadings.map(h => {
@@ -109,10 +106,50 @@ function parseSymbolSource(src) {
       return h.parentElement;
     }).filter(Boolean);
 
-    // 다른 블록을 포함하는 상위 블록 제거 (더 작은 블록 유지)
     const deduped = blocks.filter((el, i) => !blocks.some((other, j) => j !== i && el.contains(other)));
     const result = deduped.map(extractSymbolItem).filter(item => item.src || item.title);
     if (result.length) return result;
+  }
+
+  // 구조 6: 범용 탐지 — "□ 교목" 같은 prefix 포함 짧은 텍스트 요소 + 인접 이미지
+  // p, span, div 등 임의 태그에 키워드가 있고 길이가 짧은(제목 수준) 요소를 탐지
+  const genericItems = [];
+  const usedContainers = new Set();
+
+  SYMBOL_ITEM_KEYWORDS.forEach(kw => {
+    const matchEls = Array.from(
+      src.querySelectorAll('p, span, div, td, th, b, strong, h2, h3, h4, h5, dt, li')
+    ).filter(el => {
+      const t = el.textContent.trim();
+      return t.includes(kw) && t.length < 25;
+    });
+    if (!matchEls.length) return;
+
+    for (const el of matchEls) {
+      let container = el.parentElement;
+      let depth = 0;
+      while (container && container !== src.body && depth < 8) {
+        if (container.querySelector('img') && !usedContainers.has(container)) {
+          usedContainers.add(container);
+          const item = extractSymbolItem(container);
+          item.type = kw;
+          if (!item.title) item.title = el.textContent.replace(/^[^가-힣]+/, '').trim() || kw;
+          genericItems.push(item);
+          break;
+        }
+        container = container.parentElement;
+        depth++;
+      }
+      if (genericItems.some(i => i.type === kw)) break;
+    }
+  });
+
+  if (genericItems.length >= 1) {
+    // 다른 컨테이너를 포함하는 상위 컨테이너 제거
+    const containers = Array.from(usedContainers);
+    return genericItems.filter((_, i) =>
+      !containers.some((other, j) => j !== i && containers[i]?.contains(other))
+    );
   }
 
   return [];
@@ -147,6 +184,32 @@ function extractSloganText(src) {
     if (!cell.textContent.trim().includes('교훈')) continue;
     const next = cell.nextElementSibling;
     if (next) return next.innerHTML.trim();
+  }
+  // 4순위: p/span/b/strong/div 등 짧은 "교훈" 텍스트 기반 (□ 교훈 같은 prefix 대응)
+  const OTHER_SECTION_KW = ['교표', '교기', '교화', '교목', '교가'];
+  const gyohunEl = Array.from(src.querySelectorAll('p, span, b, strong, div, li'))
+    .find(el => {
+      const t = el.textContent.trim();
+      return t.includes('교훈') && t.length < 15;
+    });
+  if (gyohunEl) {
+    const parent = gyohunEl.parentElement;
+    const siblings = parent ? Array.from(parent.children) : [];
+    const startIdx = siblings.indexOf(gyohunEl) + 1;
+    const parts = [];
+    for (let i = startIdx; i < siblings.length; i++) {
+      const sib = siblings[i];
+      const t = sib.textContent.trim();
+      // 다음 상징 섹션 레이블이 나오면 중단
+      if (t.length < 15 && OTHER_SECTION_KW.some(kw => t.includes(kw))) break;
+      if (t.length > 0 || sib.querySelector('img')) {
+        parts.push(sib.innerHTML.trim() || sib.outerHTML);
+      }
+    }
+    if (parts.length > 0) return parts.join('<br>');
+    // 형제가 없으면 부모의 다른 자식 탐색
+    const other = siblings.find(c => c !== gyohunEl && (c.textContent.trim().length > 0 || c.querySelector('img')));
+    if (other) return other.innerHTML.trim() || other.outerHTML;
   }
   return null;
 }
