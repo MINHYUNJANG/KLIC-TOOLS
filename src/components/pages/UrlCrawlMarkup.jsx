@@ -6,6 +6,79 @@ import greeting from '../../templates/greeting';
 import history from '../../templates/history';
 import symbol from '../../templates/symbol';
 
+// auto-markup 결과 HTML의 테이블 구조만 정규화
+// applyTableSemantics는 내부에서 메인 document.createElement를 쓰므로
+// DOMParser document와 컨텍스트가 달라 래핑이 깨짐 → 직접 구현
+function applyTableProcessing(html) {
+  if (!html || !html.includes('<table')) return html;
+  const doc = new DOMParser().parseFromString(html, 'text/html');
+
+  Array.from(doc.querySelectorAll('table')).forEach(table => {
+    if (table.closest('table')) return; // 중첩 테이블 제외
+
+    table.removeAttribute('class');
+
+    // div.tbl-st 래핑: 단독 자식인 부모 div가 있으면 재활용, 없으면 새로 생성
+    const parent = table.parentElement;
+    if (parent && parent.tagName === 'DIV' && parent.children.length === 1) {
+      parent.className = 'tbl-st';
+    } else {
+      const wrapper = doc.createElement('div');
+      wrapper.className = 'tbl-st';
+      table.parentNode.insertBefore(wrapper, table);
+      wrapper.appendChild(table);
+    }
+
+    // thead / tbody 분리 + 첫 행 th 변환
+    const allRows = Array.from(
+      table.querySelectorAll(':scope > tr, :scope > tbody > tr, :scope > thead > tr, :scope > tfoot > tr')
+    );
+    if (!allRows.length) return;
+
+    const thead = doc.createElement('thead');
+    const tbody = doc.createElement('tbody');
+
+    allRows.forEach((row, i) => {
+      if (i === 0) {
+        Array.from(row.cells).forEach(cell => {
+          if (cell.tagName === 'TD') {
+            const th = doc.createElement('th');
+            th.setAttribute('scope', 'col');
+            while (cell.firstChild) th.appendChild(cell.firstChild);
+            Array.from(cell.attributes).forEach(a => {
+              if (a.name !== 'scope') th.setAttribute(a.name, a.value);
+            });
+            cell.replaceWith(th);
+          } else {
+            cell.setAttribute('scope', 'col');
+          }
+        });
+        thead.appendChild(row);
+      } else {
+        tbody.appendChild(row);
+      }
+    });
+
+    // caption 자동 생성
+    const headerTexts = Array.from(thead.querySelectorAll('th'))
+      .map(th => th.textContent.trim()).filter(Boolean);
+
+    const existingCaption = table.querySelector('caption');
+    table.innerHTML = '';
+    if (existingCaption) {
+      table.appendChild(existingCaption);
+    } else if (headerTexts.length) {
+      const caption = doc.createElement('caption');
+      caption.textContent = `${headerTexts.join(', ')}의 정보를 포함한 표입니다.`;
+      table.appendChild(caption);
+    }
+    if (thead.hasChildNodes()) table.appendChild(thead);
+    table.appendChild(tbody);
+  });
+
+  return doc.body.innerHTML;
+}
+
 const ALL_TEMPLATES = [...greeting, ...history, ...symbol];
 const CATEGORY_TEMPLATES = { greeting, history, symbol };
 
@@ -300,7 +373,7 @@ function BatchRetryPanel({ result, onRetry }) {
         let data = {};
         try { data = await res.json(); } catch {}
         if (!res.ok) throw new Error(data.detail || '실패');
-        html = data.html || '';
+        html = applyTableProcessing(data.html || '');
       }
 
       onRetry({ url: retryUrl.trim(), selector: retrySelector.trim(), html, error: null });
@@ -489,7 +562,7 @@ export default function UrlCrawlMarkup() {
           let data = {};
           try { data = await res.json(); } catch {}
           if (!res.ok) throw new Error(data.detail || '실패');
-          html = data.html || '';
+          html = applyTableProcessing(data.html || '');
         }
 
         results.push({ url, title, category, templateId, html, error: null });
