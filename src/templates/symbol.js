@@ -1,57 +1,164 @@
 import { parseMarkup } from '../utils/templateMapping.js';
 
+const SYMBOL_ITEM_KEYWORDS = ['교표', '교기', '교화', '교목'];
+const SYMBOL_EN_MAP = { '교표': 'Emblem', '교기': 'Flag', '교화': 'Flower', '교목': 'Tree' };
+
+function identifySymbolType(el) {
+  const text = [
+    el.querySelector('h2, h3, h4, h5, dt, strong')?.textContent || '',
+    el.querySelector('img')?.alt || '',
+  ].join(' ');
+  return SYMBOL_ITEM_KEYWORDS.find(kw => text.includes(kw)) || null;
+}
+
+function extractSymbolItem(el) {
+  const img = el.querySelector('img');
+  const heading = el.querySelector('h2, h3, h4, h5, dt, strong');
+
+  // ul > li 구조이면 리스트, 아니면 p/dd 텍스트 (여러 p도 리스트 처리)
+  const ul = Array.from(el.querySelectorAll('ul')).find(u => !u.querySelector('img') && u.querySelectorAll('li').length > 0);
+  let desc = '';
+  let isList = false;
+  if (ul) {
+    desc = Array.from(ul.querySelectorAll('li')).map(li => `<li>${li.innerHTML.trim()}</li>`).join('\n');
+    isList = true;
+  } else {
+    const ps = Array.from(el.querySelectorAll('p, dd'))
+      .filter(p => !p.querySelector('img') && p.textContent.trim().length > 0);
+    if (ps.length > 1) {
+      desc = ps.map(p => `<li>${p.innerHTML.trim()}</li>`).join('\n');
+      isList = true;
+    } else if (ps.length === 1) {
+      desc = ps[0].innerHTML.trim();
+    }
+  }
+
+  return {
+    src: img?.getAttribute('src') || img?.src || '',
+    alt: img?.alt || '',
+    title: heading?.textContent.trim() || '',
+    desc,
+    isList,
+    type: identifySymbolType(el),
+  };
+}
+
+// desc를 list_st1 ul 또는 p로 삽입
+function setDescContent(targetEl, item) {
+  if (!targetEl) return;
+  if (item.isList) {
+    const ul = targetEl.ownerDocument.createElement('ul');
+    ul.className = 'list_st1';
+    ul.innerHTML = item.desc;
+    targetEl.replaceWith(ul);
+  } else {
+    targetEl.innerHTML = item.desc;
+  }
+}
+
 // 소스 HTML에서 상징 아이템 추출 (구조 자동 감지)
 function parseSymbolSource(src) {
-  // 구조 1: .symbol > div.symbolN (div 직계 자식 중 img 있는 것)
-  const divItems = Array.from(src.querySelectorAll('.symbol > div')).filter(el => el.querySelector('img'));
-  if (divItems.length) {
-    return divItems.map(el => ({
-      src: el.querySelector('img')?.src || '',
-      alt: el.querySelector('img')?.alt || '',
-      title: el.querySelector('h3 strong, h4 strong, h3, h4, h2')?.textContent.trim() || '',
-      desc: el.querySelector('p')?.innerHTML.trim() || '',
-    }));
+  let items;
+
+  // 구조 1: .symbol > div (img 있는 것)
+  items = Array.from(src.querySelectorAll('.symbol > div')).filter(el => el.querySelector('img'));
+  if (items.length) return items.map(extractSymbolItem);
+
+  // 구조 2: .symbol li / .symbol_list li
+  items = Array.from(src.querySelectorAll('.symbol li, .symbol_list li')).filter(el => el.querySelector('img'));
+  if (items.length) return items.map(extractSymbolItem);
+
+  // 구조 3: symbol 계열 클래스/id 컨테이너 내부 자식 탐지
+  const containerSelectors = [
+    '[class*="symbol_wrap"]', '[class*="symbol_area"]', '[class*="symbol_cont"]',
+    '[class*="symbol_info"]', '[class*="symbol_list"]',
+    '[class*="symbolWrap"]', '[class*="symbolArea"]', '[class*="symbolCont"]',
+    '#symbol', '[id*="symbol_area"]',
+  ];
+  for (const sel of containerSelectors) {
+    const container = src.querySelector(sel);
+    if (!container) continue;
+    const children = Array.from(
+      container.querySelectorAll(':scope > div, :scope > ul > li, :scope > li, :scope > dl')
+    ).filter(el => el.querySelector('img'));
+    if (children.length >= 2) return children.map(extractSymbolItem);
   }
-  // 구조 2: ul > li 폴백
-  const liItems = Array.from(src.querySelectorAll('.symbol li, .symbol_list li')).filter(el => el.querySelector('img'));
-  if (liItems.length) {
-    return liItems.map(el => ({
-      src: el.querySelector('img')?.src || '',
-      alt: el.querySelector('img')?.alt || '',
-      title: el.querySelector('h3 strong, h3, h4, dt')?.textContent.trim() || '',
-      desc: el.querySelector('p, dd')?.innerHTML.trim() || '',
-    }));
+
+  // 구조 4: dl 단위로 교표/교기/교화/교목 키워드 포함 탐지
+  items = Array.from(src.querySelectorAll('dl')).filter(el =>
+    el.querySelector('img') && SYMBOL_ITEM_KEYWORDS.some(kw => el.textContent.includes(kw))
+  );
+  if (items.length) return items.map(extractSymbolItem);
+
+  // 구조 5: 키워드(교표/교기/교화/교목) heading 기반 탐지
+  const symbolHeadings = Array.from(src.querySelectorAll('h2, h3, h4, h5, dt, strong, b')).filter(h =>
+    SYMBOL_ITEM_KEYWORDS.some(kw => {
+      const t = h.textContent.trim();
+      return t === kw || t.startsWith(kw);
+    })
+  );
+  if (symbolHeadings.length) {
+    const blocks = symbolHeadings.map(h => {
+      let el = h.parentElement;
+      let depth = 0;
+      while (el && el !== src.body && depth < 6) {
+        if (el.querySelector('img')) return el;
+        el = el.parentElement;
+        depth++;
+      }
+      return h.parentElement;
+    }).filter(Boolean);
+
+    // 다른 블록을 포함하는 상위 블록 제거 (더 작은 블록 유지)
+    const deduped = blocks.filter((el, i) => !blocks.some((other, j) => j !== i && el.contains(other)));
+    const result = deduped.map(extractSymbolItem).filter(item => item.src || item.title);
+    if (result.length) return result;
   }
+
   return [];
+}
+
+// 소스에서 교훈 텍스트를 추출 (다양한 CMS 구조 대응)
+function extractSloganText(src) {
+  // 1순위: slogan/motto/gyohun 클래스 패턴
+  const sloganEl = src.querySelector('.slogan, [class*="slogan"], [class*="motto"], [class*="gyohun"]');
+  if (sloganEl) {
+    const p = sloganEl.querySelector('p');
+    const text = (p || sloganEl).innerHTML.trim();
+    if (text) return text;
+  }
+  // 2순위: "교훈" heading 기반 탐지
+  const gyohunH = Array.from(src.querySelectorAll('h2, h3, h4, h5, dt, th'))
+    .find(el => el.textContent.trim().includes('교훈'));
+  if (gyohunH) {
+    if (gyohunH.tagName === 'DT') {
+      const dd = gyohunH.nextElementSibling;
+      if (dd?.tagName === 'DD') return dd.innerHTML.trim();
+    }
+    let next = gyohunH.nextElementSibling;
+    while (next && next.matches('h2, h3, h4, h5')) next = next.nextElementSibling;
+    if (next && !next.matches('h2, h3, h4, h5')) return next.innerHTML.trim();
+    const parentPs = Array.from(gyohunH.parentElement.querySelectorAll('p, dd'))
+      .filter(p => p.textContent.trim().length > 0 && !p.querySelector('img'));
+    if (parentPs.length) return parentPs[0].innerHTML.trim();
+  }
+  // 3순위: 표 구조 (td/th 쌍)
+  for (const cell of src.querySelectorAll('td, th')) {
+    if (!cell.textContent.trim().includes('교훈')) continue;
+    const next = cell.nextElementSibling;
+    if (next) return next.innerHTML.trim();
+  }
+  return null;
 }
 
 // 소스에 교훈 섹션이 있는지 확인
 function hasSloganSection(src) {
-  if (src.querySelector('.slogan, [class*="slogan"], [class*="motto"], [class*="gyohun"]')) return true;
-  return Array.from(src.querySelectorAll('h2, h3, h4, h5'))
-    .some(el => el.textContent.trim().includes('교훈'));
+  return extractSloganText(src) !== null;
 }
 
-// 교훈 섹션 제거 (템플릿 구조별 처리)
-function removeSlogan(tpl) {
-  // tyA list/slide, tyB2: .symbol-sticky가 슬로건만 담고 있으면 제거
-  tpl.querySelectorAll('.symbol-sticky').forEach(el => {
-    if (!el.querySelector('.year, .tab-st, [data-target], #title')) el.remove();
-  });
-  // tyB1: img 없는 .box 중 .slogan 포함 box 제거
-  Array.from(tpl.querySelectorAll('.box')).forEach(box => {
-    if (!box.querySelector('img') && box.querySelector('.slogan')) box.remove();
-  });
-  // tyC: 교훈 box만 제거 (sticky는 스크롤스파이용이므로 유지)
-  tpl.querySelectorAll('.box[data-title="학교 교훈"]').forEach(el => el.remove());
-}
-
-// 소스 교훈 텍스트를 템플릿에 매핑
+// 소스 교훈 텍스트를 템플릿에 매핑 (교훈 없으면 템플릿 기본값 유지)
 function mapSloganText(src, tpl) {
-  const srcEl = src.querySelector('.slogan, [class*="slogan"], [class*="motto"], [class*="gyohun"]');
-  const srcP = srcEl?.querySelector('p');
-  if (!srcP) return;
-  const text = srcP.innerHTML.trim();
+  const text = extractSloganText(src);
   if (!text) return;
   const target =
     tpl.querySelector('.symbol-sticky .slogan p') ||
@@ -119,13 +226,15 @@ function mapSymbolBoxes(items, tpl, containerSelector, src) {
   items.forEach(item => {
     const box = refBox.cloneNode(true);
     const img = box.querySelector('img');
-    if (img) { img.src = item.src; img.alt = item.alt || item.title + ' 이미지'; }
+    if (img) {
+      if (item.src) img.src = item.src;
+      img.alt = item.alt || item.title + ' 이미지';
+    }
     const h4 = box.querySelector('h4');
     if (h4) h4.textContent = item.title;
-    const p = box.querySelector('.inner p');
-    if (p) p.innerHTML = item.desc;
+    setDescContent(box.querySelector('.inner p'), item);
     const bgText = box.querySelector('.bg-text');
-    if (bgText) bgText.textContent = '';
+    if (bgText) bgText.textContent = SYMBOL_EN_MAP[item.type] || '';
     songWrap ? container.insertBefore(box, songWrap) : container.appendChild(box);
   });
 
@@ -145,10 +254,9 @@ export default [
       if (!items.length && !hasSong) return templateCode;
       if (items.length) {
         mapSymbolBoxes(items, tpl, '.list-wrap', src);
-        if (hasSloganSection(src)) mapSloganText(src, tpl); else removeSlogan(tpl);
+        if (hasSloganSection(src)) mapSloganText(src, tpl);
       } else {
         tpl.querySelectorAll('.list-wrap .box:not(.song-wrap)').forEach(b => b.remove());
-        removeSlogan(tpl);
       }
       if (hasSong) mapSongSection(src, tpl);
       return tpl.body.innerHTML;
@@ -267,10 +375,9 @@ $(function () {
       if (!items.length && !hasSong) return templateCode;
       if (items.length) {
         mapSymbolBoxes(items, tpl, '.h-scroll', src);
-        if (hasSloganSection(src)) mapSloganText(src, tpl); else removeSlogan(tpl);
+        if (hasSloganSection(src)) mapSloganText(src, tpl);
       } else {
         tpl.querySelectorAll('.h-scroll .box').forEach(b => b.remove());
-        removeSlogan(tpl);
       }
       // 슬라이드형은 song-wrap이 list-wrap 밖에 있음
       if (hasSong) mapSongSection(src, tpl);
@@ -417,15 +524,14 @@ $(function () {
           items.forEach(item => {
             const box = refBox.cloneNode(true);
             const img = box.querySelector('img');
-            if (img) { img.src = item.src; img.alt = item.alt || item.title + ' 이미지'; }
+            if (img) { if (item.src) img.src = item.src; img.alt = item.alt || item.title + ' 이미지'; }
             const h4 = box.querySelector('h4');
             if (h4) h4.textContent = item.title;
-            const p = box.querySelector('.text-box p');
-            if (p) p.innerHTML = item.desc;
+            setDescContent(box.querySelector('.text-box p'), item);
             songWrap ? container.insertBefore(box, songWrap) : container.appendChild(box);
           });
         }
-        if (hasSloganSection(src)) mapSloganText(src, tpl); else if (sloganBox) sloganBox.remove();
+        if (hasSloganSection(src)) mapSloganText(src, tpl);
       } else {
         container.querySelectorAll('.box:not(.song-wrap)').forEach(b => b.remove());
       }
@@ -524,10 +630,9 @@ $(function () {
       if (!items.length && !hasSong) return templateCode;
       if (items.length) {
         mapSymbolBoxes(items, tpl, '.list-wrap', src);
-        if (hasSloganSection(src)) mapSloganText(src, tpl); else removeSlogan(tpl);
+        if (hasSloganSection(src)) mapSloganText(src, tpl);
       } else {
         tpl.querySelectorAll('.list-wrap .box:not(.song-wrap)').forEach(b => b.remove());
-        removeSlogan(tpl);
       }
       if (hasSong) mapSongSection(src, tpl);
       return tpl.body.innerHTML;
@@ -629,18 +734,16 @@ $(function () {
           items.forEach(item => {
             const dl = refDl.cloneNode(true);
             const img = dl.querySelector('img');
-            if (img) { img.src = item.src; img.alt = item.alt || item.title + ' 이미지'; }
+            if (img) { if (item.src) img.src = item.src; img.alt = item.alt || item.title + ' 이미지'; }
             const h5 = dl.querySelector('h5');
             if (h5) h5.innerHTML = `<span>${item.title}</span>${item.title}`;
-            const p = dl.querySelector('dd p');
-            if (p) p.innerHTML = item.desc;
+            setDescContent(dl.querySelector('dd p'), item);
             dlContainer.appendChild(dl);
           });
         }
-        if (hasSloganSection(src)) mapSloganText(src, tpl); else removeSlogan(tpl);
+        if (hasSloganSection(src)) mapSloganText(src, tpl);
       } else {
-        tpl.querySelectorAll('.box[data-title="학교 상징"], .box[data-title="학교 교훈"]').forEach(b => b.remove());
-        removeSlogan(tpl);
+        tpl.querySelectorAll('.box[data-title="학교 상징"]').forEach(b => b.remove());
       }
       if (hasSong) mapSongSection(src, tpl);
       else tpl.querySelectorAll('.box.song-wrap').forEach(el => el.remove());

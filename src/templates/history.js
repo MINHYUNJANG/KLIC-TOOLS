@@ -1,7 +1,26 @@
 import { parseMarkup } from '../utils/templateMapping.js';
 
+// li에서 날짜 요소(strong/span/em)를 제외한 본문 텍스트 추출
+function extractLiText(li) {
+  const clone = li.cloneNode(true);
+  const dateEl = Array.from(clone.querySelectorAll(':scope > strong, :scope > span, :scope > em, :scope > b')).find(el =>
+    /^\d{1,2}[.\-\/]\d{0,2}|^\d{1,2}월/.test(el.textContent.trim())
+  );
+  if (dateEl) dateEl.remove();
+  const p = clone.querySelector('p');
+  if (p) return p.textContent.trim();
+  return clone.textContent.replace(/\s+/g, ' ').trim();
+}
+
+// li에서 날짜 부분 추출 (strong > span > em 우선, 날짜 패턴 검증)
+function extractLiDate(li) {
+  const el = li.querySelector(':scope > strong, :scope > span, :scope > em, :scope > b');
+  if (!el) return '';
+  const text = el.textContent.trim();
+  return /^\d{1,2}[.\-\/]?\d{0,2}|^\d{1,2}월/.test(text) ? text : '';
+}
+
 // .date_list ul/li 구조 파싱 → [{ year, items: [{date, text}] }]
-// 예: .history_list > li > .date > ul.date_list > li > span(날짜) + 텍스트
 function parseListSource(src) {
   const groups = new Map();
   const order = [];
@@ -24,45 +43,15 @@ function parseListSource(src) {
   return order.map(year => ({ year, items: groups.get(year) }));
 }
 
-// dl 또는 table 구조 모두 파싱 → [{ year, items: [{date, text}] }]
-function parseHistorySource(src) {
-  // dl 구조 우선 — 특정 래퍼가 있으면 거기서만, 없으면 전체 dl 폴백
-  const specific = Array.from(src.querySelectorAll('.history_wrap dl, .history_area dl'));
-  const dls = specific.length
-    ? specific
-    : Array.from(src.querySelectorAll('dl')).filter(dl => dl.querySelector('dt'));
-  if (dls.length) {
-    return dls.map(dl => ({
-      year: dl.querySelector('dt')?.textContent.match(/\d{4}/)?.[0] || '',
-      items: Array.from(dl.querySelectorAll('dd ul li, dd li')).map(li => ({
-        date: li.querySelector('strong')?.textContent.trim() || '',
-        text: li.querySelector('p')?.textContent.trim()
-          || [...li.childNodes]
-              .filter(n => n.nodeType === Node.TEXT_NODE)
-              .map(n => n.textContent.trim())
-              .filter(Boolean)
-              .join(' '),
-      })),
-    })).filter(g => g.year);
-  }
-
-  // .date_list ul/li 구조
-  if (src.querySelector('.date_list')) return parseListSource(src);
-
-  // .bbs_ListA table 구조 폴백
-  return parseTableSource(src);
-}
-
-// .bbs_ListA table tbody tr 파싱 → [{ year, items: [{date, text}] }]
-function parseTableSource(src) {
+// table 행 배열을 받아 [{ year, items }] 반환
+function parseTableRows(rows) {
   const groups = new Map();
   const order = [];
   let lastYear = '';
 
-  src.querySelectorAll('.bbs_ListA table tbody tr').forEach(row => {
+  rows.forEach(row => {
     const cells = Array.from(row.querySelectorAll('td'));
     if (!cells.length) return;
-
     const c0 = cells[0].textContent.trim();
 
     // 3컬럼 이상: 연도 | 날짜 | 내용
@@ -75,7 +64,7 @@ function parseTableSource(src) {
       if (!lastYear) return;
       const date = cells[1].textContent.trim();
       const text = cells.slice(2).map(c => c.textContent.trim()).filter(Boolean).join(' ');
-      groups.get(lastYear).push({ date, text });
+      if (text) groups.get(lastYear).push({ date, text });
       return;
     }
 
@@ -90,7 +79,6 @@ function parseTableSource(src) {
     }
 
     // 2컬럼: 날짜 | 내용
-    // 연도 단독 행 (e.g. "2024")
     if (/^\d{4}$/.test(c0)) {
       lastYear = c0;
       if (!groups.has(lastYear)) { groups.set(lastYear, []); order.push(lastYear); }
@@ -98,17 +86,98 @@ function parseTableSource(src) {
       if (text) groups.get(lastYear).push({ date: '', text });
       return;
     }
-    // 날짜에서 연도 자동 추출 (e.g. "2026.01.07" → "2026")
     const yearFromDate = c0.match(/(\d{4})/)?.[0];
     if (yearFromDate) {
       if (!groups.has(yearFromDate)) { groups.set(yearFromDate, []); order.push(yearFromDate); }
       lastYear = yearFromDate;
     }
     if (!lastYear) return;
-    groups.get(lastYear).push({ date: c0, text: cells[1].textContent.trim() });
+    const text = cells[1]?.textContent.trim();
+    if (text) groups.get(lastYear).push({ date: c0, text });
   });
 
-  return order.map(year => ({ year, items: groups.get(year) }));
+  return order.map(year => ({ year, items: groups.get(year) })).filter(g => g.items.length);
+}
+
+// dl 또는 table 구조 모두 파싱 → [{ year, items: [{date, text}] }]
+function parseHistorySource(src) {
+  // 1. dl 구조: dt에 연도, dd > ul > li에 항목
+  const specific = Array.from(src.querySelectorAll('.history_wrap dl, .history_area dl'));
+  const dls = specific.length
+    ? specific
+    : Array.from(src.querySelectorAll('dl')).filter(dl => /\d{4}/.test(dl.querySelector('dt')?.textContent || ''));
+  if (dls.length) {
+    const groups = dls.map(dl => ({
+      year: dl.querySelector('dt')?.textContent.match(/\d{4}/)?.[0] || '',
+      items: Array.from(dl.querySelectorAll('dd li')).map(li => ({
+        date: extractLiDate(li),
+        text: li.querySelector('p')?.textContent.trim() || extractLiText(li),
+      })).filter(item => item.text),
+    })).filter(g => g.year && g.items.length);
+    if (groups.length) return groups;
+  }
+
+  // 2. .date_list ul/li 구조
+  if (src.querySelector('.date_list')) return parseListSource(src);
+
+  // 3. ul > li 연도 그룹 구조 (li 직계 자식에 4자리 연도 텍스트 있는 것)
+  const yearGroupLis = Array.from(src.querySelectorAll('li')).filter(li => {
+    const yearEl = li.querySelector(':scope > strong, :scope > span, :scope > h2, :scope > h3, :scope > h4, :scope > p, :scope > b, :scope > em');
+    return yearEl && /^\d{4}[년\s.]*$/.test(yearEl.textContent.trim());
+  });
+  if (yearGroupLis.length) {
+    const groups = yearGroupLis.map(li => {
+      const yearEl = li.querySelector(':scope > strong, :scope > span, :scope > h2, :scope > h3, :scope > h4, :scope > p, :scope > b, :scope > em');
+      const year = yearEl.textContent.match(/\d{4}/)[0];
+      const items = Array.from(li.querySelectorAll('li')).map(sub => ({
+        date: extractLiDate(sub),
+        text: sub.querySelector('p')?.textContent.trim() || extractLiText(sub),
+      })).filter(item => item.text);
+      return { year, items };
+    }).filter(g => g.items.length);
+    if (groups.length) return groups;
+  }
+
+  // 4. 연도 heading + 인접 리스트 구조 (h 태그나 클래스명 기반)
+  const yearHeadings = Array.from(src.querySelectorAll('h2, h3, h4, h5, [class*="year"], [class*="tit"]')).filter(el =>
+    /^\d{4}[년\s.]*$/.test(el.textContent.trim()) && !el.closest('table')
+  );
+  if (yearHeadings.length) {
+    const groups = yearHeadings.map(heading => {
+      const year = heading.textContent.match(/\d{4}/)[0];
+      // 형제 또는 부모의 다음 형제에서 li 포함 요소 탐색
+      let sibling = heading.nextElementSibling;
+      while (sibling && !sibling.querySelector('li') && !['UL', 'OL'].includes(sibling.tagName)) {
+        sibling = sibling.nextElementSibling;
+      }
+      if (!sibling) sibling = heading.parentElement?.nextElementSibling;
+      const items = sibling ? Array.from(sibling.querySelectorAll('li')).map(li => ({
+        date: extractLiDate(li),
+        text: li.querySelector('p')?.textContent.trim() || extractLiText(li),
+      })).filter(item => item.text) : [];
+      return { year, items };
+    }).filter(g => g.items.length);
+    if (groups.length) return groups;
+  }
+
+  // 5. table 구조 (class 무관 확장)
+  return parseTableSource(src);
+}
+
+// table 구조 파싱 → [{ year, items: [{date, text}] }]
+function parseTableSource(src) {
+  // 특정 래퍼 우선, 없으면 연도 데이터 포함한 첫 번째 테이블
+  const specificTable = src.querySelector('.bbs_ListA table');
+  const anyTable = !specificTable
+    ? Array.from(src.querySelectorAll('table')).find(t =>
+        /\d{4}/.test(t.textContent) && t.querySelectorAll('td').length > 2
+      )
+    : null;
+  const table = specificTable || anyTable;
+  if (!table) return [];
+
+  const rows = Array.from(table.querySelectorAll('tbody tr, tr')).filter(r => r.querySelector('td'));
+  return parseTableRows(rows);
 }
 
 // 연도 목록을 10년 단위 섹션으로 묶음 (tyB용: "XXXX ~ YYYY" 라벨)
@@ -332,6 +401,7 @@ $(function () {
     category: '연혁',
     label: '연혁 tyB',
     desc: '스티키 연도 탭 + 스크롤 스파이 + 프로그레스바',
+    previewHeight: 700,
     applyMapping(sourceMarkup, templateCode) {
       const { src, tpl } = parseMarkup(sourceMarkup, templateCode);
       const groups = parseHistorySource(src);
@@ -621,6 +691,7 @@ $(function () {
     category: '연혁',
     label: '연혁 tyC',
     desc: '스티키 연도 탭 + 스크롤 스파이 + dl 페이드인',
+    previewHeight: 700,
     applyMapping(sourceMarkup, templateCode) {
       const { src, tpl } = parseMarkup(sourceMarkup, templateCode);
       const groups = parseHistorySource(src);

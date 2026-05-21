@@ -1,5 +1,26 @@
 import { parseMarkup, extractBoxLines, mapBodyText, mapSign } from '../utils/templateMapping.js';
 
+// 인사말 리드 텍스트 컨테이너 탐지
+// .tit 단독은 페이지 제목 heading과 혼동 위험 → <p> 자식이 있을 때만 사용
+function findLeadBox(src) {
+  const explicit =
+    src.querySelector('.box') ||
+    src.querySelector('.greeting_top .tit') ||
+    src.querySelector('.greeting_top') ||
+    src.querySelector('[class*="greeting"] .lead, [class*="greeting"] .tit_box') ||
+    src.querySelector('[class*="lead-txt"], [class*="lead_txt"], [class*="lead_text"]');
+  if (explicit) return explicit;
+
+  // .tit 은 <p> 자식이 있을 때만 리드 컨테이너로 사용
+  const tit = src.querySelector('.tit');
+  if (tit?.querySelector('p')) return tit;
+
+  // 첫 번째 <strong> 포함 짧은 p → 슬로건·리드 패턴 (길이 100자 미만)
+  const strongP = Array.from(src.querySelectorAll('p'))
+    .find(p => p.querySelector('strong') && p.textContent.trim().length < 100);
+  return strongP || null;
+}
+
 export default [
   {
     id: 'greeting-tyA',
@@ -8,7 +29,7 @@ export default [
     desc: '슬로건 리드 + 스크롤 배경텍스트형',
     applyMapping(sourceMarkup, templateCode) {
       const { src, tpl } = parseMarkup(sourceMarkup, templateCode);
-      const srcBox = src.querySelector('.box') || src.querySelector('.greeting_top .tit') || src.querySelector('.tit') || src.querySelector('.greeting_top') || null;
+      const srcBox = findLeadBox(src);
       const lines = extractBoxLines(srcBox);
       const joined = lines.length > 0
         ? lines.join('<br>')
@@ -57,7 +78,7 @@ export default [
     desc: '영문 슬로건 리드 + 텍스트형 (이미지 선택)',
     applyMapping(sourceMarkup, templateCode) {
       const { src, tpl } = parseMarkup(sourceMarkup, templateCode);
-      const srcBox = src.querySelector('.box') || src.querySelector('.greeting_top .tit') || src.querySelector('.tit') || src.querySelector('.greeting_top') || null;
+      const srcBox = findLeadBox(src);
       const lines = extractBoxLines(srcBox);
       const joined = lines.length > 0
         ? lines.join('<br>')
@@ -110,7 +131,7 @@ export default [
     desc: '장식 오브젝트 + 리드문구 + 사진형',
     applyMapping(sourceMarkup, templateCode) {
       const { src, tpl } = parseMarkup(sourceMarkup, templateCode);
-      const srcBox = src.querySelector('.box') || src.querySelector('.greeting_top .tit') || src.querySelector('.tit') || src.querySelector('.greeting_top') || null;
+      const srcBox = findLeadBox(src);
       const lines = extractBoxLines(srcBox);
       const tplLeadC = tpl.querySelector('.greeting.tyC .lead-txt');
       if (tplLeadC) {

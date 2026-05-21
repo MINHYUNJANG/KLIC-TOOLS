@@ -22,8 +22,10 @@ export function mapBodyText(src, tpl, excludePs = new Set()) {
   const blocks = Array.from(src.querySelectorAll('p, ul'))
     .filter(el => !excludePs.has(el) && !el.closest('.sign') && !el.closest('.box') && !el.closest('.name'))
     .filter(el => {
+      const text = el.textContent.trim();
+      if (/^(HOME|홈|메인)\s*[>▶›»·]/i.test(text)) return false;
       if (el.tagName === 'UL') return el.querySelectorAll('li').length > 0;
-      return el.textContent.trim().length > 5;
+      return text.length > 5;
     });
   if (blocks.length > 0) {
     tplTxt.innerHTML = '\n' + blocks.map(el => {

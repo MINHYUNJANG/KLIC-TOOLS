@@ -1,6 +1,7 @@
 import { useState, useRef, useEffect } from 'react';
 import PageHowTo from '../PageHowTo';
 import { formatHtml } from '../../utils/formatHtml';
+import { isImageOnlyContent, getContentImageUrls } from '../../utils/ocrSymbol';
 import greeting from '../../templates/greeting';
 import history from '../../templates/history';
 import symbol from '../../templates/symbol';
@@ -78,6 +79,17 @@ function removeInnerNoise(el) {
   });
 }
 
+// 텍스트 패턴 기반 breadcrumb 제거 (HOME > 학교소개 > ... 등)
+// 클래스명에 무관하게 "HOME >" 또는 "홈 >" 으로 시작하는 위치 표시 요소를 제거
+function removeBreadcrumb(el) {
+  el.querySelectorAll('div, nav, ul, ol, p').forEach(child => {
+    const text = child.textContent.replace(/\s+/g, ' ').trim();
+    if (text.length < 200 && /^(HOME|홈|메인)\s*[>▶›»·]/i.test(text)) {
+      child.remove();
+    }
+  });
+}
+
 function extractContent(html, selector = '', baseUrl = '') {
   const absolutizeImages = (doc) => {
     if (!baseUrl) return;
@@ -95,6 +107,7 @@ function extractContent(html, selector = '', baseUrl = '') {
     if (matched.length > 0) {
       matched.forEach(el => {
         removeInnerNoise(el);
+        removeBreadcrumb(el);
         el.querySelectorAll('*').forEach(child => {
           ['style', 'onclick', 'onload', 'onerror'].forEach(attr => child.removeAttribute(attr));
         });
@@ -102,17 +115,45 @@ function extractContent(html, selector = '', baseUrl = '') {
       return formatHtml(matched.map(el => el.outerHTML).join('\n'));
     }
   }
-  const match = html.match(/<!--\s*contents\s*-->([\s\S]*?)<!--[^>]*contents[^>]*-->/i);
-  const sourceHtml = match ? match[1].trim() : html;
-  doc = new DOMParser().parseFromString(sourceHtml, 'text/html');
+  // 전체 HTML에서 DOM 셀렉터로 먼저 탐색 (<!-- contents --> 커멘트가 여러 개일 때 잘못된 구간이 잡히는 문제 방지)
+  doc = new DOMParser().parseFromString(html, 'text/html');
   doc.querySelectorAll('script, style, noscript, iframe, svg').forEach(el => el.remove());
   absolutizeImages(doc);
-  const target = doc.querySelector('.greeting') || doc.getElementById('subContent') || doc.body;
-  removeInnerNoise(target);
-  target.querySelectorAll('*').forEach(el => {
+  const DOM_SELECTORS = [
+    '.greeting',
+    '#subContent',
+    '#sub_container',
+    'main',
+    '#content',
+    '#contents',
+    '.contents',
+    '#container',
+  ];
+  let target = null;
+  for (const sel of DOM_SELECTORS) {
+    const el = doc.querySelector(sel);
+    if (el) { target = el; break; }
+  }
+  if (target) {
+    removeInnerNoise(target);
+    removeBreadcrumb(target);
+    target.querySelectorAll('*').forEach(el => {
+      ['style', 'onclick', 'onload', 'onerror'].forEach(attr => el.removeAttribute(attr));
+    });
+    return formatHtml(target.innerHTML);
+  }
+  // 폴백: <!-- contents --> 커멘트 구간 추출
+  const match = html.match(/<!--\s*contents\s*-->([\s\S]*?)<!--[^>]*contents[^>]*-->/i);
+  const sourceHtml = match ? match[1].trim() : html;
+  const fallbackDoc = new DOMParser().parseFromString(sourceHtml, 'text/html');
+  fallbackDoc.querySelectorAll('script, style, noscript, iframe, svg').forEach(el => el.remove());
+  absolutizeImages(fallbackDoc);
+  removeInnerNoise(fallbackDoc.body);
+  removeBreadcrumb(fallbackDoc.body);
+  fallbackDoc.body.querySelectorAll('*').forEach(el => {
     ['style', 'onclick', 'onload', 'onerror'].forEach(attr => el.removeAttribute(attr));
   });
-  return formatHtml(target.innerHTML);
+  return formatHtml(fallbackDoc.body.innerHTML);
 }
 
 function applyMarkupToTemplate(sourceMarkup, templateCode, templateId) {
@@ -244,6 +285,7 @@ export default function UrlCrawlMarkup() {
   const [urlItems, setUrlItems] = useState([]); // { id, url, title, category, templateId, selector }
   const [batchLoading, setBatchLoading] = useState(false);
   const [batchProgress, setBatchProgress] = useState({ done: 0, total: 0 });
+  const [ocrStatus, setOcrStatus] = useState('');
   const [batchResults, setBatchResults] = useState([]);
   const [activeResultIdx, setActiveResultIdx] = useState(0);
 
@@ -326,7 +368,33 @@ export default function UrlCrawlMarkup() {
           try { data = await res.json(); } catch {}
           if (!res.ok) throw new Error(data.error || '실패');
           const extracted = extractContent(data.html, itemSelector, url);
-          html = applyMarkupToTemplate(extracted, tpl.code, tpl.id);
+
+          // 이미지 전용 콘텐츠 + 상징 템플릿 → OCR 자동 시도
+          if (tpl.category === '상징' && isImageOnlyContent(extracted)) {
+            const imgUrls = getContentImageUrls(extracted, url);
+            if (imgUrls.length > 0) {
+              setOcrStatus('이미지 OCR 분석 중…');
+              try {
+                const { ocrImageUrl, parseSymbolOcr, buildSyntheticSymbolHtml } = await import('../../utils/ocrSymbol.js');
+                const ocrText = await ocrImageUrl(imgUrls[0]);
+                const { items, sloganText } = parseSymbolOcr(ocrText);
+                if (items.length > 0) {
+                  const syntheticHtml = buildSyntheticSymbolHtml(items, sloganText);
+                  html = formatHtml(applyMarkupToTemplate(syntheticHtml, tpl.code, tpl.id));
+                } else {
+                  html = formatHtml(applyMarkupToTemplate(extracted, tpl.code, tpl.id));
+                }
+              } catch {
+                html = formatHtml(applyMarkupToTemplate(extracted, tpl.code, tpl.id));
+              } finally {
+                setOcrStatus('');
+              }
+            } else {
+              html = formatHtml(applyMarkupToTemplate(extracted, tpl.code, tpl.id));
+            }
+          } else {
+            html = formatHtml(applyMarkupToTemplate(extracted, tpl.code, tpl.id));
+          }
         } else {
           // 기타 모드: auto-markup
           const res = await fetch('/api/auto-markup', {
@@ -460,7 +528,7 @@ export default function UrlCrawlMarkup() {
                   disabled={batchLoading || urlItems.every(i => !i.checked)}
                 >
                   {batchLoading
-                    ? <><span className="crawl-spinner" /> {batchProgress.done} / {batchProgress.total} 처리 중…</>
+                    ? <><span className="crawl-spinner" /> {ocrStatus || `${batchProgress.done} / ${batchProgress.total} 처리 중…`}</>
                     : `마크업 생성 (${urlItems.filter(i => i.checked).length}개)`}
                 </button>
               </>

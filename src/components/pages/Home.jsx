@@ -4,11 +4,11 @@ const menuCards = [
     iconSrc: '/icons/dazzle/browser.svg',
     desc: 'URL을 입력하면 해당 페이지의 본문을 자동으로 크롤링하여 웹 표준에 맞는 HTML 마크업을 생성합니다. CSS 셀렉터를 직접 지정하거나 자동 감지 방식을 사용할 수 있습니다.',
   },
-  {
-    label: '콘텐츠 일괄 마크업',
-    iconSrc: '/icons/dazzle/file-contract.svg',
-    desc: 'KLIC 가이드 및 디자인 템플릿을 기반으로, 크롤링된 학교 사이트 콘텐츠가 선택한 서브콘텐츠 템플릿에 자동으로 입혀집니다. 여러 학교를 한 번에 처리해 반복 마크업 작업 시간을 대폭 줄여줍니다.',
-  },
+  // {
+  //   label: '콘텐츠 일괄 마크업',
+  //   iconSrc: '/icons/dazzle/file-contract.svg',
+  //   desc: 'KLIC 가이드 및 디자인 템플릿을 기반으로, 크롤링된 학교 사이트 콘텐츠가 선택한 서브콘텐츠 템플릿에 자동으로 입혀집니다. 여러 학교를 한 번에 처리해 반복 마크업 작업 시간을 대폭 줄여줍니다.',
+  // },
   {
     label: 'MCP 마크업',
     iconSrc: '/icons/dazzle/pen-line.svg',
@@ -21,7 +21,7 @@ const menuCards = [
   },
   {
     label: '테이블 변환',
-    iconSrc: '/icons/dazzle/gallery-thumbnails.svg',
+    iconSrc: '/icons/dazzle/table-convert.svg',
     desc: '복잡한 HTML 테이블 구조를 KLIC 웹 표준에 맞게 자동으로 변환합니다. 병합 셀, 헤더 구조, 스타일 정리 등을 일괄 처리하여 마크업 수작업을 줄여줍니다.',
   },
   {
