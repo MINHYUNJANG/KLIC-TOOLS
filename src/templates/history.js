@@ -50,7 +50,7 @@ function parseTableRows(rows) {
   let lastYear = '';
 
   rows.forEach(row => {
-    const cells = Array.from(row.querySelectorAll('td'));
+    const cells = Array.from(row.querySelectorAll('th, td'));
     if (!cells.length) return;
     const c0 = cells[0].textContent.trim();
 
