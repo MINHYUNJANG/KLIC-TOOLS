@@ -25,7 +25,7 @@ async function extractUrlsFromSitemap(origin) {
 // 한국 학교 CMS는 href="javascript:leftMenuView(N)" 처럼 javascript: 를 많이 사용
 function resolveHref(el, $, pageUrl) {
   const raw = ($(el).attr('href') || '').trim();
-  if (raw && raw !== '#' && !raw.startsWith('javascript:')) return raw;
+  if (raw && raw !== '#' && !raw.startsWith('#') && !raw.startsWith('javascript:')) return raw;
 
   const onclick = $(el).attr('onclick') || '';
   if (onclick) {

@@ -164,19 +164,56 @@ function parseHistorySource(src) {
   return parseTableSource(src);
 }
 
+// 병렬 컬럼 패턴 파싱: 날짜 셀 / 내용 셀이 각각 <br>로 구분된 2열 1행 구조
+function parseParallelColumns(dateCell, contentCell) {
+  const dates = dateCell.innerHTML.split(/<br\s*\/?>/i)
+    .map(s => s.replace(/<[^>]+>/g, '').replace(/[·•]/g, '').replace(/\s+/g, ' ').trim())
+    .filter(s => /\d{4}/.test(s));
+  if (dates.length < 2) return [];
+
+  const contents = contentCell.innerHTML.split(/<br\s*\/?>/i)
+    .map(s => s.replace(/<[^>]+>/g, '').replace(/\s+/g, ' ').trim())
+    .filter(Boolean);
+  if (!contents.length) return [];
+
+  const groups = new Map();
+  const order = [];
+  dates.forEach((dateStr, i) => {
+    const text = contents[i] || '';
+    if (!text) return;
+    const yearMatch = dateStr.match(/\d{4}/);
+    if (!yearMatch) return;
+    const year = yearMatch[0];
+    const date = dateStr.replace(/^\d{4}[.\s]*/, '').trim();
+    if (!groups.has(year)) { groups.set(year, []); order.push(year); }
+    groups.get(year).push({ date, text });
+  });
+  return order.map(year => ({ year, items: groups.get(year) })).filter(g => g.items.length);
+}
+
 // table 구조 파싱 → [{ year, items: [{date, text}] }]
 function parseTableSource(src) {
   // 특정 래퍼 우선, 없으면 연도 데이터 포함한 첫 번째 테이블
   const specificTable = src.querySelector('.bbs_ListA table');
   const anyTable = !specificTable
     ? Array.from(src.querySelectorAll('table')).find(t =>
-        /\d{4}/.test(t.textContent) && t.querySelectorAll('td').length > 2
+        /\d{4}/.test(t.textContent) && t.querySelectorAll('td').length >= 2
       )
     : null;
   const table = specificTable || anyTable;
   if (!table) return [];
 
-  const rows = Array.from(table.querySelectorAll('tbody tr, tr')).filter(r => r.querySelector('td'));
+  const rows = Array.from(table.querySelectorAll('tbody tr, thead tr, tr')).filter(r => r.querySelector('td, th'));
+
+  // 병렬 컬럼 패턴: 1행에 날짜/내용이 <br>로 나열된 구조
+  if (rows.length === 1) {
+    const cells = Array.from(rows[0].querySelectorAll('th, td'));
+    if (cells.length === 2) {
+      const result = parseParallelColumns(cells[0], cells[1]);
+      if (result.length) return result;
+    }
+  }
+
   return parseTableRows(rows);
 }
 
