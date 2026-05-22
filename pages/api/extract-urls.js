@@ -63,9 +63,9 @@ async function extractUrlsFromNav(pageUrl) {
   };
 
   $(NAV_SEL).find('a[href]').each((_, a) => addLink(a));
-  if (urlMap.size < 5) {
-    $('a[href]').each((_, a) => addLink(a));
-  }
+  // NAV_SEL에 없는 사이드메뉴(vNav, depth1 등 학교 CMS별 커스텀 클래스)도 포함하기 위해 항상 전체 스캔
+  // addLink 내부에서 urlMap으로 중복 처리하므로 이중 실행 무관
+  $('a[href]').each((_, a) => addLink(a));
 
   // text만 꺼내서 반환
   return new Map([...urlMap.entries()].map(([url, { text }]) => [url, text]));
@@ -107,10 +107,12 @@ export default async function handler(req, res) {
         if (/login/i.test(pathname)) continue;
         // 메인 페이지 제외 (루트 / 또는 /main.do)
         if (pathname === '/' || pathname === '' || /\/main\.do$/i.test(pathname)) continue;
-        // 게시판 제외
-        if (/board/i.test(pathname)) continue;
+        // 게시판·공지·갤러리 등 목록/상세 글 제외
+        if (/\/(board|bbs|notice|news|gallery|photo|album|data|file|download|upload)\b/i.test(pathname)) continue;
         // 지도 제외
         if (/map/i.test(pathname)) continue;
+        // 팝업·프린트·RSS 제외
+        if (/\/(popup|print|rss)\b/i.test(pathname)) continue;
 
         // 쿼리 파라미터를 정렬해서 정규화 (순서가 달라도 같은 URL로 처리)
         const sortedSearch = [...parsed.searchParams.entries()]

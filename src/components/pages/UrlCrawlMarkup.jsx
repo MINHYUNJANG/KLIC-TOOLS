@@ -326,33 +326,70 @@ function BatchRetryPanel({ result, onRetry }) {
 
           const extracted = extractContent(fetchData.html, retrySelector.trim(), retryUrl.trim());
 
-          if (isImageOnlyContent(extracted)) {
+          if (tpl.category === '상징') {
+            // 상징 템플릿: DOM에서 상징 아이템 파싱 가능 여부 먼저 확인
+            const { parseSymbolSource } = await import('../../templates/symbol.js');
+            const docForCheck = new DOMParser().parseFromString(extracted, 'text/html');
+            const symbolItems = parseSymbolSource(docForCheck.body);
+
+            if (symbolItems.length > 0) {
+              html = formatHtml(applyMarkupToTemplate(extracted, tpl.code, tpl.id));
+            } else {
+              const imgUrls = getContentImageUrls(extracted, retryUrl.trim());
+              if (imgUrls.length > 0) {
+                setOcrStatus('이미지 OCR 분석 중…');
+                try {
+                  const SYMBOL_PROMPT = '이 이미지는 학교 상징 페이지입니다. 교훈, 교목, 교화, 교표 각 항목의 이름만 "교훈: 내용" "교목: 은행나무" 형식으로 간략히 추출하세요. 이미지에 교가(악보) 섹션이 보이면 "교가: 있음"을 추가하세요. 없는 항목은 생략하세요.';
+                  const ocrRes = await fetch('/api/ocr-image', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ imageUrl: imgUrls[0], prompt: SYMBOL_PROMPT }),
+                  });
+                  const ocrData = await ocrRes.json();
+                  const ocrText = ocrData.text || '';
+                  const { parseSymbolOcr, buildSyntheticSymbolHtml, findSongImageFromHtml } = await import('../../utils/ocrSymbol.js');
+                  const detectedSongUrl = findSongImageFromHtml(extracted, retryUrl.trim())
+                    || (imgUrls.length >= 2 ? imgUrls[imgUrls.length - 1] : '');
+                  if (ocrText.trim()) {
+                    const { items, sloganText, hasSong } = parseSymbolOcr(ocrText);
+                    const songImgUrl = detectedSongUrl || (hasSong ? imgUrls[0] : '');
+                    if (items.length > 0) {
+                      html = formatHtml(applyMarkupToTemplate(
+                        buildSyntheticSymbolHtml(items, sloganText, songImgUrl),
+                        tpl.code, tpl.id
+                      ));
+                    } else {
+                      html = formatHtml(applyMarkupToTemplate(extracted, tpl.code, tpl.id));
+                    }
+                  } else {
+                    html = formatHtml(applyMarkupToTemplate(extracted, tpl.code, tpl.id));
+                  }
+                } catch {
+                  html = formatHtml(applyMarkupToTemplate(extracted, tpl.code, tpl.id));
+                } finally {
+                  setOcrStatus('');
+                }
+              } else {
+                html = formatHtml(applyMarkupToTemplate(extracted, tpl.code, tpl.id));
+              }
+            }
+          } else if (isImageOnlyContent(extracted)) {
             const imgUrls = getContentImageUrls(extracted, retryUrl.trim());
             if (imgUrls.length > 0) {
               setOcrStatus('이미지 OCR 분석 중…');
               try {
-                if (tpl.category === '상징') {
-                  const { ocrImageUrl, parseSymbolOcr, buildSyntheticSymbolHtml } = await import('../../utils/ocrSymbol.js');
-                  const ocrText = await ocrImageUrl(imgUrls[0]);
-                  const { items, sloganText } = parseSymbolOcr(ocrText);
-                  html = formatHtml(applyMarkupToTemplate(
-                    items.length > 0 ? buildSyntheticSymbolHtml(items, sloganText) : extracted,
-                    tpl.code, tpl.id
-                  ));
+                const ocrRes = await fetch('/api/ocr-image', {
+                  method: 'POST',
+                  headers: { 'Content-Type': 'application/json' },
+                  body: JSON.stringify({ imageUrl: imgUrls[0] }),
+                });
+                const ocrData = await ocrRes.json();
+                const ocrText = ocrData.text || '';
+                if (ocrText.trim()) {
+                  const paragraphs = ocrText.split(/\n+/).map(l => l.trim()).filter(l => l.length > 3).map(l => `<p>${l}</p>`).join('\n');
+                  html = formatHtml(applyMarkupToTemplate(`<div>${paragraphs}</div>`, tpl.code, tpl.id));
                 } else {
-                  const ocrRes = await fetch('/api/ocr-image', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ imageUrl: imgUrls[0] }),
-                  });
-                  const ocrData = await ocrRes.json();
-                  const ocrText = ocrData.text || '';
-                  if (ocrText.trim()) {
-                    const paragraphs = ocrText.split(/\n+/).map(l => l.trim()).filter(l => l.length > 3).map(l => `<p>${l}</p>`).join('\n');
-                    html = formatHtml(applyMarkupToTemplate(`<div>${paragraphs}</div>`, tpl.code, tpl.id));
-                  } else {
-                    html = formatHtml(applyMarkupToTemplate(extracted, tpl.code, tpl.id));
-                  }
+                  html = formatHtml(applyMarkupToTemplate(extracted, tpl.code, tpl.id));
                 }
               } catch {
                 html = formatHtml(applyMarkupToTemplate(extracted, tpl.code, tpl.id));
@@ -505,44 +542,78 @@ export default function UrlCrawlMarkup() {
           if (!res.ok) throw new Error(data.error || '실패');
           const extracted = extractContent(data.html, itemSelector, url);
 
-          // 이미지 전용 콘텐츠 → OCR 자동 시도
-          if (isImageOnlyContent(extracted)) {
+          if (tpl.category === '상징') {
+            // 상징 템플릿: DOM에서 상징 아이템 파싱 가능 여부 먼저 확인
+            const { parseSymbolSource } = await import('../../templates/symbol.js');
+            const docForCheck = new DOMParser().parseFromString(extracted, 'text/html');
+            const symbolItems = parseSymbolSource(docForCheck.body);
+
+            if (symbolItems.length > 0) {
+              // DOM에 파싱 가능한 아이템 있음 → 일반 매핑
+              html = formatHtml(applyMarkupToTemplate(extracted, tpl.code, tpl.id));
+            } else {
+              // 아이템 없음 → 서버사이드 Groq Vision OCR 시도
+              const imgUrls = getContentImageUrls(extracted, url);
+              if (imgUrls.length > 0) {
+                setOcrStatus('이미지 OCR 분석 중…');
+                try {
+                  const SYMBOL_PROMPT = '이 이미지는 학교 상징 페이지입니다. 교훈, 교목, 교화, 교표 각 항목의 이름만 "교훈: 내용" "교목: 은행나무" 형식으로 간략히 추출하세요. 이미지에 교가(악보) 섹션이 보이면 "교가: 있음"을 추가하세요. 없는 항목은 생략하세요.';
+                  const ocrRes = await fetch('/api/ocr-image', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ imageUrl: imgUrls[0], prompt: SYMBOL_PROMPT }),
+                  });
+                  const ocrData = await ocrRes.json();
+                  const ocrText = ocrData.text || '';
+                  const { parseSymbolOcr, buildSyntheticSymbolHtml, findSongImageFromHtml } = await import('../../utils/ocrSymbol.js');
+                  const detectedSongUrl = findSongImageFromHtml(extracted, url)
+                    || (imgUrls.length >= 2 ? imgUrls[imgUrls.length - 1] : '');
+                  if (ocrText.trim()) {
+                    const { items, sloganText, hasSong } = parseSymbolOcr(ocrText);
+                    const songImgUrl = detectedSongUrl || (hasSong ? imgUrls[0] : '');
+                    if (items.length > 0) {
+                      html = formatHtml(applyMarkupToTemplate(
+                        buildSyntheticSymbolHtml(items, sloganText, songImgUrl),
+                        tpl.code, tpl.id
+                      ));
+                    } else {
+                      html = formatHtml(applyMarkupToTemplate(extracted, tpl.code, tpl.id));
+                    }
+                  } else {
+                    html = formatHtml(applyMarkupToTemplate(extracted, tpl.code, tpl.id));
+                  }
+                } catch {
+                  html = formatHtml(applyMarkupToTemplate(extracted, tpl.code, tpl.id));
+                } finally {
+                  setOcrStatus('');
+                }
+              } else {
+                html = formatHtml(applyMarkupToTemplate(extracted, tpl.code, tpl.id));
+              }
+            }
+          } else if (isImageOnlyContent(extracted)) {
+            // 인사말 등 일반 템플릿: 이미지 전용 콘텐츠 → Groq Vision OCR
             const imgUrls = getContentImageUrls(extracted, url);
             if (imgUrls.length > 0) {
               setOcrStatus('이미지 OCR 분석 중…');
               try {
-                if (tpl.category === '상징') {
-                  // 상징 템플릿: 클라이언트 Tesseract OCR → 상징 파싱
-                  const { ocrImageUrl, parseSymbolOcr, buildSyntheticSymbolHtml } = await import('../../utils/ocrSymbol.js');
-                  const ocrText = await ocrImageUrl(imgUrls[0]);
-                  const { items, sloganText } = parseSymbolOcr(ocrText);
-                  if (items.length > 0) {
-                    const syntheticHtml = buildSyntheticSymbolHtml(items, sloganText);
-                    html = formatHtml(applyMarkupToTemplate(syntheticHtml, tpl.code, tpl.id));
-                  } else {
-                    html = formatHtml(applyMarkupToTemplate(extracted, tpl.code, tpl.id));
-                  }
+                const ocrRes = await fetch('/api/ocr-image', {
+                  method: 'POST',
+                  headers: { 'Content-Type': 'application/json' },
+                  body: JSON.stringify({ imageUrl: imgUrls[0] }),
+                });
+                const ocrData = await ocrRes.json();
+                const ocrText = ocrData.text || '';
+                if (ocrText.trim()) {
+                  const paragraphs = ocrText
+                    .split(/\n+/)
+                    .map(line => line.trim())
+                    .filter(line => line.length > 3)
+                    .map(line => `<p>${line}</p>`)
+                    .join('\n');
+                  html = formatHtml(applyMarkupToTemplate(`<div>${paragraphs}</div>`, tpl.code, tpl.id));
                 } else {
-                  // 인사말 등 일반 템플릿: 서버사이드 Groq vision OCR → 단락 변환
-                  const ocrRes = await fetch('/api/ocr-image', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ imageUrl: imgUrls[0] }),
-                  });
-                  const ocrData = await ocrRes.json();
-                  const ocrText = ocrData.text || '';
-                  if (ocrText.trim()) {
-                    const paragraphs = ocrText
-                      .split(/\n+/)
-                      .map(line => line.trim())
-                      .filter(line => line.length > 3)
-                      .map(line => `<p>${line}</p>`)
-                      .join('\n');
-                    const syntheticHtml = `<div>${paragraphs}</div>`;
-                    html = formatHtml(applyMarkupToTemplate(syntheticHtml, tpl.code, tpl.id));
-                  } else {
-                    html = formatHtml(applyMarkupToTemplate(extracted, tpl.code, tpl.id));
-                  }
+                  html = formatHtml(applyMarkupToTemplate(extracted, tpl.code, tpl.id));
                 }
               } catch {
                 html = formatHtml(applyMarkupToTemplate(extracted, tpl.code, tpl.id));

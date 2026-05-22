@@ -57,7 +57,7 @@ function setDescContent(targetEl, item) {
 }
 
 // 소스 HTML에서 상징 아이템 추출 (구조 자동 감지)
-function parseSymbolSource(src) {
+export function parseSymbolSource(src) {
   let items;
 
   // 구조 1: .symbol > div (img 있는 것)
@@ -234,10 +234,17 @@ function mapSloganText(src, tpl) {
 // 소스에 교가 섹션이 있는지 확인
 function hasSongSection(src) {
   const byClass = src.querySelector('.song, .song-wrap, [class*="song"]');
-  const byHeading = Array.from(src.querySelectorAll('h2, h3, h4, h5'))
+  if (byClass) return true;
+  const byHeading = Array.from(src.querySelectorAll('h2, h3, h4, h5, dt, strong, b, th'))
     .find(el => el.textContent.trim().includes('교가'));
-  console.log('[hasSongSection] byClass:', byClass?.className, '| byHeading:', byHeading?.textContent);
-  return !!(byClass || byHeading);
+  if (byHeading) return true;
+  // p/span/li/td 등 비헤딩 레이블 — 짧은 텍스트에 "교가" 포함
+  const byLabel = Array.from(src.querySelectorAll('p, span, li, td'))
+    .find(el => {
+      const t = el.textContent.trim();
+      return t.includes('교가') && t.length <= 10;
+    });
+  return !!byLabel;
 }
 
 // 소스 교가 이미지·제목을 템플릿에 매핑
@@ -248,8 +255,11 @@ function mapSongSection(src, tpl) {
 
   // 2순위: "교가" 텍스트 제목 근처에서 img 포함 조상 탐색
   if (!songEl) {
-    const heading = Array.from(src.querySelectorAll('h2, h3, h4, h5'))
-      .find(el => el.textContent.trim().includes('교가'));
+    const heading = Array.from(src.querySelectorAll('h2, h3, h4, h5, dt, strong, b, th, p, span, li'))
+      .find(el => {
+        const t = el.textContent.trim();
+        return t.includes('교가') && t.length <= 15;
+      });
     if (heading) {
       let el = heading.parentElement;
       while (el && el.tagName !== 'BODY') {

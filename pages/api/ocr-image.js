@@ -29,7 +29,7 @@ function isSafeUrl(url) {
 
 export default async function handler(req, res) {
   if (req.method !== 'POST') return res.status(405).json({ error: 'Method not allowed' });
-  const { imageUrl } = req.body;
+  const { imageUrl, prompt: customPrompt } = req.body;
   if (!imageUrl) return res.status(400).json({ error: 'imageUrl이 필요합니다.' });
   if (!isSafeUrl(imageUrl)) return res.status(400).json({ error: '허용되지 않는 URL입니다.' });
 
@@ -50,7 +50,7 @@ export default async function handler(req, res) {
         role: 'user',
         content: [
           { type: 'image_url', image_url: { url: `data:${mediaType};base64,${imageData}` } },
-          { type: 'text', text: '이 이미지에 텍스트가 있으면 모두 추출해주세요. 텍스트만 반환하고 설명은 생략하세요. 텍스트가 없으면 빈 문자열을 반환하세요.' },
+          { type: 'text', text: customPrompt || '이 이미지에 텍스트가 있으면 모두 추출해주세요. 텍스트만 반환하고 설명은 생략하세요. 텍스트가 없으면 빈 문자열을 반환하세요.' },
         ],
       }],
     });
