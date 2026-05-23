@@ -1,11 +1,19 @@
 import { useState } from 'react';
 
 const navItems = [
-  { label: 'URL 크롤링 마크업', href: '#' },
+  { label: '크롤링 마크업', href: '#' },
   // { label: '콘텐츠 일괄 마크업', href: '#' },
   { label: 'MCP 마크업', href: '#', dividerAfter: true },
-  { label: 'KL캔버스', href: '#', dividerAfter: true },
   { label: '테이블 변환', href: '#', dividerAfter: true },
+  {
+    label: 'KL콘텐츠빌더',
+    href: '#',
+    dividerAfter: true,
+    children: [
+      { label: '교육목표 빌더', href: 'https://grid-builder-smoky.vercel.app/', external: true },
+      { label: '조직도 빌더', disabled: true },
+    ],
+  },
   { label: '웹표준검사', href: '#' },
   { label: '웹접근성검사', href: '#' },
   { label: '대체텍스트 생성', href: '#' },
@@ -15,9 +23,17 @@ export default function Header({ currentPage, setCurrentPage }) {
   const [menuOpen, setMenuOpen] = useState(false);
   const [hoveredItem, setHoveredItem] = useState(null);
 
-  function handleNavClick(e, label) {
+  function handleNavClick(e, item) {
+    if (item.children) {
+      e.preventDefault();
+      return;
+    }
+    if (item.external) {
+      setMenuOpen(false);
+      return;
+    }
     e.preventDefault();
-    setCurrentPage(label);
+    setCurrentPage(item.label);
     setMenuOpen(false);
   }
 
@@ -37,9 +53,39 @@ export default function Header({ currentPage, setCurrentPage }) {
                 onMouseEnter={() => setHoveredItem(item.label)}
                 onMouseLeave={() => setHoveredItem(null)}
               >
-                <a href={item.href} className="nav-link" onClick={e => handleNavClick(e, item.label)}>
+                <a
+                  href={item.href}
+                  className="nav-link"
+                  target={item.external ? '_blank' : undefined}
+                  rel={item.external ? 'noreferrer' : undefined}
+                  aria-haspopup={item.children ? 'true' : undefined}
+                  onClick={e => handleNavClick(e, item)}
+                >
                   {item.label}
                 </a>
+                {item.children && (
+                  <ul className="nav-submenu" aria-label={`${item.label} 하위 메뉴`}>
+                    {item.children.map((child) => (
+                      <li key={child.label}>
+                        {child.disabled ? (
+                          <span className="nav-submenu-link is-disabled" aria-disabled="true">
+                            {child.label}
+                          </span>
+                        ) : (
+                          <a
+                            href={child.href}
+                            className="nav-submenu-link"
+                            target={child.external ? '_blank' : undefined}
+                            rel={child.external ? 'noreferrer' : undefined}
+                            onClick={() => setMenuOpen(false)}
+                          >
+                            {child.label}
+                          </a>
+                        )}
+                      </li>
+                    ))}
+                  </ul>
+                )}
               </li>
             ))}
           </ul>

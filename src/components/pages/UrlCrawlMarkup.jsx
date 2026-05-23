@@ -652,7 +652,7 @@ export default function UrlCrawlMarkup() {
   return (
     <div className="crawl-page">
       <div className="crawl-page-inner">
-        <h2 className="crawl-title">URL 크롤링 마크업</h2>
+        <h2 className="crawl-title">크롤링 마크업</h2>
         <p className="crawl-desc">URL을 입력하면 본문을 자동으로 크롤링하여 마크업을 생성합니다.</p>
 
         <PageHowTo title="복사하고자하는 학교의 URL을 붙여넣으면 본문을 자동 크롤링해 KLIC 스타일의 마크업을 즉시 생성합니다">

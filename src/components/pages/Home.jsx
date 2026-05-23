@@ -1,6 +1,6 @@
 const menuCards = [
   {
-    label: 'URL 크롤링 마크업',
+    label: '크롤링 마크업',
     iconSrc: '/icons/dazzle/browser.svg',
     desc: 'URL을 입력하면 해당 페이지의 본문을 자동으로 크롤링하여 웹 표준에 맞는 HTML 마크업을 생성합니다. CSS 셀렉터를 직접 지정하거나 자동 감지 방식을 사용할 수 있습니다.',
   },
@@ -13,11 +13,6 @@ const menuCards = [
     label: 'MCP 마크업',
     iconSrc: '/icons/dazzle/pen-line.svg',
     desc: 'Claude 채팅에서 MCP로 추출한 HTML/CSS를 붙여넣어 미리보기·다운로드합니다. Figma API 토큰 없이 MCP 분석 결과를 바로 활용할 수 있습니다.',
-  },
-  {
-    label: 'KL캔버스',
-    iconSrc: '/icons/dazzle/gallery-thumbnails.svg',
-    desc: '교사와 교직원이 팝업, 비주얼, 가정통신문, 공지 등에 필요한 이미지와 마크업을 손쉽게 만들 수 있도록 돕는 제작 도구입니다.',
   },
   {
     label: '테이블 변환',
