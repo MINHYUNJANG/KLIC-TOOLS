@@ -1,6 +1,6 @@
 import { crawl } from '../../lib/crawler.js';
 
-const TIMEOUT_MS = 60000;
+const TIMEOUT_MS = 120000;
 
 function withTimeout(promise) {
   return Promise.race([
