@@ -504,6 +504,46 @@
 }
 .url-item-remove:disabled { opacity: 0.4; cursor: not-allowed; }
 
+/* URL 추가 — 헤더 오른쪽 묶음 */
+.crawl-batch-urls-header-right {
+  display: flex;
+  align-items: center;
+  gap: 0.625rem;
+}
+
+/* URL 추가 토글 버튼 (헤더 안) — crawl-btn 베이스에서 크기만 축소 */
+.crawl-btn--add-url {
+  padding: 0.4rem 0.875rem;
+  font-size: 0.875rem;
+}
+
+/* URL 직접 추가 버튼 (추출 결과 없을 때) — crawl-btn 베이스 그대로, 폭만 제한 */
+.crawl-btn--add-url-standalone {
+  align-self: flex-start;
+}
+
+/* URL 직접 입력 폼 — crawl-input 토큰과 동일한 언어 */
+.url-add-form {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+.url-add-input {
+  flex: 1;
+  border: 0.0625rem solid #d0d0d0;
+  border-radius: 0.375rem;
+  padding: 0.75rem 1rem;
+  font-size: 0.9375rem;
+  font-family: inherit;
+  color: #222;
+  outline: none;
+  transition: border-color 0.2s;
+  min-width: 0;
+}
+.url-add-input:focus { border-color: #0070c8; }
+.url-add-input:disabled { background: #f5f5f5; color: #aaa; }
+.url-add-input--title { flex: 0 0 13rem; }
+
 /* 배치 재시도 패널 */
 .crawl-retry-panel {
   display: flex;

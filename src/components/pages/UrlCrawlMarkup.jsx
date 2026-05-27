@@ -22,12 +22,12 @@ function applyTableProcessing(html) {
     const parent = table.parentElement;
     const parentIsTblSt = parent && parent.tagName === 'DIV' && /\btbl-st\b/.test(parent.className || '');
     if (parentIsTblSt) {
-      // 이미 올바른 wrapper div가 있음 — 클래스 유지 (scroll_gr 포함)
+      // 이미 올바른 wrapper div가 있음 — 클래스 유지 (scroll-w 포함)
     } else if (parent && parent.tagName === 'DIV' && parent.children.length === 1) {
-      parent.className = 'tbl-st scroll_gr';
+      parent.className = 'tbl-st scroll-w';
     } else {
       const wrapper = doc.createElement('div');
-      wrapper.className = 'tbl-st scroll_gr';
+      wrapper.className = 'tbl-st scroll-w';
       table.parentNode.insertBefore(wrapper, table);
       wrapper.appendChild(table);
     }
@@ -232,6 +232,38 @@ function extractContent(html, selector = '', baseUrl = '') {
   return formatHtml(fallbackDoc.body.innerHTML);
 }
 
+// 푸터 영역만 추출 (푸터메뉴 카테고리 전용)
+function extractFooterContent(html, baseUrl = '') {
+  const doc = new DOMParser().parseFromString(html, 'text/html');
+  doc.querySelectorAll('script, style, noscript, iframe, svg').forEach(el => el.remove());
+
+  if (baseUrl) {
+    doc.querySelectorAll('a[href]').forEach(a => {
+      try { a.href = new URL(a.getAttribute('href'), baseUrl).href; } catch {}
+    });
+  }
+
+  const FOOTER_SELECTORS = [
+    'footer', '#footer', '.footer', '.fnb',
+    '[class*="footer"]', '[id*="footer"]',
+    '[class*="fnb"]', '[id*="fnb"]',
+  ];
+
+  let footerEl = null;
+  for (const sel of FOOTER_SELECTORS) {
+    const el = doc.querySelector(sel);
+    if (el) { footerEl = el; break; }
+  }
+
+  if (!footerEl) return formatHtml(doc.body.innerHTML);
+
+  footerEl.querySelectorAll('*').forEach(el => {
+    ['style', 'onclick', 'onload', 'onerror'].forEach(attr => el.removeAttribute(attr));
+  });
+
+  return formatHtml(footerEl.innerHTML);
+}
+
 function applyMarkupToTemplate(sourceMarkup, templateCode, templateId) {
   const template = ALL_TEMPLATES.find(t => t.id === templateId);
   if (template?.applyMapping) return template.applyMapping(sourceMarkup, templateCode);
@@ -347,15 +379,16 @@ function BatchRetryPanel({ result, onRetry }) {
                   });
                   const ocrData = await ocrRes.json();
                   const ocrText = ocrData.text || '';
-                  const { parseSymbolOcr, buildSyntheticSymbolHtml, findSongImageFromHtml } = await import('../../utils/ocrSymbol.js');
+                  const { parseSymbolOcr, buildSyntheticSymbolHtml, findSongImageFromHtml, extractSongLyricsFromImage } = await import('../../utils/ocrSymbol.js');
                   const detectedSongUrl = findSongImageFromHtml(extracted, retryUrl.trim())
                     || (imgUrls.length >= 2 ? imgUrls[imgUrls.length - 1] : '');
                   if (ocrText.trim()) {
                     const { items, sloganText, hasSong } = parseSymbolOcr(ocrText);
                     const songImgUrl = detectedSongUrl || (hasSong ? imgUrls[0] : '');
                     if (items.length > 0) {
+                      const songLyrics = songImgUrl ? await extractSongLyricsFromImage(songImgUrl).catch(() => null) : null;
                       html = formatHtml(applyMarkupToTemplate(
-                        buildSyntheticSymbolHtml(items, sloganText, songImgUrl),
+                        buildSyntheticSymbolHtml(items, sloganText, songImgUrl, '', songLyrics),
                         tpl.code, tpl.id
                       ));
                     } else {
@@ -403,6 +436,17 @@ function BatchRetryPanel({ result, onRetry }) {
             html = formatHtml(applyMarkupToTemplate(extracted, tpl.code, tpl.id));
           }
         }
+      } else if (result.category === 'footer') {
+        // 푸터메뉴 재시도: 푸터 전용 마크업 규칙 적용
+        const res = await fetch('/api/auto-markup', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ url: retryUrl.trim(), context: 'footer' }),
+        });
+        let data = {};
+        try { data = await res.json(); } catch {}
+        if (!res.ok) throw new Error(data.detail || '실패');
+        html = applyTableProcessing(data.html || '');
       } else {
         // 기타 모드 재시도 (auto-markup)
         const res = await fetch('/api/auto-markup', {
@@ -456,6 +500,9 @@ export default function UrlCrawlMarkup() {
   const [extracting, setExtracting] = useState(false);
   const [extractError, setExtractError] = useState('');
   const [urlItems, setUrlItems] = useState([]); // { id, url, title, category, templateId, selector }
+  const [showAddUrl, setShowAddUrl] = useState(false);
+  const [addUrlInput, setAddUrlInput] = useState('');
+  const [addTitleInput, setAddTitleInput] = useState('');
   const [batchLoading, setBatchLoading] = useState(false);
   const [batchProgress, setBatchProgress] = useState({ done: 0, total: 0 });
   const [ocrStatus, setOcrStatus] = useState('');
@@ -477,6 +524,29 @@ export default function UrlCrawlMarkup() {
 
   function removeItem(id) {
     setUrlItems(prev => prev.filter(item => item.id !== id));
+  }
+
+  function handleAddManualUrl() {
+    const url = addUrlInput.trim();
+    if (!url || !isValidUrl(url)) return;
+    const newId = urlItems.length > 0 ? Math.max(...urlItems.map(i => i.id)) + 1 : 0;
+    setUrlItems(prev => [...prev, {
+      id: newId,
+      url,
+      title: addTitleInput.trim(),
+      category: 'other',
+      templateId: null,
+      selector: '',
+      checked: true,
+    }]);
+    setAddUrlInput('');
+    setAddTitleInput('');
+  }
+
+  function closeAddUrlForm() {
+    setShowAddUrl(false);
+    setAddUrlInput('');
+    setAddTitleInput('');
   }
 
   // ─── URL 추출 ─────────────────────────────────────────────
@@ -565,15 +635,16 @@ export default function UrlCrawlMarkup() {
                   });
                   const ocrData = await ocrRes.json();
                   const ocrText = ocrData.text || '';
-                  const { parseSymbolOcr, buildSyntheticSymbolHtml, findSongImageFromHtml } = await import('../../utils/ocrSymbol.js');
+                  const { parseSymbolOcr, buildSyntheticSymbolHtml, findSongImageFromHtml, extractSongLyricsFromImage } = await import('../../utils/ocrSymbol.js');
                   const detectedSongUrl = findSongImageFromHtml(extracted, url)
                     || (imgUrls.length >= 2 ? imgUrls[imgUrls.length - 1] : '');
                   if (ocrText.trim()) {
                     const { items, sloganText, hasSong } = parseSymbolOcr(ocrText);
                     const songImgUrl = detectedSongUrl || (hasSong ? imgUrls[0] : '');
                     if (items.length > 0) {
+                      const songLyrics = songImgUrl ? await extractSongLyricsFromImage(songImgUrl).catch(() => null) : null;
                       html = formatHtml(applyMarkupToTemplate(
-                        buildSyntheticSymbolHtml(items, sloganText, songImgUrl),
+                        buildSyntheticSymbolHtml(items, sloganText, songImgUrl, '', songLyrics),
                         tpl.code, tpl.id
                       ));
                     } else {
@@ -626,6 +697,17 @@ export default function UrlCrawlMarkup() {
           } else {
             html = formatHtml(applyMarkupToTemplate(extracted, tpl.code, tpl.id));
           }
+        } else if (category === 'footer') {
+          // 푸터메뉴 모드: 푸터 전용 마크업 규칙(개인정보처리방침 등) 적용
+          const res = await fetch('/api/auto-markup', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ url, context: 'footer' }),
+          });
+          let data = {};
+          try { data = await res.json(); } catch {}
+          if (!res.ok) throw new Error(data.detail || '실패');
+          html = applyTableProcessing(data.html || '');
         } else {
           // 기타 모드: auto-markup
           const res = await fetch('/api/auto-markup', {
@@ -676,8 +758,19 @@ export default function UrlCrawlMarkup() {
             </div>
             {extractError && <p className="crawl-error">{extractError}</p>}
 
-            {urlItems.length > 0 && (
+            {urlItems.length === 0 && !extracting && (
+              <button
+                className="crawl-btn crawl-btn--add-url-standalone"
+                onClick={() => setShowAddUrl(true)}
+                disabled={batchLoading}
+              >
+                + URL 직접 추가
+              </button>
+            )}
+
+            {(urlItems.length > 0 || showAddUrl) && (
               <>
+                {urlItems.length > 0 && (
                 <div className="crawl-batch-urls-header">
                   <label className="crawl-check-all">
                     <input
@@ -688,10 +781,20 @@ export default function UrlCrawlMarkup() {
                     />
                     <span>전체 선택</span>
                   </label>
-                  <span className="crawl-result-label">
-                    {urlItems.filter(i => i.checked).length} / {urlItems.length}개 선택
-                  </span>
+                  <div className="crawl-batch-urls-header-right">
+                    <span className="crawl-result-label">
+                      {urlItems.filter(i => i.checked).length} / {urlItems.length}개 선택
+                    </span>
+                    <button
+                      className="crawl-btn crawl-btn--add-url"
+                      onClick={() => showAddUrl ? closeAddUrlForm() : setShowAddUrl(true)}
+                      disabled={batchLoading}
+                    >
+                      {showAddUrl ? '입력 닫기' : '+ URL 추가'}
+                    </button>
+                  </div>
                 </div>
+                )}
                 <div className="url-items-list">
                   {urlItems.map(item => (
                     <div key={item.id} className={`url-item-row${item.checked ? '' : ' url-item-row--unchecked'}`}>
@@ -715,6 +818,7 @@ export default function UrlCrawlMarkup() {
                         <option value="greeting">인사말</option>
                         <option value="symbol">상징</option>
                         <option value="history">연혁</option>
+                        <option value="footer">푸터메뉴</option>
                         <option value="other">기타</option>
                       </select>
                       {item.category !== 'other' && CATEGORY_TEMPLATES[item.category] && (
@@ -743,6 +847,40 @@ export default function UrlCrawlMarkup() {
                     </div>
                   ))}
                 </div>
+                {showAddUrl && (
+                  <div className="url-add-form">
+                    <input
+                      className="url-add-input url-add-input--url"
+                      type="text"
+                      placeholder="URL 입력 (https://...)"
+                      value={addUrlInput}
+                      onChange={e => setAddUrlInput(e.target.value)}
+                      onKeyDown={e => { if (e.key === 'Enter') handleAddManualUrl(); }}
+                      autoFocus
+                    />
+                    <input
+                      className="url-add-input url-add-input--title"
+                      type="text"
+                      placeholder="페이지 제목 (선택)"
+                      value={addTitleInput}
+                      onChange={e => setAddTitleInput(e.target.value)}
+                      onKeyDown={e => { if (e.key === 'Enter') handleAddManualUrl(); }}
+                    />
+                    <button
+                      className="crawl-btn crawl-btn--extract"
+                      onClick={handleAddManualUrl}
+                      disabled={!addUrlInput.trim() || !isValidUrl(addUrlInput.trim())}
+                    >
+                      추가
+                    </button>
+                    <button
+                      className="url-item-remove"
+                      onClick={closeAddUrlForm}
+                      title="닫기"
+                    >✕</button>
+                  </div>
+                )}
+                {urlItems.length > 0 && (
                 <button
                   className="crawl-btn crawl-btn--batch"
                   onClick={handleBatchGenerate}
@@ -752,6 +890,7 @@ export default function UrlCrawlMarkup() {
                     ? <><span className="crawl-spinner" /> {ocrStatus || `${batchProgress.done} / ${batchProgress.total} 처리 중…`}</>
                     : `마크업 생성 (${urlItems.filter(i => i.checked).length}개)`}
                 </button>
+                )}
               </>
             )}
           </div>

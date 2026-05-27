@@ -162,7 +162,9 @@ export default async function handler(req, res) {
         // 게시판·공지·갤러리 등 제외
         // /board, /boardCnts, /boardList 등 board 로 시작하는 경로 모두 포함
         if (/\/board/i.test(pathname)) continue;
-        if (/\/(bbs|notice|news|gallery|photo|album|data|file|download|upload)\b/i.test(pathname)) continue;
+        if (/\/(bbs|notice|news|gallery|photo|album|file|download|upload)\b/i.test(pathname)) continue;
+        // /data 는 루트 첫 세그먼트인 경우만 제외 (/common/data/open.do 같은 경로는 허용)
+        if (/^\/data\b/i.test(pathname)) continue;
         // 지도 제외
         if (/\/map\b/i.test(pathname)) continue;
         // 팝업·프린트·RSS 제외

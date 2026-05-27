@@ -1,5 +1,5 @@
 import { crawl } from '../../lib/crawler.js';
-import { autoMarkup } from '../../lib/ai-mapper.js';
+import { autoMarkup, footerAutoMarkup } from '../../lib/ai-mapper.js';
 
 const TIMEOUT_MS = 120000;
 
@@ -15,10 +15,18 @@ function withTimeout(promise) {
 export default async function handler(req, res) {
   if (req.method !== 'POST') return res.status(405).json({ detail: 'Method not allowed' });
   try {
-    const { url, selector = '' } = req.body;
-    const crawled = await withTimeout(crawl(url, selector));
-    if (!crawled.success) return res.status(400).json({ detail: crawled.error });
-    const html = await withTimeout(autoMarkup(crawled));
+    const { url, selector = '', html: directHtml = '', context = '' } = req.body;
+
+    let crawled;
+    if (directHtml) {
+      crawled = { success: true, html: directHtml, text: '', images: [], school_name: '' };
+    } else {
+      crawled = await withTimeout(crawl(url, selector));
+      if (!crawled.success) return res.status(400).json({ detail: crawled.error });
+    }
+
+    const markupFn = context === 'footer' ? footerAutoMarkup : autoMarkup;
+    const html = await withTimeout(markupFn(crawled));
     res.json({ html, crawled });
   } catch (e) {
     res.status(500).json({ detail: e.message });

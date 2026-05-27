@@ -284,6 +284,28 @@ function mapSongSection(src, tpl) {
   const srcTitle = songEl.querySelector('h3, h2, h4')?.textContent.trim();
   const tplH5 = tpl.querySelector('.song-wrap .img h5');
   if (srcTitle && tplH5) tplH5.textContent = srcTitle;
+
+  // 가사 매핑: synthetic HTML의 data-verse1/2 속성에서 읽어 .lyr p 요소에 주입
+  const verse1 = songEl.getAttribute('data-verse1') || '';
+  const verse2 = songEl.getAttribute('data-verse2') || '';
+  if (verse1 || verse2) {
+    const lyrEl = tpl.querySelector('.song-wrap .lyr');
+    if (lyrEl) {
+      const h5Els = lyrEl.querySelectorAll('h5');
+      const pEls = lyrEl.querySelectorAll('p');
+      const isSingleVerse = verse1 === verse2 || !verse2;
+      if (isSingleVerse) {
+        // 1절=2절: 첫 h5를 "교가 1·2절"로 변경, 두 번째 h5/p 숨김
+        if (h5Els[0]) h5Els[0].textContent = '교가 1·2절';
+        if (pEls[0]) pEls[0].textContent = verse1;
+        if (h5Els[1]) h5Els[1].remove();
+        if (pEls[1]) pEls[1].remove();
+      } else {
+        if (pEls[0]) pEls[0].textContent = verse1;
+        if (pEls[1]) pEls[1].textContent = verse2;
+      }
+    }
+  }
 }
 
 // 공통 box 매핑 (.box > p.img + .inner > h4 + p 구조)

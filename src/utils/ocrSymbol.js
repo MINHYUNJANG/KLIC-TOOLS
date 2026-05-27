@@ -75,7 +75,8 @@ export function parseSymbolOcr(text) {
 // 파싱된 아이템을 parseSymbolSource가 처리할 수 있는 synthetic HTML로 변환
 // songImgUrl: 교가 악보 이미지 URL (옵셔널)
 // symbolImgUrl: 상징 아이템에 사용할 이미지 URL — 통 이미지일 때 원본 이미지 URL을 전달
-export function buildSyntheticSymbolHtml(items, sloganText, songImgUrl = '', symbolImgUrl = '') {
+// songLyrics: { verse1, verse2 } — 교가 가사 (옵셔널)
+export function buildSyntheticSymbolHtml(items, sloganText, songImgUrl = '', symbolImgUrl = '', songLyrics = null) {
   const sloganPart = sloganText
     ? `<div class="slogan"><h4>교훈</h4><p>${sloganText}</p></div>`
     : '';
@@ -87,11 +88,64 @@ export function buildSyntheticSymbolHtml(items, sloganText, songImgUrl = '', sym
       return `<div>${imgTag}<h4>${item.title}</h4><p>${item.desc || ''}</p></div>`;
     })
     .join('');
+  const lyricsAttrs = songLyrics && (songLyrics.verse1 || songLyrics.verse2)
+    ? ` data-verse1="${_escAttr(songLyrics.verse1)}" data-verse2="${_escAttr(songLyrics.verse2)}"`
+    : '';
   const songPart = songImgUrl
-    ? `<div class="song"><h4>교가</h4><div><img src="${songImgUrl}" alt="교가 악보"></div></div>`
+    ? `<div class="song"${lyricsAttrs}><h4>교가</h4><div><img src="${songImgUrl}" alt="교가 악보"></div></div>`
     : '';
   // songPart는 .symbol 밖에 위치해야 parseSymbolSource가 교가 이미지를 상징 아이템으로 오인하지 않음
   return `<div class="symbol">${sloganPart}${itemsPart}</div>${songPart}`;
+}
+
+function _escAttr(s) {
+  return String(s ?? '').replace(/&/g, '&amp;').replace(/"/g, '&quot;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+}
+
+// 교가 악보 이미지에서 Groq Vision으로 가사를 추출
+// 반환: { verse1: string, verse2: string } 또는 null (실패 시)
+export async function extractSongLyricsFromImage(songImgUrl) {
+  if (!songImgUrl) return null;
+  const prompt = `이 이미지는 학교 교가 악보입니다. 한국어 가사만 정확하게 추출하세요.
+
+【악보 구조】
+- 악보는 위에서 아래로 여러 줄(시스템)로 구성됩니다.
+- 각 악보 줄 아래에 한국어 가사가 2행으로 인쇄되어 있습니다:
+  · 첫 번째 행(윗줄) = 1절 가사
+  · 두 번째 행(아랫줄) = 2절 가사
+- 모든 악보 줄의 첫 번째 행을 위에서 아래로 순서대로 이어붙이면 → 1절 전체 가사
+- 모든 악보 줄의 두 번째 행을 위에서 아래로 순서대로 이어붙이면 → 2절 전체 가사
+
+【추출 규칙】
+- 음표·박자표·조표·쉼표·음악 기호는 모두 무시하세요.
+- 한국어 가사 텍스트만 추출하세요.
+- 단어 연결용 하이픈(-)은 제거하세요.
+- 가사가 1행만 있는 경우(1절만 존재): verse1과 verse2에 동일한 가사를 넣으세요.
+
+반드시 아래 JSON 형식으로만 응답하세요 (코드블록 없이, 순수 JSON만):
+{"verse1": "1절 전체 가사", "verse2": "2절 전체 가사"}
+가사를 읽을 수 없거나 없는 경우: {"verse1": "", "verse2": ""}`;
+
+  try {
+    const res = await fetch('/api/ocr-image', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ imageUrl: songImgUrl, prompt }),
+    });
+    if (!res.ok) return null;
+    const data = await res.json();
+    const raw = (data.text || '').trim();
+    const match = raw.match(/\{[\s\S]*\}/);
+    if (!match) return null;
+    const parsed = JSON.parse(match[0]);
+    if (typeof parsed.verse1 !== 'string') return null;
+    const verse1 = parsed.verse1.trim();
+    const verse2 = (typeof parsed.verse2 === 'string' ? parsed.verse2 : parsed.verse1).trim();
+    if (!verse1 && !verse2) return null;
+    return { verse1, verse2: verse2 || verse1 };
+  } catch {
+    return null;
+  }
 }
 
 // 추출된 HTML에서 교가 악보 이미지 URL을 찾아 반환

@@ -136,7 +136,7 @@ const SYSTEM_AUTO = `당신은 HTML 마크업 전문가입니다.
 7. 테이블:
    - 원본 테이블 HTML이 제공된 경우 그 구조(thead/tbody/th/td/colspan/rowspan 등)를 그대로 유지
    - 반드시 아래 래퍼로 감싸기:
-   <div class="tbl-st scroll_gr">
+   <div class="tbl-st scroll-w">
      <table>
        <caption>테이블 상위 타이틀과 주요 th 항목을 조합해 "OOO 테이블 입니다."형식으로 작성</caption>
        <colgroup><col><col>...</colgroup>
@@ -477,7 +477,7 @@ function postProcessMarkup(html) {
     $table.removeAttr('class');
     const $parent = $table.parent();
     if (!$parent.is('div') || !/\btbl-st\b/.test($parent.attr('class') || '')) {
-      $table.wrap('<div class="tbl-st scroll_gr"></div>');
+      $table.wrap('<div class="tbl-st scroll-w"></div>');
     }
   });
 
@@ -741,7 +741,7 @@ function directMarkupHtml(html) {
     if (tag === 'h4' || tag === 'h5') return `<h5 class="tit-st unit">${$el.html()}</h5>`;
     if (tag === 'h6')                  return `<h6 class="tit-st item">${$el.html()}</h6>`;
 
-    if (tag === 'table') return `<div class="tbl-st scroll_gr">${$.html(el)}</div>`;
+    if (tag === 'table') return `<div class="tbl-st scroll-w">${$.html(el)}</div>`;
 
     if (tag === 'p') return $el.text().trim() ? `<p>${$el.html()}</p>` : '';
 
