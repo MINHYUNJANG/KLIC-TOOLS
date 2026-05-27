@@ -7,12 +7,16 @@ import WebStandardPage from './pages/WebStandardPage';
 import WebAccessibilityPage from './pages/WebAccessibilityPage';
 import AltTextPage from './pages/AltTextPage';
 import TableTransformPage from './pages/TableTransformPage';
+import KLContentBuilderPage from './pages/KLContentBuilderPage';
+import WebCheckPage from './pages/WebCheckPage';
 
 export default function MainContent({ currentPage, setCurrentPage }) {
   if (currentPage === '크롤링 마크업') return <UrlCrawlMarkup />;
   if (currentPage === '콘텐츠 일괄 마크업') return <BatchMarkupPage />;
   if (currentPage === '피그마 마크업') return <FigmaMarkupPage />;
   if (currentPage === 'MCP 마크업') return <FigmaMarkupV2Page />;
+  if (currentPage === 'KL콘텐츠빌더') return <KLContentBuilderPage />;
+  if (currentPage === '웹검사도구') return <WebCheckPage setCurrentPage={setCurrentPage} />;
   if (currentPage === '테이블 변환') return <TableTransformPage />;
   if (currentPage === '웹표준검사') return <WebStandardPage />;
   if (currentPage === '웹접근성검사') return <WebAccessibilityPage />;

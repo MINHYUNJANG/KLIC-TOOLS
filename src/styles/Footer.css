@@ -1,7 +1,7 @@
 /* ===== Footer ===== */
 .footer {
-  background: #f7f7f7;
-  border-top: 0.0625rem solid #e5e5e5;
+  background: #0a1a3a;
+  border-top: none;
   margin-top: auto;
 }
 
@@ -14,6 +14,6 @@
 
 .footer-copy {
   font-size: 0.75rem;
-  color: #999;
+  color: #fff;
   margin: 0;
 }

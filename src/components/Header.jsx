@@ -11,11 +11,17 @@ const navItems = [
     dividerAfter: true,
     children: [
       { label: '교육목표 빌더', href: 'https://grid-builder-smoky.vercel.app/', external: true },
-      { label: '조직도 빌더', disabled: true },
+      { label: '조직도 빌더', href: 'https://grid-buider-organ.vercel.app/', external: true },
     ],
   },
-  { label: '웹표준검사', href: '#' },
-  { label: '웹접근성검사', href: '#' },
+  {
+    label: '웹검사도구',
+    href: '#',
+    children: [
+      { label: '웹표준검사', href: '#' },
+      { label: '웹접근성검사', href: '#' },
+    ],
+  },
   { label: '대체텍스트 생성', href: '#' },
 ];
 
@@ -49,7 +55,7 @@ export default function Header({ currentPage, setCurrentPage }) {
             {navItems.map((item) => (
               <li
                 key={item.label}
-                className={`nav-item ${currentPage === item.label ? 'is-active' : ''} ${hoveredItem === item.label ? 'is-active' : ''} ${item.dividerAfter ? 'has-divider' : ''}`}
+                className={`nav-item ${(currentPage === item.label || item.children?.some(c => c.label === currentPage)) ? 'is-active' : ''} ${hoveredItem === item.label ? 'is-active' : ''} ${item.dividerAfter ? 'has-divider' : ''}`}
                 onMouseEnter={() => setHoveredItem(item.label)}
                 onMouseLeave={() => setHoveredItem(null)}
               >
@@ -77,7 +83,13 @@ export default function Header({ currentPage, setCurrentPage }) {
                             className="nav-submenu-link"
                             target={child.external ? '_blank' : undefined}
                             rel={child.external ? 'noreferrer' : undefined}
-                            onClick={() => setMenuOpen(false)}
+                            onClick={(e) => {
+                              if (!child.external) {
+                                e.preventDefault();
+                                setCurrentPage(child.label);
+                              }
+                              setMenuOpen(false);
+                            }}
                           >
                             {child.label}
                           </a>

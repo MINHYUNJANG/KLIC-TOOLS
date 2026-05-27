@@ -20,14 +20,15 @@ const menuCards = [
     desc: '복잡한 HTML 테이블 구조를 KLIC 웹 표준에 맞게 자동으로 변환합니다. 병합 셀, 헤더 구조, 스타일 정리 등을 일괄 처리하여 마크업 수작업을 줄여줍니다.',
   },
   {
-    label: '웹표준검사',
-    iconSrc: '/icons/dazzle/hexagon-check.svg',
-    desc: '웹 페이지의 웹 표준 준수 여부를 자동으로 검사합니다. 검사 결과와 함께 증적 자료를 자동으로 생성하여 보고서 작성 시간을 줄여줍니다.',
+    label: 'KL콘텐츠빌더',
+    iconSrc: '/icons/dazzle/gallery-thumbnails.svg',
+    desc: '교육목표, 조직도 등 다양한 콘텐츠 구조를 시각적으로 편집하고 마크업으로 변환할 수 있는 빌더 도구 모음입니다.',
+    page: 'KL콘텐츠빌더',
   },
   {
-    label: '웹접근성검사',
-    iconSrc: '/icons/dazzle/accessibility.svg',
-    desc: '웹 페이지의 웹 접근성 준수 여부를 자동으로 검사합니다. WCAG 및 KWCAG 기준에 따라 항목별 결과와 증적 자료를 자동으로 생성합니다.',
+    label: '웹검사도구',
+    iconSrc: '/icons/dazzle/hexagon-check.svg',
+    desc: '웹 표준 및 웹 접근성 준수 여부를 자동으로 검사합니다. WCAG·KWCAG 기준에 따른 항목별 결과와 증적 자료를 자동으로 생성하여 보고서 작성 시간을 줄여줍니다.',
   },
   {
     label: '대체텍스트 생성',
