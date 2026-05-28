@@ -934,6 +934,24 @@ export async function autoMarkup(crawledData) {
       if (active) $li.attr('class', 'on');
     });
   });
+  // ul의 class 또는 id에 tab이 포함된 경우 → div.tab-st.cntnts.col-4로 감싸기
+  $t('ul').filter((_, el) => {
+    const cls = $t(el).attr('class') || '';
+    const id = $t(el).attr('id') || '';
+    return /tab/i.test(cls) || /tab/i.test(id);
+  }).each((_, ul) => {
+    const $ul = $t(ul);
+    if (!$ul.children('li').length) return;
+    if ($ul.closest('.tab-st').length) return;
+    $ul.children('li').each((_, li) => {
+      const $li = $t(li);
+      const active = /\b(active|on)\b/i.test($li.attr('class') || '');
+      $li.removeAttr('class');
+      if (active) $li.attr('class', 'on');
+    });
+    $ul.removeAttr('class').removeAttr('id');
+    $ul.wrap('<div class="tab-st cntnts col-4"></div>');
+  });
   const tabsHtml = $t('body').html() || withOcr;
 
   const $check = cheerio.load(tabsHtml);
