@@ -9,7 +9,7 @@ const MODELS = [
   'llama-3.1-8b-instant',
 ];
 
-const CEREBRAS_MODELS = ['llama3.3-70b', 'llama3.1-8b'];
+const CEREBRAS_MODELS = ['gpt-oss-120b', 'zai-glm-4.7'];
 const MAX_CHARS = 12000;
 
 function getClient() {
@@ -44,13 +44,17 @@ async function cerebrasChat(messages, maxTokens = 8192) {
           body: JSON.stringify({ model, messages: msgs, max_tokens: maxTokens }),
         });
         if (!resp.ok) {
-          lastError = new Error(`${resp.status}`);
-          if ([400, 404, 413, 429].includes(resp.status)) break; // 404: 모델 미존재 → 다음 모델로
+          let body = '';
+          try { body = await resp.text(); } catch {}
+          console.error(`[Cerebras] ${model} → HTTP ${resp.status}: ${body.slice(0, 300)}`);
+          lastError = new Error(`${resp.status}: ${body.slice(0, 200)}`);
+          if ([400, 404, 413, 429].includes(resp.status)) break;
           throw lastError;
         }
         const data = await resp.json();
         return data.choices[0].message.content;
       } catch (e) {
+        if (!(e instanceof Error && /^\d{3}/.test(e.message))) console.error('[Cerebras] 네트워크 오류:', e.message);
         lastError = e;
       }
     }
@@ -70,8 +74,10 @@ async function chat(messages, maxTokens = 8192) {
       } catch (e) {
         lastError = e;
         const status = e?.status ?? e?.statusCode;
-        if ([429, 413].includes(status)) break;
-        if (status === 400 && String(e).includes('decommissioned')) break;
+        console.warn(`[Groq] ${model} → HTTP ${status ?? 'unknown'}: ${String(e).slice(0, 200)}`);
+        if (status === 413) continue; // 내용이 너무 크면 잘라낸 버전으로 재시도
+        if (status === 429) break;    // 모델 레이트리밋 → 다음 모델로
+        if (status === 400 && (String(e).includes('decommissioned') || String(e).includes('context_length_exceeded') || String(e).includes('too many tokens'))) break;
         throw e;
       }
     }
@@ -307,28 +313,28 @@ function postProcessMarkup(html) {
     });
   });
 
-  // 8) 개인정보처리방침 h3.section 바로 아래 p 태그들 → <div class="box-st emp"><p>...<br>..</p></div>
-  $('h3.section').each((_, h3) => {
-    const $h3 = $(h3);
-    if (!/(개인정보\s*처리방침|개인정보\s*보호방침)/.test($h3.text())) return;
-    if ($h3.next().is('div') && /box-st/.test($h3.next().attr('class') || '')) return;
-
-    const toWrap = [];
-    let $cur = $h3.next();
-    while ($cur.length) {
-      const tn = ($cur.get(0)?.tagName || '').toLowerCase();
-      if (/^h[3-6]$/.test(tn) || $cur.hasClass('indent')) break;
-      if (tn === 'p') toWrap.push($cur.get(0));
-      else break;
-      $cur = $cur.next();
+  // 8) 최상단 h3.section 바로 아래 p 태그들 → <div class="box-st emp"><p>...<br>..</p></div>
+  //    가장 첫 번째 h3.section만 처리 (이하 h3에는 적용 안 함)
+  const $firstH3 = $('h3.section').first();
+  if ($firstH3.length) {
+    const $h3 = $firstH3;
+    if (!($h3.next().is('div') && /box-st/.test($h3.next().attr('class') || ''))) {
+      const toWrap = [];
+      let $cur = $h3.next();
+      while ($cur.length) {
+        const tn = ($cur.get(0)?.tagName || '').toLowerCase();
+        if (/^h[3-6]$/.test(tn) || $cur.hasClass('indent')) break;
+        if (tn === 'p') toWrap.push($cur.get(0));
+        else break;
+        $cur = $cur.next();
+      }
+      if (toWrap.length) {
+        const merged = toWrap.map(el => ($(el).html() || '').trim()).join('<br>');
+        $(toWrap[0]).before(`<div class="box-st emp"><p>${merged}</p></div>`);
+        toWrap.forEach(el => $(el).remove());
+      }
     }
-
-    if (toWrap.length) {
-      const merged = toWrap.map(el => ($(el).html() || '').trim()).join('<br>');
-      $(toWrap[0]).before(`<div class="box-st emp"><p>${merged}</p></div>`);
-      toWrap.forEach(el => $(el).remove());
-    }
-  });
+  }
 
   // 9) a/button만 담은 래퍼 div → class="btns", 내부 a/button → class="btn-st pri"
   $('div').each((_, div) => {

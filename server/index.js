@@ -5,7 +5,7 @@ import fs from 'fs';
 import * as cheerio from 'cheerio';
 import { chromium, firefox, webkit } from 'playwright';
 import { crawl } from './lib/crawler.js';
-import { autoMarkup, footerAutoMarkup } from './lib/ai-mapper.js';
+import { autoMarkup, footerAutoMarkup } from '../lib/ai-mapper.js';
 import {
   figmaAccurateMarkup,
   parseFigmaUrl,
@@ -533,15 +533,74 @@ async function extractUrlsFromNav(pageUrl) {
   const origin = new URL(pageUrl).origin;
   let html;
   let browser;
+  let onclickUrls = [];
+
   try {
     browser = await chromium.launch({ headless: true });
     const page = await browser.newPage();
     await page.goto(pageUrl, { waitUntil: 'domcontentloaded', timeout: 15000 });
     await page.waitForTimeout(1000);
+
+    // 1차 메뉴 li 항목에 hover → 2차 메뉴 노출
+    try {
+      const topLiSel = [
+        'nav > ul > li', '#gnb > ul > li', '.gnb > ul > li',
+        '#lnb > ul > li', '.lnb > ul > li', 'header ul > li',
+        '#menu > ul > li', '.top-menu > ul > li', '.site-map > ul > li',
+      ].join(', ');
+      const navItems = await page.$$(topLiSel);
+      for (const item of navItems) {
+        try {
+          await item.hover({ timeout: 500 });
+          await page.waitForTimeout(200);
+        } catch {}
+      }
+    } catch {}
+
+    // onclick/data 속성에서 URL 추출 — 2차 메뉴(li li 안)와 1차 메뉴를 구분해 반환
+    onclickUrls = await page.evaluate((origin) => {
+      const urls = [];
+      const NAV_SEL = 'nav, #gnb, #lnb, .gnb, .lnb, .nav, .menu, .navigation, header, #menu, .top-menu, .site-map';
+      const navRoots = [...document.querySelectorAll(NAV_SEL)];
+
+      const extractFrom = (el, isSub) => {
+        const text = (el.textContent || '').replace(/\s+/g, ' ').trim();
+        const onclick = el.getAttribute('onclick') || '';
+        for (const m of onclick.matchAll(/['"](\/?[^'"?#\s]+(?:\?[^'"]*)?)['"]/g)) {
+          const val = m[1];
+          if (!val.startsWith('/') && !val.startsWith('http')) continue;
+          try {
+            const full = new URL(val, origin).href;
+            if (full.startsWith(origin)) urls.push({ url: full, text, isSub });
+          } catch {}
+        }
+        for (const attr of ['data-url', 'data-href', 'data-link']) {
+          const val = el.getAttribute(attr) || '';
+          if (!val || val === '#') continue;
+          try {
+            const full = new URL(val, origin).href;
+            if (full.startsWith(origin)) urls.push({ url: full, text, isSub });
+          } catch {}
+        }
+      };
+
+      for (const root of navRoots) {
+        // 2차 메뉴: li 안의 li (li li)
+        root.querySelectorAll('li li [onclick], li li [data-url], li li [data-href], li li [data-link]')
+          .forEach(el => extractFrom(el, true));
+        // 1차 메뉴: 최상위 li의 직계 자식
+        root.querySelectorAll(':scope > ul > li > [onclick], :scope > ul > li > [data-url], :scope > ul > li > [data-href], :scope > ul > li > [data-link]')
+          .forEach(el => extractFrom(el, false));
+      }
+      return urls;
+    }, origin);
+
     html = await page.content();
   } catch {
-    const res = await fetch(pageUrl, { signal: AbortSignal.timeout(8000) });
-    html = await res.text();
+    try {
+      const res = await fetch(pageUrl, { signal: AbortSignal.timeout(8000) });
+      html = await res.text();
+    } catch { html = ''; }
   } finally {
     if (browser) await browser.close().catch(() => {});
   }
@@ -549,26 +608,45 @@ async function extractUrlsFromNav(pageUrl) {
   const $ = cheerio.load(html);
   // url → 메뉴명 맵 (처음 발견한 앵커 텍스트 우선)
   const urlMap = new Map();
+  const FILE_EXT = /\.(jpg|jpeg|png|gif|pdf|zip|hwp|docx?)(\?|$)/i;
 
-  const addLink = (a) => {
+  const addUrl = (rawHref, text) => {
+    if (!rawHref || rawHref === '#' || rawHref.startsWith('javascript')) return;
     try {
-      const href = new URL($(a).attr('href'), pageUrl).href;
-      if (href.startsWith(origin) && !href.match(/\.(jpg|jpeg|png|gif|pdf|zip|hwp|docx?)(\?|$)/i)) {
-        if (!urlMap.has(href)) {
-          const text = $(a).text().replace(/\s+/g, ' ').trim();
-          urlMap.set(href, text);
-        }
+      const href = new URL(rawHref, pageUrl).href;
+      if (href.startsWith(origin) && !FILE_EXT.test(href) && !urlMap.has(href)) {
+        urlMap.set(href, text || '');
       }
     } catch {}
   };
 
-  // 네비게이션/메뉴 영역 우선 탐색
   const NAV_SEL = 'nav, #gnb, #lnb, .gnb, .lnb, .nav, .menu, .navigation, header ul, #menu, .top-menu, .site-map';
-  $(NAV_SEL).find('a[href]').each((_, a) => addLink(a));
 
-  // 네비게이션에서 충분히 못 찾으면 전체 링크에서 추가
+  // ① 2차 메뉴(onclick/data) 먼저 등록 — 중복 URL 발생 시 2차 메뉴명이 우선
+  for (const { url, text, isSub } of onclickUrls) {
+    if (isSub) addUrl(url, text);
+  }
+
+  // ② 2차 메뉴 a[href] (li li 안) 먼저 등록
+  $(NAV_SEL).find('li li a[href]').each((_, a) => {
+    addUrl($(a).attr('href'), $(a).text().replace(/\s+/g, ' ').trim());
+  });
+
+  // ③ 1차 메뉴(onclick/data) 등록 — URL이 이미 2차로 등록됐으면 자동 스킵
+  for (const { url, text, isSub } of onclickUrls) {
+    if (!isSub) addUrl(url, text);
+  }
+
+  // ④ 1차 메뉴 a[href] 등록 (중복 스킵)
+  $(NAV_SEL).find('a[href]').each((_, a) => {
+    addUrl($(a).attr('href'), $(a).text().replace(/\s+/g, ' ').trim());
+  });
+
+  // ⑤ 네비게이션에서 충분히 못 찾으면 전체 링크에서 추가
   if (urlMap.size < 5) {
-    $('a[href]').each((_, a) => addLink(a));
+    $('a[href]').each((_, a) => {
+      addUrl($(a).attr('href'), $(a).text().replace(/\s+/g, ' ').trim());
+    });
   }
 
   return urlMap;
