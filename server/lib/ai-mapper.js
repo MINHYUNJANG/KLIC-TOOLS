@@ -45,7 +45,7 @@ async function cerebrasChat(messages, maxTokens = 8192) {
         });
         if (!resp.ok) {
           lastError = new Error(`${resp.status}`);
-          if ([429, 413].includes(resp.status)) break;
+          if ([400, 404, 413, 429].includes(resp.status)) break; // 404: 모델 미존재 → 다음 모델로
           throw lastError;
         }
         const data = await resp.json();
