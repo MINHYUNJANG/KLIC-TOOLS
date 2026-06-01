@@ -425,7 +425,11 @@ function extractSchoolName($) {
   const titleText = $('title').text().trim();
   if (titleText) {
     const parts = titleText.split(/\s*[-|:]{1,2}\s*/);
-    if (parts.length > 1) return parts.reduce((a, b) => a.length <= b.length ? a : b).trim();
+    if (parts.length > 1) {
+      const byRegex = parts.find(p => SCHOOL_RE.test(p));
+      if (byRegex) return byRegex.trim();
+      return parts[0].trim(); // 학교명은 보통 첫 세그먼트
+    }
     const m = titleText.match(SCHOOL_RE);
     if (m) return m[0];
   }
@@ -433,6 +437,10 @@ function extractSchoolName($) {
   if (h1) return h1;
   const logoAlt = $('header .logo img, #header .logo img, header #logo img').first().attr('alt');
   if (logoAlt?.trim()) return logoAlt.trim();
+  // 최후 수단: 본문 텍스트에서 "학교명 + 조사" 패턴으로 직접 스캔
+  const bodyText = $('body').text();
+  const bodyMatch = bodyText.match(/([가-힣]{2,}(?:초등학교|중학교|고등학교|유치원|학교))(?:는|이|가|에서|의)/);
+  if (bodyMatch) return bodyMatch[1];
   return '';
 }
 
@@ -445,8 +453,28 @@ export async function crawl(url, selector = '') {
   try {
     browser = await chromium.launch({ headless: true });
     const page = await browser.newPage();
-    await page.goto(url, { waitUntil: 'domcontentloaded', timeout: 20000 });
-    await page.waitForTimeout(1500);
+    // 'load' 이벤트까지 대기 (domcontentloaded보다 포괄적 — 리소스·초기 스크립트 포함)
+    await page.goto(url, { waitUntil: 'load', timeout: 25000 });
+
+    // networkidle: AJAX 요청이 모두 끝날 때까지 대기 (최대 8초)
+    await page.waitForLoadState('networkidle', { timeout: 8000 }).catch(() => {});
+
+    // table이 있는데 td가 전부 비어있으면 → 최대 6초 폴링하며 대기
+    try {
+      await page.waitForFunction(
+        () => {
+          const tds = document.querySelectorAll('td');
+          if (tds.length === 0) return true;
+          return Array.from(tds).some(td => (td.innerText || td.textContent || '').trim().length > 0);
+        },
+        { timeout: 6000, polling: 500 }
+      );
+    } catch {}
+
+    // 스크롤 한 번으로 지연 로딩 트리거 (lazy-load 방식 CMS 대응)
+    await page.evaluate(() => window.scrollTo(0, document.body.scrollHeight / 2));
+    await page.waitForTimeout(800);
+
     html = await page.content();
 
     // 현재 페이지에서 학교명 못 찾으면 홈페이지에서 재시도 (같은 브라우저 세션)

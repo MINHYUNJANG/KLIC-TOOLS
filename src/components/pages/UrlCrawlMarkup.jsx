@@ -371,7 +371,20 @@ function BatchRetryPanel({ result, onRetry }) {
               if (imgUrls.length > 0) {
                 setOcrStatus('이미지 OCR 분석 중…');
                 try {
-                  const SYMBOL_PROMPT = '이 이미지는 학교 상징 페이지입니다. 교훈, 교목, 교화, 교표 각 항목의 이름만 "교훈: 내용" "교목: 은행나무" 형식으로 간략히 추출하세요. 이미지에 교가(악보) 섹션이 보이면 "교가: 있음"을 추가하세요. 없는 항목은 생략하세요.';
+                  const SYMBOL_PROMPT = `이 이미지는 학교 상징 페이지입니다. 아래 형식으로 각 항목의 이름과 설명을 추출하세요.
+
+교목 [이름]
+[교목 설명 (있는 경우)]
+교화 [이름]
+[교화 설명 (있는 경우)]
+교표
+[교표 설명 (있는 경우)]
+교기
+[교기 설명 (있는 경우)]
+교훈: [교훈 내용]
+교가: 있음 (교가 악보가 보이는 경우)
+
+규칙: 없는 항목은 완전히 생략하세요. "없음" 같은 값은 절대 쓰지 마세요.`;
                   const ocrRes = await fetch('/api/ocr-image', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
@@ -627,7 +640,20 @@ export default function UrlCrawlMarkup() {
               if (imgUrls.length > 0) {
                 setOcrStatus('이미지 OCR 분석 중…');
                 try {
-                  const SYMBOL_PROMPT = '이 이미지는 학교 상징 페이지입니다. 교훈, 교목, 교화, 교표 각 항목의 이름만 "교훈: 내용" "교목: 은행나무" 형식으로 간략히 추출하세요. 이미지에 교가(악보) 섹션이 보이면 "교가: 있음"을 추가하세요. 없는 항목은 생략하세요.';
+                  const SYMBOL_PROMPT = `이 이미지는 학교 상징 페이지입니다. 아래 형식으로 각 항목의 이름과 설명을 추출하세요.
+
+교목 [이름]
+[교목 설명 (있는 경우)]
+교화 [이름]
+[교화 설명 (있는 경우)]
+교표
+[교표 설명 (있는 경우)]
+교기
+[교기 설명 (있는 경우)]
+교훈: [교훈 내용]
+교가: 있음 (교가 악보가 보이는 경우)
+
+규칙: 없는 항목은 완전히 생략하세요. "없음" 같은 값은 절대 쓰지 마세요.`;
                   const ocrRes = await fetch('/api/ocr-image', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },

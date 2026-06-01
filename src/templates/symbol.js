@@ -219,7 +219,9 @@ function hasSloganSection(src) {
   return extractSloganText(src) !== null;
 }
 
-// 소스 교훈 텍스트를 템플릿에 매핑 (교훈 없으면 템플릿 기본값 유지)
+const SLOGAN_FILLER = new Set(['없음', '있음', '없다', '있다', '없습니다', '있습니다', '해당없음', '해당 없음', '-', '–', '—']);
+
+// 소스 교훈 텍스트를 템플릿에 매핑 (교훈 없으면 템플릿 기본값 유지, "없음" 명시 시 빈칸)
 function mapSloganText(src, tpl) {
   const text = extractSloganText(src);
   if (!text) return;
@@ -228,7 +230,14 @@ function mapSloganText(src, tpl) {
     tpl.querySelector('.box[data-title="학교 교훈"] .inner p.slogan') ||
     tpl.querySelector('.symbol-sticky h4:not([id])') ||
     tpl.querySelector('.box .inner p.slogan');
-  if (target) target.innerHTML = text;
+  if (!target) return;
+  // 교훈이 명시적으로 "없음" 등 필러 값인 경우 → 빈칸 처리
+  const plainText = text.replace(/<[^>]+>/g, '').trim();
+  if (SLOGAN_FILLER.has(plainText)) {
+    target.innerHTML = '';
+    return;
+  }
+  target.innerHTML = text;
 }
 
 // 소스에 교가 섹션이 있는지 확인

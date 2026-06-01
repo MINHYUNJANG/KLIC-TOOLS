@@ -6,7 +6,7 @@ let _client = null;
 const MODELS = [
   'llama-3.3-70b-versatile',
   'llama3-70b-8192',
-  'llama-3.1-8b-instant',
+  // 'llama-3.1-8b-instant', // 8B: 환각 심함 — CPO/AI 등 없는 내용 추가하므로 비활성화
 ];
 
 const CEREBRAS_MODELS = ['gpt-oss-120b', 'zai-glm-4.7'];
@@ -136,6 +136,10 @@ const SYSTEM_AUTO = `당신은 HTML 마크업 전문가입니다.
    숫자는 <span class="mrk">1</span> 형식으로 작성
    ①②③ 같은 원문자는 1, 2, 3으로 변환
    숫자 뒤 '.', ',' 등 구두점 제거
+   ※ 원문자 바로 뒤에 학교명·기관명이 오고 그 뒤에 조사(는/가/이/은/에서/의 등)가 이어지는 경우
+     (예: ①천안중앙고등학교는, ②OO초등학교가)
+     학교명·기관명을 절대 제거하지 말고 반드시 그대로 보존할 것
+     올바른 예: <li><span class="mrk">1</span>천안중앙고등학교는 개인정보...</li>
 
 6. ○, -, ※ 등 특수문자로 시작하는 리스트 항목은 해당 특수문자 제거 후 <li>에 넣기
 
@@ -160,6 +164,16 @@ const SYSTEM_AUTO = `당신은 HTML 마크업 전문가입니다.
    <div class="box-st emp"><p>문단1<br>문단2</p></div>
    - 여러 문단은 <br>로 연결하여 하나의 <p> 안에 넣기 (p에 class 없음)
    - "~바랍니다.", "~해주세요" 형태의 공지 문구도 동일하게 box-st emp 처리
+
+9-1. "다음과 같습니다" 소개 문장 뒤에 "1. 항목명", "2. 항목명" 형태가 이어질 때 → 반드시 중첩 구조로:
+   <li>소개문장(예: 개인정보 파기의 절차 및 방법은 다음과 같습니다.)
+   	<ul class="bu-st2 list">
+   		<li>1. 파기절차<br>내용</li>
+   		<li>2. 파기방법<br>내용</li>
+   	</ul>
+   </li>
+   ※ 번호(1., 2.)는 <span class="mrk">로 변환하지 말고 "1. 파기절차" 형태 그대로 유지
+   ※ 하위 <ul>은 반드시 class="bu-st2 list"
 
 10. 원문 텍스트는 절대 수정하지 말 것 (오타 포함 그대로 유지)
     - 단어 하나도 바꾸거나 고치지 말 것
@@ -252,6 +266,52 @@ function postProcessMarkup(html) {
       (html, exp) => { const m = html.match(NUM_DOT_RE); return m && parseInt(m[1]) === exp; },
       1
     );
+  });
+
+  // 3-1) "파기 절차 및 방법은 다음과 같습니다" 소개 li + 번호 형제 li 들 → 소개 li 안에 ul 중첩
+  //      AI가 규칙 9-1을 어기고 형제로 평탄화했을 때 자동 교정 (class는 step 4에서 bu-st2 list로 자동 결정)
+  $('li').each((_, li) => {
+    const $li = $(li);
+    if ($li.children('ul, ol').length) return; // 이미 중첩 있으면 패스
+
+    const ownText = $li.clone().children('ul, ol').remove().end().text().trim();
+    if (!(/파기/.test(ownText) && /(?:절차|방법)/.test(ownText) && /같습니다/.test(ownText))) return;
+
+    // 같은 부모의 다음 형제 li 중 "N." 패턴으로 연속된 것만 수집
+    const allSibLi = $li.parent().children('li').toArray();
+    const myIdx = allSibLi.indexOf(li);
+    const toNest = [];
+    for (let i = myIdx + 1; i < allSibLi.length; i++) {
+      if (/^\s*[1-9][0-9]*[.)]\s*\S/.test($(allSibLi[i]).text())) {
+        toNest.push($(allSibLi[i]));
+      } else break;
+    }
+    if (!toNest.length) return;
+
+    const $ul = $('<ul></ul>');
+    toNest.forEach($s => $ul.append($s.detach()));
+    $li.append($ul);
+  });
+
+  // 3-2) 소개 li 안에 이미 중첩된 ol(order-st) → ul로 변환 + span.mrk 숫자를 "N." 텍스트로 복원
+  $('li > ol').each((_, ol) => {
+    const $ol = $(ol);
+    const $parentLi = $ol.parent();
+    const ownText = $parentLi.clone().children('ul, ol').remove().end().text().trim();
+    if (!(/파기/.test(ownText) && /(?:절차|방법)/.test(ownText) && /같습니다/.test(ownText))) return;
+
+    $ol.find('li').each((_, item) => {
+      const $item = $(item);
+      const $mrk = $item.find('> span.mrk').first();
+      if ($mrk.length) {
+        const num = $mrk.text().trim();
+        $mrk.replaceWith(`${num}. `);
+      }
+    });
+    // ol 태그를 ul로 교체 (class는 step 4에서 자동 할당)
+    const $ul = $('<ul></ul>');
+    $ul.append($ol.contents());
+    $ol.replaceWith($ul);
   });
 
   // 4) ul/ol 계층별 클래스 자동 할당 (tab-st 내부 ul은 탭 내비게이션이므로 건드리지 않음)
@@ -582,17 +642,71 @@ function tabIndent(html) {
   return lines.join('\n');
 }
 
+// ─── AI 환각(hallucination) 제거 ────────────────────────────────
+// 원문에 없는 짧은 영문 대문자 단독 <p> 제거 (CPO, AI, DPO, CEO 등)
+function removeHallucinatedElements(html, originalText) {
+  if (!originalText) return html;
+  const $ = cheerio.load(html);
+  $('p').each((_, el) => {
+    const $el = $(el);
+    if ($el.children().length) return;
+    const text = $el.text().trim();
+    // 1~8자 대문자+숫자로만 구성된 단독 p가 원문에 없으면 환각으로 간주
+    if (/^[A-Z][A-Z0-9]{0,7}$/.test(text) && !originalText.includes(text)) {
+      $el.remove();
+    }
+  });
+  return $('body').html() || html;
+}
+
 // ─── HTML 내 학교명 주입 (테이블 경로용) ─────────────────────
 function injectSchoolNameInHtml(html, name) {
   if (!name) return html;
   const n = name;
+  // (?<!<\/\w+) : 닫힌 태그(</strong> 등)의 > 는 제외 — 학교명이 이미 <strong>안에 있을 때 중복 주입 방지
   return html
-    .replace(/>(에서 )/g, `>${n}$1`)
-    .replace(/>(가 개인정보)/g, `>${n}$1`)
-    .replace(/>(는 (?:파기|정보주체|이용자|위탁|개인정보|관리|전담|기술|암호))/g, `>${n}$1`)
-    .replace(/>(의 개인정보 보호책임자)/g, `>${n}$1`)
+    .replace(/(?<!<\/\w+)>(에서 )/g, `>${n}$1`)
+    .replace(/(?<!<\/\w+)>(가 개인정보)/g, `>${n}$1`)
+    .replace(/(?<!<\/\w+)>(는 (?:파기|정보주체|이용자|위탁|개인정보|관리|전담|기술|암호))/g, `>${n}$1`)
+    .replace(/(?<!<\/\w+)>(의 개인정보 보호책임자)/g, `>${n}$1`)
     .replace(new RegExp(`([${CIRCLED}]\\s+)(는 |가 |은 )`, 'g'), `$1${n}$2`)
     .replace(/(는|은)( 에 대해)/g, `$1 ${n}에 대해`);
+}
+
+// ─── AI 출력 후 학교명 재주입 (DOM 기반) ─────────────────────────
+// regex 방식과 달리 들여쓰기·줄바꿈·span.mrk 위치에 무관하게 동작
+function injectSchoolNameDOM(html, name) {
+  if (!name) return html;
+  const $ = cheerio.load(html);
+  const BARE_PARTICLE_RE = /^(는|가|이|은|에서|의)\s*(개인정보|파기|정보주체|이용자|위탁|관리|전담|기술|암호)/;
+
+  function findFirstText(el) {
+    for (const child of $(el).contents().toArray()) {
+      if (child.nodeType === 3) {
+        const t = child.data.trimStart();
+        if (t) return { node: child, trimmed: t };
+      }
+      if (child.nodeType === 1) {
+        if ((child.tagName || '').toLowerCase() === 'span' &&
+            /\bmrk\b/.test($(child).attr('class') || '')) continue;
+        const r = findFirstText(child);
+        if (r) return r;
+      }
+    }
+    return null;
+  }
+
+  $('li, p, td, dd').each((_, el) => {
+    const $el = $(el);
+    const $clone = $el.clone();
+    $clone.find('span.mrk').remove();
+    const text = $clone.text().trim();
+    if (!BARE_PARTICLE_RE.test(text)) return;
+    const found = findFirstText(el);
+    if (found) found.node.data = name + found.trimmed;
+  });
+
+  return $('body').html() || html;
 }
 
 // ─── HTML 클린 (테이블 전처리용) ──────────────────────────────
@@ -982,5 +1096,7 @@ export async function autoMarkup(crawledData) {
         primary + extra,
     },
   ]);
-  return postProcessMarkup(result);
+  const noHalluc = removeHallucinatedElements(result, crawledData.text || '');
+  const processed = postProcessMarkup(noHalluc);
+  return crawledData.school_name ? injectSchoolNameDOM(processed, crawledData.school_name) : processed;
 }
