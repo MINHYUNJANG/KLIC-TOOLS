@@ -12,7 +12,6 @@ import { TableConfigProvider, useTableConfig, useTableConfigDispatch } from './T
 import JoditCustomEditor from './JoditCustomEditor';
 
 import PreviewModal from './modal/PreviewModal';
-import GuideModal from './modal/GuideModal';
 import TableEditModal from './modal/TableEditModal';
 import GlobalTableConfigModal from './modal/GlobalTableConfigModal';
 import ContentConfigModal from './modal/ContentConfigModal';
@@ -68,9 +67,6 @@ function TableEditor() {
         openTableEditModal,
     });
 
-    useEffect(() => {
-        if (!sessionStorage.getItem('guideClosed')) toggleModal('guide', true);
-    }, [toggleModal]);
 
     useEffect(() => {
         if (isGuideMode) {
@@ -281,7 +277,6 @@ function TableEditor() {
             {toast.show && <div key={toast.id} className="toast-popup">{toast.message}</div>}
 
             {modals.preview && <PreviewModal content={content} config={config} widthString={formattedWidthString} onClose={() => toggleModal('preview', false)} layout={layout} fadeStyle={getFadeStyle('preview')} />}
-            {modals.guide && <GuideModal onClose={() => { toggleModal('guide', false); sessionStorage.setItem('guideClosed', 'true'); }} layout={layout} fadeStyle={getFadeStyle('guide')} />}
 
             {modals.tableEdit && (
                 <TableEditModal
