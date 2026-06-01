@@ -1,11 +1,25 @@
 {
   "permissions": {
     "allow": [
-      "Bash(Get-ChildItem -Path \"c:\\\\Users\\\\CEO\\\\Desktop\\\\KLICTOOLS\" -Recurse -Directory)",
-      "Bash(Select-Object -First 20)",
-      "Bash(Format-Table FullName)",
-      "WebFetch(domain:banseokhs.djsch.kr)",
-      "Bash(node -e ' *)"
+      "Read(//home/friendking12/markup-tool/lib/**)",
+      "Bash(find /home/friendking12/markup-tool -type f \\\\\\( -name \"*.js\" -o -name \"*.jsx\" -o -name \"*.json\" -o -name \"*.py\" \\\\\\) ! -path \"*/node_modules/*\" ! -path \"*/.next/*\" ! -path \"*/.git/*\" | sort)",
+      "Read(//home/friendking12/markup-tool/**)",
+      "Bash(node --require ./server/polyfill.cjs server/index.js)",
+      "Bash(curl -s http://localhost:3001/api/extract-urls -X POST -H \"Content-Type: application/json\" -d '{}')",
+      "Read(//mnt/c/Users/CEO/Desktop/klic-editor-main/klic-editor-main/src/templates/**)",
+      "Bash(mkdir -p /home/friendking12/editorKlic/src/templates /home/friendking12/editorKlic/src/utils)",
+      "Bash(mv /home/friendking12/editorKlic /home/friendking12/KLIC-TOOLS)",
+      "Bash(git pull *)",
+      "Bash(git stash *)",
+      "Bash(sed -n '1,13p' /home/friendking12/KLIC-TOOLS/src/styles/UrlCrawlMarkup.css)",
+      "Bash(sed -n '1,13p' /home/friendking12/KLIC-TOOLS/src/styles/WebStandardPage.css)",
+      "Bash(sed -n '1,13p' /home/friendking12/KLIC-TOOLS/src/styles/CanvasEditorPage.css)",
+      "Bash(git commit -m 'UI 개선: 조직도빌더 연결, 웹검사도구 통합, 푸터 스타일, 홈 레이아웃 *)",
+      "Bash(npx vercel *)"
+    ],
+    "additionalDirectories": [
+      "/home/friendking12/editorKlic/src",
+      "/home/friendking12"
     ]
   }
 }

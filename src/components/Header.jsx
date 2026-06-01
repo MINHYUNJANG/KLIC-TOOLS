@@ -10,8 +10,11 @@ const navItems = [
     href: '#',
     dividerAfter: true,
     children: [
-      { label: '교육목표 빌더', href: 'https://grid-builder-smoky.vercel.app/', external: true },
+      { label: '콘텐츠 빌더', disabled: true },
+      { label: '교육목표 빌더', href: 'https://klic-tools-goal.vercel.app/', external: true },
       { label: '조직도 빌더', href: 'https://grid-buider-organ.vercel.app/', external: true },
+      { label: '오시는길 빌더', disabled: true },
+      { label: '공통서브 빌더', disabled: true },
     ],
   },
   {
