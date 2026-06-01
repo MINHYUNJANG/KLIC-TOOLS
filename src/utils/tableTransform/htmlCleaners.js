@@ -160,7 +160,7 @@ export const performCleanup = (container) => {
         const elements = Array.from(container.querySelectorAll(tagName));
         elements.forEach(el => {
             if (!el.parentNode) return;
-            if (tagName === 'span' && el.classList.contains('num')) return;
+            if (tagName === 'span' && el.classList.contains('mrk')) return;
 
             const elClass = el.getAttribute('class') || '';
             const elStyle = el.getAttribute('style') || '';

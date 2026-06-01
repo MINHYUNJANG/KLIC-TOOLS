@@ -1,0 +1,228 @@
+/* sub container */
+.bgWrap {position: relative; width: 100%; background: #fafafc;}
+.container {position: relative; max-width: 1600px; margin: 0 auto; padding: 0; overflow: hidden; font-family: 'Pretendard'; }
+.overflowNone {overflow: unset;}
+.container ::-webkit-scrollbar {width: 0.19rem; height: 0.19rem;}
+.container ::-webkit-scrollbar-thumb {background-color: #aaa; border-radius: 0.19rem;}
+.container ::-webkit-scrollbar-track {background-color: #ddd; border-radius: 0.19rem;}
+.tableWrap {display: flex; gap: 1.25rem; padding: 1.25rem 0;}
+.contBox {display: flex; flex-direction: column; width:100%; gap: 1.56rem; height: calc(100vh - 2.5rem);}
+.titWrap {display: flex; align-items: center; justify-content: flex-start; flex-wrap: wrap; gap: 0.63rem; margin-bottom: 1.25rem; width: 100%;}
+.titWrap2 {display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 0.63rem; margin-bottom: 1.25rem; width: 100%; margin: 0 auto; z-index: 6;}
+.titWrap3 {display: flex; align-items: flex-start; justify-content: flex-start; flex-direction: column; flex-wrap: wrap; gap: 0.63rem; margin-bottom: 1.25rem; width: 100%;}
+.relative {position: relative;}
+.tableBtnWrap {display: flex; flex-wrap: wrap; gap: 1.25rem; justify-content: center; margin-top: 0.31rem;}
+.editBox {position: relative; flex: 1; display: flex; flex-direction: column; min-height:0; }
+
+/* 가이드 버튼 (모달 내부) */
+.guideBtn {padding: 0; border: none; outline: none; background: transparent; cursor: pointer;}
+.guide {display: flex; flex-direction: column; justify-content: center; align-items: center;}
+.guideClose {position: relative; box-shadow:0 0 0 0.23rem #ff0051,0 0.31rem 0.78rem rgba(0,0,0,0.3); border-radius: 50%;}
+
+/* 가이드 모드 */
+.guideWrap {position: fixed; top: 0; left: 0; width: 100%; height: 100%;  background: rgba(0,0,0,0.5); z-index: 999;}
+.guideTarget{position:relative;z-index:1000;box-shadow:0 0 0 0.23rem #ffeb3b,0 0.31rem 0.78rem rgba(0,0,0,0.3);border-radius:0.31rem;cursor:help}
+.guideTarget:hover { z-index: 9999 !important; }
+.guideTarget::after,.guideTarget::before{opacity:0;visibility:hidden;transition:all 0.2s ease; pointer-events:none;}
+.guideTarget:hover::after,.guideTarget:hover::before{opacity:1;visibility:visible}
+.guideTarget::after{max-width: 37.5rem; min-width: max-content; content:attr(data-guide);position:absolute;background:#333;color:#fff;padding:0.63rem;border-radius:0.63rem;font-size:0.88rem;white-space:pre-wrap; text-align:left;line-height:1.2;box-shadow:0 0.31rem 0.63rem rgba(0,0,0,0.2);z-index:1001;}
+.guideTarget::before{content:'';position:absolute;border-width:0.47rem;border-style:solid;z-index:1001;}
+.guideBottom::after{top:calc(100% + 0.94rem);left:50%;transform:translateX(-50%)}
+.guideBottom::before{top:100%;left:50%;transform:translateX(-50%);border-color:transparent transparent #333 transparent}
+.guideTop::after{bottom:calc(100% + 0.94rem);left:50%;transform:translateX(-50%)}
+.guideTop::before{bottom:100%;left:50%;transform:translateX(-50%);border-color:#333 transparent transparent transparent}
+.guideRight::after{top:50%;left:calc(100% + 0.94rem);transform:translateY(-50%)}
+.guideRight::before{top:50%;left:100%;transform:translateY(-50%);border-color:transparent #333 transparent transparent}
+.guideLeft::after{top:50%;right:calc(100% + 0.94rem);transform:translateY(-50%)}
+.guideLeft::before{top:50%;right:100%;transform:translateY(-50%);border-color:transparent #333 transparent transparent}
+.guideCenter::after{top:50%;left:50%;transform:translate(-50%, -50%);border-color:transparent #333 transparent transparent}
+.guideCenter::before{display: none;}
+
+/* 버튼 */
+.btnBox {display: flex; width: auto; gap: 0.5rem; justify-content: center; align-items: center; flex-wrap: wrap;}
+.btnBox button {display: flex; width: auto; height: 2.63rem; justify-content: center; align-items: center; padding:0.75rem 1.38rem; gap: 0.5rem; border-radius: 1.88rem; transition: all 0.2s; border: none;}
+.btnBox button span{font-weight: 500; font-size: 0.94rem; letter-spacing: -2%; line-height: 1;}
+.btnBox button img,.btnBox button svg {width: auto; height: auto; max-width: 100%;}
+
+.btnBox .copyBtn { background: #DBEBFF;}
+.btnBox .copyBtn span{color: #396AFB;}
+.btnBox .removeBtn {background: #FFEDED;}
+.btnBox .removeBtn span {color: #FF2C2C;}
+.btnBox .cleanBtn {background: #F8EFFD;}
+.btnBox .cleanBtn span{color: #A753D5;}
+.btnBox .aiCleanBtn {background: #DDF9F3;}
+.btnBox .aiCleanBtn span{color: #2BAC83;}
+.btnBox .tableSettingBtn {background: #EDF7F2;}
+.btnBox .tableSettingBtn span{color: #4CA67C;}
+.btnBox .tableSettingBtn i{color: #4CA67C; font-size: 0.94rem;}
+.btnBox .tableSettingBtnOpen {background: #4CA67C;}
+.btnBox .tableSettingBtnOpen span{color: #fff;}
+.btnBox .tableSettingBtnOpen i{color: #fff;}
+
+/* active */
+.btnBox .copyBtn:focus,.btnBox .copyBtn:hover {background: #396AFB;}
+.btnBox .copyBtn:focus > *,.btnBox .copyBtn:hover > *{color:#fff;filter: brightness(0) invert(1);}
+.btnBox .removeBtn:focus,.btnBox .removeBtn:hover {background: #FF2C2C;}
+.btnBox .removeBtn:focus > *,.btnBox .removeBtn:hover > *{color:#fff;filter: brightness(0) invert(1);}
+.btnBox .cleanBtn:focus,.btnBox .cleanBtn:hover {background: #A753D5;}
+.btnBox .cleanBtn:focus > *,.btnBox .cleanBtn:hover > *{color:#fff; filter: brightness(0) invert(1);}
+.btnBox .aiCleanBtn:focus,.btnBox .aiCleanBtn:hover {background: #2BAC83;}
+.btnBox .aiCleanBtn:focus > *,.btnBox .aiCleanBtn:hover > *{color:#fff;filter: brightness(0) invert(1);}
+.btnBox .tableSettingBtn:focus,.btnBox .tableSettingBtn:hover {background: #4CA67C;}
+.btnBox .tableSettingBtn:focus > *,.btnBox .tableSettingBtn:hover > *{color:#fff;}
+
+/* HWP모달 */
+.HwpModal {position: fixed; top:0; left:0; width: 100%; height: 100%; z-index: 9999999;}
+.HwpModal .HwpHeader {position: absolute; top: 4px; right: 1.25rem;}
+.HwpModal .HwpHeader button {font-size: 1.25rem; padding: 0; line-height: 1;}
+
+/* Psd모달 */
+.PsdModal {position: fixed; top:0; left:0; width: 100%; height: 100%;z-index: 9999999;}
+.PsdModal .PsdHeader  {position: relative; display: flex; align-items: center; justify-content: flex-end; width: 100%;  background:#464646; padding:0.13rem 0.63rem;}
+.PsdModal .PsdHeader button {color:#fff; font-size: 1.25rem; padding: 0; line-height: 1;}
+
+/* 인풋모달 */
+.dropdownStyle {position: absolute;top: 100%;left: 0; width: calc(100%);background-color: #fff;border: 1px solid #ddd;border-radius: 4px;box-shadow: 0 4px 0.63rem rgba(0, 0, 0, 0.1);z-index: 50;padding: 0;margin: 0.13rem 0 0rem 0;list-style: none;max-height: 18.75rem;overflow-y: auto;}
+.dropdownStyle.w50 {width:calc(50% + 1.25rem)}
+.listItemStyle {padding: 0.5rem 0.75rem;cursor: pointer;border-bottom: 1px solid #f0f0f0;font-size: 0.81rem;color: #333;transition: background-color 0.2s;}
+.listItemStyle:hover {background-color: #f9f9f9;}
+.listItemStyle:last-child {border-bottom: none;}
+
+/* 콜박스 */
+.colWrap {display: flex; width: 100%; align-items: center; gap: 0.25rem;}
+.colWrap label {min-width: 2.5rem; white-space: nowrap;}
+.colWrap .colWidth{max-width:calc(100% - 9.38rem)}
+.colWrap .colItem{position: relative;}
+.colBox {display: flex; max-width: calc(100% - 7.5rem); min-width: 4.75rem; gap: 0.75rem; align-items: center; overflow-X: auto;}
+.colBox .colInp{border:none; border-bottom: 1px solid #ddd; border-radius: 0; max-width: 4.75rem !important; padding: 0rem 1.38rem 0rem 0.31rem !important; letter-spacing: -2%; font-size: 0.88rem; font-weight: 500;}
+.colBox .colInp::placeholder {color: #999; letter-spacing: -2%; font-size: 0.88rem; font-weight: 500;}
+.colBox .colInp:focus {box-shadow: none; border-color: #ddd;}
+.colWrap .iconBtn {font-size: 1.25rem; color: #000; padding: 0; line-height: 1;}
+.colWrap .iconBtn i {font-size: 1.25rem;}
+.colBox button.removeBtn {padding:0; position: absolute; top: 50%; right: 0.63rem; transform: translateY(-50%); color: #666;}
+.colBtn{display: flex; width: auto; gap: 0.25rem; align-items: center;}
+.colBtn button {display: flex; width: auto; height: 2.25rem; justify-content: center; align-items: center; padding:0 0.75rem; gap: 0.25rem; border-radius: 1.88rem; transition: all 0.2s; border: none; outline: none;}
+.colBtn button span{font-weight: 500; font-size: 0.88rem; letter-spacing: -2%; line-height: 1;}
+.colBtn .autoBtn {background: #E9EFFB;}
+.colBtn .autoBtn span {color: #2563ea;}
+.colBtn .allDelteBtn  {background: #FFEDED;}
+.colBtn .allDelteBtn span{color: #FF2424;}
+.colBtn .autoBtn:hover, .colBtn .autoBtn:focus {background: #2563ea;}
+.colBtn .allDelteBtn:hover, .colBtn .allDelteBtn:focus {background: #FF2424;}
+.colBtn .autoBtn:hover span, .colBtn .autoBtn:focus span {color: #fff;}
+.colBtn .allDelteBtn:hover span, .colBtn .allDelteBtn:focus span {color: #fff;}
+
+/* 스위치 */
+.swichBtnWrap {display: flex;align-items: center; margin-left: auto;}
+.swichBtnWrap .colTit {font-size: 0.94rem; color: #666; letter-spacing: -2%; margin-right: 0.25rem;}
+.swichBtnGroup {width: auto;}
+.toggleSwitch {position: relative;width: 2.25rem; height: 1.25rem;background-color: #eee;border-radius: 1.88rem; border: none;cursor: pointer;padding: 0;transition: background-color 0.3s ease;}
+.toggleSwitch.active {background-color: #2563EA;}
+.toggleKnob {position: absolute;top: 0.13rem;left: 0.13rem;width: 1rem;height: 1rem;background-color: #fff;border-radius: 50%;box-shadow: 2px 2px 4px rgba(0, 0, 0, 0.15);transition: transform 0.3s cubic-bezier(0.25, 1, 0.5, 1);}
+.toggleSwitch.active .toggleKnob {transform: translateX(1rem);}
+
+/* 토글슬라이드 */
+.toggleWrap {position: relative;display: inline-flex; width: 5.38rem; height: 2.25rem; background-color: #F4F3F7;border-radius: 0.31rem;padding: 0.38rem 0.25rem;}
+.toggleSlider {position: absolute;top: 0.38rem;left: 0.25rem;width: calc(50% - 0.25rem);height: calc(100% - 0.75rem);background-color: #ffffff;border-radius: 0.38rem;box-shadow: 2px 2px 4px rgba(0, 0, 0, 0.1);transition: transform 0.25s ease; pointer-events: none;}
+.toggleBtn {position: relative; z-index: 1;padding: 0.25rem 0.5rem; background: transparent; border: none; outline: none; font-size: 0.88rem;color: #999999;cursor: pointer;transition: color 0.25s ease;white-space: nowrap; text-align: center; font-weight: 500; line-height: 1; letter-spacing: -2%;}
+.toggleActive {color: #2563EA;}
+
+/* 테이블개별설정 */
+.tableBtn {width: auto; position: absolute; z-index: 10; transform: translateX(-100%);}
+.tableBtn .Btn {border: 1px solid rgba(76, 166, 124, 0.3); background: #F5F8F1;}
+.tableBtn .Btn i{color: #4CA67C;}
+.tableBtn button {display: flex; width: auto; height: 2.25rem; justify-content: center; align-items: center; padding:0 0.88rem; gap: 0.25rem; border-radius: 3.13rem; transition: all 0.2s;}
+.tableBtn button span{font-weight: 400; font-size: 1rem; letter-spacing: -1px; color: #333; line-height: 1;}
+.tableBtn button i {font-size: 1.25rem;}
+.tableBtn .Btn:focus,.tableBtn .Btn:hover {border: 1px solid #4CA67C; background: #4CA67C;}
+.tableBtn .Btn:focus > *,.tableBtn .Btn:hover > *{color:#fff;}
+
+/* 모달 */
+.modalPopWrap {display: flex; justify-content: center; align-items: center; position: fixed;inset: 0px;background-color: rgba(0, 0, 0, 0.5);z-index: 99999;}
+.modalPop {display: flex; flex-direction: column; background-color: #fff; padding: 1.25rem; border-radius: 0.63rem; width: 95%; max-width: 1400px; max-height: 80vh;}
+.modalPop .titWrap {display: flex; justify-content: space-between; align-items: center; padding-bottom: 1.25rem; margin-bottom: 1.25rem; border-bottom: 1px solid #eee;}
+.modalPopWrap2 {display: flex; justify-content: center; align-items: flex-start; position: fixed; padding: 6.25rem 0 0; background-color: rgba(0, 0, 0, 0.5); z-index: 99999; -webkit-backdrop-filter: blur(.4rem); backdrop-filter: blur(.4rem); top: 0; left: 0; right: 0; bottom: 0;}
+.modalPop2 {display: flex; flex-direction: column; background-color: #fff; padding: 1.25rem; border-radius: 0.63rem; width: 55%; max-width: 1400px; max-height: 80vh;}
+.modalPop2 .titWrap2 {display: flex; justify-content: space-between; align-items: center; padding-bottom: 0.63rem; margin-bottom: 0rem; border-bottom: 1px solid #eee;}
+.modalPopWrap2 .modalCont {padding:0.63rem 0; overflow-y: auto;}
+
+/* TableEditModal */
+.modalContentBox {position: fixed;top: 50%;left: 50%;z-index: 10001; background-color: #fff;border-radius: 0.94rem; max-width: 43.75rem; width: 100%; overflow: visible;box-shadow: 0 4px 1.25rem rgba(0, 0, 0, 0.15);}
+.modalTitle {display: flex; align-items: center; justify-content: space-between; padding: 0.63rem 1.25rem; gap: 1rem; box-shadow: 0 4px 4px 0 rgba(11, 14, 26, 0.02); user-select: none; cursor: grab;}
+.modalTitle > span {color:#2563EA; font-size:1.06rem; letter-spacing: -2.5%; font-weight: 500;}
+.modalTitle em {color:#666; font-weight: 400; font-size: 0.88rem; letter-spacing: -2%; margin-left: 0.38rem;}
+.modalTitle .guideBtn span {font-weight: 500; color:#666; letter-spacing: 0; font-size: 0.81rem;}
+.modalBody {display: flex;flex-direction: column;gap: 1.25rem; background-color: #fafafc; padding: 2rem 1.25rem 1.69rem;}
+.flexCol {display: flex; align-items: center; gap:1.25rem; flex-wrap: wrap;}
+.flexRow {display: flex; gap:0.63rem; flex-direction: column; flex-wrap: wrap;}
+.gap0 {gap: 0.25rem!important;}
+.gap05 {gap: 0.31rem!important;}
+.gap1 {gap: 0.44rem!important;}
+.gap2 {gap: 0.75rem!important;}
+.gap15 {gap:1.88rem !important}
+.mgl5 {margin-left:-0.63rem}
+.selectInp {max-width: 7.25rem !important;}
+.selectInp::placeholder {color: #555 !important;font-size: 0.88rem !important; font-weight: 500;}
+.selectInp.tbl {max-width: 9.56rem !important;}
+.selectInp + i {content:''; position: absolute; top:50%; right:0.63rem; transform: translateY(-50%); font-size: 1rem; color:#555;}
+.configSection {display: flex; flex-direction: column; flex-wrap: wrap; gap: 1.25rem; background-color: #fff; border-radius: 0.63rem; padding: 1.56rem 1.25rem; border: 1px solid #ddd;}
+.configSection span {color:#666; letter-spacing: -2%; font-size: 0.88rem; font-weight: 500;}
+.configSection .configLabel {font-size: 1rem; font-weight: 600; color: #000; line-height: 1.25rem; letter-spacing: -2%;}
+.configSection .configLabel img {max-width: 100%; margin-right: 0.25rem; vertical-align: auto;}
+.modalLabelSpan {font-size: 0.94rem; font-weight: 400; color: #000; line-height: normal;}
+.radioItem {cursor: pointer; display: flex;align-items: center; height: 2rem;}
+.radioItem span {font-size: 0.94rem; font-weight: 500; letter-spacing: -2%; margin-left: 0.38rem;}
+.checkItem {display: flex;align-items: center;cursor: pointer;}
+.checkItem span {margin-left: 0.5rem; color: #555; letter-spacing: -2%; font-size: 0.88rem; font-weight: 400;}
+.checkIcon {color:#4CA67C}
+.colWidthSection {border-top: 1px dashed #eee;padding-top: 1.25rem;}
+.colWidthSection .colWrap {max-width: 100%; flex-wrap: wrap;}
+.colWidthSection .colBox{max-width: calc(100% - 3.75rem);}
+.modalFooter {display: flex;justify-content: flex-end;gap: 0.63rem; background-color: #fafafc; padding: 0rem 1.25rem 1.69rem; border-radius: 0 0 0.94rem 0.94rem;}
+.cancelBtn {padding: 0.63rem 1.25rem;background-color: #fff;color: #666; border: 1px solid rgb(221 221 221 / 86%); border-radius: 0.63rem;cursor: pointer;font-weight: bold; transition: 0.3s all; font-size: 0.94rem; letter-spacing: -2%; font-weight: 500;}
+.applyBtn {padding: 0.63rem 1.25rem;color: #fff;border: none;border-radius: 0.63rem;cursor: pointer;font-weight: 500; transition: 0.3s all;}
+.applyBtn.blue {background-color: #2563EA;}
+.applyBtn.gray {background-color: #444444;}
+.cancelBtn:hover,.cancelBtn:focus {color: #000;}
+.applyBtn.blue:hover,.applyBtn.blue:focus {background-color: #074ada;}
+.applyBtn.gray:hover,.applyBtn.gray:focus {background-color: #111;}
+
+/* 인풋 */
+input.numInp {max-width: 5.25rem !important; padding: 0 0.94rem !important}
+input.Inp {max-width: 4rem; height:2.25rem; font-size: 0.88rem; padding:0 0.94rem ;line-height: 1.2;border-radius: 0.38rem; border: 1px solid #d4d4d4; background-color: #ffffff;color: #000;outline: none;transition: all 0.2s ease-in-out;}
+input.Inp + input.Inp {margin-left:0.25rem}
+input.Inp::placeholder {color: #999999; letter-spacing: -2%; font-size: 0.81rem;}
+input.Inp:hover {border-color: #a1a1a6;}
+input.Inp:focus {border-color: #007AFF; box-shadow: 0 0 0 4px rgba(0, 122, 255, 0.15);}
+@keyframes fadeIn {from { opacity: 0; }to { opacity: 1; }}
+@keyframes scaleIn {from { transform: scale(0.9); }to { transform: scale(1); }}
+
+/* 업데이트 알림 배너 */
+.updateBanner { position: fixed; top: 0; left: 0; width: 100%; background-color: #ff4d4f; color: #fff; padding: 0.75rem 1.25rem; font-weight: 700; z-index: 9999; display: flex; justify-content: center; align-items: center; gap: 0.94rem; box-shadow: 0 0.25rem 0.63rem rgba(0, 0, 0, 0.15); animation: slideDown 0.4s cubic-bezier(0.16, 1, 0.3, 1); }
+.updateBanner span { font-size: 0.94rem; letter-spacing: -0.03rem; }
+.reloadBtn { padding: 0.31rem 0.94rem; background-color: #fff; color: #ff4d4f; border: none; border-radius: 0.25rem; cursor: pointer; font-weight: 800; font-size: 0.88rem; transition: all 0.2s ease; box-shadow: 0 0.13rem 0.25rem rgba(0, 0, 0, 0.1); }
+.reloadBtn:hover { background-color: #fff0f0; transform: translateY(-0.06rem); box-shadow: 0 0.25rem 0.5rem rgba(0, 0, 0, 0.15); }
+.reloadBtn:active { transform: translateY(0.06rem); box-shadow: 0 0.06rem 0.13rem rgba(0, 0, 0, 0.1); }
+@keyframes slideDown { from { transform: translateY(-100%); opacity: 0.5; } to { transform: translateY(0); opacity: 1; } }
+
+/* 에러 바운더리 */
+.errorBox {position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); padding: 1.25rem; text-align: center; background-color: #fff0f0; color: #d00; border-radius: 0.5rem; z-index: 9999;}
+.errorBtn { padding: 0.31rem 0.63rem; margin-top: 0.63rem; background-color: #fff; border: 0.06rem solid #d00; color: #d00; border-radius: 0.25rem; cursor: pointer; transition: all 0.2s; }
+.errorBtn:hover { background-color: #d00; color: #fff; }
+
+/* 반응형 */
+@media (max-width:1024px) {
+.modalPopWrap2 {padding: 2.5rem 0 0 0;}
+.modalPop2 {width:95%}
+}
+@media (max-width:768px) {
+.modalContentBox {width: 90%;}
+}
+@media (max-width:640px) {
+    .btnBox button span {display: none;}
+    .mgl5 {margin-left: 0;}
+    .guideTarget::after{max-width: 18.75rem;}
+}
+@media (max-width:480px) {
+    .modalPop {width:95%}
+}

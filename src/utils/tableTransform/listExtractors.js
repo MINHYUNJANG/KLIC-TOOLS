@@ -30,7 +30,7 @@ export const checkTitleMatch = (text, titConfig) => {
 export const applyNestedClassesHelper = (cell, baseUlClassName, levelOffset = 0) => {
     if (!cell) return;
     const ulBaseName = (baseUlClassName && baseUlClassName !== UL_NONE_VALUE && baseUlClassName.trim()) ? baseUlClassName.trim() : '';
-    const olBaseName = 'list_ol';
+    const olBaseName = 'order-st';
 
     const processNode = (node) => {
         const tagName = node.tagName.toLowerCase();
@@ -43,7 +43,14 @@ export const applyNestedClassesHelper = (cell, baseUlClassName, levelOffset = 0)
         }
         const baseName = (tagName === 'ul') ? ulBaseName : olBaseName;
         const effectiveLevel = (tagName === 'ul') ? level + levelOffset : level;
-        if (baseName) node.className = `${baseName}${effectiveLevel}`;
+        if (baseName) {
+            const firstSpace = baseName.indexOf(' ');
+            if (firstSpace !== -1) {
+                node.className = `${baseName.slice(0, firstSpace)}${effectiveLevel}${baseName.slice(firstSpace)}`;
+            } else {
+                node.className = `${baseName}${effectiveLevel}`;
+            }
+        }
         else node.removeAttribute('class');
         Array.from(node.children).forEach(li => {
             if (li.tagName === 'LI') {
@@ -276,7 +283,7 @@ export const processCellContent = (cell, keepMarker, isOuterText = false, tit1 =
             if (!keepMarker) {
                 if (targetTagName === 'ol') {
                     const spanNum = document.createElement('span');
-                    spanNum.className = 'num';
+                    spanNum.className = 'mrk';
                     const rawChar = markerInfo.rawMarker || markerInfo.char.replace(/\s+/g, '');
                     spanNum.textContent = convertCircleToArabic(rawChar);
                     li.appendChild(spanNum);
