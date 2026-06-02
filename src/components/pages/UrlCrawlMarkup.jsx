@@ -522,6 +522,15 @@ export default function UrlCrawlMarkup() {
   const [batchResults, setBatchResults] = useState([]);
   const [activeResultIdx, setActiveResultIdx] = useState(0);
 
+  // ─── 소스 직접 입력 모드 ────────────────────────────────────
+  const [mode, setMode] = useState('url'); // 'url' | 'source'
+  const [sourceHtml, setSourceHtml] = useState('');
+  const [sourceSelector, setSourceSelector] = useState('');
+  const [sourceCategory, setSourceCategory] = useState('other');
+  const [sourceTemplateId, setSourceTemplateId] = useState(null);
+  const [sourceResult, setSourceResult] = useState(null);
+  const [sourceLoading, setSourceLoading] = useState(false);
+
   // ─── URL 아이템 수정/삭제 ───────────────────────────────────
   function updateItem(id, field, value) {
     setUrlItems(prev => prev.map(item => item.id === id ? { ...item, [field]: value } : item));
@@ -757,10 +766,154 @@ export default function UrlCrawlMarkup() {
     setBatchLoading(false);
   }
 
+  function handleSourceCategoryChange(category) {
+    const templates = CATEGORY_TEMPLATES[category];
+    setSourceCategory(category);
+    setSourceTemplateId(templates?.[0]?.id ?? null);
+  }
+
+  // ─── 소스 직접 입력 → 마크업 생성 (URL 배치 모드와 동일한 분기) ─
+  async function handleSourceMarkup() {
+    if (!sourceHtml.trim()) return;
+    setSourceLoading(true);
+    setSourceResult(null);
+    try {
+      const extracted = extractContent(sourceHtml.trim(), sourceSelector.trim(), '');
+      let html = '';
+
+      if (['greeting', 'history', 'symbol'].includes(sourceCategory) && sourceTemplateId) {
+        const tpl = ALL_TEMPLATES.find(t => t.id === sourceTemplateId);
+        if (tpl) {
+          if (tpl.category === '상징') {
+            const { parseSymbolSource } = await import('../../templates/symbol.js');
+            const docForCheck = new DOMParser().parseFromString(extracted, 'text/html');
+            const symbolItems = parseSymbolSource(docForCheck.body);
+            if (symbolItems.length > 0) {
+              html = formatHtml(applyMarkupToTemplate(extracted, tpl.code, tpl.id));
+            } else {
+              const imgUrls = getContentImageUrls(extracted, '');
+              if (imgUrls.length > 0) {
+                try {
+                  const SYMBOL_PROMPT = `이 이미지는 학교 상징 페이지입니다. 교목, 교화, 교표, 교기, 교훈, 교가 항목의 이름과 설명을 추출하세요. 없는 항목은 생략하세요.`;
+                  const ocrRes = await fetch('/api/ocr-image', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ imageUrl: imgUrls[0], prompt: SYMBOL_PROMPT }),
+                  });
+                  const ocrData = await ocrRes.json();
+                  const ocrText = ocrData.text || '';
+                  const { parseSymbolOcr, buildSyntheticSymbolHtml, findSongImageFromHtml, extractSongLyricsFromImage } = await import('../../utils/ocrSymbol.js');
+                  const detectedSongUrl = findSongImageFromHtml(extracted, '');
+                  if (ocrText.trim()) {
+                    const { items, sloganText, hasSong } = parseSymbolOcr(ocrText);
+                    const songImgUrl = detectedSongUrl || (hasSong ? imgUrls[0] : '');
+                    if (items.length > 0) {
+                      const songLyrics = songImgUrl ? await extractSongLyricsFromImage(songImgUrl).catch(() => null) : null;
+                      html = formatHtml(applyMarkupToTemplate(
+                        buildSyntheticSymbolHtml(items, sloganText, songImgUrl, '', songLyrics),
+                        tpl.code, tpl.id
+                      ));
+                    } else {
+                      html = formatHtml(applyMarkupToTemplate(extracted, tpl.code, tpl.id));
+                    }
+                  } else {
+                    html = formatHtml(applyMarkupToTemplate(extracted, tpl.code, tpl.id));
+                  }
+                } catch {
+                  html = formatHtml(applyMarkupToTemplate(extracted, tpl.code, tpl.id));
+                }
+              } else {
+                html = formatHtml(applyMarkupToTemplate(extracted, tpl.code, tpl.id));
+              }
+            }
+          } else {
+            // 인사말·연혁: 이미지 전용인지 확인 후 템플릿 적용
+            if (isImageOnlyContent(extracted)) {
+              const imgUrls = getContentImageUrls(extracted, '');
+              if (imgUrls.length > 0) {
+                try {
+                  const ocrRes = await fetch('/api/ocr-image', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ imageUrl: imgUrls[0] }),
+                  });
+                  const ocrData = await ocrRes.json();
+                  const ocrText = ocrData.text || '';
+                  if (ocrText.trim()) {
+                    const paragraphs = ocrText
+                      .split(/\n+/)
+                      .map(line => line.trim())
+                      .filter(line => line.length > 3)
+                      .map(line => `<p>${line}</p>`)
+                      .join('\n');
+                    html = formatHtml(applyMarkupToTemplate(`<div>${paragraphs}</div>`, tpl.code, tpl.id));
+                  } else {
+                    html = formatHtml(applyMarkupToTemplate(extracted, tpl.code, tpl.id));
+                  }
+                } catch {
+                  html = formatHtml(applyMarkupToTemplate(extracted, tpl.code, tpl.id));
+                }
+              } else {
+                html = formatHtml(applyMarkupToTemplate(extracted, tpl.code, tpl.id));
+              }
+            } else {
+              html = formatHtml(applyMarkupToTemplate(extracted, tpl.code, tpl.id));
+            }
+          }
+        }
+      } else if (sourceCategory === 'footer') {
+        const res = await fetch('/api/auto-markup', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ html: extracted, context: 'footer' }),
+        });
+        let data = {};
+        try { data = await res.json(); } catch {}
+        if (!res.ok) throw new Error(data.detail || '실패');
+        html = applyTableProcessing(data.html || '');
+      } else {
+        const res = await fetch('/api/auto-markup', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ html: extracted }),
+        });
+        let data = {};
+        try { data = await res.json(); } catch {}
+        if (!res.ok) throw new Error(data.detail || '마크업 변환 실패');
+        html = applyTableProcessing(data.html || '');
+      }
+
+      setSourceResult(formatHtml(html));
+    } catch (e) {
+      setSourceResult(`<!-- 마크업 생성 중 오류: ${e.message} -->`);
+    } finally {
+      setSourceLoading(false);
+    }
+  }
+
   return (
     <div className="crawl-page">
       <div className="crawl-page-inner">
         <h2 className="crawl-title">크롤링 마크업</h2>
+
+        {/* ─── 모드 탭 ─── */}
+        <div className="crawl-mode-tabs">
+          <button
+            className={`crawl-mode-tab ${mode === 'url' ? 'is-active' : ''}`}
+            onClick={() => setMode('url')}
+          >
+            URL 크롤링
+          </button>
+          <button
+            className={`crawl-mode-tab ${mode === 'source' ? 'is-active' : ''}`}
+            onClick={() => setMode('source')}
+          >
+            소스 직접 입력
+          </button>
+        </div>
+
+        {/* ─── URL 크롤링 모드 ─── */}
+        {mode === 'url' && <>
         <p className="crawl-desc">URL을 입력하면 본문을 자동으로 크롤링하여 마크업을 생성합니다.</p>
 
         <PageHowTo title="복사하고자하는 학교의 URL을 붙여넣으면 본문을 자동 크롤링해 KLIC 스타일의 마크업을 즉시 생성합니다">
@@ -961,6 +1114,89 @@ export default function UrlCrawlMarkup() {
                   }}
                 />
               )
+            )}
+          </div>
+        )}
+        </>}
+
+        {/* ─── 소스 직접 입력 모드 ─── */}
+        {mode === 'source' && (
+          <div className="crawl-source-mode">
+            <p className="crawl-desc">
+              CMS·JavaScript로 동적 로딩되어 크롤링이 안 되는 요소도 아래 방법으로 캡처할 수 있습니다.
+            </p>
+            <div className="crawl-source-guide">
+              <div className="crawl-source-guide-item">
+                <strong>방법 1 — 페이지 소스 보기 (서버 렌더링 데이터)</strong>
+                <span>브라우저에서 <kbd>Ctrl+U</kbd> → 전체 선택 (<kbd>Ctrl+A</kbd>) → 복사 (<kbd>Ctrl+C</kbd>)</span>
+              </div>
+              <div className="crawl-source-guide-item">
+                <strong>방법 2 — 렌더링된 DOM 복사 (JS 동적 데이터 포함)</strong>
+                <span><kbd>F12</kbd> → Elements 탭 → <code>&lt;html&gt;</code> 우클릭 → Copy → Copy outerHTML</span>
+              </div>
+            </div>
+            <textarea
+              className="crawl-textarea crawl-textarea--source"
+              placeholder="복사한 HTML 소스를 여기에 붙여넣으세요..."
+              value={sourceHtml}
+              onChange={e => setSourceHtml(e.target.value)}
+              spellCheck={false}
+            />
+            <div className="crawl-source-options">
+              <div className="crawl-selector-row">
+                <input
+                  type="text"
+                  className="crawl-input crawl-input--selector"
+                  placeholder="CSS 선택자 (선택사항, 예: #content, .sub-content)"
+                  value={sourceSelector}
+                  onChange={e => setSourceSelector(e.target.value)}
+                  onKeyDown={e => e.key === 'Enter' && !sourceLoading && sourceHtml.trim() && handleSourceMarkup()}
+                  disabled={sourceLoading}
+                />
+                <select
+                  className="url-item-select"
+                  value={sourceCategory}
+                  onChange={e => handleSourceCategoryChange(e.target.value)}
+                  disabled={sourceLoading}
+                >
+                  <option value="greeting">인사말</option>
+                  <option value="symbol">상징</option>
+                  <option value="history">연혁</option>
+                  <option value="footer">푸터메뉴</option>
+                  <option value="other">기타</option>
+                </select>
+                <button
+                  className="crawl-btn"
+                  onClick={handleSourceMarkup}
+                  disabled={!sourceHtml.trim() || sourceLoading}
+                >
+                  {sourceLoading ? <span className="crawl-spinner" /> : '마크업 생성'}
+                </button>
+              </div>
+              {sourceCategory !== 'other' && sourceCategory !== 'footer' && CATEGORY_TEMPLATES[sourceCategory] && (
+                <div className="url-item-type-group">
+                  {CATEGORY_TEMPLATES[sourceCategory].map(tpl => (
+                    <label key={tpl.id} className="url-item-type-label">
+                      <input
+                        type="radio"
+                        name="source-template"
+                        value={tpl.id}
+                        checked={sourceTemplateId === tpl.id}
+                        onChange={() => setSourceTemplateId(tpl.id)}
+                        disabled={sourceLoading}
+                      />
+                      {tpl.label.replace(/^(인사말|연혁|상징)\s+/, '')}
+                    </label>
+                  ))}
+                </div>
+              )}
+            </div>
+            {sourceResult && (
+              <ResultViewer
+                markup={sourceResult}
+                onMarkupChange={html => setSourceResult(html)}
+                templateId={null}
+              />
             )}
           </div>
         )}

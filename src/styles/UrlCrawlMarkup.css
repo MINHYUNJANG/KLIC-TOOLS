@@ -560,3 +560,91 @@
   gap: 0.75rem;
   align-items: center;
 }
+
+/* ─── 모드 탭 ─────────────────────────────────────────────── */
+.crawl-mode-tabs {
+  display: flex;
+  gap: 0;
+  margin-bottom: 1.5rem;
+  border-bottom: 2px solid #e8e8ee;
+}
+
+.crawl-mode-tab {
+  padding: 0.6rem 1.5rem;
+  border: none;
+  border-bottom: 2px solid transparent;
+  margin-bottom: -2px;
+  background: transparent;
+  font-size: 0.9375rem;
+  font-weight: 600;
+  color: #888;
+  cursor: pointer;
+  transition: color 0.15s, border-color 0.15s;
+  font-family: inherit;
+}
+.crawl-mode-tab:hover { color: #1a2a4a; }
+.crawl-mode-tab.is-active {
+  color: #0070c8;
+  border-bottom-color: #0070c8;
+}
+
+/* ─── 소스 직접 입력 모드 ──────────────────────────────────── */
+.crawl-source-mode {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.crawl-source-guide {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  padding: 1rem 1.25rem;
+  background: #f7fbff;
+  border: 1px solid #d7e8f8;
+  border-radius: 0.375rem;
+}
+
+.crawl-source-guide-item {
+  display: flex;
+  flex-direction: column;
+  gap: 0.2rem;
+  font-size: 0.875rem;
+}
+.crawl-source-guide-item strong {
+  color: #1a2a4a;
+  font-weight: 600;
+}
+.crawl-source-guide-item span {
+  color: #555;
+  line-height: 1.6;
+}
+.crawl-source-guide-item kbd {
+  display: inline-block;
+  padding: 0.1rem 0.4rem;
+  background: #eef0f4;
+  border: 1px solid #c8ccd8;
+  border-radius: 0.2rem;
+  font-size: 0.8rem;
+  font-family: inherit;
+  color: #333;
+}
+.crawl-source-guide-item code {
+  background: #eef0f4;
+  padding: 0.1rem 0.35rem;
+  border-radius: 0.2rem;
+  font-size: 0.8rem;
+  color: #0070c8;
+}
+
+.crawl-textarea--source {
+  min-height: 18rem;
+  background: #fafafa;
+  font-size: 0.8125rem;
+}
+
+.crawl-source-options {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
