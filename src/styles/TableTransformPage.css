@@ -37,3 +37,42 @@
     from { opacity: 0; transform: translateX(-50%) translateY(0.5rem); }
     to   { opacity: 1; transform: translateX(-50%) translateY(0); }
 }
+
+/* ─── Jodit 코드보기(소스) 에디터 스타일 ─────────────────────── */
+
+.jodit-wrapper .jodit-source,
+.jodit-wrapper .jodit-source__area {
+    background: #1e2030 !important;
+}
+
+.jodit-wrapper .jodit-source__mirror,
+.jodit-wrapper .jodit-source textarea {
+    font-family: 'D2Coding', 'Consolas', 'JetBrains Mono', 'Fira Code', 'Monaco', 'Courier New', monospace !important;
+    font-size: 13px !important;
+    line-height: 1.85 !important;
+    color: #cdd6f4 !important;
+    background: #1e2030 !important;
+    padding: 1.5rem 2rem !important;
+    tab-size: 2 !important;
+    letter-spacing: 0 !important;
+    border: none !important;
+    outline: none !important;
+    white-space: pre !important;
+    word-wrap: normal !important;
+    overflow-x: auto !important;
+}
+
+.jodit-wrapper .jodit-source__mirror::-webkit-scrollbar,
+.jodit-wrapper .jodit-source textarea::-webkit-scrollbar {
+    width: 5px;
+    height: 5px;
+}
+.jodit-wrapper .jodit-source__mirror::-webkit-scrollbar-track,
+.jodit-wrapper .jodit-source textarea::-webkit-scrollbar-track {
+    background: #2a2d3e;
+}
+.jodit-wrapper .jodit-source__mirror::-webkit-scrollbar-thumb,
+.jodit-wrapper .jodit-source textarea::-webkit-scrollbar-thumb {
+    background: #4a5068;
+    border-radius: 3px;
+}

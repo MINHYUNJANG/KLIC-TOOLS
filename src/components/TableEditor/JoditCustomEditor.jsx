@@ -164,8 +164,17 @@ const JoditCustomEditor = React.memo(forwardRef(({ initialData, onChange, onPrev
                     handlersRef.current.onTableSelect(null);
                 } catch (err) {}
             },
-            beforeSetMode: (instance) => {
-                try { instance.value = html_beautify(instance.value, BEAUTIFY_OPTIONS); } catch (e) {}
+            afterSetMode: () => {
+                requestAnimationFrame(() => {
+                    try {
+                        const jodit = editorRef.current;
+                        if (!jodit) return;
+                        const ta = jodit.container?.querySelector('.jodit-source__mirror')
+                                ?? jodit.container?.querySelector('.jodit-source textarea');
+                        if (!ta || !ta.offsetParent) return;
+                        ta.value = html_beautify(ta.value || jodit.value, BEAUTIFY_OPTIONS);
+                    } catch (e) {}
+                });
             },
             afterInit: (instance) => {
                 editorRef.current = instance;
