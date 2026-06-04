@@ -190,7 +190,7 @@ export function findSongImageFromHtml(html, baseUrl) {
   return null;
 }
 
-// 추출된 HTML이 이미지 1장으로만 구성된 콘텐츠인지 판별
+// 추출된 HTML이 이미지 1장으로만 구성된 콘텐츠인지 판별 (OCR 처리용)
 export function isImageOnlyContent(html) {
   const doc = new DOMParser().parseFromString(html, 'text/html');
   const text = doc.body.textContent.replace(/\s+/g, '').trim();
@@ -200,6 +200,17 @@ export function isImageOnlyContent(html) {
 
 // 콘텐츠에서 노이즈 이미지를 제외한 실제 콘텐츠 이미지 URL 추출
 const NOISE_IMG = /btn_|logo|icon|arrow|bg_|background|bullet|blank|pixel|spacer|left_menu|sub_menu|visual/i;
+
+// 콘텐츠에 실제 이미지가 1개 이상 있는지 판별 (URL 이미지형/텍스트형 분류용)
+export function hasContentImage(html) {
+  const doc = new DOMParser().parseFromString(html, 'text/html');
+  const imgs = doc.body.querySelectorAll('img[src]');
+  for (const img of imgs) {
+    const src = img.getAttribute('src') || '';
+    if (src && !NOISE_IMG.test(src)) return true;
+  }
+  return false;
+}
 
 export function getContentImageUrls(html, baseUrl) {
   const doc = new DOMParser().parseFromString(html, 'text/html');

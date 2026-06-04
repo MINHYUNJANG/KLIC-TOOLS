@@ -1,7 +1,7 @@
 import { useState, useRef, useEffect } from 'react';
 import PageHowTo from '../PageHowTo';
 import { formatHtml } from '../../utils/formatHtml';
-import { isImageOnlyContent, getContentImageUrls } from '../../utils/ocrSymbol';
+import { isImageOnlyContent, hasContentImage, getContentImageUrls } from '../../utils/ocrSymbol';
 import greeting from '../../templates/greeting';
 import history from '../../templates/history';
 import symbol from '../../templates/symbol';
@@ -521,6 +521,12 @@ export default function UrlCrawlMarkup() {
   const [ocrStatus, setOcrStatus] = useState('');
   const [batchResults, setBatchResults] = useState([]);
   const [activeResultIdx, setActiveResultIdx] = useState(0);
+  const [classifying, setClassifying] = useState(false);
+  const [classifyProgress, setClassifyProgress] = useState({ done: 0, total: 0 });
+  const [contentTypeFilter, setContentTypeFilter] = useState('all');
+  const [siteName, setSiteName] = useState('');
+  const [downloading, setDownloading] = useState(false);
+  const classifyAbortRef = useRef(false);
 
   // ─── 소스 직접 입력 모드 ────────────────────────────────────
   const [mode, setMode] = useState('url'); // 'url' | 'source'
@@ -560,6 +566,7 @@ export default function UrlCrawlMarkup() {
       templateId: null,
       selector: '',
       checked: true,
+      contentType: 'unknown',
     }]);
     setAddUrlInput('');
     setAddTitleInput('');
@@ -575,6 +582,9 @@ export default function UrlCrawlMarkup() {
   async function handleExtractUrls() {
     if (!batchRootUrl.trim()) { setExtractError('URL을 입력해주세요.'); return; }
     if (!isValidUrl(batchRootUrl.trim())) { setExtractError('올바른 URL 형식이 아닙니다.'); return; }
+    classifyAbortRef.current = true;
+    setClassifying(false);
+    setContentTypeFilter('all');
     setExtracting(true); setExtractError(''); setUrlItems([]);
     try {
       const res = await fetch('/api/extract-urls', {
@@ -585,7 +595,8 @@ export default function UrlCrawlMarkup() {
       let data = {};
       try { data = await res.json(); } catch {}
       if (!res.ok) { setExtractError(data.detail || `서버 오류 (${res.status})`); return; }
-      setUrlItems(data.items.map((item, i) => ({
+      if (data.siteName) setSiteName(data.siteName);
+      const newItems = data.items.map((item, i) => ({
         id: i,
         url: item.url,
         title: item.title || '',
@@ -593,12 +604,49 @@ export default function UrlCrawlMarkup() {
         templateId: null,
         selector: '',
         checked: true,
-      })));
+        contentType: 'unknown',
+      }));
+      setUrlItems(newItems);
+      classifyUrlItems(newItems);
     } catch (e) {
       setExtractError(`오류: ${e.message}`);
     } finally {
       setExtracting(false);
     }
+  }
+
+  // ─── URL 페이지 유형 분류 (이미지형 / 텍스트형) ───────────────
+  async function classifyUrlItems(items) {
+    classifyAbortRef.current = false;
+    setClassifying(true);
+    setClassifyProgress({ done: 0, total: items.length });
+    const CONCURRENCY = 3;
+    for (let i = 0; i < items.length; i += CONCURRENCY) {
+      if (classifyAbortRef.current) break;
+      const batch = items.slice(i, i + CONCURRENCY);
+      const results = await Promise.all(batch.map(async (item) => {
+        try {
+          const res = await fetch('/api/fetch-markup', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ url: item.url }),
+          });
+          if (!res.ok) return { id: item.id, contentType: 'error' };
+          const data = await res.json();
+          const extracted = extractContent(data.html, '', item.url);
+          return { id: item.id, contentType: hasContentImage(extracted) ? 'image' : 'text' };
+        } catch {
+          return { id: item.id, contentType: 'error' };
+        }
+      }));
+      if (classifyAbortRef.current) break;
+      setClassifyProgress({ done: Math.min(i + CONCURRENCY, items.length), total: items.length });
+      setUrlItems(prev => {
+        const map = Object.fromEntries(results.map(r => [r.id, r.contentType]));
+        return prev.map(it => map[it.id] !== undefined ? { ...it, contentType: map[it.id] } : it);
+      });
+    }
+    if (!classifyAbortRef.current) setClassifying(false);
   }
 
   function toggleAllChecked() {
@@ -766,6 +814,37 @@ export default function UrlCrawlMarkup() {
     setBatchLoading(false);
   }
 
+  // ─── 마크업 ZIP 다운로드 ───────────────────────────────────
+  async function handleDownloadZip() {
+    const readyResults = batchResults.filter(r => r.html?.trim() && !r.error);
+    if (readyResults.length === 0) return;
+    setDownloading(true);
+    try {
+      const files = readyResults.map(r => ({
+        name: r.title || new URL(r.url).pathname.split('/').filter(Boolean).pop() || '마크업',
+        html: r.html,
+      }));
+      const hostname = new URL(batchRootUrl.trim()).hostname || '마크업';
+      const zipName = siteName || hostname;
+      const res = await fetch('/api/batch-download', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ files, siteName: zipName }),
+      });
+      if (!res.ok) { const d = await res.json().catch(() => ({})); alert(d.detail || '다운로드 실패'); return; }
+      const blob = await res.blob();
+      const a = document.createElement('a');
+      a.href = URL.createObjectURL(blob);
+      a.download = `${zipName}.zip`;
+      a.click();
+      URL.revokeObjectURL(a.href);
+    } catch (e) {
+      alert(`다운로드 오류: ${e.message}`);
+    } finally {
+      setDownloading(false);
+    }
+  }
+
   function handleSourceCategoryChange(category) {
     const templates = CATEGORY_TEMPLATES[category];
     setSourceCategory(category);
@@ -891,6 +970,10 @@ export default function UrlCrawlMarkup() {
     }
   }
 
+  const filteredUrlItems = contentTypeFilter === 'all'
+    ? urlItems
+    : urlItems.filter(item => item.contentType === contentTypeFilter);
+
   return (
     <div className="crawl-page">
       <div className="crawl-page-inner">
@@ -974,8 +1057,35 @@ export default function UrlCrawlMarkup() {
                   </div>
                 </div>
                 )}
+                {classifying && (
+                  <div className="url-classify-status">
+                    <span className="crawl-spinner crawl-spinner--sm" />
+                    페이지 유형 분석 중… {classifyProgress.done} / {classifyProgress.total}
+                  </div>
+                )}
+                {urlItems.some(i => i.contentType !== 'unknown') && (
+                  <div className="url-type-filters">
+                    {[
+                      { key: 'all', label: '전체', count: urlItems.length },
+                      { key: 'image', label: '이미지형', count: urlItems.filter(i => i.contentType === 'image').length },
+                      { key: 'text', label: '텍스트형', count: urlItems.filter(i => i.contentType === 'text').length },
+                    ].map(({ key, label, count }) => (
+                      <button
+                        key={key}
+                        className={`url-type-filter-btn${contentTypeFilter === key ? ' is-active' : ''}`}
+                        onClick={() => setContentTypeFilter(key)}
+                      >
+                        {label} <span className="url-type-filter-count">{count}</span>
+                      </button>
+                    ))}
+                  </div>
+                )}
                 <div className="url-items-list">
-                  {urlItems.map(item => (
+                  {filteredUrlItems.length === 0 && contentTypeFilter !== 'all' ? (
+                    <div className="url-items-empty">
+                      {classifying ? '분석 중입니다…' : '해당 유형의 URL이 없습니다.'}
+                    </div>
+                  ) : filteredUrlItems.map(item => (
                     <div key={item.id} className={`url-item-row${item.checked ? '' : ' url-item-row--unchecked'}`}>
                       <input
                         type="checkbox"
@@ -988,6 +1098,8 @@ export default function UrlCrawlMarkup() {
                         <span className="url-item-title">{item.title || '—'}</span>
                         <span className="url-item-url">{item.url}</span>
                       </div>
+                      {item.contentType === 'image' && <span className="url-item-badge url-item-badge--image">이미지형</span>}
+                      {item.contentType === 'text' && <span className="url-item-badge url-item-badge--text">텍스트형</span>}
                       <select
                         className="url-item-select"
                         value={item.category}
@@ -1077,7 +1189,8 @@ export default function UrlCrawlMarkup() {
         {/* ─── 일괄 결과 탭 ─── */}
         {batchResults.length > 0 && (
           <div className="crawl-batch-results">
-            <div className="crawl-batch-tabs">
+            <div className="crawl-batch-tabs-row">
+              <div className="crawl-batch-tabs">
               {batchResults.map((r, i) => (
                 <button
                   key={i}
@@ -1092,6 +1205,17 @@ export default function UrlCrawlMarkup() {
                   {r.error && <span className="crawl-tab-badge crawl-tab-badge--error">!</span>}
                 </button>
               ))}
+              </div>
+              {!batchLoading && batchResults.some(r => r.html?.trim() && !r.error) && (
+                <button
+                  className="crawl-btn crawl-btn--download"
+                  onClick={handleDownloadZip}
+                  disabled={downloading}
+                  title="생성된 마크업을 ZIP으로 다운로드"
+                >
+                  {downloading ? <span className="crawl-spinner" /> : '다운로드'}
+                </button>
+              )}
             </div>
             {batchResults[activeResultIdx] && (
               (batchResults[activeResultIdx].error || !batchResults[activeResultIdx].html?.trim()) ? (
@@ -1192,11 +1316,30 @@ export default function UrlCrawlMarkup() {
               )}
             </div>
             {sourceResult && (
-              <ResultViewer
-                markup={sourceResult}
-                onMarkupChange={html => setSourceResult(html)}
-                templateId={null}
-              />
+              <>
+                <div className="source-result-actions">
+                  <button
+                    className="crawl-btn crawl-btn--download"
+                    onClick={() => {
+                      const categoryLabel = { greeting: '인사말', symbol: '상징', history: '연혁', footer: '푸터메뉴', other: '마크업' }[sourceCategory] || '마크업';
+                      const fullHtml = `<!DOCTYPE html>\n<html lang="ko">\n<head>\n<meta charset="UTF-8">\n<meta name="viewport" content="width=device-width, initial-scale=1.0">\n<title>${categoryLabel}</title>\n</head>\n<body>\n${sourceResult}\n</body>\n</html>`;
+                      const blob = new Blob([fullHtml], { type: 'text/html;charset=utf-8' });
+                      const a = document.createElement('a');
+                      a.href = URL.createObjectURL(blob);
+                      a.download = `${categoryLabel}.html`;
+                      a.click();
+                      URL.revokeObjectURL(a.href);
+                    }}
+                  >
+                    다운로드
+                  </button>
+                </div>
+                <ResultViewer
+                  markup={sourceResult}
+                  onMarkupChange={html => setSourceResult(html)}
+                  templateId={null}
+                />
+              </>
             )}
           </div>
         )}

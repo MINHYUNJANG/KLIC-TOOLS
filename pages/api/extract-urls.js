@@ -1,6 +1,36 @@
 import * as cheerio from 'cheerio';
 import { launchBrowser } from '../../lib/playwright-helper.js';
 
+// 의미없는 로고 alt 패턴 ("로고", "logo", "CI" 등)
+const GENERIC_ALT_RE = /^(로고|로고\s*이미지|logo(\s*img)?|symbol|ci|emblem|이미지)$/i;
+
+// 홈페이지 로고 이미지 alt를 기관명으로 추출 — 비어 있으면 빈 문자열 반환
+async function extractSiteName(homeUrl) {
+  try {
+    const res = await fetch(homeUrl, { signal: AbortSignal.timeout(8000) });
+    if (!res.ok) return '';
+    const html = await res.text();
+    const $ = cheerio.load(html);
+
+    const LOGO_SEL = [
+      'header img[alt]',
+      '#header img[alt]',
+      '.header img[alt]',
+      '#logo img[alt]',
+      '.logo img[alt]',
+      '.h_logo img[alt]',
+      '.logo_wrap img[alt]',
+      '.site-logo img[alt]',
+      'h1 img[alt]',
+      '[class*="logo"] img[alt]',
+    ].join(', ');
+
+    const alt = $(LOGO_SEL).first().attr('alt')?.trim();
+    if (alt && alt.length > 1 && !GENERIC_ALT_RE.test(alt)) return alt;
+  } catch {}
+  return '';
+}
+
 async function extractUrlsFromSitemap(origin) {
   const candidates = [
     `${origin}/sitemap.xml`,
@@ -71,6 +101,35 @@ async function extractUrlsFromNav(pageUrl) {
     const page = await browser.newPage();
     await page.goto(pageUrl, { waitUntil: 'domcontentloaded', timeout: 15000 });
     await page.waitForTimeout(1000);
+
+    // 숨겨진 서브메뉴 펼치기: CSS 강제 노출 + javascript: 토글 함수 실행
+    try {
+      await page.evaluate(() => {
+        // 1단계: li > ul/ol 패턴의 숨김 강제 해제 (display:none 등)
+        document.querySelectorAll('li > ul, li > ol').forEach(el => {
+          el.style.display = 'block';
+          el.style.visibility = 'visible';
+          el.removeAttribute('hidden');
+        });
+        // 2단계: javascript: 토글 함수 실행 (AJAX 로딩형 서브메뉴 대응)
+        // 단순 함수 호출 패턴 + 페이지 이동 코드 없는 경우만 실행
+        document.querySelectorAll('a[href^="javascript:"]').forEach(a => {
+          try {
+            const code = (a.getAttribute('href') || '').replace(/^javascript:\s*/i, '').trim();
+            if (
+              /^\w[\w$]*\s*\([^)]*\)\s*;?$/.test(code) &&
+              !/\b(?:location|history\.push|window\.open|document\.write)\b/i.test(code) &&
+              !/\.href\s*=/.test(code)
+            ) {
+              // eslint-disable-next-line no-eval
+              eval(code);
+            }
+          } catch {}
+        });
+      }).catch(() => {});
+      await page.waitForTimeout(500);
+    } catch {}
+
     html = await page.content();
   } catch {
     const res = await fetch(pageUrl, { signal: AbortSignal.timeout(8000) });
@@ -130,21 +189,25 @@ export default async function handler(req, res) {
     const origin = new URL(url).origin;
     const homeUrl = origin + '/';
 
-    const [sitemapUrls, mapFromInput, mapFromHome] = await Promise.all([
+    const [sitemapUrls, mapFromInput, mapFromHome, siteName] = await Promise.all([
       extractUrlsFromSitemap(origin),
       extractUrlsFromNav(url),
       homeUrl !== url ? extractUrlsFromNav(homeUrl) : Promise.resolve(new Map()),
+      extractSiteName(homeUrl),
     ]);
 
     const navMap = new Map([...mapFromHome, ...mapFromInput]);
+    const navUrls = [...navMap.keys()];
 
     let urlList;
     let source;
     if (sitemapUrls && sitemapUrls.length > 0) {
-      urlList = sitemapUrls;
-      source = 'sitemap';
+      // sitemap + nav 합산: sitemap에 없는 하위 메뉴 URL도 포함
+      const sitemapSet = new Set(sitemapUrls);
+      urlList = [...sitemapUrls, ...navUrls.filter(u => !sitemapSet.has(u))];
+      source = 'sitemap+nav';
     } else {
-      urlList = [...navMap.keys()];
+      urlList = navUrls;
       source = 'nav';
     }
 
@@ -184,7 +247,7 @@ export default async function handler(req, res) {
     const unique = [...seen.values()].slice(0, 200);
     const items = unique.map(u => ({ url: u, title: navMap.get(u) || '' }));
 
-    res.json({ items, source, total: items.length });
+    res.json({ items, source, total: items.length, siteName });
   } catch (e) {
     res.status(500).json({ detail: e.message });
   }
