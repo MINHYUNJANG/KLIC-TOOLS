@@ -541,7 +541,7 @@ async function extractUrlsFromNav(pageUrl) {
     await page.goto(pageUrl, { waitUntil: 'domcontentloaded', timeout: 15000 });
     await page.waitForTimeout(1000);
 
-    // 1차 메뉴 li 항목에 hover → 2차 메뉴 노출
+    // 1차 메뉴 li 항목에 hover → 2차 메뉴 노출 (뷰포트 밖 요소도 스크롤 후 hover)
     try {
       const topLiSel = [
         'nav > ul > li', '#gnb > ul > li', '.gnb > ul > li',
@@ -551,13 +551,14 @@ async function extractUrlsFromNav(pageUrl) {
       const navItems = await page.$$(topLiSel);
       for (const item of navItems) {
         try {
+          await item.scrollIntoViewIfNeeded({ timeout: 300 }).catch(() => {});
           await item.hover({ timeout: 500 });
-          await page.waitForTimeout(200);
+          await page.waitForTimeout(300);
         } catch {}
       }
     } catch {}
 
-    // onclick/data 속성에서 URL 추출 — 2차 메뉴(li li 안)와 1차 메뉴를 구분해 반환
+    // onclick/data 속성 + 숨겨진 <a href> 동시 추출 (display:none 무시)
     onclickUrls = await page.evaluate((origin) => {
       const urls = [];
       const NAV_SEL = 'nav, #gnb, #lnb, .gnb, .lnb, .nav, .menu, .navigation, header, #menu, .top-menu, .site-map';
@@ -591,7 +592,40 @@ async function extractUrlsFromNav(pageUrl) {
         // 1차 메뉴: 최상위 li의 직계 자식
         root.querySelectorAll(':scope > ul > li > [onclick], :scope > ul > li > [data-url], :scope > ul > li > [data-href], :scope > ul > li > [data-link]')
           .forEach(el => extractFrom(el, false));
+
+        // 숨겨진 <a href> 직접 추출 (display:none 포함, querySelectorAll은 visibility 무관하게 동작)
+        root.querySelectorAll('a[href]').forEach(a => {
+          const href = a.getAttribute('href');
+          if (!href || href === '#' || href.startsWith('javascript')) return;
+          const closestLi = a.closest('li');
+          const isSub = !!(closestLi && closestLi.parentElement && closestLi.parentElement.closest('li'));
+          const aText = (a.textContent || '').replace(/\s+/g, ' ').trim();
+          try {
+            const full = new URL(href, origin).href;
+            if (full.startsWith(origin)) urls.push({ url: full, text: aText, isSub });
+          } catch {}
+        });
       }
+
+      // nav 셀렉터 바깥에 위치한 숨겨진 서브메뉴 컨테이너 추가 탐색 (절대위치 배치 패턴)
+      const SUB_SEL = [
+        '.sub', '.sub-menu', '.sub_menu', '.submenu',
+        '.gnb-sub', '.gnb_sub', '.lnb-sub', '.lnb_sub',
+        '.depth2', '.depth_2', '.dep2', '.d2',
+        '.dropdown-menu', '.nav-sub', '.nav_sub',
+      ].join(', ');
+      document.querySelectorAll(SUB_SEL).forEach(container => {
+        container.querySelectorAll('a[href]').forEach(a => {
+          const href = a.getAttribute('href');
+          if (!href || href === '#' || href.startsWith('javascript')) return;
+          const aText = (a.textContent || '').replace(/\s+/g, ' ').trim();
+          try {
+            const full = new URL(href, origin).href;
+            if (full.startsWith(origin)) urls.push({ url: full, text: aText, isSub: true });
+          } catch {}
+        });
+      });
+
       return urls;
     }, origin);
 
@@ -620,9 +654,10 @@ async function extractUrlsFromNav(pageUrl) {
     } catch {}
   };
 
-  const NAV_SEL = 'nav, #gnb, #lnb, .gnb, .lnb, .nav, .menu, .navigation, header ul, #menu, .top-menu, .site-map';
+  // header ul → header 로 확장: header 직하 서브메뉴 div도 포함
+  const NAV_SEL = 'nav, #gnb, #lnb, .gnb, .lnb, .nav, .menu, .navigation, header, #menu, .top-menu, .site-map';
 
-  // ① 2차 메뉴(onclick/data) 먼저 등록 — 중복 URL 발생 시 2차 메뉴명이 우선
+  // ① 2차 메뉴(onclick/data/href) 먼저 등록 — 중복 URL 발생 시 2차 메뉴명이 우선
   for (const { url, text, isSub } of onclickUrls) {
     if (isSub) addUrl(url, text);
   }
@@ -632,13 +667,19 @@ async function extractUrlsFromNav(pageUrl) {
     addUrl($(a).attr('href'), $(a).text().replace(/\s+/g, ' ').trim());
   });
 
-  // ③ 1차 메뉴(onclick/data) 등록 — URL이 이미 2차로 등록됐으면 자동 스킵
+  // ③ 1차 메뉴(onclick/data/href) 등록 — URL이 이미 2차로 등록됐으면 자동 스킵
   for (const { url, text, isSub } of onclickUrls) {
     if (!isSub) addUrl(url, text);
   }
 
   // ④ 1차 메뉴 a[href] 등록 (중복 스킵)
   $(NAV_SEL).find('a[href]').each((_, a) => {
+    addUrl($(a).attr('href'), $(a).text().replace(/\s+/g, ' ').trim());
+  });
+
+  // ④-b nav 영역 외부 서브메뉴 컨테이너 추가 탐색 (절대위치 배치, display:none 포함)
+  const EXTRA_SUB_SEL = '.sub-menu, .sub_menu, .submenu, .gnb-sub, .gnb_sub, .lnb-sub, .lnb_sub, .depth2, .depth_2, .dep2, .d2, .dropdown-menu, .nav-sub, .nav_sub';
+  $(EXTRA_SUB_SEL).find('a[href]').each((_, a) => {
     addUrl($(a).attr('href'), $(a).text().replace(/\s+/g, ' ').trim());
   });
 
