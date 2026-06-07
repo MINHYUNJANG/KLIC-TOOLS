@@ -5,18 +5,7 @@ const navItems = [
   // { label: '콘텐츠 일괄 마크업', href: '#' },
   { label: 'MCP 마크업', href: '#', dividerAfter: true },
   { label: '테이블 변환', href: '#', dividerAfter: true },
-  {
-    label: 'KL서브콘텐츠빌더',
-    href: '#',
-    dividerAfter: true,
-    children: [
-      { label: '템플릿 빌더', href: 'https://klic-tools-template.vercel.app/', external: true },
-      { label: '교육목표 빌더', href: 'https://klic-tools-goal.vercel.app/', external: true },
-      { label: '조직도 빌더', href: 'https://klic-tools-organ.vercel.app/', external: true },
-      { label: '오시는길 빌더', href: 'https://klic-tools-map.vercel.app/', external: true },
-      { label: '공통서브 빌더', disabled: true },
-    ],
-  },
+  { label: 'KL서브콘텐츠빌더', href: 'https://klic-tools-lac.vercel.app/', external: true, dividerAfter: true },
   {
     label: '웹검사도구',
     href: '#',
