@@ -1,4 +1,7 @@
 {
+  "framework": "nextjs",
+  "buildCommand": "next build",
+  "outputDirectory": ".next",
   "functions": {
     "pages/api/crawl.js": { "maxDuration": 60 },
     "pages/api/auto-markup.js": { "maxDuration": 60 },
