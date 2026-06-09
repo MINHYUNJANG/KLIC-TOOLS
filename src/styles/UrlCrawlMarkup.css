@@ -18,11 +18,161 @@
   box-sizing: border-box;
 }
 
+.crawl-title-row {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin-bottom: 0.5rem;
+}
+
 .crawl-title {
   font-size: 1.5rem;
   font-weight: 700;
   color: #1a2a4a;
+  margin: 0;
+}
+
+.crawl-help-btn {
+  margin-left: auto;
+  width: 2rem;
+  height: 2rem;
+  border-radius: 50%;
+  border: 1.5px solid #c5cedf;
+  background: #f4f6fb;
+  color: #4a6fa5;
+  font-size: 1rem;
+  font-weight: 700;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  transition: all 0.15s;
+}
+.crawl-help-btn:hover {
+  background: #1a2a4a;
+  border-color: #1a2a4a;
+  color: #fff;
+}
+
+/* ─── 투어 오버레이 ─── */
+.tour-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 9999;
+}
+.tour-spotlight {
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+}
+.tour-tip {
+  position: fixed;
+  background: #fff;
+  border-radius: 0.75rem;
+  box-shadow: 0 8px 32px rgba(0,0,0,0.22);
+  padding: 1rem 1.1rem 0.85rem;
+  z-index: 10000;
+  pointer-events: all;
+}
+.tour-tip-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 0.5rem;
+}
+.tour-tip-title {
+  font-size: 0.95rem;
+  font-weight: 700;
+  color: #1a2a4a;
+}
+.tour-tip-close {
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-size: 0.85rem;
+  color: #8a96ac;
+  padding: 0;
+  line-height: 1;
+}
+.tour-tip-close:hover { color: #1a2a4a; }
+.tour-tip-desc {
+  font-size: 0.85rem;
+  color: #4a5568;
+  line-height: 1.6;
   margin: 0 0 0.5rem;
+  white-space: pre-line;
+}
+.tour-tip-hint {
+  font-size: 0.78rem;
+  color: #4a8af4;
+  font-weight: 600;
+  margin: 0 0 0.85rem;
+  white-space: pre-line;
+}
+.tour-tip-loading {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.85rem;
+  color: #4a5568;
+  margin: 0 0 0.85rem;
+}
+.tour-tip-bullets {
+  list-style: none;
+  padding: 0;
+  margin: 0 0 0.75rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+.tour-tip-bullets li {
+  font-size: 0.82rem;
+  color: #2d3748;
+  line-height: 1.5;
+  display: flex;
+  gap: 0.4rem;
+}
+.tour-tip-bullet-icon {
+  flex-shrink: 0;
+  font-size: 0.9rem;
+}
+.tour-tip-footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+.tour-tip-progress {
+  font-size: 0.78rem;
+  color: #aab4c8;
+}
+.tour-tip-btns {
+  display: flex;
+  gap: 0.4rem;
+}
+.tour-btn {
+  padding: 0.35rem 0.9rem;
+  border-radius: 0.4rem;
+  font-size: 0.82rem;
+  font-weight: 600;
+  cursor: pointer;
+  border: 1.5px solid #c5cedf;
+  background: #f4f6fb;
+  color: #1a2a4a;
+  transition: all 0.13s;
+}
+.tour-btn--next {
+  background: #1a2a4a;
+  border-color: #1a2a4a;
+  color: #fff;
+}
+.tour-btn--next:hover:not(:disabled) { background: #2a3f6f; }
+.tour-btn--prev:hover { background: #e2e8f4; }
+.tour-btn--next.is-disabled,
+.tour-btn--next:disabled {
+  background: #c5cedf;
+  border-color: #c5cedf;
+  cursor: not-allowed;
 }
 
 .crawl-desc {

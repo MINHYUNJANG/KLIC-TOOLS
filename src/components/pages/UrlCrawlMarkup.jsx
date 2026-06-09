@@ -1,5 +1,4 @@
-import { useState, useRef, useEffect } from 'react';
-import PageHowTo from '../PageHowTo';
+import { useState, useRef, useEffect, useCallback } from 'react';
 import { formatHtml } from '../../utils/formatHtml';
 import { isImageOnlyContent, hasContentImage, getContentImageUrls } from '../../utils/ocrSymbol';
 import greeting from '../../templates/greeting';
@@ -571,6 +570,228 @@ export default function UrlCrawlMarkup() {
   const [modalCategory, setModalCategory] = useState('other');
   const [modalTemplateId, setModalTemplateId] = useState(null);
 
+  // ─── 투어 ────────────────────────────────────────────────────
+  const [tourStep, setTourStep] = useState(-1); // -1 = 비활성
+  const tourRefs = {
+    urlInput: useRef(null),
+    extractBtn: useRef(null),
+    urlList: useRef(null),
+    typeBtn: useRef(null),
+    generateBtn: useRef(null),
+    resultTab: useRef(null),
+    downloadBtn: useRef(null),
+  };
+  const [tourRect, setTourRect] = useState(null);
+
+  // 각 단계: canNext = 다음 버튼 활성 조건, autoOn = 자동 진행 트리거 키, noOverlayBlock = 하이라이트 요소 클릭 허용
+  // bullets = 설명 항목 리스트 (desc 대신 사용)
+  const TOUR_STEPS = [
+    {
+      ref: 'urlInput',
+      title: '① URL 입력',
+      desc: '크롤링할 학교 사이트의 루트 URL을\n아래 입력창에 직접 입력해 보세요.',
+      hint: 'URL을 입력한 뒤 [다음]을 눌러주세요',
+      position: 'bottom',
+      canNext: () => batchRootUrl.trim().length > 0,
+      noOverlayBlock: true,
+    },
+    {
+      ref: 'extractBtn',
+      title: '② URL 추출',
+      desc: '[URL 추출] 버튼을 직접 클릭해 보세요.\n추출이 완료되면 자동으로 다음 단계로 넘어갑니다.',
+      hint: '버튼을 직접 클릭하세요',
+      position: 'bottom',
+      autoOn: 'extract',
+      noOverlayBlock: true,
+    },
+    {
+      ref: 'urlList',
+      title: '③ 페이지 목록 & 유형 설정',
+      bullets: [
+        { icon: '👁', text: '각 행의 미리보기 버튼을 누르면 해당 URL의 실제 페이지를 바로 확인할 수 있습니다.' },
+        { icon: '🏷', text: '인사말 · 연혁 · 상징 · 푸터메뉴 페이지는 반드시 우측 유형 버튼을 눌러 해당 유형을 선택해 주세요.' },
+        { icon: '📎', text: '위 4가지에 해당하지 않는 페이지는 유형 버튼에서 [기타]를 선택하면 됩니다.' },
+        { icon: '☑', text: '체크박스로 마크업을 생성할 페이지를 골라주세요.' },
+      ],
+      hint: '설정이 끝나면 [다음]을 눌러주세요',
+      position: 'top',
+      noOverlayBlock: true,
+    },
+    {
+      ref: 'generateBtn',
+      title: '④ 마크업 생성',
+      desc: '[마크업 생성] 버튼을 직접 클릭해 보세요.\n생성이 완료되면 자동으로 다음 단계로 넘어갑니다.',
+      hint: '버튼을 직접 클릭하세요',
+      position: 'top',
+      autoOn: 'generate',
+      noOverlayBlock: true,
+    },
+    {
+      ref: 'resultTab',
+      title: '⑤ 결과 확인',
+      desc: '생성된 마크업이 탭으로 표시됩니다.\n탭을 클릭해 내용을 확인하고 복사해 보세요.',
+      hint: '확인 후 [다음]을 눌러주세요',
+      position: 'top',
+      noOverlayBlock: true,
+    },
+    {
+      ref: 'downloadBtn',
+      title: '⑥ 일괄 다운로드',
+      desc: '[다운로드] 버튼으로 모든 마크업을\nZIP 파일로 한 번에 받을 수 있습니다.',
+      hint: '완료를 눌러 튜토리얼을 종료하세요',
+      position: 'top',
+    },
+  ];
+
+  const updateTourRect = useCallback((step) => {
+    const key = TOUR_STEPS[step]?.ref;
+    if (!key) return;
+    const el = tourRefs[key]?.current;
+    if (!el) { setTourRect(null); return; }
+    const r = el.getBoundingClientRect();
+    setTourRect({ top: r.top, left: r.left, width: r.width, height: r.height });
+  }, [batchRootUrl]);
+
+  useEffect(() => {
+    if (tourStep < 0) return;
+    updateTourRect(tourStep);
+    if (TOUR_STEPS[tourStep]?.ref === 'urlInput') {
+      setTimeout(() => tourRefs.urlInput.current?.focus(), 80);
+    }
+    const onResize = () => updateTourRect(tourStep);
+    window.addEventListener('resize', onResize);
+    window.addEventListener('scroll', onResize, true);
+    return () => { window.removeEventListener('resize', onResize); window.removeEventListener('scroll', onResize, true); };
+  }, [tourStep, updateTourRect]);
+
+  // URL 추출 완료 시 자동 진행
+  const prevExtractingRef = useRef(false);
+  useEffect(() => {
+    if (tourStep < 0) return;
+    if (TOUR_STEPS[tourStep]?.autoOn !== 'extract') return;
+    if (prevExtractingRef.current && !extracting && urlItems.length > 0) {
+      setTimeout(() => tourNextFn(), 300);
+    }
+    prevExtractingRef.current = extracting;
+  }, [extracting]);
+
+  // 마크업 생성 완료 시 자동 진행
+  const prevBatchLoadingRef = useRef(false);
+  useEffect(() => {
+    if (tourStep < 0) return;
+    if (TOUR_STEPS[tourStep]?.autoOn !== 'generate') return;
+    if (prevBatchLoadingRef.current && !batchLoading && batchResults.length > 0) {
+      setTimeout(() => tourNextFn(), 300);
+    }
+    prevBatchLoadingRef.current = batchLoading;
+  }, [batchLoading]);
+
+  function startTour() { setTourStep(0); }
+  function endTour() { setTourStep(-1); setTourRect(null); }
+  function tourNextFn() {
+    setTourStep(prev => {
+      const next = prev + 1;
+      if (next >= TOUR_STEPS.length) { setTourRect(null); return -1; }
+      setTimeout(() => updateTourRect(next), 50);
+      return next;
+    });
+  }
+  function tourNext() {
+    const step = TOUR_STEPS[tourStep];
+    if (step?.canNext && !step.canNext()) return;
+    tourNextFn();
+  }
+  function tourPrev() {
+    const prev = tourStep - 1;
+    if (prev < 0) return;
+    setTourStep(prev);
+    setTimeout(() => updateTourRect(prev), 50);
+  }
+
+  function renderTour() {
+    if (tourStep < 0) return null;
+    const step = TOUR_STEPS[tourStep];
+    const pad = 8;
+    const hasRect = tourRect && tourRect.width > 0;
+    const clipTop    = hasRect ? tourRect.top - pad : 0;
+    const clipLeft   = hasRect ? tourRect.left - pad : 0;
+    const clipRight  = hasRect ? tourRect.left + tourRect.width + pad : 0;
+    const clipBottom = hasRect ? tourRect.top + tourRect.height + pad : 0;
+    const vw = typeof window !== 'undefined' ? window.innerWidth : 1200;
+
+    let tipStyle = {};
+    if (hasRect) {
+      const tipW = step.bullets ? 340 : 300;
+      let tipLeft = tourRect.left + tourRect.width / 2 - tipW / 2;
+      tipLeft = Math.max(12, Math.min(tipLeft, vw - tipW - 12));
+      if (step.position === 'bottom') {
+        tipStyle = { top: clipBottom + 12, left: tipLeft, width: tipW };
+      } else {
+        tipStyle = { top: clipTop - 12, left: tipLeft, width: tipW, transform: 'translateY(-100%)' };
+      }
+    } else {
+      tipStyle = { top: '50%', left: '50%', transform: 'translate(-50%, -50%)', width: 300 };
+    }
+
+    const isNextDisabled = step.canNext ? !step.canNext() : false;
+    const isAutoStep = !!step.autoOn;
+
+    return (
+      <div className="tour-overlay" style={{ pointerEvents: step.noOverlayBlock ? 'none' : 'auto' }} onClick={step.noOverlayBlock ? undefined : endTour}>
+        {hasRect && (
+          <svg className="tour-spotlight" style={{ position: 'fixed', inset: 0, width: '100vw', height: '100vh', pointerEvents: 'none' }}>
+            <defs>
+              <mask id="tour-mask">
+                <rect width="100%" height="100%" fill="white" />
+                <rect x={clipLeft} y={clipTop} width={clipRight - clipLeft} height={clipBottom - clipTop} rx="6" fill="black" />
+              </mask>
+            </defs>
+            <rect width="100%" height="100%" fill="rgba(0,0,0,0.45)" mask="url(#tour-mask)" />
+            <rect x={clipLeft} y={clipTop} width={clipRight - clipLeft} height={clipBottom - clipTop} rx="6" fill="none" stroke="#4a8af4" strokeWidth="2" />
+          </svg>
+        )}
+        <div className="tour-tip" style={tipStyle} onClick={e => e.stopPropagation()}>
+          <div className="tour-tip-header">
+            <span className="tour-tip-title">{step.title}</span>
+            <button className="tour-tip-close" onClick={endTour}>✕</button>
+          </div>
+          {isAutoStep && extracting ? (
+            <div className="tour-tip-loading">
+              <span className="crawl-spinner crawl-spinner--sm" />
+              <span>URL을 분석하고 있습니다. 잠시 기다려주세요…</span>
+            </div>
+          ) : step.bullets ? (
+            <ul className="tour-tip-bullets">
+              {step.bullets.map((b, i) => (
+                <li key={i}><span className="tour-tip-bullet-icon">{b.icon}</span>{b.text}</li>
+              ))}
+            </ul>
+          ) : (
+            <p className="tour-tip-desc">{step.desc}</p>
+          )}
+          {!(isAutoStep && extracting) && step.hint && (
+            <p className="tour-tip-hint">{isAutoStep ? '⬆ ' : ''}{step.hint}</p>
+          )}
+          <div className="tour-tip-footer">
+            <span className="tour-tip-progress">{tourStep + 1} / {TOUR_STEPS.length}</span>
+            <div className="tour-tip-btns">
+              {tourStep > 0 && !isAutoStep && <button className="tour-btn tour-btn--prev" onClick={tourPrev}>이전</button>}
+              {!isAutoStep && (
+                <button
+                  className={`tour-btn tour-btn--next${isNextDisabled ? ' is-disabled' : ''}`}
+                  onClick={tourNext}
+                  disabled={isNextDisabled}
+                >
+                  {tourStep === TOUR_STEPS.length - 1 ? '완료' : '다음'}
+                </button>
+              )}
+            </div>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
   // ─── 소스 직접 입력 모드 ────────────────────────────────────
   const [mode, setMode] = useState('url'); // 'url' | 'source'
   const [sourceHtml, setSourceHtml] = useState('');
@@ -1130,7 +1351,7 @@ export default function UrlCrawlMarkup() {
   const imageItems = urlItems.filter(i => i.contentType === 'image');
   const regularItems = urlItems.filter(i => i.contentType !== 'image');
 
-  function renderUrlItemRow(item, isLast) {
+  function renderUrlItemRow(item, isLast, isFirst) {
     return (
       <div key={item.id} className={`url-item-row${item.checked ? '' : ' url-item-row--unchecked'}`}>
         <input
@@ -1155,6 +1376,7 @@ export default function UrlCrawlMarkup() {
           <span className="url-item-url">{item.url}</span>
         </div>
         <button
+          ref={isFirst ? tourRefs.typeBtn : undefined}
           className={`url-item-type-btn${item.category !== null ? ' has-selection' : ''}`}
           onClick={() => openTypeModal(item)}
           disabled={batchLoading}
@@ -1228,7 +1450,10 @@ export default function UrlCrawlMarkup() {
   return (
     <div className="crawl-page">
       <div className="crawl-page-inner">
-        <h2 className="crawl-title">크롤링 마크업</h2>
+        <div className="crawl-title-row">
+          <h2 className="crawl-title">크롤링 마크업</h2>
+          <button className="crawl-help-btn" onClick={startTour} title="도움말">?</button>
+        </div>
 
         {/* ─── 모드 탭 ─── */}
         <div className="crawl-mode-tabs">
@@ -1250,22 +1475,17 @@ export default function UrlCrawlMarkup() {
         {mode === 'url' && <>
         <p className="crawl-desc">URL을 입력하면 본문을 자동으로 크롤링하여 마크업을 생성합니다.</p>
 
-        <PageHowTo title="복사하고자하는 학교의 URL을 붙여넣으면 본문을 자동 크롤링해 KLIC 스타일의 마크업을 즉시 생성합니다">
-          <p>
-            사이트 루트 URL을 입력하면 사이트맵을 찾아 여러 URL을 한 번에 처리하며, 탭(Tab)으로 구분해서 각 페이지에 맞는 마크업을 한꺼번에 생성합니다.
-          </p>
-        </PageHowTo>
-
         <div className="crawl-form">
             <div className="crawl-url-row">
               <input
+                ref={tourRefs.urlInput}
                 type="url" className="crawl-input"
                 placeholder="사이트 루트 URL (예: https://example.com)"
                 value={batchRootUrl} onChange={e => setBatchRootUrl(e.target.value)}
                 onKeyDown={e => e.key === 'Enter' && !extracting && handleExtractUrls()}
                 disabled={extracting || batchLoading}
               />
-              <button className="crawl-btn crawl-btn--extract" onClick={handleExtractUrls} disabled={extracting || batchLoading}>
+              <button ref={tourRefs.extractBtn} className="crawl-btn crawl-btn--extract" onClick={handleExtractUrls} disabled={extracting || batchLoading}>
                 {extracting ? <span className="crawl-spinner" /> : 'URL 추출'}
               </button>
               {urlItems.length === 0 && !extracting && (
@@ -1317,7 +1537,7 @@ export default function UrlCrawlMarkup() {
                   </div>
                 </div>
                 )}
-                <div className="url-sections-row">
+                <div className="url-sections-row" ref={tourRefs.urlList}>
                   {regularItems.length > 0 && (
                     <div className="url-section-col">
                       <div className="url-section-top">
@@ -1337,7 +1557,7 @@ export default function UrlCrawlMarkup() {
                           </label>
                         </div>
                         <div className="url-items-list">
-                          {regularItems.map((item, i) => renderUrlItemRow(item, i >= regularItems.length - 3))}
+                          {regularItems.map((item, i) => renderUrlItemRow(item, i >= regularItems.length - 3, i === 0))}
                         </div>
                         {typeModalItemId !== null && regularItems.some(i => i.id === typeModalItemId) && (
                           <div className="url-type-modal-overlay" onClick={closeTypeModal}>
@@ -1417,6 +1637,7 @@ export default function UrlCrawlMarkup() {
                 )}
                 {urlItems.length > 0 && (
                 <button
+                  ref={tourRefs.generateBtn}
                   className="crawl-btn crawl-btn--batch"
                   onClick={handleBatchGenerate}
                   disabled={batchLoading || urlItems.every(i => !i.checked)}
@@ -1433,7 +1654,7 @@ export default function UrlCrawlMarkup() {
         {/* ─── 일괄 결과 탭 ─── */}
         {batchResults.length > 0 && (
           <div className="crawl-batch-results">
-            <div className="crawl-batch-tabs-row">
+            <div ref={tourRefs.resultTab} className="crawl-batch-tabs-row">
               <div className="crawl-batch-tabs">
               {batchResults.map((r, i) => (
                 <button
@@ -1452,6 +1673,7 @@ export default function UrlCrawlMarkup() {
               </div>
               {!batchLoading && batchResults.some(r => r.html?.trim() && !r.error) && (
                 <button
+                  ref={tourRefs.downloadBtn}
                   className="crawl-btn crawl-btn--download"
                   onClick={handleDownloadZip}
                   disabled={downloading}
@@ -1629,6 +1851,7 @@ export default function UrlCrawlMarkup() {
           </div>
         </div>
       )}
+      {renderTour()}
       {previewOpen && <div className="url-preview-overlay" onClick={closePreview} />}
       <div className={`url-preview-panel${previewOpen ? ' is-open' : ''}`}>
         <div className="url-preview-panel-header">
