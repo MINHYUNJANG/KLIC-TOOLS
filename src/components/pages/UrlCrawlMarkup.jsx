@@ -561,11 +561,13 @@ export default function UrlCrawlMarkup() {
   const [classifyProgress, setClassifyProgress] = useState({ done: 0, total: 0 });
   const [urlCopied, setUrlCopied] = useState(false);
   const [siteName, setSiteName] = useState('');
+  const [siteNameLocked, setSiteNameLocked] = useState(false);
   const [downloading, setDownloading] = useState(false);
   const classifyAbortRef = useRef(false);
   const [previewUrl, setPreviewUrl] = useState('');
   const [previewOpen, setPreviewOpen] = useState(false);
   const [typeModalItemId, setTypeModalItemId] = useState(null);
+  const [showUrlExportModal, setShowUrlExportModal] = useState(false);
   const [modalCategory, setModalCategory] = useState('other');
   const [modalTemplateId, setModalTemplateId] = useState(null);
 
@@ -603,7 +605,7 @@ export default function UrlCrawlMarkup() {
       id: newId,
       url,
       title: addTitleInput.trim(),
-      category: 'other',
+      category: null,
       templateId: null,
       selector: '',
       checked: true,
@@ -630,7 +632,7 @@ export default function UrlCrawlMarkup() {
 
   function openTypeModal(item) {
     setTypeModalItemId(item.id);
-    setModalCategory(item.category);
+    setModalCategory(item.category ?? 'other');
     setModalTemplateId(item.templateId);
   }
 
@@ -662,7 +664,7 @@ export default function UrlCrawlMarkup() {
     if (!isValidUrl(batchRootUrl.trim())) { setExtractError('올바른 URL 형식이 아닙니다.'); return; }
     classifyAbortRef.current = true;
     setClassifying(false);
-    setExtracting(true); setExtractError(''); setUrlItems([]); setSiteName('');
+    setExtracting(true); setExtractError(''); setUrlItems([]); setSiteName(''); setSiteNameLocked(false);
     try {
       const res = await fetch('/api/extract-urls', {
         method: 'POST',
@@ -672,12 +674,12 @@ export default function UrlCrawlMarkup() {
       let data = {};
       try { data = await res.json(); } catch {}
       if (!res.ok) { setExtractError(data.detail || `서버 오류 (${res.status})`); return; }
-      if (data.siteName) setSiteName(data.siteName);
+      if (data.siteName) { setSiteName(data.siteName); setSiteNameLocked(true); }
       const newItems = data.items.map((item, i) => ({
         id: i,
         url: item.url,
         title: item.title || '',
-        category: 'other',
+        category: null,
         templateId: null,
         selector: '',
         checked: true,
@@ -1153,12 +1155,12 @@ export default function UrlCrawlMarkup() {
           <span className="url-item-url">{item.url}</span>
         </div>
         <button
-          className={`url-item-type-btn${item.category !== 'other' ? ' has-selection' : ''}`}
+          className={`url-item-type-btn${item.category !== null ? ' has-selection' : ''}`}
           onClick={() => openTypeModal(item)}
           disabled={batchLoading}
         >
           <span className="url-item-type-main">
-            {item.category === 'other' ? '마크업 유형 선택' : { greeting: '인사말', symbol: '상징', history: '연혁', footer: '푸터메뉴' }[item.category]}
+            {{ greeting: '인사말', symbol: '상징', history: '연혁', footer: '푸터메뉴', other: '기타' }[item.category] || '마크업 유형 선택'}
           </span>
           {item.templateId && (
             <span className="url-item-type-sub">
@@ -1183,42 +1185,41 @@ export default function UrlCrawlMarkup() {
           <span className="url-type-modal-title">마크업 유형 선택</span>
           <button className="url-type-modal-close" onClick={closeTypeModal}>✕</button>
         </div>
-        <div className="url-type-modal-cats">
-          {[
-            { value: 'greeting', label: '인사말' },
-            { value: 'symbol', label: '상징' },
-            { value: 'history', label: '연혁' },
-            { value: 'footer', label: '푸터메뉴' },
-            { value: 'other', label: '기타' },
-          ].map(opt => (
-            <button
-              key={opt.value}
-              className={`url-type-modal-cat${modalCategory === opt.value ? ' is-active' : ''}`}
-              onClick={() => handleModalCategorySelect(opt.value)}
-            >
-              {opt.label}
-            </button>
-          ))}
-        </div>
-        {modalCategory && CATEGORY_TEMPLATES[modalCategory] && (
-          <div className="url-type-modal-tpls">
-            {CATEGORY_TEMPLATES[modalCategory].map(tpl => (
-              <label key={tpl.id} className="url-type-modal-tpl-label">
-                <input
-                  type="radio"
-                  name="modal-template"
-                  value={tpl.id}
-                  checked={modalTemplateId === tpl.id}
-                  onChange={() => setModalTemplateId(tpl.id)}
-                />
-                {tpl.label.replace(/^(인사말|연혁|상징)\s+/, '')}
-              </label>
+        <div className="url-type-modal-body">
+          <div className="url-type-modal-cats">
+            {[
+              { value: 'greeting', label: '인사말' },
+              { value: 'symbol', label: '상징' },
+              { value: 'history', label: '연혁' },
+              { value: 'footer', label: '푸터메뉴' },
+              { value: 'other', label: '기타' },
+            ].map(opt => (
+              <button
+                key={opt.value}
+                className={`url-type-modal-cat${modalCategory === opt.value ? ' is-active' : ''}`}
+                onClick={() => handleModalCategorySelect(opt.value)}
+              >
+                {opt.label}
+              </button>
             ))}
           </div>
-        )}
-        <div className="url-type-modal-actions">
-          <button className="crawl-btn" onClick={applyTypeModal}>적용</button>
+          {modalCategory && CATEGORY_TEMPLATES[modalCategory] && (
+            <div className="url-type-modal-tpls">
+              {CATEGORY_TEMPLATES[modalCategory].map(tpl => (
+                <button
+                  key={tpl.id}
+                  className={`url-type-modal-tpl-card${modalTemplateId === tpl.id ? ' is-active' : ''}`}
+                  onClick={() => setModalTemplateId(tpl.id)}
+                >
+                  {tpl.label.replace(/^(인사말|연혁|상징)\s+/, '')}
+                </button>
+              ))}
+            </div>
+          )}
+        </div>
+        <div className="url-type-modal-footer">
           <button className="url-type-modal-cancel" onClick={closeTypeModal}>취소</button>
+          <button className="url-type-modal-apply" onClick={applyTypeModal}>적용</button>
         </div>
       </div>
     );
@@ -1284,7 +1285,17 @@ export default function UrlCrawlMarkup() {
                 {urlItems.length > 0 && (
                 <div className="crawl-batch-urls-header">
                   <div className="crawl-batch-urls-header-left">
-                    {siteName && <span className="url-site-name-inline">{siteName}</span>}
+                    {siteNameLocked
+                      ? <span className="url-site-name-inline">{siteName}</span>
+                      : <input
+                          className="url-site-name-input"
+                          type="text"
+                          placeholder="학교명을 입력하세요."
+                          value={siteName}
+                          onChange={e => setSiteName(e.target.value)}
+                          onKeyDown={e => { if (e.key === 'Enter' && siteName.trim()) setSiteNameLocked(true); }}
+                        />
+                    }
                   </div>
                   <div className="crawl-batch-urls-header-right">
                     {classifying && (
@@ -1308,53 +1319,66 @@ export default function UrlCrawlMarkup() {
                 )}
                 <div className="url-sections-row">
                   {regularItems.length > 0 && (
-                    <div className="url-text-section">
-                      <div className="url-text-section-header">
-                        <label className="crawl-check-all url-section-check-all">
-                          <input
-                            type="checkbox"
-                            checked={regularItems.length > 0 && regularItems.every(i => i.checked)}
-                            onChange={toggleAllRegularChecked}
-                            disabled={batchLoading}
-                          />
-                          <span>전체 선택</span>
-                        </label>
+                    <div className="url-section-col">
+                      <div className="url-section-top">
                         <span className="url-text-section-title">텍스트형 페이지</span>
                         <span className="url-text-section-badge">{regularItems.length}</span>
                       </div>
-                      <div className="url-items-list">
-                        {regularItems.map((item, i) => renderUrlItemRow(item, i >= regularItems.length - 3))}
-                      </div>
-                      {typeModalItemId !== null && regularItems.some(i => i.id === typeModalItemId) && (
-                        <div className="url-type-modal-overlay" onClick={closeTypeModal}>
-                          {renderTypeModal()}
+                      <div className="url-text-section">
+                        <div className="url-text-section-header">
+                          <label className="crawl-check-all url-section-check-all">
+                            <input
+                              type="checkbox"
+                              checked={regularItems.length > 0 && regularItems.every(i => i.checked)}
+                              onChange={toggleAllRegularChecked}
+                              disabled={batchLoading}
+                            />
+                            <span>전체 선택</span>
+                          </label>
                         </div>
-                      )}
+                        <div className="url-items-list">
+                          {regularItems.map((item, i) => renderUrlItemRow(item, i >= regularItems.length - 3))}
+                        </div>
+                        {typeModalItemId !== null && regularItems.some(i => i.id === typeModalItemId) && (
+                          <div className="url-type-modal-overlay" onClick={closeTypeModal}>
+                            {renderTypeModal()}
+                          </div>
+                        )}
+                      </div>
                     </div>
                   )}
                   {imageItems.length > 0 && (
-                    <div className="url-image-section">
-                      <div className="url-image-section-header">
-                        <label className="crawl-check-all url-section-check-all">
-                          <input
-                            type="checkbox"
-                            checked={imageItems.length > 0 && imageItems.every(i => i.checked)}
-                            onChange={toggleAllImageChecked}
-                            disabled={batchLoading}
-                          />
-                          <span>전체 선택</span>
-                        </label>
+                    <div className="url-section-col">
+                      <div className="url-section-top">
                         <span className="url-image-section-title">이미지형 페이지</span>
                         <span className="url-image-section-badge">{imageItems.length}</span>
+                        <button
+                          className="url-export-btn"
+                          onClick={() => setShowUrlExportModal(true)}
+                          title="URL 내보내기"
+                        >URL 내보내기</button>
                       </div>
-                      <div className="url-items-list">
-                        {imageItems.map((item, i) => renderUrlItemRow(item, i >= imageItems.length - 3))}
-                      </div>
-                      {typeModalItemId !== null && imageItems.some(i => i.id === typeModalItemId) && (
-                        <div className="url-type-modal-overlay" onClick={closeTypeModal}>
-                          {renderTypeModal()}
+                      <div className="url-image-section">
+                        <div className="url-image-section-header">
+                          <label className="crawl-check-all url-section-check-all">
+                            <input
+                              type="checkbox"
+                              checked={imageItems.length > 0 && imageItems.every(i => i.checked)}
+                              onChange={toggleAllImageChecked}
+                              disabled={batchLoading}
+                            />
+                            <span>전체 선택</span>
+                          </label>
                         </div>
-                      )}
+                        <div className="url-items-list">
+                          {imageItems.map((item, i) => renderUrlItemRow(item, i >= imageItems.length - 3))}
+                        </div>
+                        {typeModalItemId !== null && imageItems.some(i => i.id === typeModalItemId) && (
+                          <div className="url-type-modal-overlay" onClick={closeTypeModal}>
+                            {renderTypeModal()}
+                          </div>
+                        )}
+                      </div>
                     </div>
                   )}
                 </div>
@@ -1564,6 +1588,47 @@ export default function UrlCrawlMarkup() {
           </div>
         )}
       </div>
+      {showUrlExportModal && (
+        <div className="url-export-modal-overlay" onClick={() => setShowUrlExportModal(false)}>
+          <div className="url-export-modal" onClick={e => e.stopPropagation()}>
+            <div className="url-export-modal-header">
+              <span className="url-export-modal-title">이미지형 페이지 URL 목록</span>
+              <button className="url-export-modal-close" onClick={() => setShowUrlExportModal(false)}>✕</button>
+            </div>
+            <div className="url-export-modal-body">
+              <table className="url-export-table">
+                <thead>
+                  <tr>
+                    <th>페이지명</th>
+                    <th>URL</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {imageItems.map(item => (
+                    <tr key={item.id}>
+                      <td className="url-export-table-title">{item.title || '(제목 없음)'}</td>
+                      <td className="url-export-table-url">{item.url}</td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+            <div className="url-export-modal-footer">
+              <button
+                className="crawl-btn crawl-btn--primary url-export-copy-btn"
+                onClick={e => {
+                  const btn = e.currentTarget;
+                  const text = imageItems.map(item => `${item.title || '(제목 없음)'}\t${item.url}`).join('\n');
+                  navigator.clipboard.writeText(text).then(() => {
+                    btn.textContent = '복사됨 ✓';
+                    setTimeout(() => { btn.textContent = '복사하기'; }, 2000);
+                  });
+                }}
+              >복사하기</button>
+            </div>
+          </div>
+        </div>
+      )}
       {previewOpen && <div className="url-preview-overlay" onClick={closePreview} />}
       <div className={`url-preview-panel${previewOpen ? ' is-open' : ''}`}>
         <div className="url-preview-panel-header">
