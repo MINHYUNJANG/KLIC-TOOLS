@@ -197,13 +197,17 @@ function extractContent(html, selector = '', baseUrl = '') {
   absolutizeImages(doc);
   const DOM_SELECTORS = [
     '.greeting',
-    '#subContent',
-    '#sub_container',
+    '#subContent', '#sub_content',
+    '#sub_container', '#subContainer',
     'main',
-    '#content',
-    '#contents',
-    '.contents',
+    '#content', '#contents',
+    '.contents', '.content',
     '#container',
+    '#contArea', '#cont_area', '#contWrap', '#cont_wrap',
+    '#contentArea', '#content_area', '#contentWrap', '#content_wrap',
+    '#pageContent', '#page_content',
+    '.sub_cont', '.subCont', '.sub_content',
+    '#wrap_content', '#wrapContent',
   ];
   let target = null;
   for (const sel of DOM_SELECTORS) {
@@ -419,6 +423,38 @@ function BatchRetryPanel({ result, onRetry }) {
                 html = formatHtml(applyMarkupToTemplate(extracted, tpl.code, tpl.id));
               }
             }
+          } else if (tpl.category === '연혁') {
+            const directResult = applyMarkupToTemplate(extracted, tpl.code, tpl.id);
+            if (directResult !== tpl.code) {
+              html = formatHtml(directResult);
+            } else {
+              const imgUrls = getContentImageUrls(extracted, retryUrl.trim());
+              if (imgUrls.length > 0) {
+                setOcrStatus('연혁 이미지 OCR 분석 중…');
+                try {
+                  const HISTORY_PROMPT = `이 이미지는 학교 연혁(학교 역사) 페이지입니다. 연도별 내용을 아래 형식으로 추출하세요.\n\n2024년\n3. 1 제47회 입학식(신입생 273명)\n2. 9 제45회 졸업식(졸업생 293명)\n2023년\n3. 2 제46회 입학식\n\n규칙:\n- 연도는 반드시 단독 줄에 YYYY년 형식\n- 날짜는 월. 일 형식 (예: 3. 1)\n- 내용은 날짜 뒤에 한 칸 공백 후 작성\n- 설명 없이 데이터만 출력`;
+                  const ocrRes = await fetch('/api/ocr-image', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ imageUrl: imgUrls[0], prompt: HISTORY_PROMPT }),
+                  });
+                  const ocrData = await ocrRes.json();
+                  const ocrText = ocrData.text || '';
+                  if (ocrText.trim()) {
+                    const paragraphs = ocrText.split(/\n+/).map(l => l.trim()).filter(l => l.length > 1).map(l => `<p>${l}</p>`).join('\n');
+                    html = formatHtml(applyMarkupToTemplate(`<div>${paragraphs}</div>`, tpl.code, tpl.id));
+                  } else {
+                    html = formatHtml(applyMarkupToTemplate(extracted, tpl.code, tpl.id));
+                  }
+                } catch {
+                  html = formatHtml(applyMarkupToTemplate(extracted, tpl.code, tpl.id));
+                } finally {
+                  setOcrStatus('');
+                }
+              } else {
+                html = formatHtml(applyMarkupToTemplate(extracted, tpl.code, tpl.id));
+              }
+            }
           } else if (isImageOnlyContent(extracted)) {
             const imgUrls = getContentImageUrls(extracted, retryUrl.trim());
             if (imgUrls.length > 0) {
@@ -523,10 +559,15 @@ export default function UrlCrawlMarkup() {
   const [activeResultIdx, setActiveResultIdx] = useState(0);
   const [classifying, setClassifying] = useState(false);
   const [classifyProgress, setClassifyProgress] = useState({ done: 0, total: 0 });
-  const [contentTypeFilter, setContentTypeFilter] = useState('all');
+  const [urlCopied, setUrlCopied] = useState(false);
   const [siteName, setSiteName] = useState('');
   const [downloading, setDownloading] = useState(false);
   const classifyAbortRef = useRef(false);
+  const [previewUrl, setPreviewUrl] = useState('');
+  const [previewOpen, setPreviewOpen] = useState(false);
+  const [typeModalItemId, setTypeModalItemId] = useState(null);
+  const [modalCategory, setModalCategory] = useState('other');
+  const [modalTemplateId, setModalTemplateId] = useState(null);
 
   // ─── 소스 직접 입력 모드 ────────────────────────────────────
   const [mode, setMode] = useState('url'); // 'url' | 'source'
@@ -578,14 +619,50 @@ export default function UrlCrawlMarkup() {
     setAddTitleInput('');
   }
 
+  function openPreview(url) {
+    setPreviewUrl(url);
+    setPreviewOpen(true);
+  }
+
+  function closePreview() {
+    setPreviewOpen(false);
+  }
+
+  function openTypeModal(item) {
+    setTypeModalItemId(item.id);
+    setModalCategory(item.category);
+    setModalTemplateId(item.templateId);
+  }
+
+  function closeTypeModal() {
+    setTypeModalItemId(null);
+  }
+
+  function handleModalCategorySelect(category) {
+    const templates = CATEGORY_TEMPLATES[category];
+    setModalCategory(category);
+    setModalTemplateId(templates?.[0]?.id ?? null);
+  }
+
+  function applyTypeModal() {
+    if (typeModalItemId === null) return;
+    const templates = CATEGORY_TEMPLATES[modalCategory];
+    const templateId = templates ? (modalTemplateId || templates[0]?.id || null) : null;
+    setUrlItems(prev => prev.map(item =>
+      item.id === typeModalItemId
+        ? { ...item, category: modalCategory, templateId, selector: '' }
+        : item
+    ));
+    setTypeModalItemId(null);
+  }
+
   // ─── URL 추출 ─────────────────────────────────────────────
   async function handleExtractUrls() {
     if (!batchRootUrl.trim()) { setExtractError('URL을 입력해주세요.'); return; }
     if (!isValidUrl(batchRootUrl.trim())) { setExtractError('올바른 URL 형식이 아닙니다.'); return; }
     classifyAbortRef.current = true;
     setClassifying(false);
-    setContentTypeFilter('all');
-    setExtracting(true); setExtractError(''); setUrlItems([]);
+    setExtracting(true); setExtractError(''); setUrlItems([]); setSiteName('');
     try {
       const res = await fetch('/api/extract-urls', {
         method: 'POST',
@@ -652,6 +729,34 @@ export default function UrlCrawlMarkup() {
   function toggleAllChecked() {
     const allChecked = urlItems.every(item => item.checked);
     setUrlItems(prev => prev.map(item => ({ ...item, checked: !allChecked })));
+  }
+
+  function toggleAllRegularChecked() {
+    setUrlItems(prev => {
+      const regularOnes = prev.filter(i => i.contentType !== 'image');
+      const allChecked = regularOnes.every(i => i.checked);
+      return prev.map(item =>
+        item.contentType !== 'image' ? { ...item, checked: !allChecked } : item
+      );
+    });
+  }
+
+  function toggleAllImageChecked() {
+    setUrlItems(prev => {
+      const imageOnes = prev.filter(i => i.contentType === 'image');
+      const allChecked = imageOnes.every(i => i.checked);
+      return prev.map(item =>
+        item.contentType === 'image' ? { ...item, checked: !allChecked } : item
+      );
+    });
+  }
+
+  async function handleCopySelectedUrls() {
+    const urls = urlItems.filter(i => i.checked && i.url).map(i => i.url);
+    if (!urls.length) return;
+    await navigator.clipboard.writeText(urls.join('\n'));
+    setUrlCopied(true);
+    setTimeout(() => setUrlCopied(false), 2000);
   }
 
   // ─── 일괄 마크업 생성 ─────────────────────────────────────
@@ -733,6 +838,56 @@ export default function UrlCrawlMarkup() {
                     } else {
                       html = formatHtml(applyMarkupToTemplate(extracted, tpl.code, tpl.id));
                     }
+                  } else {
+                    html = formatHtml(applyMarkupToTemplate(extracted, tpl.code, tpl.id));
+                  }
+                } catch {
+                  html = formatHtml(applyMarkupToTemplate(extracted, tpl.code, tpl.id));
+                } finally {
+                  setOcrStatus('');
+                }
+              } else {
+                html = formatHtml(applyMarkupToTemplate(extracted, tpl.code, tpl.id));
+              }
+            }
+          } else if (tpl.category === '연혁') {
+            // 연혁 템플릿: HTML에서 먼저 파싱 시도, 실패 시 이미지 OCR
+            const directResult = applyMarkupToTemplate(extracted, tpl.code, tpl.id);
+            if (directResult !== tpl.code) {
+              html = formatHtml(directResult);
+            } else {
+              const imgUrls = getContentImageUrls(extracted, url);
+              if (imgUrls.length > 0) {
+                setOcrStatus('연혁 이미지 OCR 분석 중…');
+                try {
+                  const HISTORY_PROMPT = `이 이미지는 학교 연혁(학교 역사) 페이지입니다. 연도별 내용을 아래 형식으로 추출하세요.
+
+2024년
+3. 1 제47회 입학식(신입생 273명)
+2. 9 제45회 졸업식(졸업생 293명)
+2023년
+3. 2 제46회 입학식
+
+규칙:
+- 연도는 반드시 단독 줄에 YYYY년 형식
+- 날짜는 월. 일 형식 (예: 3. 1)
+- 내용은 날짜 뒤에 한 칸 공백 후 작성
+- 설명 없이 데이터만 출력`;
+                  const ocrRes = await fetch('/api/ocr-image', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ imageUrl: imgUrls[0], prompt: HISTORY_PROMPT }),
+                  });
+                  const ocrData = await ocrRes.json();
+                  const ocrText = ocrData.text || '';
+                  if (ocrText.trim()) {
+                    const paragraphs = ocrText
+                      .split(/\n+/)
+                      .map(line => line.trim())
+                      .filter(line => line.length > 1)
+                      .map(line => `<p>${line}</p>`)
+                      .join('\n');
+                    html = formatHtml(applyMarkupToTemplate(`<div>${paragraphs}</div>`, tpl.code, tpl.id));
                   } else {
                     html = formatHtml(applyMarkupToTemplate(extracted, tpl.code, tpl.id));
                   }
@@ -970,9 +1125,104 @@ export default function UrlCrawlMarkup() {
     }
   }
 
-  const filteredUrlItems = contentTypeFilter === 'all'
-    ? urlItems
-    : urlItems.filter(item => item.contentType === contentTypeFilter);
+  const imageItems = urlItems.filter(i => i.contentType === 'image');
+  const regularItems = urlItems.filter(i => i.contentType !== 'image');
+
+  function renderUrlItemRow(item, isLast) {
+    return (
+      <div key={item.id} className={`url-item-row${item.checked ? '' : ' url-item-row--unchecked'}`}>
+        <input
+          type="checkbox"
+          className="url-item-check"
+          checked={item.checked}
+          onChange={e => updateItem(item.id, 'checked', e.target.checked)}
+          disabled={batchLoading}
+        />
+        <button
+          className="url-item-preview-btn"
+          onClick={() => openPreview(item.url)}
+          title="미리보기"
+        >
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+            <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/>
+            <circle cx="12" cy="12" r="3"/>
+          </svg>
+        </button>
+        <div className="url-item-info">
+          <span className="url-item-title">{item.title || '—'}</span>
+          <span className="url-item-url">{item.url}</span>
+        </div>
+        <button
+          className={`url-item-type-btn${item.category !== 'other' ? ' has-selection' : ''}`}
+          onClick={() => openTypeModal(item)}
+          disabled={batchLoading}
+        >
+          <span className="url-item-type-main">
+            {item.category === 'other' ? '마크업 유형 선택' : { greeting: '인사말', symbol: '상징', history: '연혁', footer: '푸터메뉴' }[item.category]}
+          </span>
+          {item.templateId && (
+            <span className="url-item-type-sub">
+              {ALL_TEMPLATES.find(t => t.id === item.templateId)?.label.replace(/^(인사말|연혁|상징)\s+/, '')}
+            </span>
+          )}
+        </button>
+        <button
+          className="url-item-remove"
+          onClick={() => removeItem(item.id)}
+          disabled={batchLoading}
+          title="제거"
+        >✕</button>
+      </div>
+    );
+  }
+
+  function renderTypeModal() {
+    return (
+      <div className="url-type-modal" onClick={e => e.stopPropagation()}>
+        <div className="url-type-modal-head">
+          <span className="url-type-modal-title">마크업 유형 선택</span>
+          <button className="url-type-modal-close" onClick={closeTypeModal}>✕</button>
+        </div>
+        <div className="url-type-modal-cats">
+          {[
+            { value: 'greeting', label: '인사말' },
+            { value: 'symbol', label: '상징' },
+            { value: 'history', label: '연혁' },
+            { value: 'footer', label: '푸터메뉴' },
+            { value: 'other', label: '기타' },
+          ].map(opt => (
+            <button
+              key={opt.value}
+              className={`url-type-modal-cat${modalCategory === opt.value ? ' is-active' : ''}`}
+              onClick={() => handleModalCategorySelect(opt.value)}
+            >
+              {opt.label}
+            </button>
+          ))}
+        </div>
+        {modalCategory && CATEGORY_TEMPLATES[modalCategory] && (
+          <div className="url-type-modal-tpls">
+            {CATEGORY_TEMPLATES[modalCategory].map(tpl => (
+              <label key={tpl.id} className="url-type-modal-tpl-label">
+                <input
+                  type="radio"
+                  name="modal-template"
+                  value={tpl.id}
+                  checked={modalTemplateId === tpl.id}
+                  onChange={() => setModalTemplateId(tpl.id)}
+                />
+                {tpl.label.replace(/^(인사말|연혁|상징)\s+/, '')}
+              </label>
+            ))}
+          </div>
+        )}
+        <div className="url-type-modal-actions">
+          <button className="crawl-btn" onClick={applyTypeModal}>적용</button>
+          <button className="url-type-modal-cancel" onClick={closeTypeModal}>취소</button>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="crawl-page">
@@ -1017,33 +1267,32 @@ export default function UrlCrawlMarkup() {
               <button className="crawl-btn crawl-btn--extract" onClick={handleExtractUrls} disabled={extracting || batchLoading}>
                 {extracting ? <span className="crawl-spinner" /> : 'URL 추출'}
               </button>
+              {urlItems.length === 0 && !extracting && (
+                <button
+                  className="crawl-btn crawl-btn--add-url-standalone"
+                  onClick={() => setShowAddUrl(true)}
+                  disabled={batchLoading}
+                >
+                  + URL 직접 추가
+                </button>
+              )}
             </div>
             {extractError && <p className="crawl-error">{extractError}</p>}
-
-            {urlItems.length === 0 && !extracting && (
-              <button
-                className="crawl-btn crawl-btn--add-url-standalone"
-                onClick={() => setShowAddUrl(true)}
-                disabled={batchLoading}
-              >
-                + URL 직접 추가
-              </button>
-            )}
 
             {(urlItems.length > 0 || showAddUrl) && (
               <>
                 {urlItems.length > 0 && (
                 <div className="crawl-batch-urls-header">
-                  <label className="crawl-check-all">
-                    <input
-                      type="checkbox"
-                      checked={urlItems.every(item => item.checked)}
-                      onChange={toggleAllChecked}
-                      disabled={batchLoading}
-                    />
-                    <span>전체 선택</span>
-                  </label>
+                  <div className="crawl-batch-urls-header-left">
+                    {siteName && <span className="url-site-name-inline">{siteName}</span>}
+                  </div>
                   <div className="crawl-batch-urls-header-right">
+                    {classifying && (
+                      <span className="url-classify-inline">
+                        <span className="crawl-spinner crawl-spinner--sm" />
+                        {classifyProgress.done} / {classifyProgress.total} 분석 중
+                      </span>
+                    )}
                     <span className="crawl-result-label">
                       {urlItems.filter(i => i.checked).length} / {urlItems.length}개 선택
                     </span>
@@ -1057,86 +1306,57 @@ export default function UrlCrawlMarkup() {
                   </div>
                 </div>
                 )}
-                {classifying && (
-                  <div className="url-classify-status">
-                    <span className="crawl-spinner crawl-spinner--sm" />
-                    페이지 유형 분석 중… {classifyProgress.done} / {classifyProgress.total}
-                  </div>
-                )}
-                {urlItems.some(i => i.contentType !== 'unknown') && (
-                  <div className="url-type-filters">
-                    {[
-                      { key: 'all', label: '전체', count: urlItems.length },
-                      { key: 'image', label: '이미지형', count: urlItems.filter(i => i.contentType === 'image').length },
-                      { key: 'text', label: '텍스트형', count: urlItems.filter(i => i.contentType === 'text').length },
-                    ].map(({ key, label, count }) => (
-                      <button
-                        key={key}
-                        className={`url-type-filter-btn${contentTypeFilter === key ? ' is-active' : ''}`}
-                        onClick={() => setContentTypeFilter(key)}
-                      >
-                        {label} <span className="url-type-filter-count">{count}</span>
-                      </button>
-                    ))}
-                  </div>
-                )}
-                <div className="url-items-list">
-                  {filteredUrlItems.length === 0 && contentTypeFilter !== 'all' ? (
-                    <div className="url-items-empty">
-                      {classifying ? '분석 중입니다…' : '해당 유형의 URL이 없습니다.'}
-                    </div>
-                  ) : filteredUrlItems.map(item => (
-                    <div key={item.id} className={`url-item-row${item.checked ? '' : ' url-item-row--unchecked'}`}>
-                      <input
-                        type="checkbox"
-                        className="url-item-check"
-                        checked={item.checked}
-                        onChange={e => updateItem(item.id, 'checked', e.target.checked)}
-                        disabled={batchLoading}
-                      />
-                      <div className="url-item-info">
-                        <span className="url-item-title">{item.title || '—'}</span>
-                        <span className="url-item-url">{item.url}</span>
+                <div className="url-sections-row">
+                  {regularItems.length > 0 && (
+                    <div className="url-text-section">
+                      <div className="url-text-section-header">
+                        <label className="crawl-check-all url-section-check-all">
+                          <input
+                            type="checkbox"
+                            checked={regularItems.length > 0 && regularItems.every(i => i.checked)}
+                            onChange={toggleAllRegularChecked}
+                            disabled={batchLoading}
+                          />
+                          <span>전체 선택</span>
+                        </label>
+                        <span className="url-text-section-title">텍스트형 페이지</span>
+                        <span className="url-text-section-badge">{regularItems.length}</span>
                       </div>
-                      {item.contentType === 'image' && <span className="url-item-badge url-item-badge--image">이미지형</span>}
-                      {item.contentType === 'text' && <span className="url-item-badge url-item-badge--text">텍스트형</span>}
-                      <select
-                        className="url-item-select"
-                        value={item.category}
-                        onChange={e => updateItemCategory(item.id, e.target.value)}
-                        disabled={batchLoading}
-                      >
-                        <option value="greeting">인사말</option>
-                        <option value="symbol">상징</option>
-                        <option value="history">연혁</option>
-                        <option value="footer">푸터메뉴</option>
-                        <option value="other">기타</option>
-                      </select>
-                      {item.category !== 'other' && CATEGORY_TEMPLATES[item.category] && (
-                        <div className="url-item-type-group">
-                          {CATEGORY_TEMPLATES[item.category].map(tpl => (
-                            <label key={tpl.id} className="url-item-type-label">
-                              <input
-                                type="radio"
-                                name={`type-${item.id}`}
-                                value={tpl.id}
-                                checked={item.templateId === tpl.id}
-                                onChange={() => updateItem(item.id, 'templateId', tpl.id)}
-                                disabled={batchLoading}
-                              />
-                              {tpl.label.replace(/^(인사말|연혁|상징)\s+/, '')}
-                            </label>
-                          ))}
+                      <div className="url-items-list">
+                        {regularItems.map((item, i) => renderUrlItemRow(item, i >= regularItems.length - 3))}
+                      </div>
+                      {typeModalItemId !== null && regularItems.some(i => i.id === typeModalItemId) && (
+                        <div className="url-type-modal-overlay" onClick={closeTypeModal}>
+                          {renderTypeModal()}
                         </div>
                       )}
-                      <button
-                        className="url-item-remove"
-                        onClick={() => removeItem(item.id)}
-                        disabled={batchLoading}
-                        title="제거"
-                      >✕</button>
                     </div>
-                  ))}
+                  )}
+                  {imageItems.length > 0 && (
+                    <div className="url-image-section">
+                      <div className="url-image-section-header">
+                        <label className="crawl-check-all url-section-check-all">
+                          <input
+                            type="checkbox"
+                            checked={imageItems.length > 0 && imageItems.every(i => i.checked)}
+                            onChange={toggleAllImageChecked}
+                            disabled={batchLoading}
+                          />
+                          <span>전체 선택</span>
+                        </label>
+                        <span className="url-image-section-title">이미지형 페이지</span>
+                        <span className="url-image-section-badge">{imageItems.length}</span>
+                      </div>
+                      <div className="url-items-list">
+                        {imageItems.map((item, i) => renderUrlItemRow(item, i >= imageItems.length - 3))}
+                      </div>
+                      {typeModalItemId !== null && imageItems.some(i => i.id === typeModalItemId) && (
+                        <div className="url-type-modal-overlay" onClick={closeTypeModal}>
+                          {renderTypeModal()}
+                        </div>
+                      )}
+                    </div>
+                  )}
                 </div>
                 {showAddUrl && (
                   <div className="url-add-form">
@@ -1343,6 +1563,19 @@ export default function UrlCrawlMarkup() {
             )}
           </div>
         )}
+      </div>
+      {previewOpen && <div className="url-preview-overlay" onClick={closePreview} />}
+      <div className={`url-preview-panel${previewOpen ? ' is-open' : ''}`}>
+        <div className="url-preview-panel-header">
+          <span className="url-preview-panel-url">{previewUrl}</span>
+          <button className="url-preview-panel-close" onClick={closePreview}>✕</button>
+        </div>
+        <iframe
+          className="url-preview-panel-iframe"
+          src={previewUrl || 'about:blank'}
+          title="페이지 미리보기"
+          sandbox="allow-same-origin allow-scripts allow-forms"
+        />
       </div>
     </div>
   );

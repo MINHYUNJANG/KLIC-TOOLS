@@ -2,9 +2,9 @@ import * as cheerio from 'cheerio';
 import { launchBrowser } from '../../lib/playwright-helper.js';
 
 // 의미없는 로고 alt 패턴 ("로고", "logo", "CI" 등)
-const GENERIC_ALT_RE = /^(로고|로고\s*이미지|logo(\s*img)?|symbol|ci|emblem|이미지)$/i;
+const GENERIC_ALT_RE = /^(로고|로고\s*이미지|홈페이지\s*로고|홈페이지\s*이미지|logo(\s*img)?|symbol|ci|emblem|이미지|홈페이지|home|homepage|home\s*page|welcome|welcome\s*to|welcome\s*homepage|main|index|메인|대문|인트로|intro)$/i;
 
-// 홈페이지 로고 이미지 alt를 기관명으로 추출 — 비어 있으면 빈 문자열 반환
+// 홈페이지 로고 이미지 alt → og:site_name → title 순으로 기관명 추출
 async function extractSiteName(homeUrl) {
   try {
     const res = await fetch(homeUrl, { signal: AbortSignal.timeout(8000) });
@@ -12,10 +12,13 @@ async function extractSiteName(homeUrl) {
     const html = await res.text();
     const $ = cheerio.load(html);
 
+    // 1) 로고 이미지 alt
     const LOGO_SEL = [
       'header img[alt]',
       '#header img[alt]',
       '.header img[alt]',
+      '#gnb img[alt]',
+      '.gnb img[alt]',
       '#logo img[alt]',
       '.logo img[alt]',
       '.h_logo img[alt]',
@@ -23,10 +26,51 @@ async function extractSiteName(homeUrl) {
       '.site-logo img[alt]',
       'h1 img[alt]',
       '[class*="logo"] img[alt]',
+      '[id*="logo"] img[alt]',
+      'a.logo img[alt]',
     ].join(', ');
 
-    const alt = $(LOGO_SEL).first().attr('alt')?.trim();
-    if (alt && alt.length > 1 && !GENERIC_ALT_RE.test(alt)) return alt;
+    const logoAlts = [];
+    $(LOGO_SEL).each((_, el) => {
+      const alt = $(el).attr('alt')?.trim();
+      if (alt && alt.length > 1 && !GENERIC_ALT_RE.test(alt)) logoAlts.push(alt);
+    });
+    if (logoAlts.length > 0) return logoAlts[0];
+
+    // 2) og:site_name
+    const ogSiteName = $('meta[property="og:site_name"]').attr('content')?.trim();
+    if (ogSiteName && ogSiteName.length > 1 && !GENERIC_ALT_RE.test(ogSiteName)) return ogSiteName;
+
+    // 3) <title> 태그 — 구분자(|·-·:·>)로 분리 후 첫 파트
+    const title = $('title').first().text().trim();
+    if (title) {
+      const firstPart = title.split(/\s*[|\-:：>]\s*/)[0].trim();
+      if (firstPart.length > 1 && !GENERIC_ALT_RE.test(firstPart)) return firstPart;
+    }
+
+    // 4) meta keywords — 학교명 패턴 추출
+    const metaKeywords = $('meta[name="keywords"]').attr('content')?.trim();
+    if (metaKeywords) {
+      const kwMatch = metaKeywords.match(/([^\s,·]{2,20}(?:학교|대학교|고등학교|중학교|초등학교|학원))/);
+      if (kwMatch) return kwMatch[1];
+    }
+
+    // 5) meta description — 앞부분에 학교명 패턴이 있으면 추출
+    const metaDesc = $('meta[name="description"]').attr('content')?.trim();
+    if (metaDesc) {
+      const descMatch = metaDesc.match(/([^\s,\.·!?]{2,20}(?:학교|대학교|고등학교|중학교|초등학교|학원))/);
+      if (descMatch) return descMatch[1];
+    }
+
+    // 6) h1, h2 텍스트에서 학교명 패턴 추출
+    const headings = ['h1', 'h2'];
+    for (const tag of headings) {
+      const text = $(tag).first().text().replace(/\s+/g, ' ').trim();
+      if (!text || GENERIC_ALT_RE.test(text)) continue;
+      const hMatch = text.match(/([^\s,·]{2,20}(?:학교|대학교|고등학교|중학교|초등학교|학원))/);
+      if (hMatch) return hMatch[1];
+      if (text.length >= 2 && text.length <= 30) return text;
+    }
   } catch {}
   return '';
 }

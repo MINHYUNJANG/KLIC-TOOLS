@@ -99,21 +99,41 @@ function parseTableRows(rows) {
   return order.map(year => ({ year, items: groups.get(year) })).filter(g => g.items.length);
 }
 
+// 진단: parseHistorySource가 빈 결과를 낼 때 원인 로그 (개발/진단용)
+function debugHistorySource(src) {
+  const body = src.body || src;
+  console.group('[history] parseHistorySource 진단');
+  console.log('본문 텍스트 (앞 500자):', body.textContent.replace(/\s+/g, ' ').trim().slice(0, 500));
+  console.log('dl 수:', body.querySelectorAll('dl').length, '/ dt 수:', body.querySelectorAll('dt').length);
+  console.log('li 수:', body.querySelectorAll('li').length);
+  console.log('table 수:', body.querySelectorAll('table').length);
+  console.log('[class*=year] 수:', body.querySelectorAll('[class*="year"]').length);
+  console.log('innerHTML (앞 1000자):', body.innerHTML.slice(0, 1000));
+  console.groupEnd();
+}
+
 // dl 또는 table 구조 모두 파싱 → [{ year, items: [{date, text}] }]
 function parseHistorySource(src) {
-  // 1. dl 구조: dt에 연도, dd > ul > li에 항목
+  // 1. dl 구조: dt에 연도, dd > ul > li 또는 dd 직접 항목
   const specific = Array.from(src.querySelectorAll('.history_wrap dl, .history_area dl'));
   const dls = specific.length
     ? specific
     : Array.from(src.querySelectorAll('dl')).filter(dl => /\d{4}/.test(dl.querySelector('dt')?.textContent || ''));
   if (dls.length) {
-    const groups = dls.map(dl => ({
-      year: dl.querySelector('dt')?.textContent.match(/\d{4}/)?.[0] || '',
-      items: Array.from(dl.querySelectorAll('dd li')).map(li => ({
-        date: extractLiDate(li),
-        text: li.querySelector('p')?.textContent.trim() || extractLiText(li),
-      })).filter(item => item.text),
-    })).filter(g => g.year && g.items.length);
+    const groups = dls.map(dl => {
+      const year = dl.querySelector('dt')?.textContent.match(/\d{4}/)?.[0] || '';
+      const liItems = Array.from(dl.querySelectorAll('dd li'));
+      const items = liItems.length
+        ? liItems.map(li => ({
+            date: extractLiDate(li),
+            text: li.querySelector('p')?.textContent.trim() || extractLiText(li),
+          }))
+        : Array.from(dl.querySelectorAll('dd')).map(dd => ({
+            date: '',
+            text: dd.textContent.replace(/\s+/g, ' ').trim(),
+          }));
+      return { year, items: items.filter(i => i.text) };
+    }).filter(g => g.year && g.items.length);
     if (groups.length) return groups;
   }
 
@@ -122,12 +142,12 @@ function parseHistorySource(src) {
 
   // 3. ul > li 연도 그룹 구조 (li 직계 자식에 4자리 연도 텍스트 있는 것)
   const yearGroupLis = Array.from(src.querySelectorAll('li')).filter(li => {
-    const yearEl = li.querySelector(':scope > strong, :scope > span, :scope > h2, :scope > h3, :scope > h4, :scope > p, :scope > b, :scope > em');
+    const yearEl = li.querySelector(':scope > strong, :scope > span, :scope > h2, :scope > h3, :scope > h4, :scope > p, :scope > b, :scope > em, :scope > div');
     return yearEl && /^\d{4}[년\s.]*$/.test(yearEl.textContent.trim());
   });
   if (yearGroupLis.length) {
     const groups = yearGroupLis.map(li => {
-      const yearEl = li.querySelector(':scope > strong, :scope > span, :scope > h2, :scope > h3, :scope > h4, :scope > p, :scope > b, :scope > em');
+      const yearEl = li.querySelector(':scope > strong, :scope > span, :scope > h2, :scope > h3, :scope > h4, :scope > p, :scope > b, :scope > em, :scope > div');
       const year = yearEl.textContent.match(/\d{4}/)[0];
       const items = Array.from(li.querySelectorAll('li')).map(sub => ({
         date: extractLiDate(sub),
@@ -145,7 +165,6 @@ function parseHistorySource(src) {
   if (yearHeadings.length) {
     const groups = yearHeadings.map(heading => {
       const year = heading.textContent.match(/\d{4}/)[0];
-      // 형제 또는 부모의 다음 형제에서 li 포함 요소 탐색
       let sibling = heading.nextElementSibling;
       while (sibling && !sibling.querySelector('li') && !['UL', 'OL'].includes(sibling.tagName)) {
         sibling = sibling.nextElementSibling;
@@ -161,7 +180,144 @@ function parseHistorySource(src) {
   }
 
   // 5. table 구조 (class 무관 확장)
-  return parseTableSource(src);
+  const tableResult = parseTableSource(src);
+  if (tableResult.length) return tableResult;
+
+  // 6. li 각 항목에 연도+날짜+내용이 하나로 합쳐진 구조 ("2024. 03. 01 입학식" 패턴)
+  const flatLis = Array.from(src.querySelectorAll('li')).filter(li =>
+    !li.querySelector('ul, ol') && /\d{4}[.\s년]/.test(li.textContent.trim())
+  );
+  if (flatLis.length >= 2) {
+    const groups = new Map();
+    const order = [];
+    flatLis.forEach(li => {
+      const raw = li.textContent.replace(/\s+/g, ' ').trim();
+      const m = raw.match(/^(\d{4})[년.\s]\s*(\d{1,2}[월.\s](?:\d{1,2}[일.\s]?)?)?\s*(.+)/);
+      if (!m) return;
+      const year = m[1];
+      const date = (m[2] || '').trim().replace(/\s+/g, '');
+      const text = m[3].trim();
+      if (!text || text.length < 2) return;
+      if (!groups.has(year)) { groups.set(year, []); order.push(year); }
+      groups.get(year).push({ date, text });
+    });
+    const flatResult = order.map(y => ({ year: y, items: groups.get(y) })).filter(g => g.items.length);
+    if (flatResult.length) return flatResult;
+  }
+
+  // 7. dt/dd 직접 나열 구조 (dt에 날짜, dd에 내용 직접 — 중첩 ul 없음)
+  const directDts = Array.from(src.querySelectorAll('dl > dt')).filter(dt => /\d{4}/.test(dt.textContent));
+  if (directDts.length >= 2) {
+    const groups = new Map();
+    const order = [];
+    directDts.forEach(dt => {
+      const raw = dt.textContent.replace(/\s+/g, ' ').trim();
+      const year = raw.match(/\d{4}/)?.[0];
+      if (!year) return;
+      const date = raw.replace(/\d{4}[.\s년]*/, '').trim();
+      let node = dt.nextElementSibling;
+      while (node && node.tagName === 'DD') {
+        const text = node.textContent.replace(/\s+/g, ' ').trim();
+        if (text) {
+          if (!groups.has(year)) { groups.set(year, []); order.push(year); }
+          groups.get(year).push({ date, text });
+        }
+        node = node.nextElementSibling;
+      }
+    });
+    const ddResult = order.map(y => ({ year: y, items: groups.get(y) })).filter(g => g.items.length);
+    if (ddResult.length) return ddResult;
+  }
+
+  // 8. p 태그에 연도+내용이 한 줄에 합쳐진 패턴 ("2024. 03. 01 입학식")
+  const flatPs = Array.from(src.querySelectorAll('p')).filter(p =>
+    /\d{4}[.\s년]/.test(p.textContent.trim()) && p.textContent.trim().length > 6 && !p.querySelector('ul, ol')
+  );
+  if (flatPs.length >= 2) {
+    const groups = new Map();
+    const order = [];
+    flatPs.forEach(p => {
+      const raw = p.textContent.replace(/\s+/g, ' ').trim();
+      const m = raw.match(/^(\d{4})[년.\s]\s*(\d{1,2}[월.\s](?:\d{1,2}[일.\s]?)?)?\s*(.+)/);
+      if (!m) return;
+      const year = m[1];
+      const date = (m[2] || '').trim().replace(/\s+/g, '');
+      const text = m[3].trim();
+      if (!text || text.length < 2) return;
+      if (!groups.has(year)) { groups.set(year, []); order.push(year); }
+      groups.get(year).push({ date, text });
+    });
+    const pResult = order.map(y => ({ year: y, items: groups.get(y) })).filter(g => g.items.length);
+    if (pResult.length) return pResult;
+  }
+
+  // 9. OCR 결과 형식 — <p>2024년</p> 연도 마커 + 후속 <p> 항목들
+  // OCR로 추출된 텍스트는 줄마다 <p> 태그가 되므로, 연도만 있는 p를 기준점으로 하위 p들을 그룹화
+  const allPs = Array.from(src.querySelectorAll('p')).filter(p => !p.querySelector('ul, ol'));
+  const yearPMarkers = allPs
+    .map((p, i) => ({ i, year: p.textContent.trim().match(/^(\d{4})[년\s.]*$/)?.[1] }))
+    .filter(x => x.year);
+
+  if (yearPMarkers.length >= 1) {
+    const groups = [];
+    for (let k = 0; k < yearPMarkers.length; k++) {
+      const { year, i } = yearPMarkers[k];
+      const nextYearIdx = k + 1 < yearPMarkers.length ? yearPMarkers[k + 1].i : allPs.length;
+      const items = [];
+      for (let j = i + 1; j < nextYearIdx; j++) {
+        const raw = allPs[j].textContent.replace(/\s+/g, ' ').trim();
+        if (raw.length < 2) continue;
+        const dateM = raw.match(/^(\d{1,2}[.\-\/월]\s*\d{0,2}[.\-\/일]?\s*)(.+)/);
+        items.push(dateM
+          ? { date: dateM[1].trim(), text: dateM[2].trim() }
+          : { date: '', text: raw });
+      }
+      if (items.length) groups.push({ year, items });
+    }
+    if (groups.length) return groups;
+  }
+
+  // 10. OCR 단일 텍스트 블록 — 연도/날짜/내용이 한 덩어리로 뭉쳐진 경우 줄 분리
+  const bodyEl = src.body || src;
+  const rawText = bodyEl.innerHTML
+    .replace(/<br\s*\/?>/gi, '\n')
+    .replace(/<[^>]+>/g, ' ')
+    .replace(/&[a-z#\d]+;/gi, ' ')
+    .replace(/[ \t]+/g, ' ');
+  const textLines = rawText.split(/\n/).map(l => l.trim()).filter(l => l.length > 1);
+
+  const lineGroups = new Map();
+  const lineOrder = [];
+  let curYear = '';
+  for (const line of textLines) {
+    const pureYear = line.match(/^(\d{4})[년\s.]*$/);
+    if (pureYear) {
+      curYear = pureYear[1];
+      if (!lineGroups.has(curYear)) { lineGroups.set(curYear, []); lineOrder.push(curYear); }
+      continue;
+    }
+    const yearInline = line.match(/^(\d{4})[년.\s]\s*(.{2,})/);
+    if (yearInline) {
+      const y = yearInline[1];
+      curYear = y;
+      if (!lineGroups.has(y)) { lineGroups.set(y, []); lineOrder.push(y); }
+      const rest = yearInline[2];
+      const dm = rest.match(/^(\d{1,2}[.\-\/월]\d{0,2}[.\-\/일]?\s*)(.+)/);
+      lineGroups.get(y).push(dm ? { date: dm[1].trim(), text: dm[2].trim() } : { date: '', text: rest.trim() });
+      continue;
+    }
+    if (!curYear) continue;
+    const dm = line.match(/^(\d{1,2}[.\-\/月월]\s*\d{0,2}[.\-\/日일]?\s*)(.+)/);
+    if (dm && dm[2].trim().length > 1) {
+      lineGroups.get(curYear)?.push({ date: dm[1].trim(), text: dm[2].trim() });
+    } else if (line.length > 3 && /[가-힣]{2,}/.test(line)) {
+      lineGroups.get(curYear)?.push({ date: '', text: line });
+    }
+  }
+  const lineResult = lineOrder.map(y => ({ year: y, items: lineGroups.get(y) })).filter(g => g.items?.length);
+  if (lineResult.length) return lineResult;
+
+  return [];
 }
 
 // 병렬 컬럼 패턴 파싱: 날짜 셀 / 내용 셀이 각각 <br>로 구분된 2열 1행 구조
@@ -262,7 +418,7 @@ export default [
     applyMapping(sourceMarkup, templateCode) {
       const { src, tpl } = parseMarkup(sourceMarkup, templateCode);
       const groups = parseHistorySource(src);
-      if (!groups.length) return templateCode;
+      if (!groups.length) { debugHistorySource(src); return templateCode; }
 
       // 1. 첫 번째 연도 → .year span
       const yearSpan = tpl.querySelector('.history.tyA .year span');
@@ -442,7 +598,7 @@ $(function () {
     applyMapping(sourceMarkup, templateCode) {
       const { src, tpl } = parseMarkup(sourceMarkup, templateCode);
       const groups = parseHistorySource(src);
-      if (!groups.length) return templateCode;
+      if (!groups.length) { debugHistorySource(src); return templateCode; }
 
       const sections = groupIntoSections(groups);
 
@@ -732,7 +888,7 @@ $(function () {
     applyMapping(sourceMarkup, templateCode) {
       const { src, tpl } = parseMarkup(sourceMarkup, templateCode);
       const groups = parseHistorySource(src);
-      if (!groups.length) return templateCode;
+      if (!groups.length) { debugHistorySource(src); return templateCode; }
 
       const sections = groupIntoErasC(groups);
 
