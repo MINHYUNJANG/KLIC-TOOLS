@@ -7,9 +7,15 @@ const GENERIC_ALT_RE = /^(로고|로고\s*이미지|홈페이지\s*로고|홈페
 // 홈페이지 로고 이미지 alt → og:site_name → title 순으로 기관명 추출
 async function extractSiteName(homeUrl) {
   try {
-    const res = await fetch(homeUrl, { signal: AbortSignal.timeout(8000) });
-    if (!res.ok) return '';
-    const html = await res.text();
+    let html;
+    try {
+      const result = await fetchHtmlInsecure(homeUrl);
+      html = result.html;
+    } catch {
+      const res = await fetch(homeUrl, { signal: AbortSignal.timeout(8000) });
+      if (!res.ok) return '';
+      html = await res.text();
+    }
     const $ = cheerio.load(html);
 
     // 1) 로고 이미지 alt
@@ -83,9 +89,15 @@ async function extractUrlsFromSitemap(origin) {
   ];
   for (const u of candidates) {
     try {
-      const res = await fetch(u, { signal: AbortSignal.timeout(8000) });
-      if (!res.ok) continue;
-      const xml = await res.text();
+      let xml;
+      try {
+        const result = await fetchHtmlInsecure(u);
+        xml = result.html;
+      } catch {
+        const res = await fetch(u, { signal: AbortSignal.timeout(8000) });
+        if (!res.ok) continue;
+        xml = await res.text();
+      }
       const urls = [...xml.matchAll(/<loc>(.*?)<\/loc>/g)]
         .map(m => m[1].trim())
         .filter(u => !u.endsWith('.xml'));
@@ -136,6 +148,44 @@ function hasSubMenu($, a) {
   return false;
 }
 
+// SSL 검증 없이 HTML을 가져오는 fallback (한국 공공기관 인증서 대응)
+async function fetchHtmlInsecure(url, timeoutMs = 10000) {
+  const { request: httpsReq } = await import('node:https');
+  const { request: httpReq } = await import('node:http');
+
+  const fetchOne = (targetUrl) => new Promise((resolve, reject) => {
+    const parsed = new URL(targetUrl);
+    const mod = parsed.protocol === 'https:' ? httpsReq : httpReq;
+    const req = mod(
+      targetUrl,
+      { rejectUnauthorized: false, timeout: timeoutMs },
+      (res) => {
+        // 301/302 리다이렉트 처리 (최대 5회)
+        if (res.statusCode >= 300 && res.statusCode < 400 && res.headers.location) {
+          const redirectUrl = new URL(res.headers.location, targetUrl).href;
+          res.resume();
+          return resolve({ redirect: redirectUrl });
+        }
+        const chunks = [];
+        res.on('data', c => chunks.push(c));
+        res.on('end', () => resolve({ html: Buffer.concat(chunks).toString('utf-8'), finalUrl: targetUrl }));
+        res.on('error', reject);
+      }
+    );
+    req.on('timeout', () => { req.destroy(); reject(new Error('timeout')); });
+    req.on('error', reject);
+    req.end();
+  });
+
+  let current = url;
+  for (let i = 0; i < 5; i++) {
+    const result = await fetchOne(current);
+    if (result.redirect) { current = result.redirect; continue; }
+    return result;
+  }
+  throw new Error('too many redirects');
+}
+
 async function extractUrlsFromNav(pageUrl) {
   const inputOrigin = new URL(pageUrl).origin;
   let html;
@@ -143,7 +193,8 @@ async function extractUrlsFromNav(pageUrl) {
   let browser;
   try {
     browser = await launchBrowser();
-    const page = await browser.newPage();
+    const context = await browser.newContext({ ignoreHTTPSErrors: true });
+    const page = await context.newPage();
     await page.goto(pageUrl, { waitUntil: 'domcontentloaded', timeout: 15000 });
     finalUrl = page.url(); // 리다이렉트 후 실제 URL 추적
     await page.waitForTimeout(1000);
@@ -178,9 +229,16 @@ async function extractUrlsFromNav(pageUrl) {
 
     html = await page.content();
   } catch {
-    const res = await fetch(pageUrl, { signal: AbortSignal.timeout(8000) });
-    finalUrl = res.url || pageUrl; // 리다이렉트 후 실제 URL 추적
-    html = await res.text();
+    // 한국 공공기관 SSL 인증서 오류 등을 무시하는 fallback
+    try {
+      const result = await fetchHtmlInsecure(pageUrl);
+      finalUrl = result.finalUrl;
+      html = result.html;
+    } catch {
+      const res = await fetch(pageUrl, { signal: AbortSignal.timeout(8000) });
+      finalUrl = res.url || pageUrl;
+      html = await res.text();
+    }
   } finally {
     if (browser) await browser.close().catch(() => {});
   }
