@@ -906,6 +906,10 @@ export default function UrlCrawlMarkup() {
         checked: true,
         contentType: 'unknown',
       }));
+      if (newItems.length === 0) {
+        setExtractError('URL을 추출하지 못했습니다. https:// 형식으로 입력하거나, URL 직접 추가 버튼을 사용해주세요.');
+        return;
+      }
       setUrlItems(newItems);
       classifyUrlItems(newItems);
     } catch (e) {

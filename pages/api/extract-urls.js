@@ -137,13 +137,15 @@ function hasSubMenu($, a) {
 }
 
 async function extractUrlsFromNav(pageUrl) {
-  const origin = new URL(pageUrl).origin;
+  const inputOrigin = new URL(pageUrl).origin;
   let html;
+  let finalUrl = pageUrl;
   let browser;
   try {
     browser = await launchBrowser();
     const page = await browser.newPage();
     await page.goto(pageUrl, { waitUntil: 'domcontentloaded', timeout: 15000 });
+    finalUrl = page.url(); // 리다이렉트 후 실제 URL 추적
     await page.waitForTimeout(1000);
 
     // 숨겨진 서브메뉴 펼치기: CSS 강제 노출 + javascript: 토글 함수 실행
@@ -177,10 +179,15 @@ async function extractUrlsFromNav(pageUrl) {
     html = await page.content();
   } catch {
     const res = await fetch(pageUrl, { signal: AbortSignal.timeout(8000) });
+    finalUrl = res.url || pageUrl; // 리다이렉트 후 실제 URL 추적
     html = await res.text();
   } finally {
     if (browser) await browser.close().catch(() => {});
   }
+
+  // http → https 리다이렉트 등을 처리하기 위해 입력 origin + 최종 origin 모두 허용
+  const finalOrigin = new URL(finalUrl).origin;
+  const allowedOrigins = new Set([inputOrigin, finalOrigin]);
 
   const $ = cheerio.load(html);
   // url → { text, depth }
@@ -192,11 +199,11 @@ async function extractUrlsFromNav(pageUrl) {
   const addLink = (a) => {
     try {
       // href 또는 onclick/data-* 에서 URL 추출
-      const rawHref = resolveHref(a, $, pageUrl);
+      const rawHref = resolveHref(a, $, finalUrl);
       if (!rawHref) return;
 
-      const href = new URL(rawHref, pageUrl).href;
-      if (!href.startsWith(origin)) return;
+      const href = new URL(rawHref, finalUrl).href;
+      if (![...allowedOrigins].some(o => href.startsWith(o))) return;
       if (href.match(/\.(jpg|jpeg|png|gif|pdf|zip|hwp|docx?)(\?|$)/i)) return;
 
       // 직접 텍스트 추출 (중첩 a 제거)
