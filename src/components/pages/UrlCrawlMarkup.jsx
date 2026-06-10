@@ -542,6 +542,50 @@ function BatchRetryPanel({ result, onRetry }) {
   );
 }
 
+// ─── 미생성 페이지 패널 ──────────────────────────────────────
+function FailedPagesPanel({ failedResults }) {
+  function classifyReason(r) {
+    const err = (r.error || '').toLowerCase();
+    if (!r.html?.trim() && !r.error) return 'HTML 콘텐츠를 추출할 수 없음';
+    if (err.includes('timeout') || err.includes('시간 초과') || err.includes('timed out')) return '요청 시간 초과 (서버 응답 없음)';
+    if (err.includes('ssl') || err.includes('certificate') || err.includes('인증서')) return 'SSL 인증서 오류';
+    if (err.includes('enotfound') || err.includes('getaddrinfo') || err.includes('dns')) return 'DNS 조회 실패 (도메인 미존재)';
+    if (err.includes('econnrefused') || err.includes('econnreset') || err.includes('연결')) return '서버 연결 거부';
+    if (err.includes('403') || err.includes('forbidden')) return '접근 권한 없음 (403 Forbidden)';
+    if (err.includes('404') || err.includes('not found')) return '페이지 없음 (404 Not Found)';
+    if (err.includes('500') || err.includes('502') || err.includes('503')) return '서버 내부 오류 (5xx)';
+    if (err.includes('redirect') || err.includes('리다이렉트')) return '리다이렉트 처리 실패';
+    if (err.includes('parse') || err.includes('파싱')) return 'HTML 파싱 오류';
+    if (r.error) return r.error;
+    return '알 수 없는 오류';
+  }
+
+  return (
+    <div className="crawl-failed-panel">
+      <div className="crawl-failed-header">
+        <span className="crawl-failed-title">미생성 페이지 목록</span>
+        <span className="crawl-failed-count">{failedResults.length}개</span>
+      </div>
+      <div className="crawl-failed-list">
+        <div className="crawl-failed-list-header">
+          <span>메뉴명</span>
+          <span>URL</span>
+          <span>미생성 이유</span>
+        </div>
+        {failedResults.map((r, i) => (
+          <div key={i} className="crawl-failed-item">
+            <span className="crawl-failed-item-name">{r.title || '(제목 없음)'}</span>
+            <a className="crawl-failed-item-url" href={r.url} target="_blank" rel="noopener noreferrer" title={r.url}>
+              {r.url}
+            </a>
+            <span className="crawl-failed-item-reason">{classifyReason(r)}</span>
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+}
+
 // ─── 메인 컴포넌트 ───────────────────────────────────────────
 export default function UrlCrawlMarkup() {
   const [batchRootUrl, setBatchRootUrl] = useState('');
@@ -1194,6 +1238,8 @@ export default function UrlCrawlMarkup() {
       setBatchResults([...results]);
     }
     setBatchLoading(false);
+    const firstSuccessIdx = results.findIndex(r => !r.error && r.html?.trim());
+    setActiveResultIdx(firstSuccessIdx >= 0 ? firstSuccessIdx : 'failed');
   }
 
   // ─── 마크업 ZIP 다운로드 ───────────────────────────────────
@@ -1660,20 +1706,33 @@ export default function UrlCrawlMarkup() {
           <div className="crawl-batch-results">
             <div ref={tourRefs.resultTab} className="crawl-batch-tabs-row">
               <div className="crawl-batch-tabs">
-              {batchResults.map((r, i) => (
+              {batchResults.map((r, i) => {
+                if (r.error || !r.html?.trim()) return null;
+                return (
+                  <button
+                    key={i}
+                    className={`crawl-batch-tab ${activeResultIdx === i ? 'is-active' : ''}`}
+                    onClick={() => setActiveResultIdx(i)}
+                    title={r.url}
+                  >
+                    {shortLabel(r.url, r.title)}
+                    {batchLoading && i === batchProgress.done - 1 && (
+                      <span className="crawl-tab-badge">✓</span>
+                    )}
+                  </button>
+                );
+              })}
+              {batchResults.some(r => r.error || !r.html?.trim()) && (
                 <button
-                  key={i}
-                  className={`crawl-batch-tab ${activeResultIdx === i ? 'is-active' : ''} ${r.error ? 'is-error' : ''}`}
-                  onClick={() => setActiveResultIdx(i)}
-                  title={r.url}
+                  className={`crawl-batch-tab crawl-batch-tab--failed ${activeResultIdx === 'failed' ? 'is-active' : ''}`}
+                  onClick={() => setActiveResultIdx('failed')}
                 >
-                  {shortLabel(r.url, r.title)}
-                  {batchLoading && i === batchProgress.done - 1 && !r.error && (
-                    <span className="crawl-tab-badge">✓</span>
-                  )}
-                  {r.error && <span className="crawl-tab-badge crawl-tab-badge--error">!</span>}
+                  미생성 페이지
+                  <span className="crawl-tab-badge crawl-tab-badge--error">
+                    {batchResults.filter(r => r.error || !r.html?.trim()).length}
+                  </span>
                 </button>
-              ))}
+              )}
               </div>
               {!batchLoading && batchResults.some(r => r.html?.trim() && !r.error) && (
                 <button
@@ -1687,27 +1746,20 @@ export default function UrlCrawlMarkup() {
                 </button>
               )}
             </div>
-            {batchResults[activeResultIdx] && (
-              (batchResults[activeResultIdx].error || !batchResults[activeResultIdx].html?.trim()) ? (
-                <BatchRetryPanel
-                  result={batchResults[activeResultIdx]}
-                  onRetry={updated => {
-                    const next = [...batchResults];
-                    next[activeResultIdx] = { ...next[activeResultIdx], ...updated };
-                    setBatchResults(next);
-                  }}
-                />
-              ) : (
-                <ResultViewer
-                  markup={batchResults[activeResultIdx].html}
-                  templateId={batchResults[activeResultIdx].templateId}
-                  onMarkupChange={html => {
-                    const next = [...batchResults];
-                    next[activeResultIdx] = { ...next[activeResultIdx], html };
-                    setBatchResults(next);
-                  }}
-                />
-              )
+            {activeResultIdx === 'failed' ? (
+              <FailedPagesPanel
+                failedResults={batchResults.filter(r => r.error || !r.html?.trim())}
+              />
+            ) : batchResults[activeResultIdx] && batchResults[activeResultIdx].html?.trim() && (
+              <ResultViewer
+                markup={batchResults[activeResultIdx].html}
+                templateId={batchResults[activeResultIdx].templateId}
+                onMarkupChange={html => {
+                  const next = [...batchResults];
+                  next[activeResultIdx] = { ...next[activeResultIdx], html };
+                  setBatchResults(next);
+                }}
+              />
             )}
           </div>
         )}

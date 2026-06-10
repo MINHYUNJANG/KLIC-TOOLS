@@ -603,6 +603,98 @@
   font-weight: 700;
 }
 
+.crawl-batch-tab--failed {
+  border-color: #f5c0c0;
+  color: #c0392b;
+  margin-left: auto;
+  flex-shrink: 0;
+}
+.crawl-batch-tab--failed:hover { border-color: #c0392b; color: #a93226; }
+.crawl-batch-tab--failed.is-active {
+  background: #c0392b;
+  border-color: #c0392b;
+  color: #fff;
+}
+.crawl-batch-tab--failed.is-active .crawl-tab-badge--error { color: #fff; }
+
+/* 미생성 페이지 패널 */
+.crawl-failed-panel {
+  border: 0.0625rem solid #f5c0c0;
+  border-radius: 0.5rem;
+  overflow: hidden;
+  background: #fff;
+}
+.crawl-failed-header {
+  display: flex;
+  align-items: center;
+  gap: 0.625rem;
+  padding: 0.75rem 1rem;
+  background: #fff5f5;
+  border-bottom: 0.0625rem solid #f5c0c0;
+}
+.crawl-failed-title {
+  font-size: 0.9375rem;
+  font-weight: 600;
+  color: #c0392b;
+}
+.crawl-failed-count {
+  font-size: 0.75rem;
+  font-weight: 600;
+  padding: 0.125rem 0.5rem;
+  background: #c0392b;
+  color: #fff;
+  border-radius: 999px;
+}
+.crawl-failed-list {
+  display: flex;
+  flex-direction: column;
+}
+.crawl-failed-list-header {
+  display: grid;
+  grid-template-columns: 10rem 1fr 14rem;
+  gap: 0.75rem;
+  padding: 0.5rem 1rem;
+  background: #fafafa;
+  border-bottom: 0.0625rem solid #ebebeb;
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: #888;
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+}
+.crawl-failed-item {
+  display: grid;
+  grid-template-columns: 10rem 1fr 14rem;
+  gap: 0.75rem;
+  align-items: start;
+  padding: 0.75rem 1rem;
+  border-bottom: 0.0625rem solid #f5f5f5;
+  font-size: 0.8125rem;
+  transition: background 0.1s;
+}
+.crawl-failed-item:last-child { border-bottom: none; }
+.crawl-failed-item:hover { background: #fff9f9; }
+.crawl-failed-item-name {
+  font-weight: 600;
+  color: #222;
+  word-break: break-all;
+}
+.crawl-failed-item-url {
+  color: #0070c8;
+  text-decoration: none;
+  word-break: break-all;
+  overflow: hidden;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+}
+.crawl-failed-item-url:hover { text-decoration: underline; }
+.crawl-failed-item-reason {
+  color: #c0392b;
+  font-size: 0.8rem;
+  word-break: keep-all;
+}
+
 /* URL 아이템 리스트 */
 .url-items-list {
   display: flex;
