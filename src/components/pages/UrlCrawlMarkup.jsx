@@ -4,6 +4,7 @@ import { isImageOnlyContent, hasContentImage, getContentImageUrls } from '../../
 import greeting from '../../templates/greeting';
 import history from '../../templates/history';
 import symbol from '../../templates/symbol';
+import useToast from '../TableEditor/hooks/useToast';
 
 // auto-markup 결과 HTML의 테이블 구조만 정규화
 // applyTableSemantics는 내부에서 메인 document.createElement를 쓰므로
@@ -285,11 +286,24 @@ function resizeIframe(iframe) {
   iframe.style.height = height + 'px';
 }
 
+const THEMES = [
+  { key: 'purple', label: '퍼플' },
+  { key: 'blue',   label: '블루' },
+  { key: 'green',  label: '그린' },
+  { key: 'navy',   label: '네이비' },
+  { key: 'mint',   label: '민트' },
+  { key: 'orange', label: '오렌지' },
+];
+
 // ─── 결과 뷰어 ────────────────────────────────────────────────
 function ResultViewer({ markup, onMarkupChange, templateId }) {
   const [tab, setTab] = useState(templateId ? 'preview' : 'code');
   const [copied, setCopied] = useState(false);
+  const [theme, setTheme] = useState('');
   const iframeRef = useRef(null);
+  const themeRef = useRef('');
+
+  useEffect(() => { themeRef.current = theme; }, [theme]);
 
   useEffect(() => {
     if (tab !== 'preview' || !iframeRef.current) return;
@@ -299,15 +313,33 @@ function ResultViewer({ markup, onMarkupChange, templateId }) {
     doc.open();
     doc.write(buildIframeDoc(markup, tpl?.previewStyle || ''));
     doc.close();
+
+    const applyTheme = () => {
+      const body = iframe.contentDocument?.body;
+      if (!body) return;
+      if (themeRef.current) body.setAttribute('data-theme', themeRef.current);
+      else body.removeAttribute('data-theme');
+    };
+
     if (tpl?.previewHeight) {
       iframe.style.height = tpl.previewHeight + 'px';
+      applyTheme();
     } else {
-      iframe.onload = () => resizeIframe(iframe);
-      setTimeout(() => resizeIframe(iframe), 300);
-      setTimeout(() => resizeIframe(iframe), 1000);
+      iframe.onload = () => { resizeIframe(iframe); applyTheme(); };
+      setTimeout(() => { resizeIframe(iframe); applyTheme(); }, 300);
+      setTimeout(() => { resizeIframe(iframe); applyTheme(); }, 1000);
     }
     return () => { iframe.onload = null; };
   }, [tab, markup, templateId]);
+
+  // 테마 변경 시 iframe body에 즉시 적용
+  useEffect(() => {
+    if (tab !== 'preview') return;
+    const body = iframeRef.current?.contentDocument?.body;
+    if (!body) return;
+    if (theme) body.setAttribute('data-theme', theme);
+    else body.removeAttribute('data-theme');
+  }, [theme]);
 
   async function handleCopy() {
     await navigator.clipboard.writeText(markup);
@@ -322,6 +354,25 @@ function ResultViewer({ markup, onMarkupChange, templateId }) {
           <button className={`crawl-tab ${tab === 'code' ? 'is-active' : ''}`} onClick={() => setTab('code')}>마크업</button>
           <button className={`crawl-tab crawl-tab--preview ${tab === 'preview' ? 'is-active' : ''}`} onClick={() => setTab('preview')}>미리보기</button>
         </div>
+        {tab === 'preview' && (
+          <div className="theme-switcher" aria-label="테마 선택">
+            <span className="theme-switcher-label">테마</span>
+            <div className="theme-swatches" role="radiogroup" aria-label="색상 테마">
+              {THEMES.map(({ key, label }) => (
+                <button
+                  key={key}
+                  type="button"
+                  className={`theme-swatch${theme === key ? ' is-active' : ''}`}
+                  data-theme={key}
+                  title={label}
+                  aria-label={`${label} 테마`}
+                  aria-pressed={theme === key}
+                  onClick={() => setTheme(prev => prev === key ? '' : key)}
+                />
+              ))}
+            </div>
+          </div>
+        )}
         <button className="crawl-copy-btn" onClick={handleCopy}>{copied ? '복사됨 ✓' : '복사'}</button>
       </div>
       {tab === 'code' ? (
@@ -607,6 +658,8 @@ export default function UrlCrawlMarkup() {
   const [siteNameLocked, setSiteNameLocked] = useState(false);
   const [downloading, setDownloading] = useState(false);
   const classifyAbortRef = useRef(false);
+  const { toast, triggerToast } = useToast();
+  const [extractProgress, setExtractProgress] = useState({ step: 0, total: 4, label: '' });
   const [previewUrl, setPreviewUrl] = useState('');
   const [previewOpen, setPreviewOpen] = useState(false);
   const [typeModalItemId, setTypeModalItemId] = useState(null);
@@ -930,24 +983,54 @@ export default function UrlCrawlMarkup() {
     classifyAbortRef.current = true;
     setClassifying(false);
     setExtracting(true); setExtractError(''); setUrlItems([]); setSiteName(''); setSiteNameLocked(false);
+    setExtractProgress({ step: 0, total: 4, label: '' });
     try {
       const res = await fetch('/api/extract-urls', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ url: batchRootUrl.trim() }),
       });
-      let data = {};
-      try { data = await res.json(); } catch {}
-      if (!res.ok) { setExtractError(data.detail || `서버 오류 (${res.status})`); return; }
-      if (data.siteName) { setSiteName(data.siteName); setSiteNameLocked(true); }
-      const newItems = data.items.map((item, i) => ({
+      if (!res.ok) {
+        let detail = `서버 오류 (${res.status})`;
+        try { const d = await res.json(); detail = d.detail || detail; } catch {}
+        setExtractError(detail);
+        return;
+      }
+      const reader = res.body.getReader();
+      const decoder = new TextDecoder();
+      let buffer = '';
+      let resultData = null;
+      outer: while (true) {
+        const { done, value } = await reader.read();
+        if (done) break;
+        buffer += decoder.decode(value, { stream: true });
+        const lines = buffer.split('\n');
+        buffer = lines.pop();
+        for (const line of lines) {
+          if (!line.startsWith('data: ')) continue;
+          let event;
+          try { event = JSON.parse(line.slice(6)); } catch { continue; }
+          if (event.type === 'progress') {
+            setExtractProgress({ step: event.step, total: event.total, label: event.label });
+          } else if (event.type === 'result') {
+            resultData = event;
+            break outer;
+          } else if (event.type === 'error') {
+            setExtractError(event.detail || '추출 오류');
+            return;
+          }
+        }
+      }
+      if (!resultData) { setExtractError('응답을 파싱할 수 없습니다.'); return; }
+      if (resultData.siteName) { setSiteName(resultData.siteName); setSiteNameLocked(true); }
+      const newItems = resultData.items.map((item, i) => ({
         id: i,
         url: item.url,
         title: item.title || '',
         category: null,
         templateId: null,
         selector: '',
-        checked: true,
+        checked: false,
         contentType: 'unknown',
       }));
       if (newItems.length === 0) {
@@ -1034,6 +1117,15 @@ export default function UrlCrawlMarkup() {
   async function handleBatchGenerate() {
     const validItems = urlItems.filter(({ url, checked }) => checked && url && isValidUrl(url));
     if (validItems.length === 0) { setExtractError('유효한 URL이 없습니다.'); return; }
+    const SPECIAL_KW = ['연혁', '상징', '인사'];
+    const untyped = validItems.filter(item =>
+      item.category === null &&
+      SPECIAL_KW.some(kw => (item.title || '').includes(kw))
+    );
+    if (untyped.length > 0) {
+      triggerToast(`마크업 유형을 선택해주세요: ${untyped.map(i => `"${i.title}"`).join(', ')}`, 'error');
+      return;
+    }
     setBatchLoading(true);
     setBatchResults([]);
     setBatchProgress({ done: 0, total: validItems.length });
@@ -1499,6 +1591,40 @@ export default function UrlCrawlMarkup() {
 
   return (
     <div className="crawl-page">
+      {toast.show && <div key={toast.id} className="toast-popup">{toast.message}</div>}
+      {(extracting || classifying) && mode === 'url' && (
+        <div className="url-extract-overlay">
+          <div className="url-extract-overlay-card">
+            <p className="url-extract-overlay-label">
+              {extracting
+                ? (extractProgress.label || 'URL 추출 중…')
+                : `페이지 분석 중 (${classifyProgress.done} / ${classifyProgress.total})`}
+            </p>
+            <div className="url-extract-progress-track">
+              <div
+                className={`url-extract-progress-fill${extracting && extractProgress.step === 0 ? ' is-indeterminate' : ''}`}
+                style={{
+                  width: extracting && extractProgress.total > 0
+                    ? `${Math.round(extractProgress.step / extractProgress.total * 100)}%`
+                    : classifying
+                    ? `${Math.round(classifyProgress.done / Math.max(classifyProgress.total, 1) * 100)}%`
+                    : undefined,
+                }}
+              />
+            </div>
+            {extracting && extractProgress.total > 0 && (
+              <p className="url-extract-overlay-pct">
+                {Math.round(extractProgress.step / extractProgress.total * 100)}%
+              </p>
+            )}
+            {classifying && (
+              <p className="url-extract-overlay-pct">
+                {Math.round(classifyProgress.done / Math.max(classifyProgress.total, 1) * 100)}%
+              </p>
+            )}
+          </div>
+        </div>
+      )}
       <div className="crawl-page-inner">
         <div className="crawl-title-row">
           <h2 className="crawl-title">크롤링 마크업</h2>
@@ -1555,17 +1681,13 @@ export default function UrlCrawlMarkup() {
                 {urlItems.length > 0 && (
                 <div className="crawl-batch-urls-header">
                   <div className="crawl-batch-urls-header-left">
-                    {siteNameLocked
-                      ? <span className="url-site-name-inline">{siteName}</span>
-                      : <input
-                          className="url-site-name-input"
-                          type="text"
-                          placeholder="학교명을 입력하세요."
-                          value={siteName}
-                          onChange={e => setSiteName(e.target.value)}
-                          onKeyDown={e => { if (e.key === 'Enter' && siteName.trim()) setSiteNameLocked(true); }}
-                        />
-                    }
+                    <input
+                      className="url-site-name-input"
+                      type="text"
+                      placeholder="학교명을 입력하세요."
+                      value={siteName}
+                      onChange={e => setSiteName(e.target.value)}
+                    />
                   </div>
                   <div className="crawl-batch-urls-header-right">
                     {classifying && (
@@ -1882,7 +2004,7 @@ export default function UrlCrawlMarkup() {
                   </tr>
                 </thead>
                 <tbody>
-                  {imageItems.map(item => (
+                  {imageItems.filter(i => i.checked).map(item => (
                     <tr key={item.id}>
                       <td className="url-export-table-title">{item.title || '(제목 없음)'}</td>
                       <td className="url-export-table-url">{item.url}</td>
@@ -1896,7 +2018,18 @@ export default function UrlCrawlMarkup() {
                 className="crawl-btn crawl-btn--primary url-export-copy-btn"
                 onClick={e => {
                   const btn = e.currentTarget;
-                  const text = imageItems.map(item => `${item.title || '(제목 없음)'}\t${item.url}`).join('\n');
+                  const displayWidth = str => [...str].reduce((w, ch) => {
+                    const code = ch.codePointAt(0);
+                    return w + ((code >= 0x1100 && code <= 0x11FF) || (code >= 0xAC00 && code <= 0xD7AF) || (code >= 0x2E80 && code <= 0xA4CF) || (code >= 0xF900 && code <= 0xFAFF) ? 4 : 2);
+                  }, 0);
+                  const checkedImageItems = imageItems.filter(i => i.checked);
+                  const titles = checkedImageItems.map(item => item.title || '(제목 없음)');
+                  const maxW = Math.max(...titles.map(displayWidth));
+                  const text = checkedImageItems.map(item => {
+                    const title = item.title || '(제목 없음)';
+                    const pad = ' '.repeat(maxW - displayWidth(title) + 2);
+                    return `${title}${pad}${item.url}`;
+                  }).join('\n');
                   navigator.clipboard.writeText(text).then(() => {
                     btn.textContent = '복사됨 ✓';
                     setTimeout(() => { btn.textContent = '복사하기'; }, 2000);

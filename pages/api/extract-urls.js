@@ -4,6 +4,9 @@ import { launchBrowser } from '../../lib/playwright-helper.js';
 // 의미없는 로고 alt 패턴 ("로고", "logo", "CI" 등)
 const GENERIC_ALT_RE = /^(로고|로고\s*이미지|홈페이지\s*로고|홈페이지\s*이미지|logo(\s*img)?|symbol|ci|emblem|이미지|홈페이지|home|homepage|home\s*page|welcome|welcome\s*to|welcome\s*homepage|main|index|메인|대문|인트로|intro)$/i;
 
+// 오류 페이지 제목 패턴 — 학교명으로 오인하면 안 되는 문자열
+const ERROR_TITLE_RE = /찾을\s*수\s*없|요청하신\s*페이지|페이지를\s*찾|없는\s*페이지|존재하지\s*않|접근\s*거부|권한이\s*없|서비스\s*준비|점검\s*중|error|not\s*found|forbidden|unauthorized/i;
+
 // 홈페이지 로고 이미지 alt → og:site_name → title 순으로 기관명 추출
 async function extractSiteName(homeUrl) {
   try {
@@ -36,22 +39,24 @@ async function extractSiteName(homeUrl) {
       'a.logo img[alt]',
     ].join(', ');
 
+    const isValid = v => v && v.length > 1 && !GENERIC_ALT_RE.test(v) && !ERROR_TITLE_RE.test(v);
+
     const logoAlts = [];
     $(LOGO_SEL).each((_, el) => {
       const alt = $(el).attr('alt')?.trim();
-      if (alt && alt.length > 1 && !GENERIC_ALT_RE.test(alt)) logoAlts.push(alt);
+      if (isValid(alt)) logoAlts.push(alt);
     });
     if (logoAlts.length > 0) return logoAlts[0];
 
     // 2) og:site_name
     const ogSiteName = $('meta[property="og:site_name"]').attr('content')?.trim();
-    if (ogSiteName && ogSiteName.length > 1 && !GENERIC_ALT_RE.test(ogSiteName)) return ogSiteName;
+    if (isValid(ogSiteName)) return ogSiteName;
 
     // 3) <title> 태그 — 구분자(|·-·:·>)로 분리 후 첫 파트
     const title = $('title').first().text().trim();
     if (title) {
       const firstPart = title.split(/\s*[|\-:：>]\s*/)[0].trim();
-      if (firstPart.length > 1 && !GENERIC_ALT_RE.test(firstPart)) return firstPart;
+      if (isValid(firstPart)) return firstPart;
     }
 
     // 4) meta keywords — 학교명 패턴 추출
@@ -72,7 +77,7 @@ async function extractSiteName(homeUrl) {
     const headings = ['h1', 'h2'];
     for (const tag of headings) {
       const text = $(tag).first().text().replace(/\s+/g, ' ').trim();
-      if (!text || GENERIC_ALT_RE.test(text)) continue;
+      if (!text || GENERIC_ALT_RE.test(text) || ERROR_TITLE_RE.test(text)) continue;
       const hMatch = text.match(/([^\s,·]{2,20}(?:학교|대학교|고등학교|중학교|초등학교|학원))/);
       if (hMatch) return hMatch[1];
       if (text.length >= 2 && text.length <= 30) return text;
@@ -291,19 +296,46 @@ async function extractUrlsFromNav(pageUrl) {
   return new Map([...urlMap.entries()].map(([url, { text }]) => [url, text]));
 }
 
+export const config = { api: { responseLimit: false } };
+
+function sendEvent(res, data) {
+  res.write(`data: ${JSON.stringify(data)}\n\n`);
+  if (typeof res.flush === 'function') res.flush();
+}
+
 export default async function handler(req, res) {
   if (req.method !== 'POST') return res.status(405).json({ detail: 'Method not allowed' });
+
+  res.setHeader('Content-Type', 'text/event-stream');
+  res.setHeader('Cache-Control', 'no-cache');
+  res.setHeader('Connection', 'keep-alive');
+  res.flushHeaders();
+
   try {
     const { url } = req.body;
     const origin = new URL(url).origin;
     const homeUrl = origin + '/';
+    const isSameUrl = homeUrl === url + '/' || homeUrl === url;
+    const totalSteps = isSameUrl ? 3 : 4;
 
-    const [sitemapUrls, mapFromInput, mapFromHome, siteName] = await Promise.all([
-      extractUrlsFromSitemap(origin),
-      extractUrlsFromNav(url),
+    sendEvent(res, { type: 'progress', step: 1, total: totalSteps, label: '사이트맵 확인 중…' });
+    const sitemapUrls = await extractUrlsFromSitemap(origin);
+
+    sendEvent(res, { type: 'progress', step: 2, total: totalSteps, label: '홈페이지 메뉴 분석 중…' });
+    const [mapFromHome, siteName] = await Promise.all([
       homeUrl !== url ? extractUrlsFromNav(homeUrl) : Promise.resolve(new Map()),
       extractSiteName(homeUrl),
     ]);
+
+    let mapFromInput;
+    if (!isSameUrl) {
+      sendEvent(res, { type: 'progress', step: 3, total: totalSteps, label: '입력 페이지 링크 추출 중…' });
+      mapFromInput = await extractUrlsFromNav(url);
+    } else {
+      mapFromInput = new Map();
+    }
+
+    sendEvent(res, { type: 'progress', step: totalSteps, total: totalSteps, label: 'URL 정리 중…' });
 
     const navMap = new Map([...mapFromHome, ...mapFromInput]);
     const navUrls = [...navMap.keys()];
@@ -311,7 +343,6 @@ export default async function handler(req, res) {
     let urlList;
     let source;
     if (sitemapUrls && sitemapUrls.length > 0) {
-      // sitemap + nav 합산: sitemap에 없는 하위 메뉴 URL도 포함
       const sitemapSet = new Set(sitemapUrls);
       urlList = [...sitemapUrls, ...navUrls.filter(u => !sitemapSet.has(u))];
       source = 'sitemap+nav';
@@ -320,35 +351,23 @@ export default async function handler(req, res) {
       source = 'nav';
     }
 
-    // 로그인·메인 제외 + 중복 제거 (쿼리 파라미터 순서 무관하게 정규화)
     const seen = new Map();
     for (const u of urlList) {
       try {
         const parsed = new URL(u);
         const { pathname } = parsed;
-
-        // 로그인 페이지 제외
         if (/login/i.test(pathname)) continue;
-        // 메인 페이지 제외 (루트 / 또는 /main.do)
         if (pathname === '/' || pathname === '' || /\/main\.do$/i.test(pathname)) continue;
-        // 게시판·공지·갤러리 등 제외
-        // /board, /boardCnts, /boardList 등 board 로 시작하는 경로 모두 포함
         if (/\/board/i.test(pathname)) continue;
         if (/\/(bbs|notice|news|gallery|photo|album|file|download|upload)\b/i.test(pathname)) continue;
-        // /data 는 루트 첫 세그먼트인 경우만 제외 (/common/data/open.do 같은 경로는 허용)
         if (/^\/data\b/i.test(pathname)) continue;
-        // 지도 제외
         if (/\/map\b/i.test(pathname)) continue;
-        // 팝업·프린트·RSS 제외
         if (/\/(popup|print|rss)\b/i.test(pathname)) continue;
-
-        // 쿼리 파라미터를 정렬해서 정규화 (순서가 달라도 같은 URL로 처리)
         const sortedSearch = [...parsed.searchParams.entries()]
           .sort(([a], [b]) => a.localeCompare(b))
           .map(([k, v]) => `${k}=${v}`)
           .join('&');
         const key = parsed.origin + pathname + (sortedSearch ? '?' + sortedSearch : '');
-
         if (!seen.has(key)) seen.set(key, u);
       } catch {}
     }
@@ -356,8 +375,10 @@ export default async function handler(req, res) {
     const unique = [...seen.values()].slice(0, 200);
     const items = unique.map(u => ({ url: u, title: navMap.get(u) || '' }));
 
-    res.json({ items, source, total: items.length, siteName });
+    sendEvent(res, { type: 'result', items, source, total: items.length, siteName });
   } catch (e) {
-    res.status(500).json({ detail: e.message });
+    sendEvent(res, { type: 'error', detail: e.message });
+  } finally {
+    res.end();
   }
 }

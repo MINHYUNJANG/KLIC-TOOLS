@@ -1731,3 +1731,111 @@
   border-top: 1px solid #e8edf5;
   flex-shrink: 0;
 }
+
+/* ─── URL 추출 오버레이 ───────────────────────────────────────── */
+.url-extract-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.45);
+  z-index: 9000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.url-extract-overlay-card {
+  background: #fff;
+  border-radius: 0.875rem;
+  padding: 2rem 2.5rem;
+  min-width: 18rem;
+  width: 26rem;
+  max-width: 90vw;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.18);
+  text-align: center;
+}
+
+.url-extract-overlay-label {
+  font-size: 0.9375rem;
+  font-weight: 500;
+  color: #1e2a3a;
+  margin: 0 0 1.125rem;
+}
+
+.url-extract-progress-track {
+  height: 0.5rem;
+  background: #e8edf5;
+  border-radius: 999px;
+  overflow: hidden;
+}
+
+.url-extract-progress-fill {
+  height: 100%;
+  background: #4a8af4;
+  border-radius: 999px;
+  transition: width 0.35s ease;
+}
+
+.url-extract-progress-fill.is-indeterminate {
+  width: 38%;
+  animation: url-progress-slide 1.4s ease-in-out infinite;
+}
+
+@keyframes url-progress-slide {
+  0%   { transform: translateX(-160%); }
+  100% { transform: translateX(380%); }
+}
+
+.url-extract-overlay-pct {
+  margin: 0.625rem 0 0;
+  font-size: 0.8125rem;
+  color: #6b7a99;
+}
+
+/* ── 테마 선택기 ─────────────────────────────────────────── */
+.theme-switcher {
+	display: flex;
+	align-items: center;
+	gap: 8px;
+}
+
+.theme-switcher-label {
+	font-size: 0.7rem;
+	font-weight: 600;
+	color: #999;
+	white-space: nowrap;
+}
+
+.theme-swatches {
+	display: flex;
+	align-items: center;
+	gap: 5px;
+}
+
+.theme-swatch {
+	width: 18px;
+	min-height: 18px;
+	border-radius: 50%;
+	border: 2px solid transparent;
+	outline: 2px solid transparent;
+	outline-offset: 1px;
+	cursor: pointer;
+	padding: 0;
+	transition: outline-color 0.15s, transform 0.1s;
+	flex-shrink: 0;
+}
+
+.theme-swatch:hover {
+	transform: scale(1.2);
+}
+
+.theme-swatch.is-active {
+	outline-color: currentColor;
+	transform: scale(1.1);
+}
+
+.theme-swatch[data-theme="purple"]  { background: #6600BF; color: #6600BF; }
+.theme-swatch[data-theme="blue"]    { background: #2870FF; color: #2870FF; }
+.theme-swatch[data-theme="green"]   { background: #057734; color: #057734; }
+.theme-swatch[data-theme="navy"]    { background: #002454; color: #002454; }
+.theme-swatch[data-theme="mint"]    { background: #268F87; color: #268F87; }
+.theme-swatch[data-theme="orange"]  { background: #E56C01; color: #E56C01; }
