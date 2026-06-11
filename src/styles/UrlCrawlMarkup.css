@@ -1839,3 +1839,24 @@
 .theme-swatch[data-theme="navy"]    { background: #002454; color: #002454; }
 .theme-swatch[data-theme="mint"]    { background: #268F87; color: #268F87; }
 .theme-swatch[data-theme="orange"]  { background: #E56C01; color: #E56C01; }
+
+.url-preview-panel-open {
+  width: 2rem;
+  min-width: 2rem;
+  height: 2rem;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid #d8e0ec;
+  border-radius: 0.375rem;
+  color: #3d5f91;
+  background: #fff;
+  text-decoration: none;
+  transition: background 0.15s ease, border-color 0.15s ease, color 0.15s ease;
+}
+
+.url-preview-panel-open:hover {
+  background: #eef5ff;
+  border-color: #9fbee9;
+  color: #1f5ca8;
+}

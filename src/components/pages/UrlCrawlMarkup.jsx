@@ -638,6 +638,108 @@ function FailedPagesPanel({ failedResults }) {
 }
 
 // ─── 메인 컴포넌트 ───────────────────────────────────────────
+function UrlPreviewPanel({ previewOpen, previewUrl, onClose }) {
+  const [screenshot, setScreenshot] = useState('');
+  const [loadingShot, setLoadingShot] = useState(false);
+  const [shotError, setShotError] = useState('');
+  const shouldUseScreenshot =
+    previewOpen &&
+    previewUrl?.startsWith('http:') &&
+    typeof window !== 'undefined' &&
+    window.location.protocol === 'https:';
+
+  useEffect(() => {
+    if (!shouldUseScreenshot) {
+      setScreenshot('');
+      setShotError('');
+      setLoadingShot(false);
+      return;
+    }
+
+    let cancelled = false;
+    setLoadingShot(true);
+    setShotError('');
+    setScreenshot('');
+
+    fetch('/api/screenshot', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ url: previewUrl, browser: 'chrome' }),
+    })
+      .then(async res => {
+        const data = await res.json().catch(() => ({}));
+        if (!res.ok) throw new Error(data.detail || 'Preview screenshot failed');
+        return data.image || '';
+      })
+      .then(image => {
+        if (!cancelled) setScreenshot(image);
+      })
+      .catch(err => {
+        if (!cancelled) setShotError(err.message || 'Preview screenshot failed');
+      })
+      .finally(() => {
+        if (!cancelled) setLoadingShot(false);
+      });
+
+    return () => { cancelled = true; };
+  }, [shouldUseScreenshot, previewUrl]);
+
+  return (
+    <>
+      {previewOpen && <div className="url-preview-overlay" onClick={onClose} />}
+      <div className={`url-preview-panel${previewOpen ? ' is-open' : ''}`}>
+        <div className="url-preview-panel-header">
+          <span className="url-preview-panel-url">{previewUrl}</span>
+          {previewUrl && (
+            <a
+              className="url-preview-panel-open"
+              href={previewUrl}
+              target="_blank"
+              rel="noopener noreferrer"
+              title="Open in new window"
+              aria-label="Open in new window"
+            >
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.25" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+                <path d="M15 3h6v6" />
+                <path d="M10 14 21 3" />
+                <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6" />
+              </svg>
+            </a>
+          )}
+          <button className="url-preview-panel-close" onClick={onClose}>Close</button>
+        </div>
+        {shouldUseScreenshot ? (
+          <div className="url-preview-panel-iframe" style={{ overflow: 'auto', background: '#fff' }}>
+            {loadingShot && (
+              <div style={{ padding: '24px', color: '#555' }}>
+                <span className="crawl-spinner" /> Loading preview...
+              </div>
+            )}
+            {shotError && (
+              <div style={{ padding: '24px', color: '#b42318' }}>
+                Preview failed: {shotError}
+              </div>
+            )}
+            {screenshot && (
+              <img
+                src={`data:image/png;base64,${screenshot}`}
+                alt="Page preview"
+                style={{ display: 'block', width: '100%', height: 'auto' }}
+              />
+            )}
+          </div>
+        ) : (
+          <iframe
+            className="url-preview-panel-iframe"
+            src={previewUrl || 'about:blank'}
+            title="Page preview"
+            sandbox="allow-same-origin allow-scripts allow-forms"
+          />
+        )}
+      </div>
+    </>
+  );
+}
 export default function UrlCrawlMarkup() {
   const [batchRootUrl, setBatchRootUrl] = useState('');
   const [extracting, setExtracting] = useState(false);
@@ -2041,19 +2143,11 @@ export default function UrlCrawlMarkup() {
         </div>
       )}
       {renderTour()}
-      {previewOpen && <div className="url-preview-overlay" onClick={closePreview} />}
-      <div className={`url-preview-panel${previewOpen ? ' is-open' : ''}`}>
-        <div className="url-preview-panel-header">
-          <span className="url-preview-panel-url">{previewUrl}</span>
-          <button className="url-preview-panel-close" onClick={closePreview}>✕</button>
-        </div>
-        <iframe
-          className="url-preview-panel-iframe"
-          src={previewUrl || 'about:blank'}
-          title="페이지 미리보기"
-          sandbox="allow-same-origin allow-scripts allow-forms"
-        />
-      </div>
+      <UrlPreviewPanel
+        previewOpen={previewOpen}
+        previewUrl={previewUrl}
+        onClose={closePreview}
+      />
     </div>
   );
 }
