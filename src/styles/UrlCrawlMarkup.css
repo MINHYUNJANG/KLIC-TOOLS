@@ -1860,3 +1860,9 @@
   border-color: #9fbee9;
   color: #1f5ca8;
 }
+
+.url-preview-panel-close {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
