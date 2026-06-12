@@ -2236,7 +2236,7 @@ export default function UrlCrawlMarkup() {
             </div>
             {extractError && <p className="crawl-error">{extractError}</p>}
 
-            {(urlItems.length > 0 || showAddUrl) && (
+            {(urlItems.length > 0 || showAddUrl || extractResults.length > 0) && (
               <>
                 {extractResults.length > 0 && (
                   <div className="school-result-tabs-row">
