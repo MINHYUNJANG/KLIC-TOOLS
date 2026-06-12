@@ -497,6 +497,27 @@
   text-align: center;
 }
 
+.school-result-retry-btn {
+  margin-left: auto;
+  padding: 0.4rem 0.75rem;
+  border: 0.0625rem solid #c5d3e8;
+  border-radius: 0.25rem;
+  background: #f0f6ff;
+  color: #1d5f9f;
+  font-size: 0.8125rem;
+  font-weight: 700;
+  font-family: inherit;
+  cursor: pointer;
+}
+.school-result-retry-btn:hover:not(:disabled) {
+  border-color: #0070c8;
+  background: #e3f0ff;
+}
+.school-result-retry-btn:disabled {
+  opacity: 0.55;
+  cursor: not-allowed;
+}
+
 .crawl-batch-urls-header {
   display: flex;
   align-items: center;

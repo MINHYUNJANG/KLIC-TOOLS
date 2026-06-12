@@ -696,6 +696,7 @@ export default function UrlCrawlMarkup() {
   const [activeResultIdx, setActiveResultIdx] = useState(0);
   const [classifying, setClassifying] = useState(false);
   const [classifyProgress, setClassifyProgress] = useState({ done: 0, total: 0 });
+  const [retryingFailedExtract, setRetryingFailedExtract] = useState(false);
   const [urlCopied, setUrlCopied] = useState(false);
   const [siteName, setSiteName] = useState('');
   const [siteNameLocked, setSiteNameLocked] = useState(false);
@@ -994,6 +995,51 @@ export default function UrlCrawlMarkup() {
     return schoolRoots;
   }
 
+  async function extractSchoolRoot(root, progressOffset = 0, progressTotal = 4) {
+    let resultData = null;
+    const res = await fetch('/api/extract-urls', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ url: root.url }),
+    });
+    if (!res.ok) {
+      let detail = `서버 오류 (${res.status})`;
+      try { const d = await res.json(); detail = d.detail || detail; } catch {}
+      throw new Error(detail);
+    }
+
+    const reader = res.body.getReader();
+    const decoder = new TextDecoder();
+    let buffer = '';
+    outer: while (true) {
+      const { done, value } = await reader.read();
+      if (done) break;
+      buffer += decoder.decode(value, { stream: true });
+      const lines = buffer.split('\n');
+      buffer = lines.pop();
+      for (const line of lines) {
+        if (!line.startsWith('data: ')) continue;
+        let event;
+        try { event = JSON.parse(line.slice(6)); } catch { continue; }
+        if (event.type === 'progress') {
+          setExtractProgress({
+            step: progressOffset + event.step,
+            total: progressTotal,
+            label: `${getRootLabel(root)}: ${event.label || 'URL 추출 중...'}`,
+          });
+        } else if (event.type === 'result') {
+          resultData = event;
+          break outer;
+        } else if (event.type === 'error') {
+          throw new Error(event.detail || '추출 오류');
+        }
+      }
+    }
+
+    if (!resultData) throw new Error('응답을 파싱할 수 없습니다.');
+    return resultData;
+  }
+
   // ─── URL 아이템 수정/삭제 ───────────────────────────────────
   function updateItem(id, field, value) {
     setUrlItems(prev => prev.map(item => item.id === id ? { ...item, [field]: value } : item));
@@ -1106,47 +1152,8 @@ export default function UrlCrawlMarkup() {
 
       for (let rootIndex = 0; rootIndex < roots.length; rootIndex++) {
         const root = roots[rootIndex];
-        let resultData = null;
         try {
-          const res = await fetch('/api/extract-urls', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ url: root.url }),
-          });
-          if (!res.ok) {
-            let detail = `서버 오류 (${res.status})`;
-            try { const d = await res.json(); detail = d.detail || detail; } catch {}
-            throw new Error(detail);
-          }
-          const reader = res.body.getReader();
-          const decoder = new TextDecoder();
-          let buffer = '';
-          outer: while (true) {
-            const { done, value } = await reader.read();
-            if (done) break;
-            buffer += decoder.decode(value, { stream: true });
-            const lines = buffer.split('\n');
-            buffer = lines.pop();
-            for (const line of lines) {
-              if (!line.startsWith('data: ')) continue;
-              let event;
-              try { event = JSON.parse(line.slice(6)); } catch { continue; }
-              if (event.type === 'progress') {
-                setExtractProgress({
-                  step: rootIndex * 4 + event.step,
-                  total: roots.length * 4,
-                  label: `${getRootLabel(root)}: ${event.label || 'URL 추출 중...'}`,
-                });
-              } else if (event.type === 'result') {
-                resultData = event;
-                break outer;
-              } else if (event.type === 'error') {
-                throw new Error(event.detail || '추출 오류');
-              }
-            }
-          }
-
-          if (!resultData) throw new Error('응답을 파싱할 수 없습니다.');
+          const resultData = await extractSchoolRoot(root, rootIndex * 4, roots.length * 4);
 
           const schoolName = resultData.siteName || getRootLabel(root);
           const newItems = resultData.items.map(item => ({
@@ -1188,6 +1195,75 @@ export default function UrlCrawlMarkup() {
       setExtractError(`오류: ${e.message}`);
     } finally {
       setExtracting(false);
+    }
+  }
+
+  async function handleRetryFailedExtracts() {
+    const failed = extractResults.filter(result => result.error || result.count === 0);
+    if (failed.length === 0) return;
+
+    setRetryingFailedExtract(true);
+    setExtracting(true);
+    setExtractError('');
+    setExtractProgress({ step: 0, total: failed.length * 4, label: '' });
+
+    const newItemsForClassify = [];
+    let nextId = urlItems.length > 0 ? Math.max(...urlItems.map(item => item.id)) + 1 : 0;
+
+    try {
+      for (let i = 0; i < failed.length; i++) {
+        const failedResult = failed[i];
+        const existingRoot = schoolRoots.find(root => root.key === failedResult.key);
+        const root = existingRoot || {
+          key: failedResult.key,
+          url: failedResult.rootUrl,
+          label: failedResult.siteName,
+        };
+
+        try {
+          const resultData = await extractSchoolRoot(root, i * 4, failed.length * 4);
+          const schoolName = resultData.siteName || getRootLabel(root);
+          const newItems = resultData.items.map(item => ({
+            id: nextId++,
+            url: item.url,
+            title: item.title || '',
+            schoolKey: root.key,
+            schoolName,
+            rootUrl: root.url,
+            category: null,
+            templateId: null,
+            selector: '',
+            checked: false,
+            contentType: 'unknown',
+          }));
+
+          newItemsForClassify.push(...newItems);
+          setUrlItems(prev => [
+            ...prev.filter(item => item.schoolKey !== root.key),
+            ...newItems,
+          ]);
+          setExtractResults(prev => prev.map(result =>
+            result.key === root.key
+              ? { ...result, siteName: schoolName, count: newItems.length, error: null }
+              : result
+          ));
+          setSchoolRoots(prev => prev.map(item =>
+            item.key === root.key ? { ...item, label: schoolName } : item
+          ));
+          setActiveSchoolKey(root.key);
+          setSiteName(schoolName);
+          setSiteNameLocked(true);
+        } catch (e) {
+          setExtractResults(prev => prev.map(result =>
+            result.key === root.key ? { ...result, error: e.message } : result
+          ));
+        }
+      }
+
+      if (newItemsForClassify.length > 0) classifyUrlItems(newItemsForClassify);
+    } finally {
+      setExtracting(false);
+      setRetryingFailedExtract(false);
     }
   }
 
@@ -1905,6 +1981,16 @@ export default function UrlCrawlMarkup() {
                         <span>{result.error ? '!' : result.count}</span>
                       </button>
                     ))}
+                    {extractResults.some(result => result.error || result.count === 0) && (
+                      <button
+                        type="button"
+                        className="school-result-retry-btn"
+                        onClick={handleRetryFailedExtracts}
+                        disabled={retryingFailedExtract || extracting || batchLoading}
+                      >
+                        {retryingFailedExtract ? '재추출 중...' : '추출 안 된 학교 재추출'}
+                      </button>
+                    )}
                   </div>
                 )}
                 {urlItems.length > 0 && (
