@@ -534,11 +534,16 @@ async function extractUrlsFromNav(pageUrl) {
   let html;
   let browser;
   let onclickUrls = [];
+  let effectiveOrigin = origin; // http→https 리다이렉트 후 실제 origin으로 갱신
 
   try {
     browser = await chromium.launch({ headless: true });
     const page = await browser.newPage();
     await page.goto(pageUrl, { waitUntil: 'domcontentloaded', timeout: 15000 });
+
+    // 리다이렉트(http→https 등) 이후의 실제 origin 갱신
+    try { effectiveOrigin = new URL(page.url()).origin; } catch {}
+
     await page.waitForTimeout(1000);
 
     // 1차 메뉴 li 항목에 hover → 2차 메뉴 노출 (뷰포트 밖 요소도 스크롤 후 hover)
@@ -627,12 +632,14 @@ async function extractUrlsFromNav(pageUrl) {
       });
 
       return urls;
-    }, origin);
+    }, effectiveOrigin);
 
     html = await page.content();
   } catch {
     try {
       const res = await fetch(pageUrl, { signal: AbortSignal.timeout(8000) });
+      // 정적 fetch도 리다이렉트 후 실제 origin 갱신
+      try { effectiveOrigin = new URL(res.url).origin; } catch {}
       html = await res.text();
     } catch { html = ''; }
   } finally {
@@ -647,8 +654,8 @@ async function extractUrlsFromNav(pageUrl) {
   const addUrl = (rawHref, text) => {
     if (!rawHref || rawHref === '#' || rawHref.startsWith('javascript')) return;
     try {
-      const href = new URL(rawHref, pageUrl).href;
-      if (href.startsWith(origin) && !FILE_EXT.test(href) && !urlMap.has(href)) {
+      const href = new URL(rawHref, effectiveOrigin).href;
+      if (href.startsWith(effectiveOrigin) && !FILE_EXT.test(href) && !urlMap.has(href)) {
         urlMap.set(href, text || '');
       }
     } catch {}

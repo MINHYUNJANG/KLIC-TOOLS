@@ -15,7 +15,15 @@
       "Bash(sed -n '1,13p' /home/friendking12/KLIC-TOOLS/src/styles/WebStandardPage.css)",
       "Bash(sed -n '1,13p' /home/friendking12/KLIC-TOOLS/src/styles/CanvasEditorPage.css)",
       "Bash(git commit -m 'UI 개선: 조직도빌더 연결, 웹검사도구 통합, 푸터 스타일, 홈 레이아웃 *)",
-      "Bash(npx vercel *)"
+      "Bash(npx vercel *)",
+      "WebFetch(domain:woollim.cnehs.kr)",
+      "Bash(fc /b \"c:\\\\Users\\\\CEO\\\\KLIC-TOOLS\\\\KlicTools_crawling\\\\KLIC-TOOLS\\\\lib\\\\crawler.js\" \"c:\\\\Users\\\\CEO\\\\KLIC-TOOLS\\\\KlicTools_crawling\\\\KLIC-TOOLS\\\\server\\\\lib\\\\crawler.js\")",
+      "Bash(git -C \"c:\\\\Users\\\\CEO\\\\KLIC-TOOLS\\\\KlicTools_crawling\\\\KLIC-TOOLS\" add src/components/pages/UrlCrawlMarkup.jsx src/styles/UrlCrawlMarkup.css)",
+      "Bash(git -C \"c:\\\\Users\\\\CEO\\\\KLIC-TOOLS\\\\KlicTools_crawling\\\\KLIC-TOOLS\" commit -m \"ui 고도화\")",
+      "Bash(npx next *)",
+      "PowerShell(Get-Process -Name \"node\")",
+      "PowerShell(Stop-Process -Force)",
+      "PowerShell(netstat -ano)"
     ],
     "additionalDirectories": [
       "/home/friendking12/editorKlic/src",
