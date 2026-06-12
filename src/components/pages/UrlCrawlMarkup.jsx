@@ -710,12 +710,12 @@ export default function UrlCrawlMarkup() {
   const [modalCategory, setModalCategory] = useState('other');
   const [modalTemplateId, setModalTemplateId] = useState(null);
 
-  function createSchoolRoot(url) {
+  function createSchoolRoot(url, label = '') {
     const cleanUrl = url.trim();
     return {
       key: `${Date.now()}-${Math.random().toString(36).slice(2, 8)}`,
       url: cleanUrl,
-      label: '',
+      label: label.trim(),
     };
   }
 
@@ -969,20 +969,30 @@ export default function UrlCrawlMarkup() {
     return schoolRoots.find(root => root.key === activeSchoolKey) || null;
   }
 
+  function parseSchoolRootLines(value) {
+    return value
+      .split(/\n+/)
+      .flatMap(line => line.split(/,(?=\s*(?:https?:\/\/|[^,]+?\s*[-–—]\s*https?:\/\/))/))
+      .map(raw => raw.trim())
+      .filter(Boolean)
+      .map(raw => {
+        const match = raw.match(/^(.*?)\s*[-–—]\s*(https?:\/\/\S+)$/i);
+        if (match) return { label: match[1].trim(), url: match[2].trim() };
+        return { label: '', url: raw };
+      });
+  }
+
   function addSchoolRootFromInput() {
-    const values = batchRootUrl
-      .split(/[\n,]+/)
-      .map(v => v.trim())
-      .filter(Boolean);
+    const values = parseSchoolRootLines(batchRootUrl);
     if (values.length === 0) { setExtractError('URL을 입력해주세요.'); return false; }
 
-    const invalid = values.find(value => !isValidUrl(value));
-    if (invalid) { setExtractError(`올바른 URL 형식이 아닙니다: ${invalid}`); return false; }
+    const invalid = values.find(item => !isValidUrl(item.url));
+    if (invalid) { setExtractError(`올바른 URL 형식이 아닙니다: ${invalid.url}`); return false; }
 
     const existing = new Set(schoolRoots.map(root => root.url.replace(/\/$/, '')));
     const nextRoots = values
-      .filter(value => !existing.has(value.replace(/\/$/, '')))
-      .map(createSchoolRoot);
+      .filter(item => !existing.has(item.url.replace(/\/$/, '')))
+      .map(item => createSchoolRoot(item.url, item.label));
 
     if (nextRoots.length === 0) {
       setExtractError('이미 추가된 URL입니다.');
@@ -1008,18 +1018,15 @@ export default function UrlCrawlMarkup() {
   }
 
   function getRootsForExtraction() {
-    const inlineUrls = batchRootUrl
-      .split(/[\n,]+/)
-      .map(v => v.trim())
-      .filter(Boolean);
+    const inlineUrls = parseSchoolRootLines(batchRootUrl);
 
     if (inlineUrls.length > 0) {
-      const invalid = inlineUrls.find(value => !isValidUrl(value));
-      if (invalid) throw new Error(`올바른 URL 형식이 아닙니다: ${invalid}`);
+      const invalid = inlineUrls.find(item => !isValidUrl(item.url));
+      if (invalid) throw new Error(`올바른 URL 형식이 아닙니다: ${invalid.url}`);
       const existing = new Set(schoolRoots.map(root => root.url.replace(/\/$/, '')));
       const inlineRoots = inlineUrls
-        .filter(value => !existing.has(value.replace(/\/$/, '')))
-        .map(createSchoolRoot);
+        .filter(item => !existing.has(item.url.replace(/\/$/, '')))
+        .map(item => createSchoolRoot(item.url, item.label));
       if (inlineRoots.length > 0) {
         setSchoolRoots(prev => [...prev, ...inlineRoots]);
         setBatchRootUrl('');
@@ -1693,8 +1700,42 @@ export default function UrlCrawlMarkup() {
   const visibleUrlItems = activeSchoolKey === 'all'
     ? urlItems
     : urlItems.filter(i => i.schoolKey === activeSchoolKey);
+  const allImageItems = urlItems.filter(i => i.contentType === 'image');
   const imageItems = visibleUrlItems.filter(i => i.contentType === 'image');
   const regularItems = visibleUrlItems.filter(i => i.contentType !== 'image');
+
+  function buildImageUrlExportText(items = allImageItems) {
+    const grouped = new Map();
+    items.forEach(item => {
+      const key = item.schoolKey || item.rootUrl || 'manual';
+      if (!grouped.has(key)) {
+        const root = schoolRoots.find(school => school.key === item.schoolKey);
+        grouped.set(key, {
+          schoolName: item.schoolName || root?.label || (root ? getRootLabel(root) : siteName) || '학교명',
+          rootUrl: item.rootUrl || root?.url || '',
+          items: [],
+        });
+      }
+      grouped.get(key).items.push(item);
+    });
+
+    return Array.from(grouped.values()).map(group => {
+      const header = `${group.schoolName} - ${group.rootUrl || '-'}`;
+      const lines = group.items.map(item => `${item.title || '(제목 없음)'} - ${item.url}`);
+      return [header, '이미지형 페이지 url', ...lines].join('\n');
+    }).join('\n\n');
+  }
+
+  function downloadImageUrlExport() {
+    const text = buildImageUrlExportText();
+    if (!text.trim()) return;
+    const blob = new Blob([text], { type: 'text/plain;charset=utf-8' });
+    const a = document.createElement('a');
+    a.href = URL.createObjectURL(blob);
+    a.download = `${getSafeDownloadName(siteName || '이미지형_페이지_URL')}.txt`;
+    a.click();
+    URL.revokeObjectURL(a.href);
+  }
 
   function renderUrlItemRow(item, isLast, isFirst) {
     return (
@@ -1852,14 +1893,14 @@ export default function UrlCrawlMarkup() {
 
         {/* ─── URL 크롤링 모드 ─── */}
         {mode === 'url' && <>
-        <p className="crawl-desc">학교 루트 URL을 입력하면 본문을 자동으로 크롤링하여 마크업을 생성합니다.</p>
+        <p className="crawl-desc">학교명과 학교 루트 URL을 줄바꿈으로 입력하면 본문을 자동으로 크롤링하여 마크업을 생성합니다.</p>
 
         <div className="crawl-form">
             <div className="crawl-url-row">
               <textarea
                 ref={tourRefs.urlInput}
                 className="crawl-input crawl-input--roots"
-                placeholder="학교 루트 URL (여러 개는 줄바꿈 또는 쉼표로 입력)"
+                placeholder="학교명 - 학교 루트 URL (줄바꿈으로 여러 개 입력)"
                 value={batchRootUrl} onChange={e => setBatchRootUrl(e.target.value)}
                 onKeyDown={e => {
                   if (e.key === 'Enter' && (e.ctrlKey || e.metaKey) && !extracting) handleExtractUrls();
@@ -1890,15 +1931,10 @@ export default function UrlCrawlMarkup() {
               <div className="school-root-list">
                 {schoolRoots.map(root => (
                   <div key={root.key} className="school-root-chip">
-                    <button
-                      type="button"
-                      className={`school-root-chip-main${activeSchoolKey === root.key ? ' is-active' : ''}`}
-                      onClick={() => setActiveSchoolKey(root.key)}
-                      title={root.url}
-                    >
+                    <div className="school-root-chip-main" title={root.url}>
                       <span>{getRootLabel(root)}</span>
                       <small>{root.url}</small>
-                    </button>
+                    </div>
                     <button
                       type="button"
                       className="school-root-chip-remove"
@@ -2011,6 +2047,12 @@ export default function UrlCrawlMarkup() {
                           onClick={() => setShowUrlExportModal(true)}
                           title="URL 내보내기"
                         >URL 내보내기</button>
+                        <button
+                          className="url-export-btn"
+                          onClick={downloadImageUrlExport}
+                          disabled={allImageItems.length === 0}
+                          title="전체 이미지형 페이지 URL 다운로드"
+                        >일괄 다운로드</button>
                       </div>
                       <div className="url-image-section">
                         <div className="url-image-section-header">
@@ -2266,9 +2308,11 @@ export default function UrlCrawlMarkup() {
                   </tr>
                 </thead>
                 <tbody>
-                  {imageItems.filter(i => i.checked).map(item => (
+                  {allImageItems.map(item => (
                     <tr key={item.id}>
-                      <td className="url-export-table-title">{item.title || '(제목 없음)'}</td>
+                      <td className="url-export-table-title">
+                        {item.schoolName ? `${item.schoolName} - ` : ''}{item.title || '(제목 없음)'}
+                      </td>
                       <td className="url-export-table-url">{item.url}</td>
                     </tr>
                   ))}
@@ -2280,24 +2324,17 @@ export default function UrlCrawlMarkup() {
                 className="crawl-btn crawl-btn--primary url-export-copy-btn"
                 onClick={e => {
                   const btn = e.currentTarget;
-                  const displayWidth = str => [...str].reduce((w, ch) => {
-                    const code = ch.codePointAt(0);
-                    return w + ((code >= 0x1100 && code <= 0x11FF) || (code >= 0xAC00 && code <= 0xD7AF) || (code >= 0x2E80 && code <= 0xA4CF) || (code >= 0xF900 && code <= 0xFAFF) ? 4 : 2);
-                  }, 0);
-                  const checkedImageItems = imageItems.filter(i => i.checked);
-                  const titles = checkedImageItems.map(item => item.title || '(제목 없음)');
-                  const maxW = Math.max(...titles.map(displayWidth));
-                  const text = checkedImageItems.map(item => {
-                    const title = item.title || '(제목 없음)';
-                    const pad = ' '.repeat(maxW - displayWidth(title) + 2);
-                    return `${title}${pad}${item.url}`;
-                  }).join('\n');
+                  const text = buildImageUrlExportText();
                   navigator.clipboard.writeText(text).then(() => {
                     btn.textContent = '복사됨 ✓';
                     setTimeout(() => { btn.textContent = '복사하기'; }, 2000);
                   });
                 }}
               >복사하기</button>
+              <button
+                className="crawl-btn crawl-btn--download url-export-copy-btn"
+                onClick={downloadImageUrlExport}
+              >다운로드</button>
             </div>
           </div>
         </div>

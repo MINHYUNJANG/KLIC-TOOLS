@@ -478,11 +478,7 @@
   color: #26364f;
   font-family: inherit;
   text-align: left;
-  cursor: pointer;
-}
-.school-root-chip-main.is-active {
-  background: #edf5ff;
-  color: #005aa3;
+  cursor: default;
 }
 .school-root-chip-main span,
 .school-root-chip-main small {
@@ -1757,9 +1753,16 @@
   white-space: nowrap;
   transition: background 0.15s, color 0.15s;
 }
+.url-export-btn + .url-export-btn {
+  margin-left: 0.4rem;
+}
 .url-export-btn:hover {
   background: #dce8f8;
   color: #2a4f8a;
+}
+.url-export-btn:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
 }
 
 /* ── URL 내보내기 모달 ── */
