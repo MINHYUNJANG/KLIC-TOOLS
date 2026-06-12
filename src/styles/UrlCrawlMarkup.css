@@ -445,7 +445,8 @@
 .crawl-btn--batch:hover:not(:disabled) { background: #0070c8; }
 
 .crawl-input--roots {
-  min-height: 4.5rem;
+  height: 2.875rem;
+  min-height: 2.875rem;
   resize: vertical;
   line-height: 1.45;
 }
@@ -1003,6 +1004,15 @@
 .crawl-btn--add-url {
   padding: 0.4rem 0.875rem;
   font-size: 0.875rem;
+  min-height: 2.875rem;
+  align-items: center;
+  justify-content: center;
+}
+.crawl-btn--add-url:not(:disabled) {
+  background: #0070c8;
+}
+.crawl-btn--add-url:hover:not(:disabled) {
+  background: #005aa3;
 }
 
 /* URL 직접 추가 버튼 (추출 결과 없을 때) — crawl-btn 베이스 그대로, 폭만 제한 */
