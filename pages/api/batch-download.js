@@ -1,5 +1,13 @@
 import JSZip from 'jszip';
 
+function getSafeDownloadName(value, fallback = '마크업') {
+  const safeName = String(value || '')
+    .trim()
+    .replace(/[\\/:*?"<>|]/g, '_')
+    .replace(/\s+/g, '_');
+  return safeName || fallback;
+}
+
 export default async function handler(req, res) {
   if (req.method !== 'POST') return res.status(405).json({ detail: 'Method not allowed' });
 
@@ -15,10 +23,7 @@ export default async function handler(req, res) {
     for (const { name, html } of files) {
       if (!html?.trim()) continue;
 
-      let safeName = (name || '마크업')
-        .trim()
-        .replace(/[\\/:*?"<>|]/g, '_')
-        .replace(/\s+/g, '_');
+      let safeName = getSafeDownloadName(name);
 
       // 중복 파일명 방지
       let finalName = safeName;
@@ -43,7 +48,7 @@ ${html}
       zip.file(`${finalName}.html`, fullHtml);
     }
 
-    const safeZipName = siteName.trim().replace(/[\\/:*?"<>|]/g, '_') || '마크업';
+    const safeZipName = getSafeDownloadName(siteName);
     const zipBuffer = await zip.generateAsync({
       type: 'nodebuffer',
       compression: 'DEFLATE',

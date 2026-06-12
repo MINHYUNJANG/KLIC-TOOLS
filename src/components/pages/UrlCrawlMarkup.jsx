@@ -680,6 +680,9 @@ function UrlPreviewPanel({ previewOpen, previewUrl, onClose }) {
 }
 export default function UrlCrawlMarkup() {
   const [batchRootUrl, setBatchRootUrl] = useState('');
+  const [schoolRoots, setSchoolRoots] = useState([]);
+  const [activeSchoolKey, setActiveSchoolKey] = useState('all');
+  const [extractResults, setExtractResults] = useState([]);
   const [extracting, setExtracting] = useState(false);
   const [extractError, setExtractError] = useState('');
   const [urlItems, setUrlItems] = useState([]); // { id, url, title, category, templateId, selector }
@@ -707,6 +710,15 @@ export default function UrlCrawlMarkup() {
   const [modalCategory, setModalCategory] = useState('other');
   const [modalTemplateId, setModalTemplateId] = useState(null);
 
+  function createSchoolRoot(url) {
+    const cleanUrl = url.trim();
+    return {
+      key: `${Date.now()}-${Math.random().toString(36).slice(2, 8)}`,
+      url: cleanUrl,
+      label: '',
+    };
+  }
+
   // ─── 투어 ────────────────────────────────────────────────────
   const [tourStep, setTourStep] = useState(-1); // -1 = 비활성
   const tourRefs = {
@@ -729,7 +741,7 @@ export default function UrlCrawlMarkup() {
       desc: '크롤링할 학교 사이트의 루트 URL을\n아래 입력창에 직접 입력해 보세요.',
       hint: 'URL을 입력한 뒤 [다음]을 눌러주세요',
       position: 'bottom',
-      canNext: () => batchRootUrl.trim().length > 0,
+      canNext: () => batchRootUrl.trim().length > 0 || schoolRoots.length > 0,
       noOverlayBlock: true,
     },
     {
@@ -787,7 +799,7 @@ export default function UrlCrawlMarkup() {
     if (!el) { setTourRect(null); return; }
     const r = el.getBoundingClientRect();
     setTourRect({ top: r.top, left: r.left, width: r.width, height: r.height });
-  }, [batchRootUrl]);
+  }, [batchRootUrl, schoolRoots.length]);
 
   useEffect(() => {
     if (tourStep < 0) return;
@@ -822,6 +834,15 @@ export default function UrlCrawlMarkup() {
     }
     prevBatchLoadingRef.current = batchLoading;
   }, [batchLoading]);
+
+  useEffect(() => {
+    if (activeSchoolKey === 'all') return;
+    const activeResult = extractResults.find(result => result.key === activeSchoolKey);
+    if (activeResult?.siteName) {
+      setSiteName(activeResult.siteName);
+      setSiteNameLocked(true);
+    }
+  }, [activeSchoolKey, extractResults]);
 
   function startTour() { setTourStep(0); }
   function endTour() { setTourStep(-1); setTourRect(null); }
@@ -938,6 +959,77 @@ export default function UrlCrawlMarkup() {
   const [sourceResult, setSourceResult] = useState(null);
   const [sourceLoading, setSourceLoading] = useState(false);
 
+  function getRootLabel(root) {
+    if (root?.label) return root.label;
+    try { return new URL(root.url).hostname; } catch { return root?.url || '학교 URL'; }
+  }
+
+  function getActiveSchoolRoot() {
+    if (activeSchoolKey === 'all') return null;
+    return schoolRoots.find(root => root.key === activeSchoolKey) || null;
+  }
+
+  function addSchoolRootFromInput() {
+    const values = batchRootUrl
+      .split(/[\n,]+/)
+      .map(v => v.trim())
+      .filter(Boolean);
+    if (values.length === 0) { setExtractError('URL을 입력해주세요.'); return false; }
+
+    const invalid = values.find(value => !isValidUrl(value));
+    if (invalid) { setExtractError(`올바른 URL 형식이 아닙니다: ${invalid}`); return false; }
+
+    const existing = new Set(schoolRoots.map(root => root.url.replace(/\/$/, '')));
+    const nextRoots = values
+      .filter(value => !existing.has(value.replace(/\/$/, '')))
+      .map(createSchoolRoot);
+
+    if (nextRoots.length === 0) {
+      setExtractError('이미 추가된 URL입니다.');
+      return false;
+    }
+
+    setSchoolRoots(prev => [...prev, ...nextRoots]);
+    if (schoolRoots.length === 0 && nextRoots.length === 1) {
+      setActiveSchoolKey(nextRoots[0].key);
+    }
+    setBatchRootUrl('');
+    setExtractError('');
+    return true;
+  }
+
+  function removeSchoolRoot(key) {
+    setSchoolRoots(prev => prev.filter(root => root.key !== key));
+    setUrlItems(prev => prev.filter(item => item.schoolKey !== key));
+    setExtractResults(prev => prev.filter(result => result.key !== key));
+    setBatchResults([]);
+    setActiveResultIdx(0);
+    setActiveSchoolKey(prev => prev === key ? 'all' : prev);
+  }
+
+  function getRootsForExtraction() {
+    const inlineUrls = batchRootUrl
+      .split(/[\n,]+/)
+      .map(v => v.trim())
+      .filter(Boolean);
+
+    if (inlineUrls.length > 0) {
+      const invalid = inlineUrls.find(value => !isValidUrl(value));
+      if (invalid) throw new Error(`올바른 URL 형식이 아닙니다: ${invalid}`);
+      const existing = new Set(schoolRoots.map(root => root.url.replace(/\/$/, '')));
+      const inlineRoots = inlineUrls
+        .filter(value => !existing.has(value.replace(/\/$/, '')))
+        .map(createSchoolRoot);
+      if (inlineRoots.length > 0) {
+        setSchoolRoots(prev => [...prev, ...inlineRoots]);
+        setBatchRootUrl('');
+      }
+      return [...schoolRoots, ...inlineRoots];
+    }
+
+    return schoolRoots;
+  }
+
   // ─── URL 아이템 수정/삭제 ───────────────────────────────────
   function updateItem(id, field, value) {
     setUrlItems(prev => prev.map(item => item.id === id ? { ...item, [field]: value } : item));
@@ -958,11 +1050,15 @@ export default function UrlCrawlMarkup() {
   function handleAddManualUrl() {
     const url = addUrlInput.trim();
     if (!url || !isValidUrl(url)) return;
+    const activeRoot = getActiveSchoolRoot();
     const newId = urlItems.length > 0 ? Math.max(...urlItems.map(i => i.id)) + 1 : 0;
     setUrlItems(prev => [...prev, {
       id: newId,
       url,
       title: addTitleInput.trim(),
+      schoolKey: activeRoot?.key || null,
+      schoolName: activeRoot?.label || '',
+      rootUrl: activeRoot?.url || '',
       category: null,
       templateId: null,
       selector: '',
@@ -1023,67 +1119,106 @@ export default function UrlCrawlMarkup() {
 
   // ─── URL 추출 ─────────────────────────────────────────────
   async function handleExtractUrls() {
-    if (!batchRootUrl.trim()) { setExtractError('URL을 입력해주세요.'); return; }
-    if (!isValidUrl(batchRootUrl.trim())) { setExtractError('올바른 URL 형식이 아닙니다.'); return; }
     classifyAbortRef.current = true;
     setClassifying(false);
-    setExtracting(true); setExtractError(''); setUrlItems([]); setSiteName(''); setSiteNameLocked(false);
-    setExtractProgress({ step: 0, total: 4, label: '' });
+    let roots = [];
     try {
-      const res = await fetch('/api/extract-urls', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ url: batchRootUrl.trim() }),
-      });
-      if (!res.ok) {
-        let detail = `서버 오류 (${res.status})`;
-        try { const d = await res.json(); detail = d.detail || detail; } catch {}
-        setExtractError(detail);
-        return;
-      }
-      const reader = res.body.getReader();
-      const decoder = new TextDecoder();
-      let buffer = '';
-      let resultData = null;
-      outer: while (true) {
-        const { done, value } = await reader.read();
-        if (done) break;
-        buffer += decoder.decode(value, { stream: true });
-        const lines = buffer.split('\n');
-        buffer = lines.pop();
-        for (const line of lines) {
-          if (!line.startsWith('data: ')) continue;
-          let event;
-          try { event = JSON.parse(line.slice(6)); } catch { continue; }
-          if (event.type === 'progress') {
-            setExtractProgress({ step: event.step, total: event.total, label: event.label });
-          } else if (event.type === 'result') {
-            resultData = event;
-            break outer;
-          } else if (event.type === 'error') {
-            setExtractError(event.detail || '추출 오류');
-            return;
+      roots = getRootsForExtraction();
+    } catch (e) {
+      setExtractError(e.message);
+      return;
+    }
+    if (roots.length === 0) { setExtractError('URL을 입력하거나 학교 URL을 추가해주세요.'); return; }
+
+    setExtracting(true); setExtractError(''); setUrlItems([]); setSiteName(''); setSiteNameLocked(false); setExtractResults([]);
+    setBatchResults([]);
+    setActiveResultIdx(0);
+    setExtractProgress({ step: 0, total: roots.length * 4, label: '' });
+    try {
+      const allItems = [];
+      const results = [];
+      let nextId = 0;
+
+      for (let rootIndex = 0; rootIndex < roots.length; rootIndex++) {
+        const root = roots[rootIndex];
+        let resultData = null;
+        try {
+          const res = await fetch('/api/extract-urls', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ url: root.url }),
+          });
+          if (!res.ok) {
+            let detail = `서버 오류 (${res.status})`;
+            try { const d = await res.json(); detail = d.detail || detail; } catch {}
+            throw new Error(detail);
           }
+          const reader = res.body.getReader();
+          const decoder = new TextDecoder();
+          let buffer = '';
+          outer: while (true) {
+            const { done, value } = await reader.read();
+            if (done) break;
+            buffer += decoder.decode(value, { stream: true });
+            const lines = buffer.split('\n');
+            buffer = lines.pop();
+            for (const line of lines) {
+              if (!line.startsWith('data: ')) continue;
+              let event;
+              try { event = JSON.parse(line.slice(6)); } catch { continue; }
+              if (event.type === 'progress') {
+                setExtractProgress({
+                  step: rootIndex * 4 + event.step,
+                  total: roots.length * 4,
+                  label: `${getRootLabel(root)}: ${event.label || 'URL 추출 중...'}`,
+                });
+              } else if (event.type === 'result') {
+                resultData = event;
+                break outer;
+              } else if (event.type === 'error') {
+                throw new Error(event.detail || '추출 오류');
+              }
+            }
+          }
+
+          if (!resultData) throw new Error('응답을 파싱할 수 없습니다.');
+
+          const schoolName = resultData.siteName || getRootLabel(root);
+          const newItems = resultData.items.map(item => ({
+            id: nextId++,
+            url: item.url,
+            title: item.title || '',
+            schoolKey: root.key,
+            schoolName,
+            rootUrl: root.url,
+            category: null,
+            templateId: null,
+            selector: '',
+            checked: false,
+            contentType: 'unknown',
+          }));
+          allItems.push(...newItems);
+          results.push({ key: root.key, rootUrl: root.url, siteName: schoolName, count: newItems.length, error: null });
+          setSchoolRoots(prev => prev.map(item => item.key === root.key ? { ...item, label: schoolName } : item));
+        } catch (e) {
+          results.push({ key: root.key, rootUrl: root.url, siteName: getRootLabel(root), count: 0, error: e.message });
         }
+        setExtractResults([...results]);
       }
-      if (!resultData) { setExtractError('응답을 파싱할 수 없습니다.'); return; }
-      if (resultData.siteName) { setSiteName(resultData.siteName); setSiteNameLocked(true); }
-      const newItems = resultData.items.map((item, i) => ({
-        id: i,
-        url: item.url,
-        title: item.title || '',
-        category: null,
-        templateId: null,
-        selector: '',
-        checked: false,
-        contentType: 'unknown',
-      }));
-      if (newItems.length === 0) {
+
+      if (allItems.length === 0) {
         setExtractError('URL을 추출하지 못했습니다. https:// 형식으로 입력하거나, URL 직접 추가 버튼을 사용해주세요.');
         return;
       }
-      setUrlItems(newItems);
-      classifyUrlItems(newItems);
+
+      const firstSuccess = results.find(result => !result.error && result.count > 0);
+      if (firstSuccess) {
+        setActiveSchoolKey(firstSuccess.key);
+        setSiteName(firstSuccess.siteName);
+        setSiteNameLocked(true);
+      }
+      setUrlItems(allItems);
+      classifyUrlItems(allItems);
     } catch (e) {
       setExtractError(`오류: ${e.message}`);
     } finally {
@@ -1132,20 +1267,28 @@ export default function UrlCrawlMarkup() {
 
   function toggleAllRegularChecked() {
     setUrlItems(prev => {
-      const regularOnes = prev.filter(i => i.contentType !== 'image');
+      const regularOnes = prev.filter(i =>
+        i.contentType !== 'image' && (activeSchoolKey === 'all' || i.schoolKey === activeSchoolKey)
+      );
       const allChecked = regularOnes.every(i => i.checked);
       return prev.map(item =>
-        item.contentType !== 'image' ? { ...item, checked: !allChecked } : item
+        item.contentType !== 'image' && (activeSchoolKey === 'all' || item.schoolKey === activeSchoolKey)
+          ? { ...item, checked: !allChecked }
+          : item
       );
     });
   }
 
   function toggleAllImageChecked() {
     setUrlItems(prev => {
-      const imageOnes = prev.filter(i => i.contentType === 'image');
+      const imageOnes = prev.filter(i =>
+        i.contentType === 'image' && (activeSchoolKey === 'all' || i.schoolKey === activeSchoolKey)
+      );
       const allChecked = imageOnes.every(i => i.checked);
       return prev.map(item =>
-        item.contentType === 'image' ? { ...item, checked: !allChecked } : item
+        item.contentType === 'image' && (activeSchoolKey === 'all' || item.schoolKey === activeSchoolKey)
+          ? { ...item, checked: !allChecked }
+          : item
       );
     });
   }
@@ -1380,6 +1523,14 @@ export default function UrlCrawlMarkup() {
   }
 
   // ─── 마크업 ZIP 다운로드 ───────────────────────────────────
+  function getSafeDownloadName(value, fallback = '마크업') {
+    const safeName = String(value || '')
+      .trim()
+      .replace(/[\\/:*?"<>|]/g, '_')
+      .replace(/\s+/g, '_');
+    return safeName || fallback;
+  }
+
   async function handleDownloadZip() {
     const readyResults = batchResults.filter(r => r.html?.trim() && !r.error);
     if (readyResults.length === 0) return;
@@ -1389,8 +1540,12 @@ export default function UrlCrawlMarkup() {
         name: r.title || new URL(r.url).pathname.split('/').filter(Boolean).pop() || '마크업',
         html: r.html,
       }));
-      const hostname = new URL(batchRootUrl.trim()).hostname || '마크업';
-      const zipName = siteName || hostname;
+      const rootForName = getActiveSchoolRoot() || schoolRoots[0];
+      let hostname = '마크업';
+      try {
+        hostname = rootForName?.url ? new URL(rootForName.url).hostname : new URL(batchRootUrl.trim()).hostname;
+      } catch {}
+      const zipName = getSafeDownloadName(siteName, hostname);
       const res = await fetch('/api/batch-download', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -1535,8 +1690,11 @@ export default function UrlCrawlMarkup() {
     }
   }
 
-  const imageItems = urlItems.filter(i => i.contentType === 'image');
-  const regularItems = urlItems.filter(i => i.contentType !== 'image');
+  const visibleUrlItems = activeSchoolKey === 'all'
+    ? urlItems
+    : urlItems.filter(i => i.schoolKey === activeSchoolKey);
+  const imageItems = visibleUrlItems.filter(i => i.contentType === 'image');
+  const regularItems = visibleUrlItems.filter(i => i.contentType !== 'image');
 
   function renderUrlItemRow(item, isLast, isFirst) {
     return (
@@ -1694,22 +1852,31 @@ export default function UrlCrawlMarkup() {
 
         {/* ─── URL 크롤링 모드 ─── */}
         {mode === 'url' && <>
-        <p className="crawl-desc">URL을 입력하면 본문을 자동으로 크롤링하여 마크업을 생성합니다.</p>
+        <p className="crawl-desc">학교 루트 URL을 입력하면 본문을 자동으로 크롤링하여 마크업을 생성합니다.</p>
 
         <div className="crawl-form">
             <div className="crawl-url-row">
-              <input
+              <textarea
                 ref={tourRefs.urlInput}
-                type="url" className="crawl-input"
-                placeholder="사이트 루트 URL (예: https://example.com)"
+                className="crawl-input crawl-input--roots"
+                placeholder="학교 루트 URL (여러 개는 줄바꿈 또는 쉼표로 입력)"
                 value={batchRootUrl} onChange={e => setBatchRootUrl(e.target.value)}
-                onKeyDown={e => e.key === 'Enter' && !extracting && handleExtractUrls()}
+                onKeyDown={e => {
+                  if (e.key === 'Enter' && (e.ctrlKey || e.metaKey) && !extracting) handleExtractUrls();
+                }}
                 disabled={extracting || batchLoading}
               />
-              <button ref={tourRefs.extractBtn} className="crawl-btn crawl-btn--extract" onClick={handleExtractUrls} disabled={extracting || batchLoading}>
-                {extracting ? <span className="crawl-spinner" /> : 'URL 추출'}
+              <button
+                className="crawl-btn crawl-btn--add-url"
+                onClick={addSchoolRootFromInput}
+                disabled={extracting || batchLoading || !batchRootUrl.trim()}
+              >
+                URL 추가
               </button>
-              {urlItems.length === 0 && !extracting && (
+              <button ref={tourRefs.extractBtn} className="crawl-btn crawl-btn--extract" onClick={handleExtractUrls} disabled={extracting || batchLoading || (!batchRootUrl.trim() && schoolRoots.length === 0)}>
+                {extracting ? <span className="crawl-spinner" /> : '전체 추출'}
+              </button>
+              {urlItems.length === 0 && schoolRoots.length === 0 && !extracting && (
                 <button
                   className="crawl-btn crawl-btn--add-url-standalone"
                   onClick={() => setShowAddUrl(true)}
@@ -1719,10 +1886,60 @@ export default function UrlCrawlMarkup() {
                 </button>
               )}
             </div>
+            {schoolRoots.length > 0 && (
+              <div className="school-root-list">
+                {schoolRoots.map(root => (
+                  <div key={root.key} className="school-root-chip">
+                    <button
+                      type="button"
+                      className={`school-root-chip-main${activeSchoolKey === root.key ? ' is-active' : ''}`}
+                      onClick={() => setActiveSchoolKey(root.key)}
+                      title={root.url}
+                    >
+                      <span>{getRootLabel(root)}</span>
+                      <small>{root.url}</small>
+                    </button>
+                    <button
+                      type="button"
+                      className="school-root-chip-remove"
+                      onClick={() => removeSchoolRoot(root.key)}
+                      disabled={extracting || batchLoading}
+                      title="삭제"
+                    >
+                      ✕
+                    </button>
+                  </div>
+                ))}
+              </div>
+            )}
             {extractError && <p className="crawl-error">{extractError}</p>}
 
             {(urlItems.length > 0 || showAddUrl) && (
               <>
+                {extractResults.length > 0 && (
+                  <div className="school-result-tabs-row">
+                    <button
+                      type="button"
+                      className={`school-result-tab${activeSchoolKey === 'all' ? ' is-active' : ''}`}
+                      onClick={() => setActiveSchoolKey('all')}
+                    >
+                      전체
+                      <span>{urlItems.length}</span>
+                    </button>
+                    {extractResults.map(result => (
+                      <button
+                        key={result.key}
+                        type="button"
+                        className={`school-result-tab${activeSchoolKey === result.key ? ' is-active' : ''}${result.error ? ' is-error' : ''}`}
+                        onClick={() => setActiveSchoolKey(result.key)}
+                        title={result.error || result.rootUrl}
+                      >
+                        {result.siteName}
+                        <span>{result.error ? '!' : result.count}</span>
+                      </button>
+                    ))}
+                  </div>
+                )}
                 {urlItems.length > 0 && (
                 <div className="crawl-batch-urls-header">
                   <div className="crawl-batch-urls-header-left">
@@ -1742,7 +1959,7 @@ export default function UrlCrawlMarkup() {
                       </span>
                     )}
                     <span className="crawl-result-label">
-                      {urlItems.filter(i => i.checked).length} / {urlItems.length}개 선택
+                      {visibleUrlItems.filter(i => i.checked).length} / {visibleUrlItems.length}개 선택
                     </span>
                     <button
                       className="crawl-btn crawl-btn--add-url"
