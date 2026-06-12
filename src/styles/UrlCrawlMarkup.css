@@ -451,69 +451,6 @@
   line-height: 1.45;
 }
 
-.school-root-list {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 0.5rem;
-}
-
-.school-root-chip {
-  display: inline-flex;
-  align-items: stretch;
-  max-width: 22rem;
-  border: 0.0625rem solid #d7deea;
-  border-radius: 0.375rem;
-  overflow: hidden;
-  background: #fff;
-}
-
-.school-root-chip-main {
-  display: flex;
-  flex-direction: column;
-  gap: 0.125rem;
-  min-width: 0;
-  padding: 0.45rem 0.625rem;
-  border: 0;
-  background: transparent;
-  color: #26364f;
-  font-family: inherit;
-  text-align: left;
-  cursor: default;
-}
-.school-root-chip-main span,
-.school-root-chip-main small {
-  display: block;
-  max-width: 16rem;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-}
-.school-root-chip-main span {
-  font-size: 0.8125rem;
-  font-weight: 700;
-}
-.school-root-chip-main small {
-  font-size: 0.6875rem;
-  color: #6f7f96;
-}
-
-.school-root-chip-remove {
-  width: 1.875rem;
-  border: 0;
-  border-left: 0.0625rem solid #e4e9f2;
-  background: #fbfcfe;
-  color: #8c97a8;
-  cursor: pointer;
-}
-.school-root-chip-remove:hover:not(:disabled) {
-  background: #fff0f0;
-  color: #c0392b;
-}
-.school-root-chip-remove:disabled {
-  opacity: 0.45;
-  cursor: not-allowed;
-}
-
 .school-result-tabs-row {
   display: flex;
   flex-wrap: wrap;
