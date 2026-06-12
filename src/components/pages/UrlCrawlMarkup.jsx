@@ -1334,6 +1334,14 @@ export default function UrlCrawlMarkup() {
     });
   }
 
+  function moveCheckedItemsToContentType(contentType) {
+    setUrlItems(prev => prev.map(item => {
+      const isVisible = activeSchoolKey === 'all' || item.schoolKey === activeSchoolKey;
+      if (!isVisible || !item.checked) return item;
+      return { ...item, contentType, checked: false };
+    }));
+  }
+
   async function handleCopySelectedUrls() {
     const urls = urlItems.filter(i => i.checked && i.url).map(i => i.url);
     if (!urls.length) return;
@@ -1734,9 +1742,8 @@ export default function UrlCrawlMarkup() {
   const visibleUrlItems = activeSchoolKey === 'all'
     ? urlItems
     : urlItems.filter(i => i.schoolKey === activeSchoolKey);
-  const allImageItems = urlItems.filter(i => i.contentType === 'image');
-  const checkedImageItems = allImageItems.filter(i => i.checked);
   const imageItems = visibleUrlItems.filter(i => i.contentType === 'image');
+  const checkedImageItems = imageItems.filter(i => i.checked);
   const regularItems = visibleUrlItems.filter(i => i.contentType !== 'image');
 
   function buildImageUrlExportText(items = allImageItems) {
@@ -2025,76 +2032,96 @@ export default function UrlCrawlMarkup() {
                 </div>
                 )}
                 <div className="url-sections-row" ref={tourRefs.urlList}>
-                  {regularItems.length > 0 && (
-                    <div className="url-section-col">
-                      <div className="url-section-top">
-                        <span className="url-text-section-title">텍스트형 페이지</span>
-                        <span className="url-text-section-badge">{regularItems.length}</span>
-                      </div>
-                      <div className="url-text-section">
-                        <div className="url-text-section-header">
-                          <label className="crawl-check-all url-section-check-all">
-                            <input
-                              type="checkbox"
-                              checked={regularItems.length > 0 && regularItems.every(i => i.checked)}
-                              onChange={toggleAllRegularChecked}
-                              disabled={batchLoading}
-                            />
-                            <span>전체 선택</span>
-                          </label>
-                        </div>
-                        <div className="url-items-list">
-                          {regularItems.map((item, i) => renderUrlItemRow(item, i >= regularItems.length - 3, i === 0))}
-                        </div>
-                        {typeModalItemId !== null && regularItems.some(i => i.id === typeModalItemId) && (
-                          <div className="url-type-modal-overlay" onClick={closeTypeModal}>
-                            {renderTypeModal()}
-                          </div>
-                        )}
-                      </div>
+                  <div className="url-section-col">
+                    <div className="url-section-top">
+                      <span className="url-text-section-title">텍스트형 페이지</span>
+                      <span className="url-text-section-badge">{regularItems.length}</span>
                     </div>
-                  )}
-                  {imageItems.length > 0 && (
-                    <div className="url-section-col">
-                      <div className="url-section-top">
-                        <span className="url-image-section-title">이미지형 페이지</span>
-                        <span className="url-image-section-badge">{imageItems.length}</span>
-                        <button
-                          className="url-export-btn"
-                          onClick={() => setShowUrlExportModal(true)}
-                          disabled={checkedImageItems.length === 0}
-                          title="URL 내보내기"
-                        >URL 내보내기</button>
-                        <button
-                          className="url-export-btn"
-                          onClick={downloadImageUrlExport}
-                          disabled={checkedImageItems.length === 0}
-                          title="체크한 이미지형 페이지 URL 다운로드"
-                        >일괄 다운로드</button>
+                    <div className="url-text-section">
+                      <div className="url-text-section-header">
+                        <label className="crawl-check-all url-section-check-all">
+                          <input
+                            type="checkbox"
+                            checked={regularItems.length > 0 && regularItems.every(i => i.checked)}
+                            onChange={toggleAllRegularChecked}
+                            disabled={batchLoading || regularItems.length === 0}
+                          />
+                          <span>전체 선택</span>
+                        </label>
                       </div>
-                      <div className="url-image-section">
-                        <div className="url-image-section-header">
-                          <label className="crawl-check-all url-section-check-all">
-                            <input
-                              type="checkbox"
-                              checked={imageItems.length > 0 && imageItems.every(i => i.checked)}
-                              onChange={toggleAllImageChecked}
-                              disabled={batchLoading}
-                            />
-                            <span>전체 선택</span>
-                          </label>
-                        </div>
-                        <div className="url-items-list">
-                          {imageItems.map((item, i) => renderUrlItemRow(item, i >= imageItems.length - 3))}
-                        </div>
-                        {typeModalItemId !== null && imageItems.some(i => i.id === typeModalItemId) && (
-                          <div className="url-type-modal-overlay" onClick={closeTypeModal}>
-                            {renderTypeModal()}
-                          </div>
-                        )}
+                      <div className="url-items-list">
+                        {regularItems.length > 0
+                          ? regularItems.map((item, i) => renderUrlItemRow(item, i >= regularItems.length - 3, i === 0))
+                          : <div className="url-section-empty">텍스트형 페이지가 없습니다.</div>}
                       </div>
+                      {typeModalItemId !== null && regularItems.some(i => i.id === typeModalItemId) && (
+                        <div className="url-type-modal-overlay" onClick={closeTypeModal}>
+                          {renderTypeModal()}
+                        </div>
+                      )}
                     </div>
-                  )}
+                  </div>
+                  <div className="url-shuttle-controls" aria-label="페이지 유형 이동">
+                    <button
+                      type="button"
+                      className="url-shuttle-btn"
+                      onClick={() => moveCheckedItemsToContentType('image')}
+                      disabled={batchLoading || regularItems.every(i => !i.checked)}
+                      title="선택 항목을 이미지형으로 이동"
+                    >
+                      &gt;
+                    </button>
+                    <button
+                      type="button"
+                      className="url-shuttle-btn"
+                      onClick={() => moveCheckedItemsToContentType('text')}
+                      disabled={batchLoading || imageItems.every(i => !i.checked)}
+                      title="선택 항목을 텍스트형으로 이동"
+                    >
+                      &lt;
+                    </button>
+                  </div>
+                  <div className="url-section-col">
+                    <div className="url-section-top">
+                      <span className="url-image-section-title">이미지형 페이지</span>
+                      <span className="url-image-section-badge">{imageItems.length}</span>
+                      <button
+                        className="url-export-btn"
+                        onClick={() => setShowUrlExportModal(true)}
+                        disabled={checkedImageItems.length === 0}
+                        title="URL 내보내기"
+                      >URL 내보내기</button>
+                      <button
+                        className="url-export-btn"
+                        onClick={downloadImageUrlExport}
+                        disabled={checkedImageItems.length === 0}
+                        title="체크한 이미지형 페이지 URL 다운로드"
+                      >일괄 다운로드</button>
+                    </div>
+                    <div className="url-image-section">
+                      <div className="url-image-section-header">
+                        <label className="crawl-check-all url-section-check-all">
+                          <input
+                            type="checkbox"
+                            checked={imageItems.length > 0 && imageItems.every(i => i.checked)}
+                            onChange={toggleAllImageChecked}
+                            disabled={batchLoading || imageItems.length === 0}
+                          />
+                          <span>전체 선택</span>
+                        </label>
+                      </div>
+                      <div className="url-items-list">
+                        {imageItems.length > 0
+                          ? imageItems.map((item, i) => renderUrlItemRow(item, i >= imageItems.length - 3))
+                          : <div className="url-section-empty">이미지형 페이지가 없습니다.</div>}
+                      </div>
+                      {typeModalItemId !== null && imageItems.some(i => i.id === typeModalItemId) && (
+                        <div className="url-type-modal-overlay" onClick={closeTypeModal}>
+                          {renderTypeModal()}
+                        </div>
+                      )}
+                    </div>
+                  </div>
                 </div>
                 {showAddUrl && (
                   <div className="url-add-form">
