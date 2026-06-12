@@ -18,20 +18,23 @@ export default async function handler(req, res) {
     }
 
     const zip = new JSZip();
-    const usedNames = new Set();
+    const usedNamesByFolder = new Map();
 
-    for (const { name, html } of files) {
+    for (const { name, html, schoolName, rootUrl } of files) {
       if (!html?.trim()) continue;
 
+      const folderName = getSafeDownloadName(schoolName || rootUrl || siteName);
       let safeName = getSafeDownloadName(name);
+      const folderUsedNames = usedNamesByFolder.get(folderName) || new Set();
 
       // 중복 파일명 방지
       let finalName = safeName;
       let counter = 1;
-      while (usedNames.has(finalName)) {
+      while (folderUsedNames.has(finalName)) {
         finalName = `${safeName}(${counter++})`;
       }
-      usedNames.add(finalName);
+      folderUsedNames.add(finalName);
+      usedNamesByFolder.set(folderName, folderUsedNames);
 
       const fullHtml = `<!DOCTYPE html>
 <html lang="ko">
@@ -45,7 +48,7 @@ ${html}
 </body>
 </html>`;
 
-      zip.file(`${finalName}.html`, fullHtml);
+      zip.file(`${folderName}/${finalName}.html`, fullHtml);
     }
 
     const safeZipName = getSafeDownloadName(siteName);

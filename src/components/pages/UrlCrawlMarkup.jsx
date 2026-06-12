@@ -82,6 +82,39 @@ function applyTableProcessing(html) {
   return doc.body.innerHTML;
 }
 
+function normalizeGeneratedMarkup(html) {
+  if (!html?.trim()) return html;
+  const doc = new DOMParser().parseFromString(html, 'text/html');
+  const body = doc.body;
+  const firstElement = Array.from(body.children).find(el => el.textContent.trim() || el.children.length > 0);
+
+  if (firstElement?.tagName === 'H4' && firstElement.matches('.tit-st.contents')) {
+    const h2 = doc.createElement('h2');
+    h2.className = firstElement.className;
+    Array.from(firstElement.attributes).forEach(attr => {
+      if (attr.name !== 'class') h2.setAttribute(attr.name, attr.value);
+    });
+    while (firstElement.firstChild) h2.appendChild(firstElement.firstChild);
+    firstElement.replaceWith(h2);
+  }
+
+  Array.from(body.querySelectorAll('.tit-st')).forEach(title => {
+    const next = title.nextElementSibling;
+    if (!next?.classList.contains('indent')) return;
+
+    const indentChildren = Array.from(next.children);
+    const firstMeaningful = indentChildren.find(el => el.textContent.trim() || el.children.length > 0);
+    if (!firstMeaningful?.classList.contains('tbl-st')) return;
+
+    while (next.firstChild) {
+      title.parentNode.insertBefore(next.firstChild, next);
+    }
+    next.remove();
+  });
+
+  return formatHtml(body.innerHTML);
+}
+
 const ALL_TEMPLATES = [...greeting, ...history, ...symbol];
 const CATEGORY_TEMPLATES = { greeting, history, symbol };
 
@@ -559,7 +592,7 @@ function BatchRetryPanel({ result, onRetry }) {
         html = applyTableProcessing(data.html || '');
       }
 
-      onRetry({ url: retryUrl.trim(), selector: retrySelector.trim(), html, error: null });
+      onRetry({ url: retryUrl.trim(), selector: retrySelector.trim(), html: normalizeGeneratedMarkup(html), error: null });
     } catch (e) {
       onRetry({ url: retryUrl.trim(), selector: retrySelector.trim(), html: '', error: e.message });
     } finally {
@@ -594,21 +627,11 @@ function BatchRetryPanel({ result, onRetry }) {
 }
 
 // ─── 미생성 페이지 패널 ──────────────────────────────────────
-function FailedPagesPanel({ failedResults }) {
-  function classifyReason(r) {
-    const err = (r.error || '').toLowerCase();
-    if (!r.html?.trim() && !r.error) return 'HTML 콘텐츠를 추출할 수 없음';
-    if (err.includes('timeout') || err.includes('시간 초과') || err.includes('timed out')) return '요청 시간 초과 (서버 응답 없음)';
-    if (err.includes('ssl') || err.includes('certificate') || err.includes('인증서')) return 'SSL 인증서 오류';
-    if (err.includes('enotfound') || err.includes('getaddrinfo') || err.includes('dns')) return 'DNS 조회 실패 (도메인 미존재)';
-    if (err.includes('econnrefused') || err.includes('econnreset') || err.includes('연결')) return '서버 연결 거부';
-    if (err.includes('403') || err.includes('forbidden')) return '접근 권한 없음 (403 Forbidden)';
-    if (err.includes('404') || err.includes('not found')) return '페이지 없음 (404 Not Found)';
-    if (err.includes('500') || err.includes('502') || err.includes('503')) return '서버 내부 오류 (5xx)';
-    if (err.includes('redirect') || err.includes('리다이렉트')) return '리다이렉트 처리 실패';
-    if (err.includes('parse') || err.includes('파싱')) return 'HTML 파싱 오류';
-    if (r.error) return r.error;
-    return '알 수 없는 오류';
+function FailedPagesPanel({ failedResults, onRegenerate, regenerating }) {
+  const [selectors, setSelectors] = useState({});
+
+  function updateSelector(url, value) {
+    setSelectors(prev => ({ ...prev, [url]: value }));
   }
 
   return (
@@ -619,19 +642,40 @@ function FailedPagesPanel({ failedResults }) {
       </div>
       <div className="crawl-failed-list">
         <div className="crawl-failed-list-header">
-          <span>메뉴명</span>
           <span>URL</span>
-          <span>미생성 이유</span>
+          <span>CSS 셀렉터</span>
         </div>
         {failedResults.map((r, i) => (
           <div key={i} className="crawl-failed-item">
-            <span className="crawl-failed-item-name">{r.title || '(제목 없음)'}</span>
-            <a className="crawl-failed-item-url" href={r.url} target="_blank" rel="noopener noreferrer" title={r.url}>
-              {r.url}
-            </a>
-            <span className="crawl-failed-item-reason">{classifyReason(r)}</span>
+            <div className="crawl-failed-item-info">
+              <a className="crawl-failed-item-url" href={r.url} target="_blank" rel="noopener noreferrer" title={r.url}>
+                {r.url}
+              </a>
+              <span className="crawl-failed-item-guide">▶ 본문 영역을 자동으로 감지하지 못했습니다. CSS 셀렉터를 직접 입력해주세요.</span>
+            </div>
+            <input
+              type="text"
+              className="crawl-failed-selector-input"
+              value={selectors[r.url] ?? r.selector ?? ''}
+              onChange={e => updateSelector(r.url, e.target.value)}
+              placeholder="#content, .article-body"
+              disabled={regenerating}
+            />
           </div>
         ))}
+      </div>
+      <div className="crawl-failed-actions">
+        <button
+          type="button"
+          className="crawl-btn crawl-btn--retry"
+          onClick={() => onRegenerate(failedResults.map(result => ({
+            ...result,
+            selector: selectors[result.url] ?? result.selector ?? '',
+          })))}
+          disabled={regenerating || failedResults.length === 0}
+        >
+          {regenerating ? <><span className="crawl-spinner" /> 재생성 중...</> : '마크업 재생성'}
+        </button>
       </div>
     </div>
   );
@@ -694,6 +738,8 @@ export default function UrlCrawlMarkup() {
   const [ocrStatus, setOcrStatus] = useState('');
   const [batchResults, setBatchResults] = useState([]);
   const [activeResultIdx, setActiveResultIdx] = useState(0);
+  const [activeResultSchoolKey, setActiveResultSchoolKey] = useState('');
+  const [regeneratingFailed, setRegeneratingFailed] = useState(false);
   const [classifying, setClassifying] = useState(false);
   const [classifyProgress, setClassifyProgress] = useState({ done: 0, total: 0 });
   const [retryingFailedExtract, setRetryingFailedExtract] = useState(false);
@@ -1350,6 +1396,80 @@ export default function UrlCrawlMarkup() {
     setTimeout(() => setUrlCopied(false), 2000);
   }
 
+  async function generateMarkupForResult(result) {
+    const url = result.url;
+    const selector = result.selector || '';
+    let html = '';
+
+    if (result.templateId) {
+      const tpl = ALL_TEMPLATES.find(t => t.id === result.templateId);
+      if (!tpl) throw new Error('템플릿을 찾을 수 없습니다.');
+      const res = await fetch('/api/fetch-markup', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ url }),
+      });
+      let data = {};
+      try { data = await res.json(); } catch {}
+      if (!res.ok) throw new Error(data.error || '실패');
+      const extracted = extractContent(data.html, selector, url);
+      html = formatHtml(applyMarkupToTemplate(extracted, tpl.code, tpl.id));
+    } else if (result.category === 'footer') {
+      const res = await fetch('/api/auto-markup', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ url, context: 'footer', selector }),
+      });
+      let data = {};
+      try { data = await res.json(); } catch {}
+      if (!res.ok) throw new Error(data.detail || '실패');
+      html = applyTableProcessing(data.html || '');
+    } else {
+      const res = await fetch('/api/auto-markup', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ url, selector }),
+      });
+      let data = {};
+      try { data = await res.json(); } catch {}
+      if (!res.ok) throw new Error(data.detail || '실패');
+      html = applyTableProcessing(data.html || '');
+    }
+
+    if (!html?.trim()) throw new Error('본문 영역을 자동으로 감지하지 못했습니다.');
+    return normalizeGeneratedMarkup(html);
+  }
+
+  async function handleRegenerateFailedPages(failedResults) {
+    if (!failedResults.length) return;
+    setRegeneratingFailed(true);
+    try {
+      const updated = [...batchResults];
+      for (const failed of failedResults) {
+        try {
+          const html = await generateMarkupForResult(failed);
+          const idx = updated.findIndex(result => result.url === failed.url);
+          const nextResult = { ...failed, html, error: null };
+          if (idx >= 0) updated[idx] = { ...updated[idx], ...nextResult };
+          else updated.push(nextResult);
+        } catch (e) {
+          const idx = updated.findIndex(result => result.url === failed.url);
+          const nextResult = { ...failed, html: '', error: e.message };
+          if (idx >= 0) updated[idx] = { ...updated[idx], ...nextResult };
+          else updated.push(nextResult);
+        }
+      }
+      setBatchResults(updated);
+      const firstSuccessIdx = updated.findIndex(result => !result.error && result.html?.trim());
+      if (firstSuccessIdx >= 0) {
+        setActiveResultIdx(firstSuccessIdx);
+        setActiveResultSchoolKey(updated[firstSuccessIdx].schoolKey || 'unknown');
+      }
+    } finally {
+      setRegeneratingFailed(false);
+    }
+  }
+
   // ─── 일괄 마크업 생성 ─────────────────────────────────────
   async function handleBatchGenerate() {
     const validItems = urlItems.filter(({ url, checked }) => checked && url && isValidUrl(url));
@@ -1367,10 +1487,11 @@ export default function UrlCrawlMarkup() {
     setBatchResults([]);
     setBatchProgress({ done: 0, total: validItems.length });
     setActiveResultIdx(0);
+    setActiveResultSchoolKey(validItems[0]?.schoolKey || 'unknown');
 
     const results = [];
     for (let i = 0; i < validItems.length; i++) {
-      const { url, title, category, templateId, selector: itemSelector } = validItems[i];
+      const { url, title, category, templateId, selector: itemSelector, schoolKey, schoolName, rootUrl } = validItems[i];
       const tpl = templateId ? ALL_TEMPLATES.find(t => t.id === templateId) : null;
       try {
         let html = '';
@@ -1559,9 +1680,9 @@ export default function UrlCrawlMarkup() {
           html = applyTableProcessing(data.html || '');
         }
 
-        results.push({ url, title, category, templateId, html, error: null });
+        results.push({ url, title, category, templateId, selector: itemSelector, schoolKey, schoolName, rootUrl, html: normalizeGeneratedMarkup(html), error: null });
       } catch (e) {
-        results.push({ url, title, category, templateId, html: '', error: e.message });
+        results.push({ url, title, category, templateId, selector: itemSelector, schoolKey, schoolName, rootUrl, html: '', error: e.message });
       }
       setBatchProgress({ done: i + 1, total: validItems.length });
       setBatchResults([...results]);
@@ -1569,6 +1690,7 @@ export default function UrlCrawlMarkup() {
     setBatchLoading(false);
     const firstSuccessIdx = results.findIndex(r => !r.error && r.html?.trim());
     setActiveResultIdx(firstSuccessIdx >= 0 ? firstSuccessIdx : 'failed');
+    if (firstSuccessIdx >= 0) setActiveResultSchoolKey(results[firstSuccessIdx].schoolKey || 'unknown');
   }
 
   // ─── 마크업 ZIP 다운로드 ───────────────────────────────────
@@ -1587,6 +1709,8 @@ export default function UrlCrawlMarkup() {
     try {
       const files = readyResults.map(r => ({
         name: r.title || new URL(r.url).pathname.split('/').filter(Boolean).pop() || '마크업',
+        schoolName: r.schoolName || siteName || '학교명',
+        rootUrl: r.rootUrl || '',
         html: r.html,
       }));
       const rootForName = getActiveSchoolRoot() || schoolRoots[0];
@@ -1731,7 +1855,7 @@ export default function UrlCrawlMarkup() {
         html = applyTableProcessing(data.html || '');
       }
 
-      setSourceResult(formatHtml(html));
+      setSourceResult(normalizeGeneratedMarkup(html));
     } catch (e) {
       setSourceResult(`<!-- 마크업 생성 중 오류: ${e.message} -->`);
     } finally {
@@ -1745,6 +1869,22 @@ export default function UrlCrawlMarkup() {
   const imageItems = visibleUrlItems.filter(i => i.contentType === 'image');
   const checkedImageItems = imageItems.filter(i => i.checked);
   const regularItems = visibleUrlItems.filter(i => i.contentType !== 'image');
+  const resultSchoolGroups = Array.from(batchResults.reduce((map, result, index) => {
+    const key = result.schoolKey || 'unknown';
+    if (!map.has(key)) {
+      map.set(key, {
+        key,
+        label: result.schoolName || siteName || '학교명',
+        results: [],
+      });
+    }
+    map.get(key).results.push({ ...result, index });
+    return map;
+  }, new Map()).values());
+  const currentResultSchoolKey = activeResultSchoolKey || resultSchoolGroups[0]?.key || '';
+  const activeResultSchoolGroup = resultSchoolGroups.find(group => group.key === currentResultSchoolKey) || resultSchoolGroups[0];
+  const activeSchoolSuccessResults = activeResultSchoolGroup?.results.filter(r => !r.error && r.html?.trim()) || [];
+  const activeSchoolFailedResults = activeResultSchoolGroup?.results.filter(r => r.error || !r.html?.trim()) || [];
 
   function buildImageUrlExportText(items = allImageItems) {
     const grouped = new Map();
@@ -2091,12 +2231,6 @@ export default function UrlCrawlMarkup() {
                         disabled={checkedImageItems.length === 0}
                         title="URL 내보내기"
                       >URL 내보내기</button>
-                      <button
-                        className="url-export-btn"
-                        onClick={downloadImageUrlExport}
-                        disabled={checkedImageItems.length === 0}
-                        title="체크한 이미지형 페이지 URL 다운로드"
-                      >일괄 다운로드</button>
                     </div>
                     <div className="url-image-section">
                       <div className="url-image-section-header">
@@ -2175,32 +2309,52 @@ export default function UrlCrawlMarkup() {
         {/* ─── 일괄 결과 탭 ─── */}
         {batchResults.length > 0 && (
           <div className="crawl-batch-results">
-            <div ref={tourRefs.resultTab} className="crawl-batch-tabs-row">
-              <div className="crawl-batch-tabs">
-              {batchResults.map((r, i) => {
-                if (r.error || !r.html?.trim()) return null;
+            <div className="crawl-result-school-tabs" ref={tourRefs.resultTab}>
+              {resultSchoolGroups.map(group => {
+                const failedCount = group.results.filter(r => r.error || !r.html?.trim()).length;
                 return (
                   <button
-                    key={i}
-                    className={`crawl-batch-tab ${activeResultIdx === i ? 'is-active' : ''}`}
-                    onClick={() => setActiveResultIdx(i)}
+                    key={group.key}
+                    type="button"
+                    className={`crawl-result-school-tab ${activeResultSchoolGroup?.key === group.key ? 'is-active' : ''}`}
+                    onClick={() => {
+                      setActiveResultSchoolKey(group.key);
+                      const firstSuccess = group.results.find(r => !r.error && r.html?.trim());
+                      setActiveResultIdx(firstSuccess ? firstSuccess.index : 'failed');
+                    }}
+                  >
+                    {group.label}
+                    <span>{group.results.length}</span>
+                    {failedCount > 0 && <span className="crawl-tab-badge crawl-tab-badge--error">{failedCount}</span>}
+                  </button>
+                );
+              })}
+            </div>
+            <div className="crawl-batch-tabs-row">
+              <div className="crawl-batch-tabs">
+              {activeSchoolSuccessResults.map((r) => {
+                return (
+                  <button
+                    key={r.index}
+                    className={`crawl-batch-tab ${activeResultIdx === r.index ? 'is-active' : ''}`}
+                    onClick={() => setActiveResultIdx(r.index)}
                     title={r.url}
                   >
                     {shortLabel(r.url, r.title)}
-                    {batchLoading && i === batchProgress.done - 1 && (
+                    {batchLoading && r.index === batchProgress.done - 1 && (
                       <span className="crawl-tab-badge">✓</span>
                     )}
                   </button>
                 );
               })}
-              {batchResults.some(r => r.error || !r.html?.trim()) && (
+              {activeSchoolFailedResults.length > 0 && (
                 <button
                   className={`crawl-batch-tab crawl-batch-tab--failed ${activeResultIdx === 'failed' ? 'is-active' : ''}`}
                   onClick={() => setActiveResultIdx('failed')}
                 >
                   미생성 페이지
                   <span className="crawl-tab-badge crawl-tab-badge--error">
-                    {batchResults.filter(r => r.error || !r.html?.trim()).length}
+                    {activeSchoolFailedResults.length}
                   </span>
                 </button>
               )}
@@ -2219,7 +2373,9 @@ export default function UrlCrawlMarkup() {
             </div>
             {activeResultIdx === 'failed' ? (
               <FailedPagesPanel
-                failedResults={batchResults.filter(r => r.error || !r.html?.trim())}
+                failedResults={activeSchoolFailedResults}
+                onRegenerate={handleRegenerateFailedPages}
+                regenerating={regeneratingFailed}
               />
             ) : batchResults[activeResultIdx] && batchResults[activeResultIdx].html?.trim() && (
               <ResultViewer
