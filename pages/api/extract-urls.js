@@ -153,6 +153,24 @@ function hasSubMenu($, a) {
   return false;
 }
 
+function resolveClientRedirect(html, baseUrl) {
+  if (!html) return '';
+  const patterns = [
+    /location\.href\s*=\s*['"]([^'"]+)['"]/i,
+    /window\.location(?:\.href)?\s*=\s*['"]([^'"]+)['"]/i,
+    /location\.replace\s*\(\s*['"]([^'"]+)['"]\s*\)/i,
+    /<meta[^>]+http-equiv=["']?refresh["']?[^>]+content=["'][^"']*url=([^"']+)["']/i,
+  ];
+  for (const pattern of patterns) {
+    const match = html.match(pattern);
+    if (!match?.[1]) continue;
+    try {
+      return new URL(match[1].trim(), baseUrl).href;
+    } catch {}
+  }
+  return '';
+}
+
 // SSL 검증 없이 HTML을 가져오는 fallback (한국 공공기관 인증서 대응)
 async function fetchHtmlInsecure(url, timeoutMs = 10000) {
   const { request: httpsReq } = await import('node:https');
@@ -173,7 +191,14 @@ async function fetchHtmlInsecure(url, timeoutMs = 10000) {
         }
         const chunks = [];
         res.on('data', c => chunks.push(c));
-        res.on('end', () => resolve({ html: Buffer.concat(chunks).toString('utf-8'), finalUrl: targetUrl }));
+        res.on('end', () => {
+          const html = Buffer.concat(chunks).toString('utf-8');
+          const clientRedirect = resolveClientRedirect(html, targetUrl);
+          if (clientRedirect && clientRedirect !== targetUrl) {
+            return resolve({ redirect: clientRedirect });
+          }
+          resolve({ html, finalUrl: targetUrl });
+        });
         res.on('error', reject);
       }
     );
@@ -201,8 +226,8 @@ async function extractUrlsFromNav(pageUrl) {
     const context = await browser.newContext({ ignoreHTTPSErrors: true });
     const page = await context.newPage();
     await page.goto(pageUrl, { waitUntil: 'domcontentloaded', timeout: 15000 });
-    finalUrl = page.url(); // 리다이렉트 후 실제 URL 추적
     await page.waitForTimeout(1000);
+    finalUrl = page.url(); // HTTP/JS 리다이렉트 후 실제 URL 추적
 
     // 숨겨진 서브메뉴 펼치기: CSS 강제 노출 + javascript: 토글 함수 실행
     try {
@@ -243,6 +268,12 @@ async function extractUrlsFromNav(pageUrl) {
       const res = await fetch(pageUrl, { signal: AbortSignal.timeout(8000) });
       finalUrl = res.url || pageUrl;
       html = await res.text();
+      const clientRedirect = resolveClientRedirect(html, finalUrl);
+      if (clientRedirect && clientRedirect !== finalUrl) {
+        const redirected = await fetch(clientRedirect, { signal: AbortSignal.timeout(8000) });
+        finalUrl = redirected.url || clientRedirect;
+        html = await redirected.text();
+      }
     }
   } finally {
     if (browser) await browser.close().catch(() => {});

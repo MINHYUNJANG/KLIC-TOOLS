@@ -529,6 +529,24 @@ async function extractUrlsFromSitemap(origin) {
   return null;
 }
 
+function resolveClientRedirect(html, baseUrl) {
+  if (!html) return '';
+  const patterns = [
+    /location\.href\s*=\s*['"]([^'"]+)['"]/i,
+    /window\.location(?:\.href)?\s*=\s*['"]([^'"]+)['"]/i,
+    /location\.replace\s*\(\s*['"]([^'"]+)['"]\s*\)/i,
+    /<meta[^>]+http-equiv=["']?refresh["']?[^>]+content=["'][^"']*url=([^"']+)["']/i,
+  ];
+  for (const pattern of patterns) {
+    const match = html.match(pattern);
+    if (!match?.[1]) continue;
+    try {
+      return new URL(match[1].trim(), baseUrl).href;
+    } catch {}
+  }
+  return '';
+}
+
 async function extractUrlsFromNav(pageUrl) {
   const origin = new URL(pageUrl).origin;
   let html;
@@ -541,10 +559,9 @@ async function extractUrlsFromNav(pageUrl) {
     const page = await browser.newPage();
     await page.goto(pageUrl, { waitUntil: 'domcontentloaded', timeout: 15000 });
 
-    // 리다이렉트(http→https 등) 이후의 실제 origin 갱신
-    try { effectiveOrigin = new URL(page.url()).origin; } catch {}
-
     await page.waitForTimeout(1000);
+    // HTTP/JS 리다이렉트 이후의 실제 origin 갱신
+    try { effectiveOrigin = new URL(page.url()).origin; } catch {}
 
     // 1차 메뉴 li 항목에 hover → 2차 메뉴 노출 (뷰포트 밖 요소도 스크롤 후 hover)
     try {
@@ -641,6 +658,12 @@ async function extractUrlsFromNav(pageUrl) {
       // 정적 fetch도 리다이렉트 후 실제 origin 갱신
       try { effectiveOrigin = new URL(res.url).origin; } catch {}
       html = await res.text();
+      const clientRedirect = resolveClientRedirect(html, res.url || pageUrl);
+      if (clientRedirect) {
+        const redirected = await fetch(clientRedirect, { signal: AbortSignal.timeout(8000) });
+        try { effectiveOrigin = new URL(redirected.url || clientRedirect).origin; } catch {}
+        html = await redirected.text();
+      }
     } catch { html = ''; }
   } finally {
     if (browser) await browser.close().catch(() => {});
