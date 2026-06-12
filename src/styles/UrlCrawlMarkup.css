@@ -257,6 +257,7 @@
 }
 
 .crawl-url-row,
+.crawl-exclude-row,
 .crawl-selector-row {
   display: flex;
   align-items: flex-start;
@@ -446,6 +447,12 @@
 
 .crawl-input--roots {
   height: 2.875rem;
+  min-height: 2.875rem;
+  resize: vertical;
+  line-height: 1.45;
+}
+
+.crawl-input--exclude {
   min-height: 2.875rem;
   resize: vertical;
   line-height: 1.45;
@@ -667,6 +674,20 @@
   white-space: nowrap;
 }
 .crawl-btn--download:hover:not(:disabled) { background: #005aa3; }
+
+.crawl-download-footer {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 0.75rem;
+  padding-top: 0.75rem;
+  border-top: 0.0625rem solid #e8e8ee;
+}
+
+.crawl-download-footer-text {
+  color: #566176;
+  font-size: 0.8125rem;
+}
 
 .crawl-batch-tab {
   position: relative;

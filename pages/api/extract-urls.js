@@ -334,6 +334,34 @@ function sendEvent(res, data) {
   if (typeof res.flush === 'function') res.flush();
 }
 
+function normalizeKeywordText(value) {
+  return String(value || '')
+    .toLowerCase()
+    .replace(/\s+/g, '');
+}
+
+function parseExcludeKeywords(value) {
+  const list = Array.isArray(value) ? value : String(value || '').split(/[\n,]+/);
+  return list
+    .map(keyword => normalizeKeywordText(keyword))
+    .filter(Boolean);
+}
+
+function shouldExcludeByKeyword(url, title, excludeKeywords) {
+  if (!excludeKeywords.length) return false;
+
+  let decodedUrl = url;
+  try { decodedUrl = decodeURIComponent(url); } catch {}
+
+  const haystacks = [
+    title,
+    decodedUrl,
+    decodedUrl.replace(/[-_]/g, ' '),
+  ].map(normalizeKeywordText);
+
+  return excludeKeywords.some(keyword => haystacks.some(text => text.includes(keyword)));
+}
+
 export default async function handler(req, res) {
   if (req.method !== 'POST') return res.status(405).json({ detail: 'Method not allowed' });
 
@@ -343,7 +371,8 @@ export default async function handler(req, res) {
   res.flushHeaders();
 
   try {
-    const { url } = req.body;
+    const { url, excludeKeywords: rawExcludeKeywords } = req.body;
+    const excludeKeywords = parseExcludeKeywords(rawExcludeKeywords);
     const origin = new URL(url).origin;
     const homeUrl = origin + '/';
     const isSameUrl = homeUrl === url + '/' || homeUrl === url;
@@ -394,6 +423,7 @@ export default async function handler(req, res) {
         if (/^\/data\b/i.test(pathname)) continue;
         if (/\/map\b/i.test(pathname)) continue;
         if (/\/(popup|print|rss)\b/i.test(pathname)) continue;
+        if (shouldExcludeByKeyword(u, navMap.get(u) || '', excludeKeywords)) continue;
         const sortedSearch = [...parsed.searchParams.entries()]
           .sort(([a], [b]) => a.localeCompare(b))
           .map(([k, v]) => `${k}=${v}`)

@@ -86,17 +86,40 @@ function normalizeGeneratedMarkup(html) {
   if (!html?.trim()) return html;
   const doc = new DOMParser().parseFromString(html, 'text/html');
   const body = doc.body;
-  const firstElement = Array.from(body.children).find(el => el.textContent.trim() || el.children.length > 0);
 
-  if (firstElement?.tagName === 'H4' && firstElement.matches('.tit-st.contents')) {
+  function replaceHeadingTag(element, tagName) {
+    const next = doc.createElement(tagName);
+    Array.from(element.attributes).forEach(attr => {
+      next.setAttribute(attr.name, attr.value);
+    });
+    while (element.firstChild) next.appendChild(element.firstChild);
+    element.replaceWith(next);
+    return next;
+  }
+
+  Array.from(body.querySelectorAll('.tit-st.section')).forEach(title => {
+    title.classList.remove('section');
+    title.classList.add('contents');
+    if (title.tagName === 'H3') replaceHeadingTag(title, 'h2');
+  });
+
+  const firstElement = Array.from(body.children).find(el => el.textContent.trim() || el.children.length > 0);
+  if (
+    firstElement?.matches('.tit-st.contents') &&
+    ['H3', 'H4'].includes(firstElement.tagName)
+  ) {
+    replaceHeadingTag(firstElement, 'h2');
+  }
+
+  Array.from(body.querySelectorAll('h3.tit-st.contents')).forEach(title => {
     const h2 = doc.createElement('h2');
-    h2.className = firstElement.className;
-    Array.from(firstElement.attributes).forEach(attr => {
+    Array.from(title.attributes).forEach(attr => {
       if (attr.name !== 'class') h2.setAttribute(attr.name, attr.value);
     });
-    while (firstElement.firstChild) h2.appendChild(firstElement.firstChild);
-    firstElement.replaceWith(h2);
-  }
+    h2.className = title.className;
+    while (title.firstChild) h2.appendChild(title.firstChild);
+    title.replaceWith(h2);
+  });
 
   Array.from(body.querySelectorAll('.tit-st')).forEach(title => {
     const next = title.nextElementSibling;
@@ -165,6 +188,97 @@ function buildIframeDoc(bodyContent, previewStyle = '') {
 </head>
 <body style="padding:1.5rem 2.5rem;">
 ${bodyContent}
+<script>
+(function () {
+  function textYear(text) {
+    var match = String(text || '').match(/\\d{4}/);
+    return match ? match[0] : '';
+  }
+
+  function initHistoryTypeA(root) {
+    if (!window.Swiper) return;
+    var historyEl = root.querySelector('.historySwiper');
+    var timelineEl = root.querySelector('.timelineSwiper');
+    if (!historyEl || !timelineEl) return;
+    if (historyEl.dataset.klicHistoryReady === '1') return;
+    historyEl.dataset.klicHistoryReady = '1';
+
+    if (historyEl.swiper) historyEl.swiper.destroy(true, true);
+    if (timelineEl.swiper) timelineEl.swiper.destroy(true, true);
+
+    var yearSpan = root.querySelector('.history-header .year span') || root.querySelector('.year span');
+    var timelineSlides = timelineEl.querySelectorAll('.swiper-slide');
+    var historySwiper = new Swiper(historyEl, {
+      slidesPerView: 1,
+      centeredSlides: false,
+      spaceBetween: 0,
+      speed: 600,
+      observer: true,
+      observeParents: true,
+      slideToClickedSlide: true,
+      breakpoints: {
+        768: { slidesPerView: 2, spaceBetween: 24 },
+        1025: { slidesPerView: 3, centeredSlides: true, spaceBetween: 40 }
+      }
+    });
+    var timelineSwiper = new Swiper(timelineEl, {
+      slidesPerView: Math.min(3, Math.max(timelineSlides.length, 1)),
+      centeredSlides: true,
+      slideToClickedSlide: true,
+      speed: 600,
+      observer: true,
+      observeParents: true,
+      breakpoints: {
+        768: { slidesPerView: Math.min(5, Math.max(timelineSlides.length, 1)) },
+        1025: { slidesPerView: Math.min(9, Math.max(timelineSlides.length, 1)) }
+      }
+    });
+
+    function setActive(index) {
+      var historySlide = historySwiper.slides[index];
+      var year = historySlide ? (historySlide.getAttribute('data-year') || textYear(historySlide.textContent)) : '';
+      if (!year && timelineSlides[index]) year = textYear(timelineSlides[index].textContent);
+      if (yearSpan && year) yearSpan.textContent = year;
+      Array.prototype.forEach.call(timelineSlides, function (slide, slideIndex) {
+        slide.classList.toggle('is-active', slideIndex === index);
+      });
+      if (timelineSwiper && timelineSwiper.activeIndex !== index) timelineSwiper.slideTo(index);
+    }
+
+    historySwiper.on('slideChange', function () {
+      setActive(historySwiper.realIndex || historySwiper.activeIndex || 0);
+    });
+    Array.prototype.forEach.call(timelineSlides, function (slide, index) {
+      slide.addEventListener('click', function () {
+        historySwiper.slideTo(index);
+        setActive(index);
+      });
+      slide.addEventListener('keydown', function (event) {
+        if (event.key === 'Enter' || event.key === ' ') {
+          event.preventDefault();
+          historySwiper.slideTo(index);
+          setActive(index);
+        }
+      });
+    });
+
+    setActive(0);
+    setTimeout(function () {
+      historySwiper.update();
+      timelineSwiper.update();
+    }, 100);
+  }
+
+  function initHistorySlides() {
+    if (!window.Swiper) return;
+    document.querySelectorAll('.history.tyA').forEach(initHistoryTypeA);
+  }
+
+  window.addEventListener('load', initHistorySlides);
+  document.addEventListener('DOMContentLoaded', initHistorySlides);
+  setTimeout(initHistorySlides, 250);
+})();
+</script>
 </body>
 </html>`;
 }
@@ -724,6 +838,7 @@ function UrlPreviewPanel({ previewOpen, previewUrl, onClose }) {
 }
 export default function UrlCrawlMarkup() {
   const [batchRootUrl, setBatchRootUrl] = useState('');
+  const [excludeMenuInput, setExcludeMenuInput] = useState('');
   const [schoolRoots, setSchoolRoots] = useState([]);
   const [activeSchoolKey, setActiveSchoolKey] = useState('all');
   const [extractResults, setExtractResults] = useState([]);
@@ -1029,6 +1144,13 @@ export default function UrlCrawlMarkup() {
       });
   }
 
+  function parseExcludeKeywords(value) {
+    return value
+      .split(/[\n,]+/)
+      .map(keyword => keyword.trim())
+      .filter(Boolean);
+  }
+
   function getRootsForExtraction() {
     const inlineUrls = parseSchoolRootLines(batchRootUrl);
 
@@ -1043,10 +1165,11 @@ export default function UrlCrawlMarkup() {
 
   async function extractSchoolRoot(root, progressOffset = 0, progressTotal = 4) {
     let resultData = null;
+    const excludeKeywords = parseExcludeKeywords(excludeMenuInput);
     const res = await fetch('/api/extract-urls', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ url: root.url }),
+      body: JSON.stringify({ url: root.url, excludeKeywords }),
     });
     if (!res.ok) {
       let detail = `서버 오류 (${res.status})`;
@@ -2102,6 +2225,15 @@ export default function UrlCrawlMarkup() {
                 </button>
               )}
             </div>
+            <div className="crawl-exclude-row">
+              <textarea
+                className="crawl-input crawl-input--exclude"
+                placeholder="크롤링 제외 메뉴 입력 (예: 시설안내, 공공데이터 개방 / 줄바꿈 또는 쉼표로 구분)"
+                value={excludeMenuInput}
+                onChange={e => setExcludeMenuInput(e.target.value)}
+                disabled={extracting || batchLoading}
+              />
+            </div>
             {extractError && <p className="crawl-error">{extractError}</p>}
 
             {(urlItems.length > 0 || showAddUrl) && (
@@ -2359,17 +2491,6 @@ export default function UrlCrawlMarkup() {
                 </button>
               )}
               </div>
-              {!batchLoading && batchResults.some(r => r.html?.trim() && !r.error) && (
-                <button
-                  ref={tourRefs.downloadBtn}
-                  className="crawl-btn crawl-btn--download"
-                  onClick={handleDownloadZip}
-                  disabled={downloading}
-                  title="생성된 마크업을 ZIP으로 다운로드"
-                >
-                  {downloading ? <span className="crawl-spinner" /> : '다운로드'}
-                </button>
-              )}
             </div>
             {activeResultIdx === 'failed' ? (
               <FailedPagesPanel
@@ -2387,6 +2508,22 @@ export default function UrlCrawlMarkup() {
                   setBatchResults(next);
                 }}
               />
+            )}
+            {!batchLoading && batchResults.some(r => r.html?.trim() && !r.error) && (
+              <div className="crawl-download-footer">
+                <span className="crawl-download-footer-text">
+                  생성된 전체 마크업을 학교별 폴더로 묶어 하나의 ZIP 파일로 다운로드합니다.
+                </span>
+                <button
+                  ref={tourRefs.downloadBtn}
+                  className="crawl-btn crawl-btn--download"
+                  onClick={handleDownloadZip}
+                  disabled={downloading}
+                  title="생성된 전체 마크업을 ZIP으로 다운로드"
+                >
+                  {downloading ? <span className="crawl-spinner" /> : '전체 ZIP 다운로드'}
+                </button>
+              </div>
             )}
           </div>
         )}

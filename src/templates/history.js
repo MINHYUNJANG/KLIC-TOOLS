@@ -448,75 +448,109 @@ export default [
     },
     code: `<script>
 $(function () {
-  let historySwiper = new Swiper(".historySwiper", {
-    slidesPerView: 3,
-    centeredSlides: true,
-    spaceBetween: 40,
-    speed: 600,
-    allowTouchMove: false,
-    slideToClickedSlide: true,
-    breakpoints: {
-      1025: {
-        slidesPerView: 1,
-        centeredSlides: false,
-        allowTouchMove: true,
-        spaceBetween: 0
+  $(".history.tyA").each(function () {
+    let $history = $(this);
+    let historyEl = $history.find(".historySwiper")[0];
+    let timelineEl = $history.find(".timelineSwiper")[0];
+    if (!historyEl || !timelineEl || !window.Swiper) return;
+
+    let historySwiper = new Swiper(historyEl, {
+      slidesPerView: 1,
+      centeredSlides: false,
+      spaceBetween: 0,
+      speed: 600,
+      slideToClickedSlide: true,
+      observer: true,
+      observeParents: true,
+      breakpoints: {
+        768: {
+          slidesPerView: 2,
+          spaceBetween: 24
+        },
+        1025: {
+          slidesPerView: 3,
+          centeredSlides: true,
+          spaceBetween: 40
+        }
       }
-    }
-  });
+    });
 
-  let timelineSwiper = new Swiper(".timelineSwiper", {
-    slidesPerView: 9,
-    centeredSlides: true,
-    slideToClickedSlide: true,
-    speed: 600,
-    breakpoints: {
-      1025: {
-        slidesPerView: 3
+    let timelineCount = $history.find(".timelineSwiper .swiper-slide").length || 1;
+    let timelineSwiper = new Swiper(timelineEl, {
+      slidesPerView: Math.min(3, timelineCount),
+      centeredSlides: true,
+      slideToClickedSlide: true,
+      speed: 600,
+      observer: true,
+      observeParents: true,
+      breakpoints: {
+        768: {
+          slidesPerView: Math.min(5, timelineCount)
+        },
+        1025: {
+          slidesPerView: Math.min(9, timelineCount)
+        }
       }
+    });
+
+    function getYear(index) {
+      let $slide = $history.find(".historySwiper .swiper-slide").eq(index);
+      let year = $slide.attr("data-year") || "";
+      if (!year) year = (($slide.text() || "").match(/\\d{4}/) || [""])[0];
+      if (!year) year = (($history.find(".timelineSwiper .swiper-slide").eq(index).text() || "").match(/\\d{4}/) || [""])[0];
+      return year;
     }
-  });
 
-  historySwiper.controller.control = timelineSwiper;
-  timelineSwiper.controller.control = historySwiper;
+    function setActive(index) {
+      let year = getYear(index);
+      if (year) $history.find(".year span").text(year);
+      $history.find(".timelineSwiper .swiper-slide").removeClass("is-active").eq(index).addClass("is-active");
+      if (timelineSwiper.activeIndex !== index) timelineSwiper.slideTo(index);
+    }
 
-  timelineSwiper.on("slideChange", function () {
-    let index = timelineSwiper.realIndex;
-    let year = $(".timelineSwiper .swiper-slide").eq(index).text();
-    $(".year span").text(year);
-  });
+    historySwiper.on("slideChange", function () {
+      setActive(historySwiper.realIndex || historySwiper.activeIndex || 0);
+    });
 
-  function setHistoryHeight() {
-    let slideCount = $(".historySwiper .swiper-slide").length;
-    let perSlide = window.innerHeight * 0.9;
-    let totalHeight = slideCount * perSlide;
-    $(".history").css("height", totalHeight + "px");
-  }
-  setHistoryHeight();
+    $history.find(".timelineSwiper .swiper-slide").each(function (index) {
+      $(this).on("click keydown", function (event) {
+        if (event.type === "keydown" && event.key !== "Enter" && event.key !== " ") return;
+        event.preventDefault();
+        historySwiper.slideTo(index);
+        setActive(index);
+      });
+    });
 
-  $(window).on("resize", function () {
-    setHistoryHeight();
-    setScrollRange();
-  });
+    function setHistoryHeight() {
+      let slideCount = $history.find(".historySwiper .swiper-slide").length;
+      let perSlide = window.innerHeight * 0.9;
+      $history.css("height", Math.max(slideCount, 1) * perSlide + "px");
+    }
 
-  let historyStart;
-  let historyEnd;
+    let historyStart;
+    let historyEnd;
+    function setScrollRange() {
+      historyStart = $history.offset().top;
+      historyEnd = historyStart + $history.outerHeight() - $(window).height();
+    }
 
-  function setScrollRange() {
-    let $history = $(".history");
-    historyStart = $history.offset().top;
-    historyEnd = historyStart + $history.outerHeight() - $(window).height();
-  }
-  setScrollRange();
+    function refresh() {
+      setHistoryHeight();
+      setScrollRange();
+      historySwiper.update();
+      timelineSwiper.update();
+    }
 
-  $(window).on("scroll", function () {
-    let scrollTop = $(window).scrollTop();
-    if (scrollTop < historyStart || scrollTop > historyEnd) return;
-    let progress = (scrollTop - historyStart) / (historyEnd - historyStart);
-    progress = Math.max(0, Math.min(1, progress));
-    let slideCount = historySwiper.slides.length - 1;
-    let index = Math.round(progress * slideCount);
-    historySwiper.slideTo(index);
+    setActive(0);
+    refresh();
+    $(window).on("resize", refresh);
+    $(window).on("scroll", function () {
+      let scrollTop = $(window).scrollTop();
+      if (scrollTop < historyStart || scrollTop > historyEnd || historyEnd <= historyStart) return;
+      let progress = (scrollTop - historyStart) / (historyEnd - historyStart);
+      let index = Math.round(Math.max(0, Math.min(1, progress)) * (historySwiper.slides.length - 1));
+      historySwiper.slideTo(index);
+    });
   });
 });
 <\/script>
