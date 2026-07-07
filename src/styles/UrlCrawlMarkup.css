@@ -181,6 +181,831 @@
   margin: 0 0 1.25rem;
 }
 
+.crawl-project-switch {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  padding: 0.25rem;
+  margin: 0.25rem 0 1.25rem;
+  border: 1px solid #d8deea;
+  border-radius: 0.5rem;
+  background: #f6f8fb;
+}
+
+.crawl-project-option {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
+  min-height: 2.25rem;
+  padding: 0 1rem;
+  border: 1px solid transparent;
+  border-radius: 0.375rem;
+  color: #5f6b7d;
+  font-size: 0.9rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: background 0.15s, border-color 0.15s, color 0.15s, box-shadow 0.15s;
+}
+
+.crawl-project-option input {
+  width: 0.95rem;
+  height: 0.95rem;
+  margin: 0;
+  accent-color: #0070c8;
+}
+
+.crawl-project-option:hover {
+  color: #1a2a4a;
+  background: #fff;
+}
+
+.crawl-project-option.is-active {
+  border-color: #0070c8;
+  background: #fff;
+  color: #0070c8;
+  box-shadow: 0 0.25rem 0.75rem rgba(0, 112, 200, 0.12);
+}
+
+.gwangju-url-panel {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  min-height: 24rem;
+}
+
+.gwangju-url-item {
+  display: flex;
+  flex-direction: column;
+  gap: 0.55rem;
+}
+
+.gwangju-url-row {
+  display: flex;
+  gap: 0.5rem;
+  align-items: stretch;
+}
+
+.gwangju-url-input {
+  flex: 1 1 auto;
+  min-width: 0;
+  width: 100%;
+  min-height: 3.25rem;
+  padding: 0 1.1rem;
+  border: 1px solid #cfd7e6;
+  border-radius: 0.375rem;
+  background: #fff;
+  color: #1a2a4a;
+  font-size: 1rem;
+  font-family: inherit;
+  box-sizing: border-box;
+}
+
+.gwangju-url-input:focus {
+  outline: none;
+  border-color: #0070c8;
+  box-shadow: 0 0 0 3px rgba(0, 112, 200, 0.12);
+}
+
+.gwangju-url-input:disabled {
+  background: #f5f7fa;
+  color: #8a96a8;
+}
+
+.gwangju-url-icon-btn,
+.gwangju-url-search-btn {
+  min-height: 3.25rem;
+  border: 1px solid #0070c8;
+  border-radius: 0.375rem;
+  color: #fff;
+  font-family: inherit;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background 0.15s, border-color 0.15s;
+}
+
+.gwangju-url-icon-btn {
+  width: 3.25rem;
+  background: #fff;
+  color: #0070c8;
+  font-size: 1.35rem;
+  line-height: 1;
+}
+
+.gwangju-url-search-btn {
+  border-color: #333;
+  background: #333;
+  min-width: 6.5rem;
+  padding: 0 1.6rem;
+  font-size: 0.95rem;
+}
+
+.gwangju-crawl-actions {
+  display: flex;
+  justify-content: center;
+  margin-top: 0.25rem;
+}
+
+.gwangju-url-search-btn--main {
+  min-width: 11rem;
+}
+
+.gwangju-url-icon-btn:hover {
+  background: #eef7ff;
+  border-color: #005fa8;
+  color: #005fa8;
+}
+
+.gwangju-url-icon-btn:disabled,
+.gwangju-url-search-btn:disabled {
+  opacity: 0.65;
+  cursor: not-allowed;
+}
+
+.gwangju-url-search-btn:hover {
+  background: #222;
+  border-color: #222;
+}
+
+.gwangju-url-icon-btn--remove {
+  border-color: #d23d3d;
+  background: #fff;
+  color: #d23d3d;
+}
+
+.gwangju-url-icon-btn--remove:hover {
+  border-color: #b82f2f;
+  background: #fff5f5;
+  color: #b82f2f;
+}
+
+.gwangju-url-error {
+  margin: 0;
+  color: #d23d3d;
+  font-size: 0.875rem;
+}
+
+.gwangju-url-status {
+  margin: 0;
+  color: #5f6b7d;
+  font-size: 0.9rem;
+}
+
+.gwangju-site-results {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  margin-top: 0.5rem;
+}
+
+.gwangju-work-layer {
+  position: fixed;
+  inset: 0;
+  z-index: 9999;
+  margin: 0;
+  padding: 1rem;
+  background: #f4f6fa;
+}
+
+.gwangju-work-layer-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  min-height: 3.25rem;
+}
+
+.gwangju-work-layer-head h2 {
+  margin: 0;
+  color: #1a2a4a;
+  font-size: 1.125rem;
+  font-weight: 800;
+}
+
+.gwangju-work-layer-head p {
+  margin: 0.2rem 0 0;
+  color: #68758a;
+  font-size: 0.85rem;
+}
+
+.gwangju-work-layer-close {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex: 0 0 auto;
+  width: 2.25rem;
+  height: 2.25rem;
+  border: 1px solid #d23d3d;
+  border-radius: 0.375rem;
+  background: #fff;
+  color: #d23d3d;
+  font-family: inherit;
+  font-size: 1.35rem;
+  font-weight: 300;
+  line-height: 1;
+  cursor: pointer;
+}
+
+.gwangju-work-layer-close:hover {
+  border-color: #b82f2f;
+  background: #fff5f5;
+  color: #b82f2f;
+}
+
+.gwangju-site-tabs {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem;
+  border-bottom: 1px solid #e0e6f0;
+  padding-bottom: 0.5rem;
+}
+
+.gwangju-site-tab {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
+  min-height: 2.35rem;
+  max-width: 15rem;
+  padding: 0 0.9rem;
+  border: 1px solid #d8deea;
+  border-radius: 0.375rem;
+  background: #fff;
+  color: #5f6b7d;
+  font-family: inherit;
+  font-size: 0.9rem;
+  font-weight: 700;
+  cursor: pointer;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.gwangju-site-tab span {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 1.25rem;
+  height: 1.25rem;
+  padding: 0 0.3rem;
+  border-radius: 999px;
+  background: #e9f3ff;
+  color: #0070c8;
+  font-size: 0.75rem;
+}
+
+.gwangju-site-tab:hover,
+.gwangju-site-tab.is-active {
+  border-color: #0070c8;
+  color: #0070c8;
+}
+
+.gwangju-file-download-btn {
+  margin-left: auto;
+  min-height: 2.35rem;
+  padding: 0 1rem;
+  border: 1px solid #333;
+  border-radius: 0.375rem;
+  background: #333;
+  color: #fff;
+  font-family: inherit;
+  font-size: 0.875rem;
+  font-weight: 800;
+  cursor: pointer;
+  white-space: nowrap;
+}
+
+.gwangju-file-download-btn:hover:not(:disabled) {
+  background: #111;
+  border-color: #111;
+}
+
+.gwangju-file-download-btn:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+}
+
+.gwangju-site-panel {
+  min-height: 4.25rem;
+}
+
+.gwangju-work-layer .gwangju-site-panel {
+  flex: 1;
+  min-height: 0;
+}
+
+.gwangju-menu-workspace {
+  display: grid;
+  grid-template-columns: minmax(12rem, 18rem) minmax(0, 1fr);
+  gap: 0.875rem;
+  min-height: 34rem;
+}
+
+.gwangju-work-layer .gwangju-menu-workspace {
+  height: 100%;
+  min-height: 0;
+}
+
+.gwangju-menu-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+  padding: 0.75rem;
+  border: 1px solid #e0e6f0;
+  border-radius: 0.375rem;
+  background: #fafbfe;
+  max-height: 34rem;
+  overflow-y: auto;
+}
+
+.gwangju-menu-depth-title {
+  margin: 0.75rem 0 0.15rem;
+  padding: 0.15rem 0.2rem 0.4rem;
+  border-bottom: 1px solid #dfe6f1;
+  color: #1a2a4a;
+  font-size: 1rem;
+  font-weight: 800;
+  line-height: 1.35;
+}
+
+.gwangju-menu-depth-title:first-child {
+  margin-top: 0;
+}
+
+.gwangju-menu-row {
+  display: flex;
+  align-items: stretch;
+  gap: 0.35rem;
+  width: 100%;
+}
+
+.gwangju-menu-btn {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+  flex: 1;
+  min-width: 0;
+  min-height: 2.45rem;
+  padding: 0.35rem 0.75rem;
+  border: 1px solid #cfd7e6;
+  border-radius: 0.375rem;
+  background: #fff;
+  color: #1a2a4a;
+  font-family: inherit;
+  font-size: 0.9rem;
+  font-weight: 500;
+  cursor: pointer;
+  text-align: left;
+  line-height: 1.35;
+}
+
+.gwangju-menu-delete-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex: 0 0 2.45rem;
+  width: 2.45rem;
+  min-height: 2.45rem;
+  border: 1px solid #d23d3d;
+  border-radius: 0.375rem;
+  background: #fff;
+  color: #d23d3d;
+  font-family: inherit;
+  font-size: 1.1rem;
+  font-weight: 300;
+  line-height: 1;
+  cursor: pointer;
+}
+
+.gwangju-menu-delete-btn:hover {
+  border-color: #b82f2f;
+  background: #fff5f5;
+  color: #b82f2f;
+}
+
+.gwangju-menu-btn-label {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.gwangju-menu-saved-badge {
+  flex: 0 0 auto;
+  padding: 0.15rem 0.4rem;
+  border-radius: 999px;
+  background: #eaf7ef;
+  color: #16834d;
+  font-size: 0.72rem;
+  font-weight: 800;
+}
+
+.gwangju-menu-btn:hover,
+.gwangju-menu-btn.is-active {
+  border-color: #0070c8;
+  color: #0070c8;
+  background: #f0f8ff;
+}
+
+.gwangju-menu-preview {
+  position: relative;
+  min-width: 0;
+  min-height: 34rem;
+  border: 1px solid #d8deea;
+  border-radius: 0.375rem;
+  background: #fff;
+  overflow: hidden;
+}
+
+.gwangju-preview-toolbar {
+  position: absolute;
+  top: 0.75rem;
+  left: 0.75rem;
+  z-index: 5;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.gwangju-markup-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 4.5rem;
+  height: 4.5rem;
+  padding: 0;
+  border: 0;
+  border-radius: 50%;
+  background: #0070c8;
+  color: #fff;
+  font-family: inherit;
+  font-size: 0.82rem;
+  font-weight: 800;
+  line-height: 1.2;
+  cursor: pointer;
+  text-align: center;
+  white-space: normal;
+  word-break: keep-all;
+  box-shadow: 0 0 0 0 rgba(0, 112, 200, 0.45), 0 0.4rem 1rem rgba(0, 112, 200, 0.22);
+  animation: gwangjuMarkupPulse 1.6s infinite;
+}
+
+.gwangju-markup-btn:hover:not(:disabled) {
+  background: #005aa3;
+}
+
+.gwangju-markup-btn:disabled {
+  opacity: 0.55;
+  cursor: not-allowed;
+  animation: none;
+}
+
+@keyframes gwangjuMarkupPulse {
+  0% {
+    box-shadow: 0 0 0 0 rgba(0, 112, 200, 0.5), 0 0.4rem 1rem rgba(0, 112, 200, 0.22);
+  }
+  70% {
+    box-shadow: 0 0 0 1rem rgba(0, 112, 200, 0), 0 0.4rem 1rem rgba(0, 112, 200, 0.22);
+  }
+  100% {
+    box-shadow: 0 0 0 0 rgba(0, 112, 200, 0), 0 0.4rem 1rem rgba(0, 112, 200, 0.22);
+  }
+}
+
+.gwangju-markup-source-panel {
+  position: absolute;
+  top: 0;
+  left: 0;
+  z-index: 6;
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  width: min(34rem, 70%);
+  height: 100%;
+  padding: 1rem;
+  border-right: 1px solid #d8deea;
+  background: #fff;
+  box-shadow: 0.55rem 0 1.5rem rgba(26, 42, 74, 0.12);
+  transform: translateX(-105%);
+  transition: transform 0.22s ease, opacity 0.18s ease, visibility 0.18s ease;
+}
+
+.gwangju-markup-source-panel.is-open {
+  transform: translateX(0);
+}
+
+.gwangju-convert-pulse-btn {
+  position: absolute;
+  top: 50%;
+  right: -2rem;
+  z-index: 7;
+  display: none;
+  align-items: center;
+  justify-content: center;
+  width: 4rem;
+  height: 4rem;
+  border: 0;
+  border-radius: 50%;
+  background: #d23d3d;
+  color: #fff;
+  font-family: inherit;
+  font-size: 0.875rem;
+  font-weight: 800;
+  cursor: pointer;
+  box-shadow: 0 0 0 0 rgba(210, 61, 61, 0.45);
+  transform: translateY(-50%);
+  animation: gwangjuConvertPulse 1.6s infinite;
+}
+
+.gwangju-markup-source-panel.is-open .gwangju-convert-pulse-btn {
+  display: inline-flex;
+}
+
+.gwangju-markup-source-panel.has-convert-panel .gwangju-convert-pulse-btn {
+  display: none;
+}
+
+.gwangju-convert-pulse-btn:hover:not(:disabled) {
+  background: #b82f2f;
+}
+
+.gwangju-convert-pulse-btn:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+  animation: none;
+}
+
+@keyframes gwangjuConvertPulse {
+  0% {
+    box-shadow: 0 0 0 0 rgba(210, 61, 61, 0.5);
+  }
+  70% {
+    box-shadow: 0 0 0 1rem rgba(210, 61, 61, 0);
+  }
+  100% {
+    box-shadow: 0 0 0 0 rgba(210, 61, 61, 0);
+  }
+}
+
+.gwangju-convert-panel {
+  position: absolute;
+  top: 0;
+  left: min(34rem, 70%);
+  z-index: 5;
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  right: 0;
+  width: auto;
+  height: 100%;
+  padding: 1rem;
+  border-right: 1px solid #d8deea;
+  background: #fff;
+  box-shadow: 0.55rem 0 1.5rem rgba(26, 42, 74, 0.1);
+  transform: translateX(-105%);
+  visibility: hidden;
+  opacity: 0;
+  pointer-events: none;
+  transition: transform 0.22s ease;
+}
+
+.gwangju-convert-panel.is-open {
+  transform: translateX(0);
+  visibility: visible;
+  opacity: 1;
+  pointer-events: auto;
+}
+
+.gwangju-convert-panel-head {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 1rem;
+}
+
+.gwangju-convert-head-actions {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  flex: 0 0 auto;
+}
+
+.gwangju-convert-preview-btn {
+  min-height: 2rem;
+  padding: 0 0.75rem;
+  border: 1px solid #333;
+  border-radius: 0.375rem;
+  background: #333;
+  color: #fff;
+  font-family: inherit;
+  font-size: 0.8125rem;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.gwangju-convert-preview-btn:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+}
+
+.gwangju-convert-panel-head h3 {
+  margin: 0;
+  color: #1a2a4a;
+  font-size: 1rem;
+  font-weight: 800;
+}
+
+.gwangju-convert-panel-head p {
+  margin: 0.2rem 0 0;
+  color: #d23d3d;
+  font-size: 0.8125rem;
+  font-weight: 700;
+}
+
+.gwangju-convert-textarea {
+  flex: 1;
+  min-height: 0;
+  width: 100%;
+  padding: 0.75rem;
+  border: 1px solid #d8deea;
+  border-radius: 0.375rem;
+  background: #fbfcff;
+  color: #1a2a4a;
+  font-family: Consolas, "Courier New", monospace;
+  font-size: 0.8125rem;
+  line-height: 1.55;
+  resize: none;
+  outline: none;
+}
+
+.gwangju-convert-panel-footer {
+  display: flex;
+  justify-content: flex-end;
+  gap: 0.5rem;
+}
+
+.gwangju-convert-save-btn {
+  min-width: 6.5rem;
+  min-height: 2.25rem;
+  padding: 0 1rem;
+  border: 1px solid #0070c8;
+  border-radius: 0.375rem;
+  background: #0070c8;
+  color: #fff;
+  font-family: inherit;
+  font-size: 0.875rem;
+  font-weight: 800;
+  cursor: pointer;
+}
+
+.gwangju-convert-save-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.gwangju-convert-preview-dim {
+  position: fixed;
+  inset: 0;
+  z-index: 10020;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 2rem;
+  background: rgba(10, 16, 28, 0.55);
+}
+
+.gwangju-convert-preview-modal {
+  display: flex;
+  flex-direction: column;
+  width: min(1400px, calc(100vw - 4rem));
+  height: 80vh;
+  min-height: 0;
+  border-radius: 0.5rem;
+  background: #fff;
+  box-shadow: 0 1.25rem 3rem rgba(0, 0, 0, 0.26);
+  overflow: hidden;
+}
+
+.gwangju-convert-preview-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  padding: 0.75rem 1rem;
+  border-bottom: 1px solid #d8deea;
+}
+
+.gwangju-convert-preview-head h3 {
+  margin: 0;
+  color: #1a2a4a;
+  font-size: 1rem;
+  font-weight: 800;
+}
+
+.gwangju-convert-preview-frame {
+  flex: 1;
+  width: 100%;
+  min-height: 0;
+  border: 0;
+  background: #fff;
+}
+
+.gwangju-markup-source-head {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 1rem;
+}
+
+.gwangju-markup-source-head h3 {
+  margin: 0;
+  color: #1a2a4a;
+  font-size: 1rem;
+  font-weight: 800;
+}
+
+.gwangju-markup-source-head p {
+  margin: 0.2rem 0 0;
+  color: #0070c8;
+  font-size: 0.8125rem;
+  font-weight: 700;
+}
+
+.gwangju-markup-source-close {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex: 0 0 auto;
+  width: 2rem;
+  height: 2rem;
+  border: 1px solid #d23d3d;
+  border-radius: 0.375rem;
+  background: #fff;
+  color: #d23d3d;
+  font-family: inherit;
+  font-size: 1.2rem;
+  font-weight: 300;
+  line-height: 1;
+  cursor: pointer;
+}
+
+.gwangju-markup-source-url {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  padding: 0.5rem 0.625rem;
+  border-radius: 0.25rem;
+  background: #f4f6fa;
+  color: #5f6b7d;
+  font-size: 0.78rem;
+}
+
+.gwangju-markup-source-status,
+.gwangju-markup-source-error {
+  margin: 0;
+  font-size: 0.875rem;
+}
+
+.gwangju-markup-source-status {
+  color: #5f6b7d;
+}
+
+.gwangju-markup-source-error {
+  color: #d23d3d;
+}
+
+.gwangju-markup-source-textarea {
+  flex: 1;
+  min-height: 0;
+  width: 100%;
+  padding: 0.75rem;
+  border: 1px solid #d8deea;
+  border-radius: 0.375rem;
+  background: #fbfcff;
+  color: #1a2a4a;
+  font-family: Consolas, "Courier New", monospace;
+  font-size: 0.8125rem;
+  line-height: 1.55;
+  resize: none;
+  outline: none;
+}
+
+.gwangju-work-layer .gwangju-menu-preview,
+.gwangju-work-layer .gwangju-menu-list {
+  max-height: none;
+  min-height: 0;
+  height: 100%;
+}
+
+.gwangju-menu-iframe {
+  display: block;
+  width: 100%;
+  height: 34rem;
+  border: 0;
+}
+
+.gwangju-work-layer .gwangju-menu-iframe {
+  height: 100%;
+}
+
 .page-how-to {
   position: relative;
   padding: 1.75rem;
