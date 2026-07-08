@@ -154,8 +154,11 @@ function findFlatContentRoot(el) {
       if (n.nodeType === 3 && !n.textContent.trim()) return false;
       return true;
     });
-    if (meaningfulChildren.length === 1 && meaningfulChildren[0].nodeType === 1) {
-      current = meaningfulChildren[0];
+    const onlyChild = meaningfulChildren.length === 1 ? meaningfulChildren[0] : null;
+    // table/tbody/tr는 그 자체로 "감싸는 wrapper div"가 아니라 표 구조의 일부라서, 안으로
+    // 더 파고들면 cleanTableHtml에 낱개 <tr>만 남겨 표 전체가 깨진다. table을 만나면 멈춘다.
+    if (onlyChild?.nodeType === 1 && onlyChild.tagName !== 'TABLE') {
+      current = onlyChild;
       continue;
     }
     return current;
