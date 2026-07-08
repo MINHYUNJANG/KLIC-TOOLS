@@ -129,6 +129,7 @@ export default async function handler(req, res) {
     }
 
     const $source = target.$el.clone();
+    $source.find('#subTop').remove();
     absolutizeSource($, $source, finalUrl);
 
     res.json({

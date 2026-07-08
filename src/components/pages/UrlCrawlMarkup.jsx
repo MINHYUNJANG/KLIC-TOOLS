@@ -162,6 +162,76 @@ function findFlatContentRoot(el) {
   }
 }
 
+// 크롤링 결과에 섞여오는 탭 메뉴(예: class="tapMenu"로 감싼 class="TabM_1" li,
+// 또는 id="tabNavi")를 guide.html의 표준 탭 마크업(.tab-st depth01)으로 바꾼다.
+// 래퍼 클래스명이 사이트마다 "tapMenu"처럼 살짝 다르게 오타나 있기도 해서, li 클래스에
+// "tab"이 들어있는지까지 함께 본다.
+function isTabLike(el) {
+  if (!el || el.nodeType !== 1) return false;
+  const cls = el.className || '';
+  const id = el.id || '';
+  return /tab/i.test(cls) || /tab/i.test(id);
+}
+
+// cleanTableHtml에 넘기면 새로 만든 tab-st div를 "빈 div"로 오인해 <p>로 풀어버리거나
+// 안의 ul을 bu-st 리스트로 재분류해버릴 수 있어, 탭 변환은 cleanTableHtml 실행 전에 하고
+// 결과물은 텍스트 플레이스홀더로 감싸 무사히 통과시킨 뒤 실제 탭 마크업으로 되돌린다.
+function convertTabMenus(container) {
+  const lists = Array.from(container.querySelectorAll('ul, ol'));
+  const blocks = [];
+
+  lists.forEach((list, i) => {
+    const items = Array.from(list.children).filter(c => c.tagName === 'LI');
+    const looksLikeTabs = isTabLike(list) ||
+      (items.length > 1 && items.every(li => isTabLike(li)));
+    if (!looksLikeTabs) return;
+
+    const tabItems = items.map(li => {
+      const a = li.querySelector('a');
+      const active = /(^|\s)on(\s|$)/.test(li.className || '') ||
+        /현재\s*페이지/.test((a && a.getAttribute('title')) || '');
+      return {
+        href: a ? (a.getAttribute('href') || '') : '',
+        label: (a ? a.textContent : li.textContent).replace(/\s+/g, ' ').trim(),
+        active,
+      };
+    }).filter(t => t.label);
+    if (!tabItems.length) return;
+
+    const placeholder = `@@GWANGJU_TAB_${i}@@`;
+    const p = document.createElement('p');
+    p.textContent = placeholder;
+
+    // ul 하나만 감싸고 있는 래퍼 div(예: .tapMenu)가 있으면 그 wrapper까지 통째로 교체한다.
+    const parent = list.parentElement;
+    const disposableWrapper = parent && parent !== container && parent.tagName === 'DIV' &&
+      parent.children.length === 1;
+    (disposableWrapper ? parent : list).replaceWith(p);
+
+    blocks.push({ placeholder, items: tabItems });
+  });
+
+  return blocks;
+}
+
+function renderTabBlock({ items }) {
+  const li = items.map(t => {
+    const cls = t.active ? ' class="on"' : '';
+    const href = t.href ? ` href="${t.href}"` : '';
+    return `<li${cls}><a${href}>${t.label}</a></li>`;
+  }).join('');
+  return `<div class="tab-st depth01"><ul>${li}</ul></div>`;
+}
+
+// cleanTableHtml은 h3/h4/h5만 tit-st(section/contents/unit)로 정규화해준다. "가) 인성교육
+// 내용"처럼 순차 마커가 붙은 h6("나)", "다)" ...로 이어지는 하위 소제목)나 드물게 쓰이는
+// h1/h2는 그 대상이 아니라 원래 클래스가 그대로 남는다. con_com.css 타이틀 위계상 h6은
+// tit-st item에 해당하므로 미리 정규화해둔다(마커 텍스트 자체는 순서를 보여주므로 유지).
+function normalizeExtraHeadings(container) {
+  Array.from(container.querySelectorAll('h1, h2')).forEach(h => { h.className = 'tit-st section'; });
+  Array.from(container.querySelectorAll('h6')).forEach(h => { h.className = 'tit-st item'; });
+}
+
 function applyGwangjuBasicMarkup(html) {
   if (!html || typeof window === 'undefined') return html;
   const flattened = flattenMarkedListItems(html);
@@ -170,7 +240,13 @@ function applyGwangjuBasicMarkup(html) {
   if (!wrapper) return cleanTableHtml(flattened, GWANGJU_BASIC_CONFIG);
 
   const target = findFlatContentRoot(wrapper);
-  target.innerHTML = cleanTableHtml(target.innerHTML, GWANGJU_BASIC_CONFIG);
+  normalizeExtraHeadings(target);
+  const tabBlocks = convertTabMenus(target);
+  let cleaned = cleanTableHtml(target.innerHTML, GWANGJU_BASIC_CONFIG);
+  tabBlocks.forEach(block => {
+    cleaned = cleaned.replace(`<p>${block.placeholder}</p>`, renderTabBlock(block));
+  });
+  target.innerHTML = cleaned;
   return doc.body.innerHTML;
 }
 
@@ -1283,6 +1359,7 @@ export default function UrlCrawlMarkup() {
   // ─── 소스 직접 입력 모드 ────────────────────────────────────
   const [projectType, setProjectType] = useState('gwangju'); // 'gwangju' | 'chungnam'
   const [gwangjuUrlItems, setGwangjuUrlItems] = useState([{ id: 1, value: '' }]);
+  const [gwangjuCrawlProgress, setGwangjuCrawlProgress] = useState({ done: 0, total: 0 });
   const [nextGwangjuUrlId, setNextGwangjuUrlId] = useState(2);
   const [activeGwangjuUrlId, setActiveGwangjuUrlId] = useState(1);
   const [activeGwangjuMenuBySite, setActiveGwangjuMenuBySite] = useState({});
@@ -1536,7 +1613,9 @@ export default function UrlCrawlMarkup() {
     const converted = template
       ? applyMarkupToTemplate(raw, template.code, template.id)
       : applyGwangjuBasicMarkup(raw);
-    setGwangjuConvertedSource(formatHtml(stripScriptTags(converted)));
+    const formatted = formatHtml(stripScriptTags(converted));
+    setGwangjuConvertedSource(formatted);
+    persistGwangjuConvertedSource(formatted);
     setGwangjuConvertMenuOpen(false);
     setGwangjuConvertSubmenuCategory(null);
     setGwangjuConvertPanelOpen(true);
@@ -1576,19 +1655,29 @@ ${bodyHtml || ''}
 </html>`;
   }
 
-  function saveGwangjuConvertedSource() {
+  function persistGwangjuConvertedSource(source) {
     if (!activeGwangjuMenuUrl) return;
     setGwangjuSavedMarkupByUrl(prev => ({
       ...prev,
       [activeGwangjuMenuUrl]: {
-        source: gwangjuConvertedSource,
+        source,
         savedAt: new Date().toISOString(),
       },
     }));
+  }
+
+  function saveGwangjuConvertedSource() {
+    persistGwangjuConvertedSource(gwangjuConvertedSource);
     setGwangjuConvertPanelOpen(false);
     setGwangjuMarkupPanelOpen(false);
     setGwangjuConvertPreviewOpen(false);
   }
+
+  const isGwangjuConvertedSaved = Boolean(
+    activeGwangjuMenuUrl &&
+    gwangjuConvertedSource &&
+    gwangjuSavedMarkupByUrl[activeGwangjuMenuUrl]?.source === gwangjuConvertedSource
+  );
 
   async function crawlGwangjuHeaderMenus(id) {
     setActiveGwangjuUrlId(id);
@@ -1805,6 +1894,7 @@ ${bodyHtml || ''}
       .slice(0, GWANGJU_MAX_URLS)
       .map(item => ({ ...item, value: normalizeGwangjuUrl(item.value) }));
     setShowGwangjuInlineResults(true);
+    setGwangjuCrawlProgress({ done: 0, total: crawlTargets.length });
 
     setGwangjuUrlItems(prev => prev.map(entry => (
       crawlTargets.some(target => target.id === entry.id)
@@ -1813,10 +1903,10 @@ ${bodyHtml || ''}
     )));
 
     const crawledItems = await Promise.all(crawlTargets.map(async item => {
-      if (!item.value || !isValidUrl(item.value)) {
-        return { ...item, loading: false, error: '올바른 URL 형식이 아닙니다.', menus: [] };
-      }
       try {
+        if (!item.value || !isValidUrl(item.value)) {
+          return { ...item, loading: false, error: '올바른 URL 형식이 아닙니다.', menus: [] };
+        }
         const res = await fetch('/api/gwangju-header-menu', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
@@ -1833,6 +1923,8 @@ ${bodyHtml || ''}
         };
       } catch (error) {
         return { ...item, loading: false, error: error.message, menus: [] };
+      } finally {
+        setGwangjuCrawlProgress(prev => ({ ...prev, done: prev.done + 1 }));
       }
     }));
 
@@ -2896,6 +2988,26 @@ ${bodyHtml || ''}
           </div>
         </div>
       )}
+      {isGwangjuCrawling && projectType === 'gwangju' && (
+        <div className="url-extract-overlay">
+          <div className="url-extract-overlay-card">
+            <p className="url-extract-overlay-label">
+              사이트 크롤링 중 ({gwangjuCrawlProgress.done} / {gwangjuCrawlProgress.total})
+            </p>
+            <div className="url-extract-progress-track">
+              <div
+                className="url-extract-progress-fill"
+                style={{
+                  width: `${Math.round(gwangjuCrawlProgress.done / Math.max(gwangjuCrawlProgress.total, 1) * 100)}%`,
+                }}
+              />
+            </div>
+            <p className="url-extract-overlay-pct">
+              {Math.round(gwangjuCrawlProgress.done / Math.max(gwangjuCrawlProgress.total, 1) * 100)}%
+            </p>
+          </div>
+        </div>
+      )}
       <div className="crawl-page-inner">
         <div className="crawl-title-row">
           <h2 className="crawl-title">크롤링 마크업</h2>
@@ -3225,11 +3337,11 @@ ${bodyHtml || ''}
                           <div className="gwangju-convert-panel-footer">
                             <button
                               type="button"
-                              className="gwangju-convert-save-btn"
+                              className={`gwangju-convert-save-btn ${isGwangjuConvertedSaved ? 'is-saved' : ''}`}
                               onClick={saveGwangjuConvertedSource}
                               disabled={!activeGwangjuMenuUrl}
                             >
-                              저장
+                              {isGwangjuConvertedSaved ? '✓ 저장됨' : '저장'}
                             </button>
                           </div>
                         </div>
@@ -3274,12 +3386,17 @@ ${bodyHtml || ''}
                           </div>
                         )}
                         {activeGwangjuMenuUrl ? (
-                          <iframe
-                            className="gwangju-menu-iframe"
-                            src={activeGwangjuMenuUrl}
-                            sandbox="allow-same-origin allow-scripts allow-forms allow-popups allow-downloads"
-                            title={activeGwangjuMenuLabel || '메뉴 미리보기'}
-                          />
+                          <div className="gwangju-menu-iframe-wrap">
+                            <div className="gwangju-menu-iframe-bar">
+                              {(activeGwangjuUrlItem?.siteName || getGwangjuTabLabel(activeGwangjuUrlItem, 0))} - {activeGwangjuMenuUrl}
+                            </div>
+                            <iframe
+                              className="gwangju-menu-iframe"
+                              src={activeGwangjuMenuUrl}
+                              sandbox="allow-same-origin allow-scripts allow-forms allow-popups allow-downloads"
+                              title={activeGwangjuMenuLabel || '메뉴 미리보기'}
+                            />
+                          </div>
                         ) : (
                           <p className="gwangju-url-status">미리보기할 메뉴 URL이 없습니다.</p>
                         )}

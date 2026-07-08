@@ -60,6 +60,19 @@ function isExcludedMenuLink($, el, text, href, url) {
   // 급식/영양 소식, 배너모음처럼 실제 페이지 콘텐츠가 아니라 이미지·첨부 위주인 메뉴는 제외.
   if (/(급식|영양|배너모음|banner)/i.test(`${text} ${href}`.toLowerCase())) return true;
 
+  // 연간학사일정은 달력형 위젯이라 마크업 변환 대상이 아니다.
+  if (/연간\s*학사\s*일정|학사\s*일정/i.test(text)) return true;
+
+  return false;
+}
+
+// 실제 페이지 내용이 로그인 폼이거나 로그인 페이지로 리다이렉트된 경우, 그 메뉴는
+// 마크업 변환 대상이 될 수 없으므로 크롤링에서 제외한다.
+function isLoginPage($, finalUrl) {
+  if (/login|signin|member\/login|memberLogin/i.test(finalUrl)) return true;
+  if ($('input[type="password"]').length > 0) return true;
+  const bodyText = normalizeText($('body').text()).slice(0, 800);
+  if (/아이디.{0,20}비밀번호|비밀번호.{0,20}아이디|로그인\s*(이|을)\s*(필요|해주세요)/.test(bodyText)) return true;
   return false;
 }
 
@@ -153,23 +166,34 @@ function extractHeaderMenus(html, pageUrl, siteHostname) {
 }
 
 // 메뉴 하나의 실제 페이지 안에 "규정/명단/게시판"처럼 sid=로 서로 연결된 탭이 있는 경우가
-// 있다. 탭 컨테이너 id는 사이트마다 다를 수 있어, id 대신 "다른 탭 링크의 sid 값이 현재
-// 페이지의 id와 일치"하는 패턴으로 범용적으로 찾는다. 그중 게시판 성격의 탭은 제외한다.
-function extractSiblingTabs(html, pageUrl, siteHostname) {
-  let currentId;
-  try { currentId = new URL(pageUrl).searchParams.get('id'); } catch { return []; }
-  if (!currentId) return [];
+// 있다. 사이트마다 URL 파라미터 방식이 달라서(id=35&sid=35 처럼 sid를 쓰는 곳도 있고,
+// page_code=education_12_05 / education_12_04 처럼 접두사만 공유하는 곳도 있다) URL
+// 패턴으로 판별하지 않고, 링크(또는 그 조상)의 class/id에 "tab"이 들어있는지로 범용적으로
+// 탭 목록을 찾는다. 그중 게시판 성격의 탭과 현재 페이지 자기 자신은 제외한다.
+function isInsideTabContainer($, el) {
+  let node = el;
+  for (let depth = 0; node && depth < 6; depth++) {
+    const cls = ($(node).attr && $(node).attr('class')) || '';
+    const id = ($(node).attr && $(node).attr('id')) || '';
+    if (/tab/i.test(cls) || /tab/i.test(id)) return true;
+    node = node.parent;
+  }
+  return false;
+}
 
+function extractSiblingTabs(html, pageUrl, siteHostname) {
   const $ = cheerio.load(html);
   const seen = new Set();
   const tabs = [];
 
   $('a[href]').each((_, el) => {
+    if (!isInsideTabContainer($, el)) return;
+
     const href = normalizeText($(el).attr('href'));
     if (!href || href === '#' || href.startsWith('javascript:')) return;
     let url;
     try { url = new URL(href, pageUrl); } catch { return; }
-    if (url.searchParams.get('sid') !== currentId) return;
+    if (url.href === pageUrl) return; // 현재 탭(자기 자신)
     if (isDifferentDomain(url.href, siteHostname)) return;
 
     const text = normalizeText($(el).text() || $(el).attr('title'));
@@ -201,22 +225,25 @@ async function mapWithConcurrency(items, limit, mapper) {
 // 메뉴마다 실제 페이지를 방문해 형제 탭을 찾아 게시판이 아닌 탭만 원래 메뉴 바로 뒤에
 // 한 단계 깊은 depth로 끼워 넣는다. 사이트당 메뉴가 많을 수 있어 동시 요청 수를 제한한다.
 async function expandMenusWithTabs(menus, siteHostname) {
-  const tabsByIndex = await mapWithConcurrency(menus, 5, async menu => {
-    if (!menu.url) return [];
+  const infoByIndex = await mapWithConcurrency(menus, 5, async menu => {
+    if (!menu.url) return { tabs: [], isLogin: false };
     try {
       const { html, finalUrl } = await fetchHtml(menu.url);
+      const $ = cheerio.load(html);
+      if (isLoginPage($, finalUrl)) return { tabs: [], isLogin: true };
       const tabs = extractSiblingTabs(html, finalUrl, siteHostname);
-      return tabs.filter(tab => tab.url !== menu.url);
+      return { tabs: tabs.filter(tab => tab.url !== menu.url), isLogin: false };
     } catch {
-      return [];
+      return { tabs: [], isLogin: false };
     }
   });
 
   const seenUrls = new Set(menus.map(m => m.url));
   const expanded = [];
   menus.forEach((menu, idx) => {
+    if (infoByIndex[idx].isLogin) return; // 로그인이 필요한 메뉴는 제외
     expanded.push(menu);
-    tabsByIndex[idx].forEach(tab => {
+    infoByIndex[idx].tabs.forEach(tab => {
       if (seenUrls.has(tab.url)) return;
       seenUrls.add(tab.url);
       expanded.push({ label: tab.label, url: tab.url, depth: menu.depth + 1 });
