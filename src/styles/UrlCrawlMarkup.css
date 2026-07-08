@@ -728,7 +728,9 @@
   background: #d23d3d;
   color: #fff;
   font-family: inherit;
-  font-size: 0.875rem;
+  font-size: 0.75rem;
+  line-height: 1.25;
+  text-align: center;
   font-weight: 800;
   cursor: pointer;
   box-shadow: 0 0 0 0 rgba(210, 61, 61, 0.45);
@@ -743,6 +745,53 @@
   opacity: 0.45;
   cursor: not-allowed;
   animation: none;
+}
+
+.gwangju-basic-pulse-btn {
+  position: absolute;
+  bottom: calc(100% + 0.75rem);
+  left: 50%;
+  transform: translateX(-50%);
+  flex: none;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 4rem;
+  height: 4rem;
+  border: 0;
+  border-radius: 50%;
+  background: #1a6fd6;
+  color: #fff;
+  font-family: inherit;
+  font-size: 0.75rem;
+  line-height: 1.25;
+  text-align: center;
+  font-weight: 800;
+  cursor: pointer;
+  box-shadow: 0 0 0 0 rgba(26, 111, 214, 0.5);
+  animation: gwangjuBasicPulse 1.6s infinite;
+}
+
+.gwangju-basic-pulse-btn:hover:not(:disabled) {
+  background: #1558ab;
+}
+
+.gwangju-basic-pulse-btn:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+  animation: none;
+}
+
+@keyframes gwangjuBasicPulse {
+  0% {
+    box-shadow: 0 0 0 0 rgba(26, 111, 214, 0.5);
+  }
+  70% {
+    box-shadow: 0 0 0 1rem rgba(26, 111, 214, 0);
+  }
+  100% {
+    box-shadow: 0 0 0 0 rgba(26, 111, 214, 0);
+  }
 }
 
 .gwangju-convert-menu {

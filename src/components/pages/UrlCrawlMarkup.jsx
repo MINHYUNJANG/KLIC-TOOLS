@@ -1616,7 +1616,6 @@ export default function UrlCrawlMarkup() {
   }
 
   const GWANGJU_CONVERT_CATEGORIES = [
-    { key: 'default', label: '기본', ready: true },
     { key: '인사말', label: '인사말', ready: true },
     { key: '연혁', label: '연혁', ready: true },
     { key: '상징', label: '상징', ready: true },
@@ -3217,18 +3216,27 @@ ${bodyHtml || ''}
                           <div className="gwangju-convert-trigger">
                             <button
                               type="button"
+                              className="gwangju-basic-pulse-btn"
+                              onClick={() => applyGwangjuConvertTemplate(null)}
+                              disabled={!gwangjuMarkupSource || gwangjuMarkupLoading}
+                              aria-label="기본 마크업 적용"
+                            >
+                              기본<br />마크업
+                            </button>
+                            <button
+                              type="button"
                               className="gwangju-convert-pulse-btn"
                               onClick={() => setGwangjuConvertMenuOpen(open => !open)}
                               disabled={!gwangjuMarkupSource || gwangjuMarkupLoading}
-                              aria-label="광주 소스로 변환"
+                              aria-label="디자인 마크업으로 변환"
                               aria-expanded={gwangjuConvertMenuOpen}
                             >
-                              변환
+                              디자인<br />마크업
                             </button>
                             {gwangjuConvertMenuOpen && (
                               <div className="gwangju-convert-menu" role="menu" aria-label="변환 템플릿 선택">
                                 {GWANGJU_CONVERT_CATEGORIES.map(cat => {
-                                  const variants = cat.key === 'default' ? [] : ALL_TEMPLATES.filter(t => t.category === cat.key);
+                                  const variants = ALL_TEMPLATES.filter(t => t.category === cat.key);
                                   const hasVariants = variants.length > 0;
                                   const submenuOpen = gwangjuConvertSubmenuCategory === cat.key;
                                   return (
