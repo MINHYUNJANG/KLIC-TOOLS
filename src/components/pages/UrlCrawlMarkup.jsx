@@ -173,6 +173,22 @@ function isTabLike(el) {
   return /tab/i.test(cls) || /tab/i.test(id);
 }
 
+// class/id에 "tab"이 전혀 없어도(예: <li class="on"><p><a class="bu_link" href="...">)
+// href의 sid= 값을 공유하는 형제 링크들이면 사실상 같은 탭 그룹이다. 그중 하나는 현재
+// 탭이라 sid= 없이 자기 id만 가리키는 경우가 많으므로, sid 값 일치가 2개 이상이면 충분하다.
+function looksLikeSidTabGroup(items) {
+  if (items.length < 2) return false;
+  const hasActive = items.some(li => /(^|\s)on(\s|$)/.test(li.className || ''));
+  if (!hasActive) return false;
+  const sidValues = items
+    .map(li => {
+      const href = li.querySelector('a[href]')?.getAttribute('href') || '';
+      return href.match(/[?&]sid=([^&]+)/i)?.[1] || null;
+    })
+    .filter(Boolean);
+  return sidValues.length >= 2 && new Set(sidValues).size === 1;
+}
+
 // cleanTableHtml에 넘기면 새로 만든 tab-st div를 "빈 div"로 오인해 <p>로 풀어버리거나
 // 안의 ul을 bu-st 리스트로 재분류해버릴 수 있어, 탭 변환은 cleanTableHtml 실행 전에 하고
 // 결과물은 텍스트 플레이스홀더로 감싸 무사히 통과시킨 뒤 실제 탭 마크업으로 되돌린다.
@@ -183,7 +199,8 @@ function convertTabMenus(container) {
   lists.forEach((list, i) => {
     const items = Array.from(list.children).filter(c => c.tagName === 'LI');
     const looksLikeTabs = isTabLike(list) ||
-      (items.length > 1 && items.every(li => isTabLike(li)));
+      (items.length > 1 && items.every(li => isTabLike(li))) ||
+      looksLikeSidTabGroup(items);
     if (!looksLikeTabs) return;
 
     const tabItems = items.map(li => {
