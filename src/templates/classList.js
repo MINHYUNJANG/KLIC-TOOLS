@@ -6,15 +6,25 @@ function extractClassGroups(src) {
   const norm = s => (s || '').replace(/\s+/g, ' ').trim();
   const groups = [];
 
-  const boxes = Array.from(src.querySelectorAll('[class*="classBox"], [class*="class_box"], [class*="classbox"]'));
+  // "classBox"류 클래스명 외에도 id="class_grade"처럼 id에만 학년 박스 표시가 붙은
+  // 사이트가 있어 class/id 양쪽 다 확인한다.
+  const boxes = Array.from(src.querySelectorAll(
+    '[class*="classBox"], [class*="class_box"], [class*="classbox"], [class*="class_grade"], [class*="classGrade"], ' +
+    '[id*="classBox"], [id*="class_box"], [id*="classbox"], [id*="class_grade"], [id*="classGrade"]'
+  ));
   boxes.forEach(box => {
-    const gradeTitle = norm(box.querySelector('h1, h2, h3, h4, h5, h6')?.textContent) || '';
+    // 학년 제목이 <h*> 대신 <img alt="1학년">로만 표시되는 사이트도 있다.
+    const gradeTitle = norm(
+      box.querySelector('h1, h2, h3, h4, h5, h6')?.textContent ||
+      box.querySelector('img[alt]')?.getAttribute('alt')
+    ) || '';
     // leaf li(반 하나에 해당하는 행) 안의 첫 번째 링크만 사용한다. li 전체 텍스트를 쓰면
-    // "GO" 같은 버튼 텍스트까지 붙어버린다.
+    // "GO" 같은 버튼 텍스트까지 붙어버린다. "학습도움반"처럼 숫자 없이 "반"으로만 끝나는
+    // 학급명도 있어 숫자 유무는 요구하지 않는다.
     const classNames = Array.from(box.querySelectorAll('li'))
       .filter(li => !li.querySelector('li'))
       .map(li => norm((li.querySelector('a') || li).textContent))
-      .filter(text => text && /\d+\s*반|\d+반/.test(text) && !/^go$/i.test(text));
+      .filter(text => text && /반/.test(text) && !/^go$/i.test(text));
     const uniqueClassNames = [...new Set(classNames)];
     if (uniqueClassNames.length) groups.push({ grade: gradeTitle, classes: uniqueClassNames });
   });
