@@ -143,7 +143,7 @@ function extractHeaderMenus(html, pageUrl, siteHostname) {
 
     const href = normalizeText($(el).attr('href'));
     let url = '';
-    if (href && href !== '#' && !href.startsWith('javascript:')) {
+    if (href && !href.startsWith('#') && !href.startsWith('javascript:')) {
       try {
         url = new URL(href, pageUrl).href;
       } catch {}
@@ -190,9 +190,10 @@ function extractSiblingTabs(html, pageUrl, siteHostname) {
     if (!isInsideTabContainer($, el)) return;
 
     const href = normalizeText($(el).attr('href'));
-    if (!href || href === '#' || href.startsWith('javascript:')) return;
+    if (!href || href.startsWith('#') || href.startsWith('javascript:')) return;
     let url;
     try { url = new URL(href, pageUrl); } catch { return; }
+    url.hash = ''; // 페이지 내 바로가기 앵커(#chapter2 등)는 별도 탭이 아니라 같은 페이지다.
     if (url.href === pageUrl) return; // 현재 탭(자기 자신)
     if (isDifferentDomain(url.href, siteHostname)) return;
 
