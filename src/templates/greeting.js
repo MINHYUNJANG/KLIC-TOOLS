@@ -21,6 +21,25 @@ function findLeadBox(src) {
   return strongP || null;
 }
 
+// tyC-01 / tyC-02 공용: lead-txt는 <span>Welcome</span><h4>...</h4> 구조라
+// h4만 교체해 span 장식은 유지한다.
+function applyGreetingTyCMapping(sourceMarkup, templateCode) {
+  const { src, tpl } = parseMarkup(sourceMarkup, templateCode);
+  const srcBox = findLeadBox(src);
+  const lines = extractBoxLines(srcBox);
+  const tplLeadH4 = tpl.querySelector('.greeting.tyC .lead-txt h4');
+  if (tplLeadH4) {
+    const joined = lines.length > 0
+      ? lines.join('<br>')
+      : srcBox ? (srcBox.tagName === 'P' ? srcBox.innerHTML.trim() : srcBox.textContent.trim()) : '';
+    if (joined) tplLeadH4.innerHTML = joined;
+  }
+  const boxPs = srcBox ? new Set([srcBox, ...Array.from(srcBox.querySelectorAll('p, div'))]) : new Set();
+  mapBodyText(src, tpl, boxPs);
+  mapSign(src, tpl);
+  return tpl.body.innerHTML;
+}
+
 export default [
   {
     id: 'greeting-tyA',
@@ -125,61 +144,77 @@ export default [
 </div>`,
   },
   {
-    id: 'greeting-tyC',
+    id: 'greeting-tyC-01',
     category: '인사말',
-    label: '인사말 tyC',
-    desc: '장식 오브젝트 + 리드문구 + 사진형',
-    applyMapping(sourceMarkup, templateCode) {
-      const { src, tpl } = parseMarkup(sourceMarkup, templateCode);
-      const srcBox = findLeadBox(src);
-      const lines = extractBoxLines(srcBox);
-      const tplLeadC = tpl.querySelector('.greeting.tyC .lead-txt');
-      if (tplLeadC) {
-        tplLeadC.innerHTML = lines.length > 0
-          ? '\n' + lines.map(l => `<p>${l}</p>`).join('\n') + '\n'
-          : srcBox ? `\n<p>${srcBox.tagName === 'P' ? srcBox.innerHTML.trim() : srcBox.textContent.trim()}</p>\n` : '';
-      }
-      const tplGreetingC = tpl.querySelector('.greeting.tyC');
-      if (tplGreetingC && !src.querySelector('.greeting img')) {
-        tplGreetingC.querySelector('.img')?.remove();
-        tplGreetingC.classList.remove('ty-img');
-      }
-      const boxPs = srcBox ? new Set([srcBox, ...Array.from(srcBox.querySelectorAll('p, div'))]) : new Set();
-      mapBodyText(src, tpl, boxPs);
-      mapSign(src, tpl);
-      return tpl.body.innerHTML;
-    },
-    code: `<div class="greeting tyC ty-img"><!-- 이미지 없을 시 'ty-img' 제거 -->
+    label: '인사말 tyC (단일 섹션)',
+    desc: '사진 + 리드문구 + 본문 한 블록형',
+    applyMapping: applyGreetingTyCMapping,
+    code: `<div class="greeting tyC wideCnt">
   <div class="container">
     <div class="obj">
-      <p class="mask mask1"></p>
-      <p class="mask mask2"></p>
-      <p class="mask mask3"></p>
+      <img src="/common/images/sub_com/greeting_C_img.png" alt="기관장 홍길동 사진">
     </div>
 
     <div class="inner">
       <div class="lead-wrap">
         <!-- lead text -->
         <div class="lead-txt">
+          <span>Welcome</span>
           <h4>안녕하십니까 ? <br><strong>○○기관장 홍길동</strong>입니다.</h4>
-          <p>○○기관 홈페이지를 방문해 주셔서 환영합니다.</p>
         </div>
-
-        <!-- 이미지 있을 시 -->
-        <div class="img"><p><img src="/common/images/sub_com/greeting_C_temp.png" alt="기관장 홍길동 사진"></p></div>
       </div>
       <div class="txt-wrap">
         <div class="txt">
           <p>안녕하십니까.<br>○○기관 홈페이지를 방문해 주셔서 감사합니다.</p>
           <p>우리 기관은 ···</p>
+          <p>앞으로도 변함없는 관심과 성원을 부탁드립니다.</p>
+          <p>감사합니다.</p>
+        </div>
 
-          <h4 class="tit-st contents">우리가 추구하는 자세</h4>
-          <ul class="bu-st1 list">
-            <li>항목 1</li>
-            <li>항목 2</li>
-            <li>항목 3</li>
-          </ul>
+        <div class="sign">○○기관장 <strong>홍 길 동</strong></div>
+      </div>
+    </div>
+  </div>
+</div>`,
+  },
+  {
+    id: 'greeting-tyC-02',
+    category: '인사말',
+    label: '인사말 tyC (두 섹션 + 핵심가치)',
+    desc: '사진 + 리드문구 섹션, 핵심가치 목록 + 본문 섹션의 2단 구성',
+    applyMapping: applyGreetingTyCMapping,
+    code: `<div class="greeting tyC ty-img wideCnt">
+  <div class="container">
+    <div class="obj">
+      <img src="/common/images/sub_com/greeting_C_img.png" alt="기관장 홍길동 사진">
+    </div>
 
+    <div class="inner">
+      <div class="lead-wrap">
+        <!-- lead text -->
+        <div class="lead-txt">
+          <span>Welcome</span>
+          <h4>안녕하십니까 ? <br><strong>○○기관장 홍길동</strong>입니다.</h4>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="container second">
+    <div class="obj">
+      <img src="/common/images/sub_com/greeting_C_img_02.png" alt="핵심 가치 이미지">
+    </div>
+    <div class="inner">
+      <span class="s-lead-txt">우리가 추구하는 자세</span>
+      <ul>
+        <li><strong>하나</strong> 항목 1</li>
+        <li><strong>하나</strong> 항목 2</li>
+        <li><strong>하나</strong> 항목 3</li>
+        <li><strong>하나</strong> 항목 4</li>
+      </ul>
+      <div class="txt-wrap">
+        <div class="txt">
+          <p>안녕하십니까.<br>○○기관 홈페이지를 방문해 주셔서 감사합니다.</p>
+          <p>우리 기관은 ···</p>
           <p>앞으로도 변함없는 관심과 성원을 부탁드립니다.</p>
           <p>감사합니다.</p>
         </div>

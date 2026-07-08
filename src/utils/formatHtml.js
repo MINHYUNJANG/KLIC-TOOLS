@@ -15,9 +15,14 @@ export function formatHtml(html) {
     .map(line => {
       line = line.trim();
       if (!line) return '';
-      if (line.startsWith('</')) indent = Math.max(0, indent - 1);
-      const result = '  '.repeat(indent) + line;
-      if (!line.startsWith('</') && !line.endsWith('/>') && !VOID_TAGS.test(line) && !line.includes('</')) indent++;
+      // '<'로 시작하지 않는 줄(순수 텍스트, 혹은 원본에 있던 개행으로 쪼개진 텍스트+<br> 등)은
+      // 태그가 아니므로 들여쓰기 단계를 바꾸지 않는다.
+      const isTag = line.startsWith('<');
+      const isClosingTag = isTag && line.startsWith('</');
+      if (isClosingTag) indent = Math.max(0, indent - 1);
+      const result = '    '.repeat(indent) + line;
+      const opensNewLevel = isTag && !isClosingTag && !line.endsWith('/>') && !VOID_TAGS.test(line) && !line.includes('</');
+      if (opensNewLevel) indent++;
       return result;
     })
     .filter(Boolean)

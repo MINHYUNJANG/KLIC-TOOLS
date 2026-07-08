@@ -1,11 +1,178 @@
 import { useState, useRef, useEffect, useCallback } from 'react';
 import { formatHtml } from '../../utils/formatHtml';
 import { isImageOnlyContent, hasContentImage, getContentImageUrls } from '../../utils/ocrSymbol';
+import { cleanTableHtml } from '../../utils/tableTransform/cleanTableHtml';
+import { MARKER_TYPES } from '../../utils/tableTransform/constants';
 import greeting from '../../templates/greeting';
 import history from '../../templates/history';
 import symbol from '../../templates/symbol';
+import principal from '../../templates/principal';
+import location from '../../templates/location';
+import classList from '../../templates/classList';
 import useToast from '../TableEditor/hooks/useToast';
 import JSZip from 'jszip';
+
+// 운영 사이트에서는 common.js/sub_com.js 등 스크립트를 레이아웃에서 공통으로 불러오므로,
+// 페이지별 저장 마크업에는 크롤링 원본에 섞여있던 <script>가 남아있으면 안 된다.
+function stripScriptTags(html) {
+  if (!html || typeof window === 'undefined') return html;
+  const doc = new DOMParser().parseFromString(html, 'text/html');
+  doc.querySelectorAll('script').forEach(el => el.remove());
+  return doc.body.innerHTML;
+}
+
+// bullet을 제외한 모든 마커(①②③, 1. 2., 가. 나., Ⅰ.Ⅱ. 등)는 순서가 있는 목록이므로
+// order-st + <span class="mrk"> 형태로 마크업한다 (con_com.css guide 기준).
+const GWANGJU_LIST_OL_TYPES = Object.keys(MARKER_TYPES).filter(type => type !== 'bullet');
+
+// 광주 "기본" 변환: con_com.css 클래스 체계(표 tbl-st / 리스트 bu-st·order-st / 제목 tit-st)로
+// 표·리스트·제목을 일괄 정규화한다. 표/리스트 혼재 순서 처리는 이미 검증된
+// 테이블변환(cleanTableHtml) 로직을 그대로 재사용한다.
+const GWANGJU_BASIC_CONFIG = {
+  wrapperClassName: 'tbl-st',
+  tableUlClassName: 'bu-st list',
+  tableOlType: GWANGJU_LIST_OL_TYPES,
+  tableKeepMarker: false,
+  tableType: 'default',
+  isWrapDiv: true,
+  isVerticalHeader: false,
+  headerRows: 1,
+  headerCols: 1,
+  isColorMode: false,
+  isColorClassMode: true,
+  tableListStartFrom2: false,
+  isMergeTables: false,
+  keepMarker: false,
+  ulClassName: 'bu-st list',
+  olType: GWANGJU_LIST_OL_TYPES,
+  listStartFrom2: false,
+  tit1: null,
+  tit2: null,
+  tit3: null,
+  tit1Class: 'tit-st section',
+  tit2Class: 'tit-st contents',
+  tit3Class: 'tit-st unit',
+};
+
+// <li> 안에 "①", "1." 같은 마커가 텍스트로 박혀 있으면 cleanTableHtml의 마커 인식
+// 로직이 이를 다시 order-st 목록으로 재구성할 수 있도록, 마커가 있는 항목만 골라
+// 평문 <p>로 풀어둔다. 마커 없는 순수 리스트는 태그 그대로 둔다
+// (cleanTableHtml이 기존 ul/ol 구조를 보존한 채 클래스만 새로 매겨준다).
+function hasExplicitMarker(text) {
+  const trimmed = (text || '').trim();
+  return Object.entries(MARKER_TYPES).some(([type, regex]) => type !== 'bullet' && regex.test(trimmed));
+}
+
+// dl은 표변환 로직이 지원하는 출력 태그 목록(ALLOWED_TAGS)에 없어서 그대로 두면 태그만
+// 벗겨지고 텍스트가 줄바꿈도 없이 뭉쳐버린다. dl의 dt/dd는 명시적 번호가 없어도 항목이
+// 여러 개 나열된 목록이므로, dt(+뒤따르는 dd)를 한 항목으로 묶어 <p>로 풀어내되, 그
+// 항목에 마커가 전혀 없으면 "N. "을 텍스트로 주입해 cleanTableHtml의 마커 인식 로직이
+// (주변의 다른 마커 항목과 함께) 올바른 중첩까지 포함해 order-st 리스트로 재구성하게
+// 맡긴다 — 완성된 <ol>을 미리 만들면 그 지점에서 바깥 리스트의 중첩 흐름이 끊긴다.
+function flattenDefinitionLists(container) {
+  Array.from(container.querySelectorAll('dl')).forEach(dl => {
+    if (dl.closest('table')) return;
+    const children = Array.from(dl.children).filter(c => c.tagName === 'DT' || c.tagName === 'DD');
+    if (!children.length) { dl.remove(); return; }
+
+    // dt 하나 + 그 바로 다음 dd 하나만 한 항목으로 묶는다. dt 없이 dd만 연달아 나오는
+    // 경우(원본에 이미 "1. 2. 3." 처럼 각자 번호가 박혀있는 경우가 많음)는 각 dd를 별개
+    // 항목으로 취급해야 하므로, dt의 "첫 dd"가 아니면 항상 새 항목을 시작한다.
+    const items = [];
+    let current = null;
+    children.forEach(child => {
+      if (child.tagName === 'DT') {
+        current = { dt: child, dds: [] };
+        items.push(current);
+      } else if (current && current.dt && current.dds.length === 0) {
+        current.dds.push(child);
+      } else {
+        current = { dt: null, dds: [child] };
+        items.push(current);
+      }
+    });
+
+    const frag = document.createDocumentFragment();
+    items.forEach((item, idx) => {
+      const p = document.createElement('p');
+      if (item.dt) {
+        const strong = document.createElement('strong');
+        while (item.dt.firstChild) strong.appendChild(item.dt.firstChild);
+        p.appendChild(strong);
+      }
+      item.dds.forEach(dd => {
+        if (p.childNodes.length > 0) p.appendChild(document.createElement('br'));
+        while (dd.firstChild) p.appendChild(dd.firstChild);
+      });
+      if (!hasExplicitMarker(p.textContent)) {
+        p.insertBefore(document.createTextNode(`${idx + 1}. `), p.firstChild);
+      }
+      frag.appendChild(p);
+    });
+    dl.replaceWith(frag);
+  });
+}
+
+function flattenMarkedListItems(html) {
+  if (!html || typeof window === 'undefined') return html;
+  const doc = new DOMParser().parseFromString(html, 'text/html');
+  const container = doc.body;
+
+  flattenDefinitionLists(container);
+
+  // li는 마커(①, 1. 등)가 있을 때만 평문 <p>로 풀어서 order-st 재구성 대상이 되게 하고,
+  // 마커 없는 순수 리스트는 태그 그대로 둔다(cleanTableHtml이 구조를 보존한 채 클래스만 새로 매김).
+  Array.from(container.querySelectorAll('li')).forEach(item => {
+    if (item.closest('table')) return;
+    if (!hasExplicitMarker(item.textContent)) return;
+    const p = document.createElement('p');
+    while (item.firstChild) p.appendChild(item.firstChild);
+    item.replaceWith(p);
+  });
+
+  // li가 하나도 안 남은 ul/ol 래퍼는 걷어내고 남은 자식은 제자리에 둔다.
+  Array.from(container.querySelectorAll('ul, ol')).forEach(listEl => {
+    if (listEl.closest('table')) return;
+    const hasRemainingItems = Array.from(listEl.children).some(c => c.tagName === 'LI');
+    if (hasRemainingItems) return;
+    listEl.replaceWith(...Array.from(listEl.childNodes));
+  });
+
+  return container.innerHTML;
+}
+
+// cleanTableHtml은 body의 최상위 자식들을 평평한 블록 시퀀스로 가정하고 순회하므로,
+// 크롤링 결과처럼 <div id="content"><div class="help09">...실제 내용...</div></div>처럼
+// 감싸는 div가 하나 이상 겹쳐 있으면 표를 포함한 안쪽 wrapper 전체가 "표 노드" 취급되어
+// 그 안의 다른 형제 콘텐츠가 통째로 유실된다. 의미 있는 자식이 정확히 하나뿐인 래퍼 div를
+// (주석·공백 제외) 만나는 한 계속 파고들어 실제 콘텐츠가 평평하게 나열된 지점을 찾는다.
+function findFlatContentRoot(el) {
+  let current = el;
+  while (true) {
+    const meaningfulChildren = Array.from(current.childNodes).filter(n => {
+      if (n.nodeType === 8) return false;
+      if (n.nodeType === 3 && !n.textContent.trim()) return false;
+      return true;
+    });
+    if (meaningfulChildren.length === 1 && meaningfulChildren[0].nodeType === 1) {
+      current = meaningfulChildren[0];
+      continue;
+    }
+    return current;
+  }
+}
+
+function applyGwangjuBasicMarkup(html) {
+  if (!html || typeof window === 'undefined') return html;
+  const flattened = flattenMarkedListItems(html);
+  const doc = new DOMParser().parseFromString(flattened, 'text/html');
+  const wrapper = doc.body.firstElementChild;
+  if (!wrapper) return cleanTableHtml(flattened, GWANGJU_BASIC_CONFIG);
+
+  const target = findFlatContentRoot(wrapper);
+  target.innerHTML = cleanTableHtml(target.innerHTML, GWANGJU_BASIC_CONFIG);
+  return doc.body.innerHTML;
+}
 
 // auto-markup 결과 HTML의 테이블 구조만 정규화
 // applyTableSemantics는 내부에서 메인 document.createElement를 쓰므로
@@ -139,8 +306,8 @@ function normalizeGeneratedMarkup(html) {
   return formatHtml(body.innerHTML);
 }
 
-const ALL_TEMPLATES = [...greeting, ...history, ...symbol];
-const CATEGORY_TEMPLATES = { greeting, history, symbol };
+const ALL_TEMPLATES = [...greeting, ...history, ...symbol, ...principal, ...location, ...classList];
+const CATEGORY_TEMPLATES = { greeting, history, symbol, principal, location, classList };
 
 function isValidUrl(str) {
   try { new URL(str); return true; } catch { return false; }
@@ -1127,6 +1294,8 @@ export default function UrlCrawlMarkup() {
   const [gwangjuMarkupLoading, setGwangjuMarkupLoading] = useState(false);
   const [gwangjuMarkupError, setGwangjuMarkupError] = useState('');
   const [gwangjuConvertPanelOpen, setGwangjuConvertPanelOpen] = useState(false);
+  const [gwangjuConvertMenuOpen, setGwangjuConvertMenuOpen] = useState(false);
+  const [gwangjuConvertSubmenuCategory, setGwangjuConvertSubmenuCategory] = useState(null);
   const [gwangjuConvertedSource, setGwangjuConvertedSource] = useState('');
   const [gwangjuConvertPreviewOpen, setGwangjuConvertPreviewOpen] = useState(false);
   const [gwangjuSavedMarkupByUrl, setGwangjuSavedMarkupByUrl] = useState({});
@@ -1352,9 +1521,59 @@ export default function UrlCrawlMarkup() {
     }
   }
 
-  function openGwangjuConvertPanel() {
-    setGwangjuConvertedSource(prev => prev || gwangjuMarkupSource || '');
+  const GWANGJU_CONVERT_CATEGORIES = [
+    { key: 'default', label: '기본', ready: true },
+    { key: '인사말', label: '인사말', ready: true },
+    { key: '연혁', label: '연혁', ready: true },
+    { key: '상징', label: '상징', ready: true },
+    { key: '역대교장', label: '역대교장', ready: true },
+    { key: '오시는길', label: '오시는길', ready: true },
+    { key: '학급목록', label: '학급목록', ready: true },
+  ];
+
+  function applyGwangjuConvertTemplate(template) {
+    const raw = gwangjuMarkupSource || '';
+    const converted = template
+      ? applyMarkupToTemplate(raw, template.code, template.id)
+      : applyGwangjuBasicMarkup(raw);
+    setGwangjuConvertedSource(formatHtml(stripScriptTags(converted)));
+    setGwangjuConvertMenuOpen(false);
+    setGwangjuConvertSubmenuCategory(null);
     setGwangjuConvertPanelOpen(true);
+  }
+
+  function handleGwangjuConvertCategoryClick(cat) {
+    if (!cat.ready) return;
+    if (cat.key === 'default') {
+      applyGwangjuConvertTemplate(null);
+      return;
+    }
+    setGwangjuConvertSubmenuCategory(prev => (prev === cat.key ? null : cat.key));
+  }
+
+  const GWANGJU_PREVIEW_CSS = ['basic.css', 'theme.css', 'layout.css', 'swiper.min.css', 'con_com.css', 'sub_com.css'];
+  const GWANGJU_PREVIEW_JS = ['jquery.min.js', 'swiper.min.js', 'common.js', 'con_com.js', 'sub_com.js'];
+
+  function buildGwangjuPreviewDoc(bodyHtml) {
+    const links = GWANGJU_PREVIEW_CSS
+      .map(name => `<link rel="stylesheet" href="/api/gwangju-assets/css/${name}">`)
+      .join('\n');
+    const scripts = GWANGJU_PREVIEW_JS
+      .map(name => `<script src="/api/gwangju-assets/js/${name}"></script>`)
+      .join('\n');
+    // 스크립트를 본문보다 먼저 실행해야 크롤링 콘텐츠 안의 인라인 <script>(예: $(...))가
+    // jQuery/Swiper 로드 이전에 실행되어 "$ is not defined" 등이 나는 것을 막을 수 있다.
+    return `<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+${links}
+</head>
+<body style="padding:1rem;">
+${scripts}
+${bodyHtml || ''}
+</body>
+</html>`;
   }
 
   function saveGwangjuConvertedSource() {
@@ -2745,6 +2964,7 @@ export default function UrlCrawlMarkup() {
                 </div>
               </div>
             ))}
+            <p className="gwangju-url-limit-note">※ 최대 10개 URL 크롤링이 가능합니다.</p>
             {hasGwangjuUrlInput && (
               <div className="gwangju-crawl-actions">
                 <button
@@ -2865,15 +3085,59 @@ export default function UrlCrawlMarkup() {
                           </button>
                         </div>
                         <div className={`gwangju-markup-source-panel ${gwangjuMarkupPanelOpen ? 'is-open' : ''} ${gwangjuConvertPanelOpen ? 'has-convert-panel' : ''}`}>
-                          <button
-                            type="button"
-                            className="gwangju-convert-pulse-btn"
-                            onClick={openGwangjuConvertPanel}
-                            disabled={!gwangjuMarkupSource || gwangjuMarkupLoading}
-                            aria-label="광주 소스로 변환"
-                          >
-                            변환
-                          </button>
+                          <div className="gwangju-convert-trigger">
+                            <button
+                              type="button"
+                              className="gwangju-convert-pulse-btn"
+                              onClick={() => setGwangjuConvertMenuOpen(open => !open)}
+                              disabled={!gwangjuMarkupSource || gwangjuMarkupLoading}
+                              aria-label="광주 소스로 변환"
+                              aria-expanded={gwangjuConvertMenuOpen}
+                            >
+                              변환
+                            </button>
+                            {gwangjuConvertMenuOpen && (
+                              <div className="gwangju-convert-menu" role="menu" aria-label="변환 템플릿 선택">
+                                {GWANGJU_CONVERT_CATEGORIES.map(cat => {
+                                  const variants = cat.key === 'default' ? [] : ALL_TEMPLATES.filter(t => t.category === cat.key);
+                                  const hasVariants = variants.length > 0;
+                                  const submenuOpen = gwangjuConvertSubmenuCategory === cat.key;
+                                  return (
+                                    <div key={cat.key} className="gwangju-convert-menu-row">
+                                      <button
+                                        type="button"
+                                        role="menuitem"
+                                        className={`gwangju-convert-menu-item ${submenuOpen ? 'is-active' : ''}`}
+                                        disabled={!cat.ready}
+                                        aria-expanded={hasVariants ? submenuOpen : undefined}
+                                        onClick={() => handleGwangjuConvertCategoryClick(cat)}
+                                      >
+                                        <span>{cat.label}</span>
+                                        {!cat.ready && <span className="gwangju-convert-menu-badge">준비중</span>}
+                                        {cat.ready && hasVariants && <span className="gwangju-convert-menu-arrow">›</span>}
+                                      </button>
+                                      {hasVariants && submenuOpen && (
+                                        <div className="gwangju-convert-submenu" role="menu" aria-label={`${cat.label} 타입 선택`}>
+                                          {variants.map(tpl => (
+                                            <button
+                                              key={tpl.id}
+                                              type="button"
+                                              role="menuitem"
+                                              className="gwangju-convert-menu-item"
+                                              title={tpl.desc}
+                                              onClick={() => applyGwangjuConvertTemplate(tpl)}
+                                            >
+                                              {tpl.label}
+                                            </button>
+                                          ))}
+                                        </div>
+                                      )}
+                                    </div>
+                                  );
+                                })}
+                              </div>
+                            )}
+                          </div>
                           <div className="gwangju-markup-source-head">
                             <div>
                               <h3>페이지 소스</h3>
@@ -2886,6 +3150,8 @@ export default function UrlCrawlMarkup() {
                                 setGwangjuMarkupPanelOpen(false);
                                 setGwangjuConvertPanelOpen(false);
                                 setGwangjuConvertPreviewOpen(false);
+                                setGwangjuConvertMenuOpen(false);
+                                setGwangjuConvertSubmenuCategory(null);
                               }}
                               aria-label="소스 패널 닫기"
                             >
@@ -2901,7 +3167,17 @@ export default function UrlCrawlMarkup() {
                             <p className="gwangju-markup-source-status">소스를 가져오고 있습니다.</p>
                           )}
                           {gwangjuMarkupError && (
-                            <p className="gwangju-markup-source-error">{gwangjuMarkupError}</p>
+                            <div className="gwangju-markup-source-error-box">
+                              <p className="gwangju-markup-source-error">{gwangjuMarkupError}</p>
+                              <button
+                                type="button"
+                                className="gwangju-markup-retry-btn"
+                                onClick={fetchGwangjuMarkupSource}
+                                disabled={!activeGwangjuMenuUrl || gwangjuMarkupLoading}
+                              >
+                                재검색
+                              </button>
+                            </div>
                           )}
                           {!gwangjuMarkupLoading && !gwangjuMarkupError && (
                             <textarea
@@ -2961,7 +3237,7 @@ export default function UrlCrawlMarkup() {
                           <div className="gwangju-convert-preview-dim" role="dialog" aria-modal="true">
                             <div className="gwangju-convert-preview-modal">
                               <div className="gwangju-convert-preview-head">
-                                <h3>변환 소스 미리보기</h3>
+                                <h3>현재 사이트 vs 변환 결과 비교</h3>
                                 <button
                                   type="button"
                                   className="gwangju-markup-source-close"
@@ -2971,11 +3247,29 @@ export default function UrlCrawlMarkup() {
                                   ×
                                 </button>
                               </div>
-                              <iframe
-                                className="gwangju-convert-preview-frame"
-                                title="변환 소스 미리보기"
-                                srcDoc={gwangjuConvertedSource || '<!doctype html><html><body></body></html>'}
-                              />
+                              <div className="gwangju-convert-preview-compare">
+                                <div className="gwangju-convert-preview-pane">
+                                  <p className="gwangju-convert-preview-pane-label">현재 사이트</p>
+                                  {activeGwangjuMenuUrl ? (
+                                    <iframe
+                                      className="gwangju-convert-preview-frame"
+                                      title="현재 사이트"
+                                      src={activeGwangjuMenuUrl}
+                                      sandbox="allow-same-origin allow-scripts allow-forms allow-popups allow-downloads"
+                                    />
+                                  ) : (
+                                    <p className="gwangju-url-status">비교할 원본 URL이 없습니다.</p>
+                                  )}
+                                </div>
+                                <div className="gwangju-convert-preview-pane">
+                                  <p className="gwangju-convert-preview-pane-label">변환 결과</p>
+                                  <iframe
+                                    className="gwangju-convert-preview-frame"
+                                    title="변환 소스 미리보기"
+                                    srcDoc={buildGwangjuPreviewDoc(gwangjuConvertedSource)}
+                                  />
+                                </div>
+                              </div>
                             </div>
                           </div>
                         )}
