@@ -1,0 +1,194 @@
+﻿.wing-005 {
+	width: 100%;
+	box-sizing: border-box;
+}
+
+.wing-005 .organ-inner {
+	display: flex;
+	align-items: stretch;
+	width: 100%;
+	padding: 0 5%;
+}
+
+.wing-005 .organ-left {
+	flex: 1;
+	display: flex;
+	justify-content: flex-start;
+	align-items: start;
+	min-width: 0;
+}
+
+.wing-005 .organ-axis {
+	width: 0;
+	align-self: stretch;
+	position: relative;
+	flex-shrink: 0;
+}
+
+.wing-005 .organ-axis::before {
+	content: '';
+	position: absolute;
+	top: 0;
+	bottom: 0;
+	left: 0;
+	width: 0;
+	border-right: var(--connector-size, 1px) var(--connector-dash, solid) var(--connector-color, #aaaaaa);
+	transform: translateX(calc(var(--connector-size, 1px) * -0.5));
+}
+
+/* .wing-005 .organ-dot {
+	position: absolute;
+	top: 50%;
+	left: 0;
+	transform: translate(-50%, -50%);
+	width: 7px;
+	height: 7px;
+	border-radius: 50%;
+	background: var(--connector-color, #aaaaaa);
+	display: block;
+	z-index: 1;
+} */
+
+.wing-005 .organ-right {
+	flex: 1;
+	display: flex;
+	justify-content: flex-end;
+	align-items: start;
+	min-width: 0;
+}
+
+.wing-005 .organ-line {
+	display: block;
+	flex: 1;
+	height: 0;
+	border-top: var(--connector-size, 1px) var(--connector-dash, solid) var(--connector-color, #aaaaaa);
+	margin-top: 26px;
+}
+
+.wing-005 .organ-box {
+	flex-shrink: 0;
+	width: clamp(200px, 38%, 360px);
+	box-sizing: border-box;
+	overflow: hidden;
+}
+
+.wing-005 .organ-head {
+	background: #fff;
+	padding: clamp(10px, 1.2vw, 12px) clamp(12px, 1.5vw, 20px);
+	min-height: var(--title-height, auto);
+	border: 1px solid var(--title-border, #1c3478);
+	text-align: center;
+}
+
+.wing-005 .organ-head p {
+	color: var(--title-text, #1c3478);
+	font-size: var(--title-size, 20px);
+	font-weight: var(--title-weight, 700);
+	letter-spacing: -0.3px;
+	line-height: 1.4;
+	white-space: pre-line;
+}
+
+.wing-005 .organ-body {
+	padding: clamp(12px, 1.5vw, 16px) clamp(14px, 1.8vw, 20px);
+	min-height: var(--body-height, auto);
+	background: var(--body-bg, #f5f5f5);
+	margin-top: 10px;
+	list-style: none;
+}
+
+.wing-005 .organ-item {
+	position: relative;
+	padding-left: 14px;
+	color: var(--body-text, #333333);
+	font-size: var(--body-size, 16px);
+	font-weight: var(--body-weight, 400);
+	line-height: 1.9;
+	letter-spacing: -0.2px;
+}
+
+.wing-005 .organ-item::before {
+	content: '·';
+	position: absolute;
+	left: 2px;
+}
+
+/* 오른쪽 박스 독립 스타일 */
+.wing-005 .organ-right .organ-head {
+	border-color: var(--right-title-border, #1c3478);
+	min-height: var(--right-title-height, auto);
+}
+.wing-005 .organ-right .organ-head p {
+	color: var(--right-title-text, #1c3478);
+	font-size: var(--right-title-size, 20px);
+	font-weight: var(--right-title-weight, 700);
+}
+.wing-005 .organ-right .organ-body {
+	background: var(--right-body-bg, #f5f5f5);
+	min-height: var(--right-body-height, auto);
+}
+.wing-005 .organ-right .organ-item {
+	color: var(--right-body-text, #333333);
+	font-size: var(--right-body-size, 16px);
+	font-weight: var(--right-body-weight, 400);
+}
+
+/* 배치 방향 */
+.wing-005.right .organ-left {
+	visibility: hidden;
+}
+
+.wing-005.left .organ-right {
+	visibility: hidden;
+}
+
+/* 빌더 모바일 캔버스 미리보기 */
+body:not(.preview-mode)[data-preview-device="mobile"] .wing-005 .organ-inner {
+	position: relative;
+	flex-direction: column;
+	gap: 20px;
+	padding: 0;
+}
+body:not(.preview-mode)[data-preview-device="mobile"] .wing-005 .organ-line {display: none;}
+body:not(.preview-mode)[data-preview-device="mobile"] .wing-005 .organ-left,
+body:not(.preview-mode)[data-preview-device="mobile"] .wing-005 .organ-right {justify-content: center;}
+body:not(.preview-mode)[data-preview-device="mobile"] .wing-005 .organ-box {
+	z-index: 1;
+}
+body:not(.preview-mode)[data-preview-device="mobile"] .wing-005 .organ-axis {
+	position: absolute;
+	left: 50%;
+	height: 100%;
+}
+body:not(.preview-mode)[data-preview-device="mobile"] .wing-005.right .organ-left,
+body:not(.preview-mode)[data-preview-device="mobile"] .wing-005.left .organ-right {display: none;}
+
+/* 반응형 */
+@media (max-width:580px) {
+	.wing-005 .organ-inner {
+		position: relative;
+		flex-direction: column;
+		gap: 20px;
+		padding: 0;
+	}
+
+	.wing-005 .organ-line {display: none;}
+
+	.wing-005 .organ-left,
+	.wing-005 .organ-right {
+		justify-content: center;
+	}
+
+	.wing-005 .organ-box {
+		z-index: 1;
+	}
+
+	.wing-005 .organ-axis {
+		position: absolute;
+		left: 50%;
+		height: 100%;
+	}
+
+	.wing-005.right .organ-left,
+	.wing-005.left .organ-right {display: none;}
+}

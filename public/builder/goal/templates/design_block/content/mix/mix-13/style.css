@@ -1,0 +1,75 @@
+﻿.mix-13 {
+	/* 타이틀 */
+	--title-align: left;
+	--title-text: #000;
+	--title-border: #E7E7E8;
+	
+	/* 본문 */
+	--body-align: center;
+	--body-text: #000;
+
+	display: flex;
+	flex-direction: row;
+	gap: 1rem;
+}
+
+
+.mix-13 .tit-wrap {
+	width: clamp(120px, 18%, 180px);
+	align-items: start;
+	flex-shrink: 0;
+	padding-top: 0.75rem;
+	text-align: var(--title-align);
+	border-top: 1px solid var(--title-border);
+}
+
+/* per-item 기본 배경색 (--item-bg) — 본문 옵션이 우선, 없으면 이 값 사용 */
+.mix-13 [data-item-idx="0"] { --item-bg: #D8F4EF; }
+.mix-13 [data-item-idx="1"] { --item-bg: #F5F0FF; }
+.mix-13 [data-item-idx="2"] { --item-bg: #FFEAF1; }
+.mix-13 [data-item-idx="3"] { --item-bg: #eaecff; }
+.mix-13 [data-item-idx="4"] { --item-bg: #fff2df; }
+
+
+.mix-13 .txt-wrap {
+	flex: 1;
+	width: auto;
+	display: flex;
+	flex-direction: column;
+	gap: 0.75rem;
+	line-height: 1.5;
+	word-break: keep-all;
+	min-height: 100%;
+	border-radius: 0.75rem;
+	padding: 1rem 0.8rem;
+	background:#fff;
+	box-shadow: 2px 2px 8px rgba(0,0,0,0.2);
+}
+
+.mix-13 .txt-wrap .icon{
+	display: flex;
+	align-items: center;
+	justify-self: center;
+	width: 2.5rem;
+	height: 2.5rem;
+	margin: 0 auto;
+	border-radius: 50%;
+	/* --body-bg: 본문 옵션에서 명시적으로 설정된 경우에만 적용
+	   --item-bg: 각 항목의 기본 배경색 (위 per-item 설정) */
+	background: var(--body-bg, var(--item-bg));
+}
+
+.mix-13 .txt-wrap .icon img{
+	width: 1.4rem;
+	height: auto;
+}
+
+@media (max-width: 768px) {
+
+	.mix-13 .tit-wrap{ 
+		width: 100%; 
+	}
+	.mix-13 .txt-wrap{
+		gap: 0.5rem;
+	}
+}

@@ -1,0 +1,8 @@
+{
+  "addDirection": "column",
+  "templateFilters": ["accordion"],
+  "discloserDefaults": {
+    "title": "Discloser",
+    "content": ""
+  }
+}

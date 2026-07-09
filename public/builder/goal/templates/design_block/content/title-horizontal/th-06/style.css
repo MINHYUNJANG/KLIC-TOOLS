@@ -1,0 +1,25 @@
+﻿.th-06-title {
+	margin-bottom: clamp(10px, 1.5vw, 16px);
+	color: var(--title-text, #101010);
+	font-size: var(--title-size, clamp(16px, 2.2vw, 24px));
+	font-weight: 700;
+	letter-spacing: -0.03em;
+	text-align: var(--title-align, center);
+}
+
+.th-06-pill {
+	border: 1px solid #ccd2de;
+	border-radius: 50px;
+	padding: clamp(12px, 1.5vw, 16px) clamp(24px, 4vw, 48px);
+	background: var(--body-bg);
+	text-align: center;
+}
+
+.th-06-pill p {
+	color: var(--body-text, #fff);
+	font-size: var(--body-size, clamp(13px, 1.6vw, 18px));
+	font-weight: 600;
+	letter-spacing: -0.025em;
+	text-align: var(--body-align, center);
+}
+

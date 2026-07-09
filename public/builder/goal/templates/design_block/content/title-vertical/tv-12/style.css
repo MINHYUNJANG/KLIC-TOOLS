@@ -1,0 +1,60 @@
+﻿.tv-12 {
+	padding: clamp(16px, 2.5vw, 28px);
+}
+
+.tv-12-wrap {
+	background: var(--body-bg);
+	border: 2px solid var(--body-border);
+	border-radius: 60px;
+	padding: clamp(14px, 2vw, 22px) clamp(20px, 3vw, 36px);
+	display: flex;
+	align-items: center;
+	gap: clamp(12px, 2vw, 24px);
+	width: 100%;
+	flex-wrap: wrap;
+}
+
+.tv-12-title-group {
+	display: flex;
+	align-items: center;
+	gap: 10px;
+	flex-shrink: 0;
+}
+
+.tv-12-dot {
+	width: 10px;
+	height: 10px;
+	border-radius: 50%;
+	background: var(--body-border);
+	flex-shrink: 0;
+}
+
+.tv-12-title {
+	font-size: var(--title-size, clamp(14px, 1.8vw, 24px));
+	font-weight: 700;
+	color: var(--title-text, #672e94);
+	white-space: nowrap;
+	background: none;
+	text-align: var(--title-align, center);
+}
+
+.tv-12-divider {
+	width: 1.5px;
+	height: clamp(20px, 2.5vw, 28px);
+	background: #ddd;
+	flex-shrink: 0;
+}
+
+.tv-12-text {
+	flex: 1;
+	font-size: var(--body-size, clamp(13px, 1.6vw, 20px));
+	font-weight: 600;
+	color: var(--body-text, #000);
+	word-break: keep-all;
+	text-align: var(--body-align, center);
+}
+
+.tv-12 .template-title {
+	background: none;
+}
+

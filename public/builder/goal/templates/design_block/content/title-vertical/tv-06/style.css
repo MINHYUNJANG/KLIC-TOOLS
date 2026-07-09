@@ -1,0 +1,44 @@
+﻿.tv-06 {
+	padding: clamp(16px, 2.5vw, 28px);
+}
+
+.tv-06-wrap {
+	display: flex;
+	align-items: center;
+	gap: clamp(8px, 1.2vw, 16px);
+	width: 100%;
+}
+
+.tv-06-circle {
+	width: clamp(80px, 10vw, 120px);
+	height: clamp(80px, 10vw, 120px);
+	border-radius: 50%;
+	background: var(--title-bg, #32a044);
+	border: 3px solid color-mix(in srgb, var(--title-bg, #32a044) 30%, #fff);
+	flex-shrink: 0;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	font-size: var(--title-size, clamp(13px, 1.6vw, 20px));
+	font-weight: 600;
+	color: var(--title-text, #fff);
+	text-align: center;
+}
+
+.tv-06-box {
+	flex: 1;
+	background: var(--body-bg);
+	border: 1.5px solid var(--body-border);
+	border-radius: 15px;
+	padding: clamp(16px, 2.5vw, 24px) clamp(16px, 2.5vw, 28px);
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	min-height: clamp(70px, 9vw, 100px);
+	font-size: var(--body-size, clamp(13px, 1.6vw, 20px));
+	font-weight: 600;
+	color: var(--body-text, #32a044);
+	text-align: var(--body-align, center);
+	word-break: keep-all;
+}
+

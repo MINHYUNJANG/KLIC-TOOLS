@@ -1,0 +1,13 @@
+{
+	"addDirection": "row",
+	"max": "1",
+	"templateFilters": ["best", "education-goal"],
+	"recommend": {
+		"category": "school-vision",
+		"colors": ["pink", "white", "black"],
+		"tone": ["formal", "public", "educational"],
+		"style": ["full-template", "section", "grid"],
+		"keywords": ["교육비전", "교육상", "역량", "교육철학", "자율과제"],
+		"matchWith": ["design-block", "icon", "decoration"]
+	}
+}

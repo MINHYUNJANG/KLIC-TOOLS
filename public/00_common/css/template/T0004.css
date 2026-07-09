@@ -1,0 +1,78 @@
+﻿/* 메인 컨테이너 */
+#container { position:relative; z-index:2; width:100%;}
+#container *{ scrollbar-arrow-color: #ddd; scrollbar-Track-Color: #ddd; scrollbar-base-color: #aaa; scrollbar-Face-Color: #aaa; scrollbar-3dLight-Color: #aaa; scrollbar-DarkShadow-Color: #aaa; scrollbar-Highlight-Color: #aaa; scrollbar-Shadow-Color: #aaa;}
+#container ::-webkit-scrollbar { width: 5px; }
+#container ::-webkit-scrollbar-thumb { background-color: #aaa; border-radius:10px; }
+#container ::-webkit-scrollbar-track { background-color: #ddd; border-radius:10px; }
+
+.MC_wrap1 {padding-top: 1.5rem; position: relative; z-index: 1;}
+.MC_wrap1:before {content: ""; display: block; width: 79.3rem; height: 24.95rem; background: url('/images/template/T0004/main/0004_bg_chr.png') center no-repeat; position: absolute; left: 50%; margin-left: -39.65rem; bottom: 0; z-index: -1;}
+.MC_wrap1:after {content: ""; display: block; clear: both; visibility: hidden;}
+.MC_wrap2 {clear: both; padding-top: 1.5rem; padding-bottom: 3.5rem;}
+.MC_wrap2:after {content: ""; display: block; clear: both; visibility: hidden;}
+.MC_wrap3 {clear: both; padding: 2.5rem 0; background: #fff6d7;}
+.MC_wrap3:after {content: ""; display: block; clear: both; visibility: hidden;}
+
+.MC_box1 {float: right; width: calc(100% - 18.8rem); padding-bottom: 2rem;} /* 메인비주얼 */
+.MC_box2 {float: left; width: 17rem;} /* 캘린더 */
+.MC_box3 {float: left; margin-top: 2.15rem; width: 17rem;} /* 바로가기 */
+.MC_box4 {float: left; width: calc(100% - 20rem);} /* 게시판 */
+.MC_box5 {float: left; width: 17.5rem; margin-left: 2.5rem;} /* 팝업존 */
+.MC_box6 {float: left; width: calc(100% - 20rem);} /* 갤러리 */
+.MC_box7 {float: left; width: 17.5rem; margin-left: 2.5rem;} /* 오늘의식단 */
+
+@media (max-width: 1400px) {
+}
+
+@media (max-width: 1240px) {
+
+    .MC_wrap1:before {height: calc(100% - 16.5rem); background: url('/images/template/T0004/main/0004_bg_ptt.png');}
+
+    .MC_box2 {padding-left: 0.5rem;}
+}
+
+@media (max-width: 1024px) {
+
+    #container {padding-top: 3.3rem;}
+}
+
+@media (max-width: 984px) {
+
+    .MC_box1 {height: 32rem;}
+    .MC_box3 {padding-bottom: 2rem;}
+    .MC_box4 {float: none; width: 100%;}
+    .MC_box5 {float: none; width: 100%; margin-left: 0; margin-top: 2.5rem;}
+}
+
+@media (max-width: 860px) {
+
+    .MC_wrap1 {display: flex; flex-wrap: wrap; justify-content: space-between;}
+    .MC_wrap1:after {display: none;}
+    .MC_wrap2 {padding-top: 1.5rem; padding-bottom: 2rem;}
+
+    .MC_box1 {width: 100%; height: auto; padding-bottom: 0;}
+    .MC_box2 {margin-top: 2rem; float: none; width: calc(100% - 8rem); padding-bottom: 1.5rem;}
+    .MC_box3 {margin-top: 2rem; float: none; width: 8rem; padding-bottom: 0.75rem;}
+}
+
+@media (max-width: 768px) {
+}
+
+@media (max-width: 640px) {
+
+    .MC_wrap1:before {height: 16rem;}
+
+    .MC_box6 {float: none; width: 100%;}
+    .MC_box7 {float: none; width: 100%; margin-left: 0; margin-top: 1.5rem;}
+}
+
+@media (max-width: 560px) {
+}
+
+@media (max-width: 480px) {
+    .MC_box2 {margin-top: 1.5rem; width: 100%; padding-bottom: 0;}
+    .MC_box3 {margin-top: 0.5rem; width: 100%; padding-bottom: 0.75rem;}
+}
+
+@media (max-width: 380px) {
+}

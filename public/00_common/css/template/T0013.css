@@ -1,0 +1,45 @@
+﻿/* 메인 컨테이너 */
+#container { position:relative; z-index:2; width:100%; }
+#container *{ scrollbar-arrow-color: #ddd; scrollbar-Track-Color: #ddd; scrollbar-base-color: #aaa; scrollbar-Face-Color: #aaa; scrollbar-3dLight-Color: #aaa; scrollbar-DarkShadow-Color: #aaa; scrollbar-Highlight-Color: #aaa; scrollbar-Shadow-Color: #aaa;}
+#container ::-webkit-scrollbar { width: 5px; }
+#container ::-webkit-scrollbar-thumb { background-color: #aaa; border-radius:10px; }
+#container ::-webkit-scrollbar-track { background-color: #ddd; border-radius:10px; }
+
+.MC_wrap1 { position:relative; }
+.MC_wrap2 { position:relative; margin: 3rem 0;}
+.MC_wrap3 { position:relative; margin-bottom: 3rem;}
+
+[class^="MC_box"]:after { content:""; display:block; clear:both; }
+.MC_box1 { position:relative; height:22.75rem; } /* 메인비주얼 */
+.MC_box2 { position:relative; width:100%; height:10.75rem; } /* 바로가기 */
+.MC_box2:before { content:""; position:absolute; width: 200%; height: 100%; top: 0; left: -7.75rem; background: #e95f92; border-radius: 5rem 0 0 5rem; }
+.MC_box3 { position:relative; width:calc(100% - 20.75rem); height:23.5rem; padding-top: 2rem; float: left; } /* 게시판 */
+.MC_box3::before{width: 200%; height: 100%; background: #dff1fa; border-radius: 0 2.5rem 2.5rem 0; position: absolute; right: -2rem; top: 0; content: '';}
+.MC_box4 { position:relative; width:16.75rem; height: 23.5rem; float:right; } /* 캘린더 */
+.MC_box5 { position:relative; width:100%; height: 5rem; float: left; margin-top: 3rem;} /* 식단 */
+.MC_box6 { position:relative; width:calc(100% - 19.5rem); height: 18.75rem; float: left; } /* 갤러리 */
+.MC_box7 { position:relative; width:17.5rem; height: 18.75rem; float: right;} /* 팝업존 */
+
+/* responsive */
+@media (max-width:1240px) {
+	.MC_wrap2{margin: 2rem 0;}
+	.MC_wrap3{margin-bottom: 2rem;}
+
+	.MC_box1 { height:auto; } /* 메인비주얼 */
+	.MC_box5{margin-top: 2rem;}
+}
+
+
+@media (max-width:840px){
+	.MC_wrap2{margin-top: 0;}
+	.MC_box2{height: auto;}
+	.MC_box3{width: 100%; height: auto; padding-bottom: 1.5rem;}
+	.MC_box3::before{border-radius: 0;}
+	.MC_box4{width: 100%; height: auto; margin-top: 1.5rem;}
+	.MC_box5{height: auto;}
+	.MC_box6{width: 100%; height: auto;}
+	.MC_box7{width: 100%; height: auto; margin-top: 1.5rem;}
+}
+
+@media (max-width:380px){
+}

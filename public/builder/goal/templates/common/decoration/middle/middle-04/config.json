@@ -1,0 +1,43 @@
+{
+	"max": "1",
+	"images": [
+		"1.png",
+		"2.png",
+		"3.png",
+		"4.png",
+		"5.png",
+		"6.png",
+		"7.png",
+		"8.png"
+	],
+	"recommend": {
+		"category": "decoration",
+		"colors": [
+			"blue",
+			"green",
+			"yellow",
+			"white"
+		],
+		"tone": [
+			"friendly",
+			"bright",
+			"public"
+		],
+		"style": [
+			"sticker",
+			"illustration",
+			"accent"
+		],
+		"keywords": [
+			"중학교",
+			"교육",
+			"행사",
+			"꾸밈"
+		],
+		"matchWith": [
+			"box",
+			"title",
+			"banner"
+		]
+	}
+}

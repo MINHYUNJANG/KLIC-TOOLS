@@ -1,0 +1,39 @@
+{
+	"addDirection": "row",
+	"max": "6",
+	"styleOptions": {
+		"title": { "hide": ["borderColor"] },
+		"body": { "hide": ["borderColor", "backgroundColor"] },
+		"caption": { "label": "부제", "hide": ["borderColor", "backgroundColor"] },
+		"sub": { "label": "강조", "hide": ["borderColor", "backgroundColor"] }
+	},
+	"recommend": {
+		"category": "notice",
+		"colors": [
+			"blue",
+			"navy",
+			"white"
+		],
+		"tone": [
+			"clean",
+			"formal",
+			"public"
+		],
+		"style": [
+			"card",
+			"rounded",
+			"line"
+		],
+		"keywords": [
+			"학교",
+			"공지",
+			"교육청",
+			"안내"
+		],
+		"matchWith": [
+			"icon",
+			"illustration",
+			"banner"
+		]
+	}
+}

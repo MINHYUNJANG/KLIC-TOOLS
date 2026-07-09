@@ -1,0 +1,75 @@
+﻿.list-009 {
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	width: 100%;
+	box-sizing: border-box;
+}
+
+.list-009 .organ-head {
+	position: relative;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	width: clamp(100px, 12vw, 128px);
+	height: clamp(100px, 12vw, 128px);
+	border-radius: 50%;
+	border: 2px solid var(--title-border, #1c3478);
+	background: var(--title-bg, #ffffff);
+	box-sizing: border-box;
+	padding: 12px;
+}
+
+.list-009 .organ-head::after {
+	content: '';
+	position: absolute;
+	bottom: -30px;
+	left: 50%;
+	transform: translateX(-50%);
+	width: 1px;
+	height: 28px;
+	background: #dddddd;
+}
+
+.list-009 .organ-head p {
+	color: var(--title-text, #1c3478);
+	font-size: var(--title-size, 14px);
+	font-weight: var(--title-weight, 600);
+	text-align: center;
+	letter-spacing: -0.3px;
+	line-height: 1.4;
+	white-space: pre-line;
+}
+
+.list-009 .organ-body {
+	position: relative;
+	width: 100%;
+	margin-top: 30px;
+	display: flex;
+	flex-direction: column;
+	gap: 2px;
+	justify-content: center;
+	min-height: var(--body-height, auto);
+	padding-top: 20px;
+	list-style: none;
+}
+
+.list-009 .organ-body::before {
+	content: '';
+	position: absolute;
+	top: -3px;
+	left: calc(50% - 3px);
+	width: 6px;
+	height: 6px;
+	background: #D9D9D9;
+	border-radius: 50%;
+}
+
+.list-009 .organ-item {
+	color: var(--body-text, #333333);
+	font-size: var(--body-size, 13px);
+	font-weight: var(--body-weight, 400);
+	text-align: center;
+	letter-spacing: -0.3px;
+	line-height: 1.6;
+}

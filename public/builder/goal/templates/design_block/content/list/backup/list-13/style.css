@@ -1,0 +1,46 @@
+﻿.list-13 {
+	padding: clamp(20px, 3vw, 34px);
+	border: 2px solid var(--title-bg, #327bd7);
+	border-radius: 6px;
+	background: var(--body-bg);
+}
+
+.list-13 .template-title {
+	background: none;
+}
+
+.list-13-title {
+	display: block;
+	padding-bottom: clamp(12px, 1.7vw, 18px);
+	border-bottom: 1px solid var(--body-border);
+	color: var(--title-text, #1a5dab);
+	font-size: var(--title-size, clamp(20px, 2.5vw, 32px));
+	font-weight: var(--title-weight, 900);
+	text-align: var(--title-align, center);
+}
+
+.list-13-list {
+	display: grid;
+	gap: clamp(9px, 1.4vw, 14px);
+	padding-top: clamp(16px, 2.2vw, 24px);
+}
+
+.list-13-list li {
+	position: relative;
+	padding-left: clamp(18px, 2vw, 24px);
+	color: var(--body-text, #1c2734);
+	font-size: var(--body-size, clamp(12px, 1.5vw, 17px));
+	font-weight: var(--body-weight, 600);
+	line-height: 1.55;
+	text-align: var(--body-align, center);
+}
+
+.list-13-list li::before {
+	content: "";
+	position: absolute;
+	top: 0.75em;
+	left: 0;
+	width: 9px;
+	border-top: 2px solid var(--title-bg, #327bd7);
+}
+

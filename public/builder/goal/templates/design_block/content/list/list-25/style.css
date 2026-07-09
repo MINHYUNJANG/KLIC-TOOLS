@@ -1,0 +1,90 @@
+﻿.list-25 {
+	/* 본문 */
+	--body-align: center;
+	--body-bg: #EBF3FC;
+	--body-text: #002169;
+	--body-weight: 600;
+
+	min-height: 100%;
+	border-radius: 0.25rem;
+	padding: 1rem;
+	border: 1px solid #ccc;
+}
+
+.list-25 .txt-wrap .txt {
+	min-width: 4rem;
+	border-radius: 0.25rem;
+	background: var(--body-bg);
+	padding: 0.4rem;
+}
+
+.list-25 .txt-wrap ul[data-depth="1"] {
+	display: flex;
+	flex-wrap: wrap;
+}
+
+.list-25 .txt-wrap ul[data-depth="1"] > li{
+	width: 100%;
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+	gap: 0 0.5rem;
+	padding: 0.4rem 0.75rem 0.4rem 1.75rem;
+	text-indent: 0;
+	position: relative;
+}
+
+.list-25 .txt-wrap ul[data-depth="1"].ls-num {
+	counter-reset: list-item;
+}
+.list-25 .txt-wrap ul[data-depth="1"].ls-num > li {
+	list-style: none;
+	counter-increment: list-item;
+}
+.list-25 .txt-wrap ul[data-depth="1"].ls-num > li::before {
+	content: counter(list-item) '. ';
+	position: absolute;
+	left: 0.75rem;
+	font-weight: bold;
+	color: var(--ls-color-1, currentColor);
+}
+
+.list-25 .txt-wrap ul[data-depth="1"] > li .txt {
+	flex-shrink: 0;
+}
+.list-25 .txt-wrap ul[data-depth="1"] > li li{ 
+	width: 100%;
+}
+
+.list-25 .txt-wrap ul[data-depth="1"] > li + li{
+	border-top: 1px dashed #ccc;
+}
+
+.list-25 .edit-list {
+    --ls-color-1: #002169;
+    --ls-color-2: #555;
+    --ls-color-3: #555;
+}
+
+@media screen and (max-width: 1240px) {
+
+	.builder-columns.columns-2:has(.list-25){
+		grid-template-columns: repeat(1, 1fr);
+	}
+
+	.list-25{ padding: 0.5rem 1rem;}
+}
+
+@media screen and (max-width: 420px) {
+
+	.list-25 .txt-wrap ul[data-depth="1"] > li{
+		flex-direction: column;
+		align-items: start;
+		gap: 0.5rem;
+	}
+	
+	.list-25 .txt-wrap ul[data-depth="1"] > li .txt{
+		width: 100%;
+	}
+}
+

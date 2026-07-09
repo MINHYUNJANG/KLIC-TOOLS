@@ -1,0 +1,31 @@
+{
+	"category": "wing",
+	"addDirection": "row",
+	"max": "1",
+	"classOptions": [
+		{
+			"key": "direction",
+			"label": "배치 방향",
+			"default": "both",
+			"options": [
+				{ "value": "left",  "label": "왼쪽" },
+				{ "value": "right", "label": "오른쪽" },
+				{ "value": "both",  "label": "양쪽" }
+			]
+		}
+	],
+	"styleOptions": {
+		"title": {
+			"fields": [
+				{ "key": "backgroundColor", "label": "박스 배경",  "default": "#2a449e" },
+				{ "key": "textColor",       "label": "제목 글자", "default": "#ffffff" },
+				{ "key": "minHeight",       "label": "높이",      "type": "number", "min": 20, "max": 300 }
+			]
+		},
+		"body": {
+			"fields": [
+				{ "key": "textColor", "label": "서브 글자", "default": "#c5cdf0" }
+			]
+		}
+	}
+}

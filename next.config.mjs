@@ -3,6 +3,9 @@ const nextConfig = {
   reactStrictMode: true,
   devIndicators: false,
   transpilePackages: ['jodit-react', 'jodit'],
+  outputFileTracingIncludes: {
+    '/api/gwangju-assets/[...path]': ['./src/common/gwangju/**/*'],
+  },
   eslint: {
     ignoreDuringBuilds: true,
   },

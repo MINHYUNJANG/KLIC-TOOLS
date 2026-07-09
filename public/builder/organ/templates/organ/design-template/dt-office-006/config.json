@@ -1,0 +1,43 @@
+{
+  "templateFilters": ["office"],
+  "sections": [
+    "box-006",
+    {"type": "divider-001", "style": {"connectorHeight": "30"}},
+    {"type": "box-002", "blockWidth": 280, "style": {"titleMinHeight": 85, "titleFontSize": 24}, "data": {"title": "부시장"}},
+    "divider-001",
+    "wing-006",
+    "divider-001",
+    {"type": "box-002", "blockWidth": 280, "style": {"titleMinHeight": 85, "titleFontSize": 24}, "data": {"title": "부시장"}},
+    "divider-001",
+    {"type": "wing-006", "data": {"title": "홍보담당관"}},
+    {"type": "divider-001", "style": {"connectorHeight": "10"}},
+    {"type": "wing-006", "data": {"title": "감사담당관"}},
+    "divider-001",
+    {
+      "type": "list-003",
+      "columns": 2,
+      "data": {
+        "item3": "예산법무과",
+        "item4": "회계과",
+        "item5": "재산관리과",
+        "item6": "세정과"
+      },
+      "itemsData": [
+        null,
+        {
+          "title": "행정안전국",
+          "item1": "행정지원과",
+          "item2": "자치분권과",
+          "item3": "재난안전과",
+          "item4": "정보통신과",
+          "item5": "민원과",
+          "item6": ""
+        }
+      ],
+      "itemStyles": [
+        {"titleBackgroundColor": "#317AD7"},
+        {"titleBackgroundColor": "#4D719E"}
+      ]
+    }
+  ]
+}

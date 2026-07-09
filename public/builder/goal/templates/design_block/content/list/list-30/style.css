@@ -1,0 +1,88 @@
+﻿.list-30 {
+	/* 타이틀 */
+	--title-align: center;
+	--title-text: #143776;
+
+	/* 서브 */
+	--sub-bg: #143776;
+	--sub-weight: 700;
+	--sub-text: #fff;
+
+	min-height: 100%;
+	flex-direction: row;
+	padding-top: 1.25rem;
+	gap: 1rem;
+}
+
+.list-30 .tit-wrap{
+	flex: 1;
+	max-width: 11rem;
+	min-height: 100%;
+	align-items: center;
+	justify-content: center;
+	padding: 1rem;
+	border-radius: 1rem;
+	border: 1px solid #E1E3E6;
+	background: #fff;
+}
+
+.list-30 .tit-wrap .sub{
+	position: absolute;
+	left: 1rem;
+	top: -1.25rem;
+	width: 2rem;
+	height: 2rem;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	font-size: 0.8rem;
+	border-radius: 50%;
+	background: var(--sub-bg);
+}
+
+.list-30 .txt-wrap {
+	flex: 2;
+	padding: 1rem 0;
+}
+
+.list-30 .txt-wrap ul[data-depth="1"] {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 0.3rem;
+}
+
+.list-30 .txt-wrap ul[data-depth="1"] > li{
+	width: 100%;
+	padding: 0.4rem 0.75rem 0.4rem 1.75rem;
+	border-radius: 0.25rem;
+	background:#F4F4F4;
+}
+
+.list-30 .edit-list {
+    --ls-color-1: #143776;
+    --ls-color-2: #333;
+    --ls-color-3: #333;
+}
+
+@media (max-width: 1024px) {
+
+	.builder-columns.columns-2:has(.list-30){
+		grid-template-columns: repeat(1, 1fr);
+	}
+}
+
+@media (max-width: 560px) {
+	
+	.list-30{
+		flex-direction: column;
+		gap: 0;
+	}
+
+	.list-30 .tit-wrap{
+		max-width: 100%;
+	}
+
+	.list-30 .txt-wrap{
+		padding-top: 0.5rem;
+	}
+}

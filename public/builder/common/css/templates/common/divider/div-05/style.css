@@ -1,0 +1,10 @@
+﻿.div-05 {
+	display: flex;
+	align-items: center;
+	box-sizing: border-box;
+}
+
+.div-05-line {
+	width: 100%;
+	border-top: calc(2px * var(--connector-size, 1)) solid var(--connector-color, #aaa);
+}

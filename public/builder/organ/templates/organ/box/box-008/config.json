@@ -1,0 +1,15 @@
+{
+	"category": "box",
+	"addDirection": "row",
+	"max": "1",
+	"styleOptions": {
+		"title": {
+			"fields": [
+				{ "key": "backgroundColor", "label": "내부 배경", "default": "#ffffff" },
+				{ "key": "borderColor",     "label": "테두리",    "default": "#1a3578" },
+				{ "key": "textColor",       "label": "텍스트",    "default": "#1a3578" }
+			]
+		},
+		"body": { "fields": [] }
+	}
+}

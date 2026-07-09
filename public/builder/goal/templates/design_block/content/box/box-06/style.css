@@ -1,0 +1,50 @@
+﻿.box-06 {
+	/* 본문 */
+	--body-align: center;
+	--body-text: #000;
+
+	/* 서브 */
+	--sub-align: center;
+	--sub-bg: #000;
+	--sub-text: #ffffff;
+	--sub-weight: 700;
+	--sub-size: 0.75rem;
+
+	display: flex;
+	min-height: 100%;
+	flex-direction: column;
+	align-items: center;
+	gap: 8px;
+	padding: 24px 16px;
+	border-radius: 20px;
+	background: #fff;
+	box-shadow: 2px 2px 10px rgba(0,0,0,0.2);
+}
+
+.box-06 .txt-wrap{
+	display: flex;
+	flex-direction: column;
+	gap: 8px;
+	align-items: center;
+}
+
+.box-06 .txt-wrap .txt{
+	width: 100%;
+}
+
+.box-06 .sub{
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	min-width: 32px;
+	min-height: 32px;
+	flex-shrink: 0;
+	padding: 0 8px;
+	border-radius: 20px;
+	color: var(--sub-text);
+	background: var(--sub-bg);
+}
+
+.box-06 .sub > p{
+	width: 100%;
+}

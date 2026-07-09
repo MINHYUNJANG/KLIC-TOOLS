@@ -1,0 +1,35 @@
+﻿.list-03 {
+	/* 본문 */
+	--body-align: center;
+	--body-bg: #E6F2FB;
+	--body-border: #288CD2;
+
+	min-height: 100%;
+	padding: 1rem;
+	border-radius: 1.5rem;
+	border: 1px dashed var(--body-border);
+}
+
+.list-03 .txt-wrap {
+	flex: 1;
+}
+
+.list-03 .txt-wrap ul li{
+	font-size: 0.8rem;
+}
+
+.list-03 .txt-wrap .bu-st1 > li:before{
+	background: var(--title-text);
+}
+
+.list-03 .txt-wrap .bu-st2 > li:before{
+	background: #777;
+}
+
+@media (max-width: 768px) {
+
+	.list-03 {
+		border-radius: 1rem;
+	}
+}
+

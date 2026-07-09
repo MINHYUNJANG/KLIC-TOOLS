@@ -1,0 +1,20 @@
+{
+	"category": "box",
+	"addDirection": "row",
+	"max": "1",
+	"styleOptions": {
+		"title": {
+			"fields": [
+				{ "key": "borderColor",     "label": "테두리 시작", "default": "#ECEDF4" },
+				{ "key": "borderColor2",    "label": "테두리 끝",   "default": "#485194" },
+				{ "key": "textColor",       "label": "텍스트",      "default": "#1c3478" },
+				{ "key": "minHeight",       "label": "높이",        "type": "number", "min": 20, "max": 300 }
+			]
+		},
+		"body": {
+			"fields": [
+				{ "key": "backgroundColor", "label": "배경", "default": "#ffffff" }
+			]
+		}
+	}
+}

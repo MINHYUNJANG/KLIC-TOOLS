@@ -1,0 +1,11 @@
+{
+  "addDirection": "column",
+  "templateFilters": ["accordion"],
+  "accordionDefaults": {
+    "items": [
+      {"text": "아코디언 메뉴 1", "content": "", "disabled": false},
+      {"text": "아코디언 메뉴 2", "content": "", "disabled": false}
+    ],
+    "size": ""
+  }
+}

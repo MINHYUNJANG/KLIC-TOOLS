@@ -1,0 +1,33 @@
+{
+	"category": "wing",
+	"addDirection": "row",
+	"max": "1",
+	"classOptions": [
+		{
+			"key": "direction",
+			"label": "배치 방향",
+			"default": "both",
+			"options": [
+				{ "value": "left",  "label": "왼쪽" },
+				{ "value": "right", "label": "오른쪽" },
+				{ "value": "both",  "label": "양쪽" }
+			]
+		}
+	],
+	"styleOptions": {
+		"title": {
+			"fields": [
+				{ "key": "borderColor", "label": "테두리·구분선", "default": "#1c3478" },
+				{ "key": "textColor",   "label": "제목 텍스트",   "default": "#1c3478" },
+				{ "key": "minHeight",   "label": "높이",          "type": "number", "min": 20, "max": 300 }
+			]
+		},
+		"body": {
+			"fields": [
+				{ "key": "backgroundColor", "label": "본문 배경",   "default": "#ffffff" },
+				{ "key": "textColor",       "label": "본문 텍스트", "default": "#1c3478" },
+				{ "key": "minHeight",       "label": "높이",        "type": "number", "min": 20, "max": 300 }
+			]
+		}
+	}
+}

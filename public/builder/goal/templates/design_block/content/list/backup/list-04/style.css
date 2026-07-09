@@ -1,0 +1,43 @@
+﻿.list-04 {
+	padding: clamp(20px, 3vw, 34px);
+	border-radius: 20px;
+	background: var(--body-bg);
+}
+
+.list-04-head {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	min-height: clamp(44px, 5vw, 58px);
+	margin-bottom: clamp(16px, 2.2vw, 24px);
+	border-radius: 12px;
+	background: var(--title-bg, #fff);
+	color: var(--title-text, #1569b5);
+	font-size: var(--title-size, clamp(18px, 2.2vw, 28px));
+	font-weight: var(--title-weight, 900);
+}
+
+.list-04-list {
+	display: grid;
+	gap: clamp(9px, 1.3vw, 13px);
+}
+
+.list-04-list li {
+	position: relative;
+	padding-left: clamp(18px, 2vw, 24px);
+	color: var(--body-text, #fff);
+	font-size: var(--body-size, clamp(12px, 1.5vw, 17px));
+	font-weight: var(--body-weight, 600);
+	line-height: 1.55;
+	text-align: var(--body-align, center);
+}
+
+.list-04-list li::before {
+	content: "";
+	position: absolute;
+	top: 0.75em;
+	left: 0;
+	width: 9px;
+	border-top: 2px solid rgba(255, 255, 255, 0.85);
+}
+

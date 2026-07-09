@@ -1,0 +1,28 @@
+﻿.box-07 {
+	/* 본문 */
+	--body-border: #6f36a5;
+	--body-bg: #fff;
+	--body-align: center;
+	--body-weight: 500;
+
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	gap: 16px;
+	border-radius: 20px;
+	padding: 20px 16px;
+	background: var(--body-bg);
+	box-shadow: 1px 1px 8px rgba(0,0,0,0.1);
+	min-height: 100%;
+}
+
+.box-07 .icon {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	width: 90px;
+	height: 90px;
+	border: 2px solid var(--body-border);
+	border-radius: 30px;
+	background: #fff;;
+}

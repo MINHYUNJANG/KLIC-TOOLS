@@ -1,0 +1,11 @@
+{
+  "templateFilters": ["school"],
+  "sections": [
+    {"type": "box-011", "blockWidth": 200},
+    "divider-001",
+    {"type": "box-011", "blockWidth": 200, "data": {"title": "부학생회장"}},
+    "divider-001",
+    "divider-001",
+    {"type": "list-010", "columns": 5, "gap": 25}
+  ]
+}

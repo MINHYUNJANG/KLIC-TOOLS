@@ -1,10 +1,341 @@
 import { useState, useRef, useEffect, useCallback } from 'react';
 import { formatHtml } from '../../utils/formatHtml';
 import { isImageOnlyContent, hasContentImage, getContentImageUrls } from '../../utils/ocrSymbol';
+import { cleanTableHtml } from '../../utils/tableTransform/cleanTableHtml';
+import { MARKER_TYPES } from '../../utils/tableTransform/constants';
 import greeting from '../../templates/greeting';
 import history from '../../templates/history';
 import symbol from '../../templates/symbol';
+import principal from '../../templates/principal';
+import location from '../../templates/location';
+import classList from '../../templates/classList';
+import { createGreetingKlicDocument } from '../../utils/greetingKlicMapping';
 import useToast from '../TableEditor/hooks/useToast';
+import JSZip from 'jszip';
+
+// 운영 사이트에서는 common.js/sub_com.js 등 스크립트를 레이아웃에서 공통으로 불러오므로,
+// 페이지별 저장 마크업에는 크롤링 원본에 섞여있던 <script>가 남아있으면 안 된다.
+function stripScriptTags(html) {
+  if (!html || typeof window === 'undefined') return html;
+  const doc = new DOMParser().parseFromString(html, 'text/html');
+  doc.querySelectorAll('script').forEach(el => el.remove());
+  return doc.body.innerHTML;
+}
+
+// bullet을 제외한 모든 마커(①②③, 1. 2., 가. 나., Ⅰ.Ⅱ. 등)는 순서가 있는 목록이므로
+// order-st + <span class="mrk"> 형태로 마크업한다 (con_com.css guide 기준).
+const GWANGJU_LIST_OL_TYPES = Object.keys(MARKER_TYPES).filter(type => type !== 'bullet');
+
+// 광주 "기본" 변환: con_com.css 클래스 체계(표 tbl-st / 리스트 bu-st·order-st / 제목 tit-st)로
+// 표·리스트·제목을 일괄 정규화한다. 표/리스트 혼재 순서 처리는 이미 검증된
+// 테이블변환(cleanTableHtml) 로직을 그대로 재사용한다.
+const GWANGJU_BASIC_CONFIG = {
+  wrapperClassName: 'tbl-st',
+  tableUlClassName: 'bu-st list',
+  tableOlType: GWANGJU_LIST_OL_TYPES,
+  tableKeepMarker: false,
+  tableType: 'default',
+  isWrapDiv: true,
+  isVerticalHeader: false,
+  headerRows: 1,
+  headerCols: 1,
+  isColorMode: false,
+  isColorClassMode: true,
+  tableListStartFrom2: false,
+  isMergeTables: false,
+  keepMarker: false,
+  ulClassName: 'bu-st list',
+  olType: GWANGJU_LIST_OL_TYPES,
+  listStartFrom2: false,
+  tit1: null,
+  tit2: null,
+  tit3: null,
+  tit1Class: 'tit-st section',
+  tit2Class: 'tit-st contents',
+  tit3Class: 'tit-st unit',
+};
+
+// <li> 안에 "①", "1." 같은 마커가 텍스트로 박혀 있으면 cleanTableHtml의 마커 인식
+// 로직이 이를 다시 order-st 목록으로 재구성할 수 있도록, 마커가 있는 항목만 골라
+// 평문 <p>로 풀어둔다. 마커 없는 순수 리스트는 태그 그대로 둔다
+// (cleanTableHtml이 기존 ul/ol 구조를 보존한 채 클래스만 새로 매겨준다).
+function hasExplicitMarker(text) {
+  const trimmed = (text || '').trim();
+  return Object.entries(MARKER_TYPES).some(([type, regex]) => type !== 'bullet' && regex.test(trimmed));
+}
+
+function getExplicitMarker(text) {
+  const trimmed = (text || '').trim();
+  for (const [type, regex] of Object.entries(MARKER_TYPES)) {
+    if (type === 'bullet') continue;
+    const match = trimmed.match(regex);
+    if (match) return { type, match: match[0] };
+  }
+  return null;
+}
+
+// dl은 표변환 로직이 지원하는 출력 태그 목록(ALLOWED_TAGS)에 없어서 그대로 두면 태그만
+// 벗겨지고 텍스트가 줄바꿈도 없이 뭉쳐버린다. dl의 dt/dd는 명시적 번호가 없어도 항목이
+// 여러 개 나열된 목록이므로, dt(+뒤따르는 dd)를 한 항목으로 묶어 <p>로 풀어내되, 그
+// 항목에 마커가 전혀 없으면 "N. "을 텍스트로 주입해 cleanTableHtml의 마커 인식 로직이
+// (주변의 다른 마커 항목과 함께) 올바른 중첩까지 포함해 order-st 리스트로 재구성하게
+// 맡긴다 — 완성된 <ol>을 미리 만들면 그 지점에서 바깥 리스트의 중첩 흐름이 끊긴다.
+function flattenDefinitionLists(container) {
+  Array.from(container.querySelectorAll('dl')).forEach(dl => {
+    if (dl.closest('table')) return;
+    const children = Array.from(dl.children).filter(c => c.tagName === 'DT' || c.tagName === 'DD');
+    if (!children.length) { dl.remove(); return; }
+
+    // dt 하나 + 그 바로 다음 dd 하나만 한 항목으로 묶는다. dt 없이 dd만 연달아 나오는
+    // 경우(원본에 이미 "1. 2. 3." 처럼 각자 번호가 박혀있는 경우가 많음)는 각 dd를 별개
+    // 항목으로 취급해야 하므로, dt의 "첫 dd"가 아니면 항상 새 항목을 시작한다.
+    const items = [];
+    let current = null;
+    children.forEach(child => {
+      if (child.tagName === 'DT') {
+        current = { dt: child, dds: [] };
+        items.push(current);
+      } else if (current && current.dt && current.dds.length === 0) {
+        current.dds.push(child);
+      } else {
+        current = { dt: null, dds: [child] };
+        items.push(current);
+      }
+    });
+
+    const frag = document.createDocumentFragment();
+    items.forEach((item, idx) => {
+      const p = document.createElement('p');
+      if (item.dt) {
+        const strong = document.createElement('strong');
+        while (item.dt.firstChild) strong.appendChild(item.dt.firstChild);
+        p.appendChild(strong);
+      }
+      item.dds.forEach(dd => {
+        if (p.childNodes.length > 0) p.appendChild(document.createElement('br'));
+        while (dd.firstChild) p.appendChild(dd.firstChild);
+      });
+      if (!hasExplicitMarker(p.textContent)) {
+        p.insertBefore(document.createTextNode(`${idx + 1}. `), p.firstChild);
+      }
+      frag.appendChild(p);
+    });
+    dl.replaceWith(frag);
+  });
+}
+
+function flattenMarkedListItems(html) {
+  if (!html || typeof window === 'undefined') return html;
+  const doc = new DOMParser().parseFromString(html, 'text/html');
+  const container = doc.body;
+
+  flattenDefinitionLists(container);
+
+  // li는 마커(①, 1. 등)가 있을 때만 평문 <p>로 풀어서 order-st 재구성 대상이 되게 하고,
+  // 마커 없는 순수 리스트는 태그 그대로 둔다(cleanTableHtml이 구조를 보존한 채 클래스만 새로 매김).
+  Array.from(container.querySelectorAll('li')).forEach(item => {
+    if (item.closest('table')) return;
+    if (!hasExplicitMarker(item.textContent)) return;
+    const p = document.createElement('p');
+    while (item.firstChild) p.appendChild(item.firstChild);
+    item.replaceWith(p);
+  });
+
+  // li가 하나도 안 남은 ul/ol 래퍼는 걷어내고 남은 자식은 제자리에 둔다.
+  Array.from(container.querySelectorAll('ul, ol')).forEach(listEl => {
+    if (listEl.closest('table')) return;
+    const hasRemainingItems = Array.from(listEl.children).some(c => c.tagName === 'LI');
+    if (hasRemainingItems) return;
+    listEl.replaceWith(...Array.from(listEl.childNodes));
+  });
+
+  return container.innerHTML;
+}
+
+// cleanTableHtml은 body의 최상위 자식들을 평평한 블록 시퀀스로 가정하고 순회하므로,
+// 크롤링 결과처럼 <div id="content"><div class="help09">...실제 내용...</div></div>처럼
+// 감싸는 div가 하나 이상 겹쳐 있으면 표를 포함한 안쪽 wrapper 전체가 "표 노드" 취급되어
+// 그 안의 다른 형제 콘텐츠가 통째로 유실된다. 의미 있는 자식이 정확히 하나뿐인 래퍼 div를
+// (주석·공백 제외) 만나는 한 계속 파고들어 실제 콘텐츠가 평평하게 나열된 지점을 찾는다.
+function findFlatContentRoot(el) {
+  let current = el;
+  while (true) {
+    const meaningfulChildren = Array.from(current.childNodes).filter(n => {
+      if (n.nodeType === 8) return false;
+      if (n.nodeType === 3 && !n.textContent.trim()) return false;
+      return true;
+    });
+    const onlyChild = meaningfulChildren.length === 1 ? meaningfulChildren[0] : null;
+    // table/tbody/tr는 그 자체로 "감싸는 wrapper div"가 아니라 표 구조의 일부라서, 안으로
+    // 더 파고들면 cleanTableHtml에 낱개 <tr>만 남겨 표 전체가 깨진다. table을 만나면 멈춘다.
+    if (onlyChild?.nodeType === 1 && onlyChild.tagName !== 'TABLE') {
+      current = onlyChild;
+      continue;
+    }
+    return current;
+  }
+}
+
+// 크롤링 결과에 섞여오는 탭 메뉴(예: class="tapMenu"로 감싼 class="TabM_1" li,
+// 또는 id="tabNavi")를 guide.html의 표준 탭 마크업(.tab-st depth01)으로 바꾼다.
+// 래퍼 클래스명이 사이트마다 "tapMenu"처럼 살짝 다르게 오타나 있기도 해서, li 클래스에
+// "tab"이 들어있는지까지 함께 본다.
+function isTabLike(el) {
+  if (!el || el.nodeType !== 1) return false;
+  const cls = el.className || '';
+  const id = el.id || '';
+  return /tab/i.test(cls) || /tab/i.test(id);
+}
+
+// class/id에 "tab"이 전혀 없어도(예: <li class="on"><p><a class="bu_link" href="...">)
+// href의 sid= 값을 공유하는 형제 링크들이면 사실상 같은 탭 그룹이다. 그중 하나는 현재
+// 탭이라 sid= 없이 자기 id만 가리키는 경우가 많으므로, sid 값 일치가 2개 이상이면 충분하다.
+function looksLikeSidTabGroup(items) {
+  if (items.length < 2) return false;
+  const hasActive = items.some(li => /(^|\s)on(\s|$)/.test(li.className || ''));
+  if (!hasActive) return false;
+  const sidValues = items
+    .map(li => {
+      const href = li.querySelector('a[href]')?.getAttribute('href') || '';
+      return href.match(/[?&]sid=([^&]+)/i)?.[1] || null;
+    })
+    .filter(Boolean);
+  return sidValues.length >= 2 && new Set(sidValues).size === 1;
+}
+
+// cleanTableHtml에 넘기면 새로 만든 tab-st div를 "빈 div"로 오인해 <p>로 풀어버리거나
+// 안의 ul을 bu-st 리스트로 재분류해버릴 수 있어, 탭 변환은 cleanTableHtml 실행 전에 하고
+// 결과물은 텍스트 플레이스홀더로 감싸 무사히 통과시킨 뒤 실제 탭 마크업으로 되돌린다.
+function convertTabMenus(container) {
+  const lists = Array.from(container.querySelectorAll('ul, ol'));
+  const blocks = [];
+
+  lists.forEach((list, i) => {
+    const items = Array.from(list.children).filter(c => c.tagName === 'LI');
+    const looksLikeTabs = isTabLike(list) ||
+      (items.length > 1 && items.every(li => isTabLike(li))) ||
+      looksLikeSidTabGroup(items);
+    if (!looksLikeTabs) return;
+
+    const tabItems = items.map(li => {
+      const a = li.querySelector('a');
+      const active = /(^|\s)on(\s|$)/.test(li.className || '') ||
+        /현재\s*페이지/.test((a && a.getAttribute('title')) || '');
+      return {
+        href: a ? (a.getAttribute('href') || '') : '',
+        label: (a ? a.textContent : li.textContent).replace(/\s+/g, ' ').trim(),
+        active,
+      };
+    }).filter(t => t.label);
+    if (!tabItems.length) return;
+
+    const placeholder = `@@GWANGJU_TAB_${i}@@`;
+    const p = document.createElement('p');
+    p.textContent = placeholder;
+
+    // ul 하나만 감싸고 있는 래퍼 div(예: .tapMenu)가 있으면 그 wrapper까지 통째로 교체한다.
+    const parent = list.parentElement;
+    const disposableWrapper = parent && parent !== container && parent.tagName === 'DIV' &&
+      parent.children.length === 1;
+    (disposableWrapper ? parent : list).replaceWith(p);
+
+    blocks.push({ placeholder, items: tabItems });
+  });
+
+  return blocks;
+}
+
+function renderTabBlock({ items }) {
+  const li = items.map(t => {
+    const cls = t.active ? ' class="on"' : '';
+    const href = t.href ? ` href="${t.href}"` : '';
+    return `<li${cls}><a${href}>${t.label}</a></li>`;
+  }).join('');
+  return `<div class="tab-st depth01"><ul>${li}</ul></div>`;
+}
+
+// cleanTableHtml은 h3/h4/h5만 tit-st(section/contents/unit)로 정규화해준다. "가) 인성교육
+// 내용"처럼 순차 마커가 붙은 h6("나)", "다)" ...로 이어지는 하위 소제목)나 드물게 쓰이는
+// h1/h2는 그 대상이 아니라 원래 클래스가 그대로 남는다. con_com.css 타이틀 위계상 h6은
+// tit-st item에 해당하므로 미리 정규화해둔다(마커 텍스트 자체는 순서를 보여주므로 유지).
+function normalizeExtraHeadings(container) {
+  Array.from(container.querySelectorAll('h1, h2')).forEach(h => { h.className = 'tit-st section'; });
+  Array.from(container.querySelectorAll('h6')).forEach(h => { h.className = 'tit-st item'; });
+}
+
+// 부모 항목의 <br> 뒤에 첫 하위 순번이 인라인으로 붙고, 두 번째 순번부터 중첩 ol로
+// 만들어진 경우가 있다. 예: "<br>가. 항목<ol><li>나. ...". 인라인의 "가."를
+// 중첩 목록 첫 li로 승격해 1/가 항목부터 동일한 order-st 단계가 적용되게 한다.
+function promoteInlineFirstNestedListItems(container) {
+  Array.from(container.querySelectorAll('li')).forEach(parentLi => {
+    const directChildren = Array.from(parentLi.childNodes);
+    const nestedListIndex = directChildren.findIndex(node =>
+      node.nodeType === 1 && (node.tagName === 'OL' || node.tagName === 'UL')
+    );
+    if (nestedListIndex < 0) return;
+
+    const nestedList = directChildren[nestedListIndex];
+    let breakIndex = -1;
+    for (let index = nestedListIndex - 1; index >= 0; index -= 1) {
+      const node = directChildren[index];
+      if (node.nodeType === 1 && node.tagName === 'BR') {
+        breakIndex = index;
+        break;
+      }
+      if (node.nodeType === 1 && /^(OL|UL|P|DIV|TABLE)$/.test(node.tagName)) break;
+    }
+    if (breakIndex < 0) return;
+
+    const inlineNodes = directChildren.slice(breakIndex + 1, nestedListIndex);
+    const inlineText = inlineNodes.map(node => node.textContent || '').join('').trim();
+    const marker = getExplicitMarker(inlineText);
+    if (!marker) return;
+
+    const holder = document.createElement('div');
+    inlineNodes.forEach(node => holder.appendChild(node.cloneNode(true)));
+    const walker = document.createTreeWalker(holder, NodeFilter.SHOW_TEXT);
+    let textNode;
+    while ((textNode = walker.nextNode())) {
+      if (!textNode.textContent.trim()) continue;
+      textNode.textContent = textNode.textContent.replace(
+        new RegExp(`^\\s*${marker.match.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}`),
+        ''
+      );
+      break;
+    }
+
+    const firstItem = document.createElement('li');
+    const markerSpan = document.createElement('span');
+    markerSpan.className = 'mrk';
+    markerSpan.textContent = marker.match.replace(/[.\s()]/g, '');
+    firstItem.appendChild(markerSpan);
+    firstItem.appendChild(document.createTextNode(' '));
+    while (holder.firstChild) firstItem.appendChild(holder.firstChild);
+
+    directChildren[breakIndex].remove();
+    inlineNodes.forEach(node => node.remove());
+    nestedList.insertBefore(firstItem, nestedList.firstChild);
+  });
+}
+
+function applyGwangjuBasicMarkup(html) {
+  if (!html || typeof window === 'undefined') return html;
+  const flattened = flattenMarkedListItems(html);
+  const doc = new DOMParser().parseFromString(flattened, 'text/html');
+  const wrapper = doc.body.firstElementChild;
+  if (!wrapper) return cleanTableHtml(flattened, GWANGJU_BASIC_CONFIG);
+
+  const target = findFlatContentRoot(wrapper);
+  normalizeExtraHeadings(target);
+  const tabBlocks = convertTabMenus(target);
+  let cleaned = cleanTableHtml(target.innerHTML, GWANGJU_BASIC_CONFIG);
+  tabBlocks.forEach(block => {
+    cleaned = cleaned.replace(`<p>${block.placeholder}</p>`, renderTabBlock(block));
+  });
+  target.innerHTML = cleaned;
+  promoteInlineFirstNestedListItems(target);
+  return doc.body.innerHTML;
+}
 
 // auto-markup 결과 HTML의 테이블 구조만 정규화
 // applyTableSemantics는 내부에서 메인 document.createElement를 쓰므로
@@ -12,6 +343,35 @@ import useToast from '../TableEditor/hooks/useToast';
 function applyTableProcessing(html) {
   if (!html || !html.includes('<table')) return html;
   const doc = new DOMParser().parseFromString(html, 'text/html');
+
+  const getMaxColumnCount = table => Array.from(table.rows).reduce((max, row) => {
+    const count = Array.from(row.cells).reduce((sum, cell) => {
+      return sum + parseInt(cell.getAttribute('colspan') || '1', 10);
+    }, 0);
+    return Math.max(max, count);
+  }, 0);
+
+  const shouldUseWideScroll = table => {
+    const maxCols = getMaxColumnCount(table);
+    if (maxCols >= 8) return true;
+    const headerTextLength = Array.from(table.querySelectorAll('thead th, tr:first-child th, tr:first-child td'))
+      .reduce((sum, cell) => sum + cell.textContent.replace(/\s+/g, '').length, 0);
+    return maxCols >= 6 && headerTextLength >= 36;
+  };
+
+  const applyWideScrollClass = table => {
+    if (!shouldUseWideScroll(table)) return;
+    const parent = table.parentElement;
+    if (parent && parent.tagName === 'DIV' && /\btbl-st\b/.test(parent.className || '')) {
+      parent.classList.add('scroll-w');
+      if (!parent.parentElement?.classList.contains('scroll-wrap')) {
+        const scrollWrap = doc.createElement('div');
+        scrollWrap.className = 'scroll-wrap';
+        parent.parentNode.insertBefore(scrollWrap, parent);
+        scrollWrap.appendChild(parent);
+      }
+    }
+  };
 
   Array.from(doc.querySelectorAll('table')).forEach(table => {
     if (table.closest('table')) return; // 중첩 테이블 제외
@@ -22,14 +382,17 @@ function applyTableProcessing(html) {
     const parent = table.parentElement;
     const parentIsTblSt = parent && parent.tagName === 'DIV' && /\btbl-st\b/.test(parent.className || '');
     if (parentIsTblSt) {
-      // 이미 올바른 wrapper div가 있음 — 클래스 유지 (scroll-w 포함)
+      // 이미 올바른 wrapper div가 있음 — 긴 표면 con_com.css의 가로 스크롤 클래스를 추가
+      applyWideScrollClass(table);
     } else if (parent && parent.tagName === 'DIV' && parent.children.length === 1) {
-      parent.className = 'tbl-st scroll-w';
+      parent.className = 'tbl-st';
+      applyWideScrollClass(table);
     } else {
       const wrapper = doc.createElement('div');
-      wrapper.className = 'tbl-st scroll-w';
+      wrapper.className = 'tbl-st';
       table.parentNode.insertBefore(wrapper, table);
       wrapper.appendChild(table);
+      applyWideScrollClass(table);
     }
 
     // thead / tbody 분리 + 첫 행 th 변환
@@ -77,6 +440,7 @@ function applyTableProcessing(html) {
     }
     if (thead.hasChildNodes()) table.appendChild(thead);
     table.appendChild(tbody);
+    applyWideScrollClass(table);
   });
 
   return doc.body.innerHTML;
@@ -127,7 +491,9 @@ function normalizeGeneratedMarkup(html) {
 
     const indentChildren = Array.from(next.children);
     const firstMeaningful = indentChildren.find(el => el.textContent.trim() || el.children.length > 0);
-    if (!firstMeaningful?.classList.contains('tbl-st')) return;
+    const hasTableBlock = firstMeaningful?.classList.contains('tbl-st') ||
+      (firstMeaningful?.classList.contains('scroll-wrap') && firstMeaningful.querySelector(':scope > .tbl-st'));
+    if (!hasTableBlock) return;
 
     while (next.firstChild) {
       title.parentNode.insertBefore(next.firstChild, next);
@@ -138,8 +504,8 @@ function normalizeGeneratedMarkup(html) {
   return formatHtml(body.innerHTML);
 }
 
-const ALL_TEMPLATES = [...greeting, ...history, ...symbol];
-const CATEGORY_TEMPLATES = { greeting, history, symbol };
+const ALL_TEMPLATES = [...greeting, ...history, ...symbol, ...principal, ...location, ...classList];
+const CATEGORY_TEMPLATES = { greeting, history, symbol, principal, location, classList };
 
 function isValidUrl(str) {
   try { new URL(str); return true; } catch { return false; }
@@ -1113,6 +1479,26 @@ export default function UrlCrawlMarkup() {
   }
 
   // ─── 소스 직접 입력 모드 ────────────────────────────────────
+  const [projectType, setProjectType] = useState('gwangju'); // 'gwangju' | 'chungnam'
+  const [gwangjuUrlItems, setGwangjuUrlItems] = useState([{ id: 1, value: '' }]);
+  const [gwangjuCrawlProgress, setGwangjuCrawlProgress] = useState({ done: 0, total: 0 });
+  const [nextGwangjuUrlId, setNextGwangjuUrlId] = useState(2);
+  const [activeGwangjuUrlId, setActiveGwangjuUrlId] = useState(1);
+  const [activeGwangjuMenuBySite, setActiveGwangjuMenuBySite] = useState({});
+  const [showGwangjuInlineResults, setShowGwangjuInlineResults] = useState(false);
+  const [gwangjuMarkupPanelOpen, setGwangjuMarkupPanelOpen] = useState(false);
+  const [gwangjuMarkupSource, setGwangjuMarkupSource] = useState('');
+  const [gwangjuMarkupSelector, setGwangjuMarkupSelector] = useState('');
+  const [gwangjuMarkupSourceUrl, setGwangjuMarkupSourceUrl] = useState('');
+  const [gwangjuMarkupLoading, setGwangjuMarkupLoading] = useState(false);
+  const [gwangjuMarkupError, setGwangjuMarkupError] = useState('');
+  const [gwangjuConvertPanelOpen, setGwangjuConvertPanelOpen] = useState(false);
+  const [gwangjuConvertMenuOpen, setGwangjuConvertMenuOpen] = useState(false);
+  const [gwangjuConvertSubmenuCategory, setGwangjuConvertSubmenuCategory] = useState(null);
+  const [gwangjuConvertedSource, setGwangjuConvertedSource] = useState('');
+  const [gwangjuSelectedTemplateId, setGwangjuSelectedTemplateId] = useState(null);
+  const [gwangjuConvertPreviewOpen, setGwangjuConvertPreviewOpen] = useState(false);
+  const [gwangjuSavedMarkupByUrl, setGwangjuSavedMarkupByUrl] = useState({});
   const [mode, setMode] = useState('url'); // 'url' | 'source'
   const [sourceHtml, setSourceHtml] = useState('');
   const [sourceSelector, setSourceSelector] = useState('');
@@ -1120,6 +1506,601 @@ export default function UrlCrawlMarkup() {
   const [sourceTemplateId, setSourceTemplateId] = useState(null);
   const [sourceResult, setSourceResult] = useState(null);
   const [sourceLoading, setSourceLoading] = useState(false);
+  const GWANGJU_MAX_URLS = 10;
+
+  function addGwangjuUrlInput() {
+    if (gwangjuUrlItems.length >= GWANGJU_MAX_URLS) return;
+    setGwangjuUrlItems(prev => [...prev, { id: nextGwangjuUrlId, value: '', siteName: '', menus: [], loading: false, error: '' }]);
+    setActiveGwangjuUrlId(nextGwangjuUrlId);
+    setNextGwangjuUrlId(prev => prev + 1);
+  }
+
+  function extractUrlsFromText(value) {
+    const text = String(value || '');
+    const urls = [
+      ...[...text.matchAll(/https?:\/\/[^\s,]+/gi)].map(match => match[0]),
+      ...[...text.matchAll(/(?:^|[\s([])([a-z0-9-]+(?:\.[a-z0-9-]+)+)(?=[\s)\],;]|$)/gi)].map(match => match[1]),
+    ];
+    return [...new Set(urls.map(normalizeGwangjuUrl).filter(Boolean))];
+  }
+
+  function normalizeGwangjuUrl(value) {
+    const url = String(value || '').trim().replace(/^[([]+|[)\].,;]+$/g, '');
+    if (!url) return '';
+    return /^https?:\/\//i.test(url) ? url : `http://${url}`;
+  }
+
+  function updateGwangjuUrlInput(id, value) {
+    const pastedUrls = extractUrlsFromText(value);
+    if (pastedUrls.length > 1) {
+      setGwangjuUrlItems(prev => {
+        const currentIndex = prev.findIndex(item => item.id === id);
+        const baseIndex = currentIndex >= 0 ? currentIndex : prev.length;
+        const availableCount = Math.max(GWANGJU_MAX_URLS - (prev.length - 1), 1);
+        const limitedUrls = pastedUrls.slice(0, availableCount);
+        let nextId = nextGwangjuUrlId;
+        const splitItems = limitedUrls.map((url, index) => ({
+          id: index === 0 ? id : nextId++,
+          value: url,
+          siteName: '',
+          menus: [],
+          loading: false,
+          error: '',
+        }));
+        return [
+          ...prev.slice(0, baseIndex),
+          ...splitItems,
+          ...prev.slice(baseIndex + 1),
+        ];
+      });
+      setActiveGwangjuUrlId(id);
+      setNextGwangjuUrlId(prev => prev + Math.min(Math.max(pastedUrls.length - 1, 0), GWANGJU_MAX_URLS - 1));
+      return;
+    }
+    setGwangjuUrlItems(prev => prev.map(item => item.id === id ? { ...item, value, error: '' } : item));
+  }
+
+  function removeGwangjuUrlInput(id) {
+    setGwangjuUrlItems(prev => {
+      if (prev.length <= 1) return prev;
+      const next = prev.filter(item => item.id !== id);
+      if (activeGwangjuUrlId === id) setActiveGwangjuUrlId(next[0]?.id || 1);
+      return next;
+    });
+  }
+
+  const activeGwangjuUrlItem =
+    gwangjuUrlItems.find(item => item.id === activeGwangjuUrlId) || gwangjuUrlItems[0];
+  const hasGwangjuCrawlResult = gwangjuUrlItems.some(item =>
+    item.loading || item.error || item.menus?.length > 0
+  );
+  const hasGwangjuUrlInput = gwangjuUrlItems.some(item => item.value?.trim());
+  const isGwangjuCrawling = gwangjuUrlItems.some(item => item.loading);
+  const firstGwangjuPreviewMenu =
+    activeGwangjuUrlItem?.menus?.find(menu => menu.url && menu.depth !== 1) ||
+    activeGwangjuUrlItem?.menus?.find(menu => menu.url);
+  const activeGwangjuMenuUrl = activeGwangjuMenuBySite[activeGwangjuUrlItem?.id] || firstGwangjuPreviewMenu?.url || '';
+  const activeGwangjuMenuLabel =
+    activeGwangjuUrlItem?.menus?.find(menu => menu.url === activeGwangjuMenuUrl)?.label ||
+    firstGwangjuPreviewMenu?.label ||
+    '';
+  const gwangjuSaveTargetMenus = gwangjuUrlItems.flatMap(site => (
+    site.menus || []
+  ).filter(menu => menu.url && menu.depth !== 1));
+  const hasGwangjuSavedMarkup = gwangjuSaveTargetMenus.some(menu => gwangjuSavedMarkupByUrl[menu.url]?.source);
+
+  function closeGwangjuMarkupPanels() {
+    setGwangjuMarkupPanelOpen(false);
+    setGwangjuConvertPanelOpen(false);
+    setGwangjuConvertPreviewOpen(false);
+  }
+
+  function removeGwangjuMenu(siteId, menuToRemove) {
+    setGwangjuUrlItems(prev => prev.map(site => {
+      if (site.id !== siteId) return site;
+      return {
+        ...site,
+        menus: (site.menus || []).filter(menu => menu !== menuToRemove),
+      };
+    }));
+    if (menuToRemove.url) {
+      setGwangjuSavedMarkupByUrl(prev => {
+        const next = { ...prev };
+        delete next[menuToRemove.url];
+        return next;
+      });
+      setActiveGwangjuMenuBySite(prev => {
+        if (prev[siteId] !== menuToRemove.url) return prev;
+        const nextMenus = (activeGwangjuUrlItem?.menus || []).filter(menu => menu !== menuToRemove);
+        const nextMenu = nextMenus.find(menu => menu.url && menu.depth !== 1) || nextMenus.find(menu => menu.url);
+        return { ...prev, [siteId]: nextMenu?.url || '' };
+      });
+    }
+    closeGwangjuMarkupPanels();
+  }
+
+  function getGwangjuTabLabel(item, index) {
+    if (item.siteName) return item.siteName;
+    try {
+      return new URL(item.value).hostname.replace(/^www\./, '') || `사이트 ${index + 1}`;
+    } catch {
+      return item.value?.trim() ? `사이트 ${index + 1}` : `URL ${index + 1}`;
+    }
+  }
+
+  function getGwangjuSafeFileName(value, fallback = 'page') {
+    return String(value || fallback)
+      .replace(/[\\/:*?"<>|]/g, '_')
+      .replace(/\s+/g, ' ')
+      .trim()
+      .slice(0, 80) || fallback;
+  }
+
+  async function readGwangjuJsonResponse(res, fallbackMessage) {
+    const responseText = await res.text();
+    try {
+      return responseText ? JSON.parse(responseText) : {};
+    } catch {
+      const message = responseText.trim().startsWith('<!DOCTYPE') || responseText.trim().startsWith('<html')
+        ? 'API가 JSON 대신 HTML 페이지를 반환했습니다. 새로고침 후 다시 시도하세요.'
+        : fallbackMessage;
+      throw new Error(message);
+    }
+  }
+
+  async function downloadGwangjuSavedMarkupZip() {
+    const zip = new JSZip();
+    const usedPaths = new Set();
+    let fileCount = 0;
+
+    gwangjuUrlItems.forEach((site, siteIndex) => {
+      const schoolName = getGwangjuSafeFileName(getGwangjuTabLabel(site, siteIndex), `site-${siteIndex + 1}`);
+      (site.menus || []).forEach((menu, menuIndex) => {
+        const saved = menu.url ? gwangjuSavedMarkupByUrl[menu.url] : null;
+        if (!saved?.source) return;
+
+        const menuName = getGwangjuSafeFileName(menu.label, `menu-${menuIndex + 1}`);
+        let zipPath = `pub/web/${schoolName}/${menuName}.html`;
+        let duplicateIndex = 2;
+        while (usedPaths.has(zipPath)) {
+          zipPath = `pub/web/${schoolName}/${menuName}-${duplicateIndex}.html`;
+          duplicateIndex += 1;
+        }
+
+        usedPaths.add(zipPath);
+        zip.file(zipPath, saved.source);
+        fileCount += 1;
+      });
+    });
+
+    if (!fileCount) return;
+
+    const blob = await zip.generateAsync({ type: 'blob' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `gwangju-markup-${new Date().toISOString().slice(0, 10)}.zip`;
+    document.body.appendChild(a);
+    a.click();
+    a.remove();
+    URL.revokeObjectURL(url);
+  }
+
+  async function fetchGwangjuMarkupSource() {
+    if (!activeGwangjuMenuUrl) return;
+    setGwangjuMarkupPanelOpen(true);
+    setGwangjuMarkupLoading(true);
+    setGwangjuMarkupError('');
+    setGwangjuMarkupSource('');
+    setGwangjuMarkupSelector('');
+    setGwangjuMarkupSourceUrl(activeGwangjuMenuUrl);
+    setGwangjuConvertPanelOpen(false);
+    setGwangjuConvertPreviewOpen(false);
+    setGwangjuConvertedSource('');
+    setGwangjuSelectedTemplateId(null);
+
+    try {
+      const res = await fetch('/api/gwangju-page-source', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ url: activeGwangjuMenuUrl }),
+      });
+      const responseText = await res.text();
+      let data = {};
+      try {
+        data = responseText ? JSON.parse(responseText) : {};
+      } catch {
+        throw new Error('소스 API가 JSON이 아닌 HTML 응답을 반환했습니다. 페이지를 새로고침한 뒤 다시 시도하세요.');
+      }
+      if (!res.ok) throw new Error(data.error || '소스를 가져오지 못했습니다.');
+      setGwangjuMarkupSource(data.html || '');
+      setGwangjuMarkupSelector(data.selector || '');
+    } catch (error) {
+      setGwangjuMarkupError(error.message || '소스를 가져오지 못했습니다.');
+    } finally {
+      setGwangjuMarkupLoading(false);
+    }
+  }
+
+  const GWANGJU_CONVERT_CATEGORIES = [
+    { key: '인사말', label: '인사말', ready: true },
+    { key: '연혁', label: '연혁', ready: false },
+    { key: '상징', label: '상징', ready: false },
+    { key: '역대교장', label: '역대교장', ready: false },
+    { key: '오시는길', label: '오시는길', ready: false },
+    { key: '학급목록', label: '학급목록', ready: false },
+  ];
+
+  function applyGwangjuConvertTemplate(template) {
+    const raw = gwangjuMarkupSource || '';
+    const converted = template
+      ? applyMarkupToTemplate(raw, template.code, template.id)
+      : applyGwangjuBasicMarkup(raw);
+    const formatted = formatHtml(stripScriptTags(converted));
+    setGwangjuConvertedSource(formatted);
+    setGwangjuSelectedTemplateId(template?.id || null);
+    persistGwangjuConvertedSource(formatted, template?.id || null);
+    setGwangjuConvertMenuOpen(false);
+    setGwangjuConvertSubmenuCategory(null);
+    setGwangjuConvertPanelOpen(true);
+  }
+
+  function handleGwangjuConvertCategoryClick(cat) {
+    if (!cat.ready) return;
+    if (cat.key === 'default') {
+      applyGwangjuConvertTemplate(null);
+      return;
+    }
+    setGwangjuConvertSubmenuCategory(prev => (prev === cat.key ? null : cat.key));
+  }
+
+  const GWANGJU_PREVIEW_CSS = ['basic.css', 'theme.css', 'layout.css', 'swiper.min.css', 'con_com.css', 'sub_com.css'];
+  const GWANGJU_PREVIEW_JS = ['jquery.min.js', 'swiper.min.js', 'common.js', 'con_com.js', 'sub_com.js'];
+
+  function buildGwangjuPreviewDoc(bodyHtml) {
+    const links = GWANGJU_PREVIEW_CSS
+      .map(name => `<link rel="stylesheet" href="/api/gwangju-assets/css/${name}">`)
+      .join('\n');
+    const scripts = GWANGJU_PREVIEW_JS
+      .map(name => `<script src="/api/gwangju-assets/js/${name}"></script>`)
+      .join('\n');
+    // 스크립트를 본문보다 먼저 실행해야 크롤링 콘텐츠 안의 인라인 <script>(예: $(...))가
+    // jQuery/Swiper 로드 이전에 실행되어 "$ is not defined" 등이 나는 것을 막을 수 있다.
+    return `<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+${links}
+</head>
+<body style="padding:1rem;">
+${scripts}
+${bodyHtml || ''}
+</body>
+</html>`;
+  }
+
+  function persistGwangjuConvertedSource(source, templateId = gwangjuSelectedTemplateId) {
+    if (!activeGwangjuMenuUrl) return;
+    setGwangjuSavedMarkupByUrl(prev => ({
+      ...prev,
+      [activeGwangjuMenuUrl]: {
+        source,
+        templateId,
+        savedAt: new Date().toISOString(),
+      },
+    }));
+  }
+
+  function saveGwangjuConvertedSource() {
+    persistGwangjuConvertedSource(gwangjuConvertedSource);
+    setGwangjuConvertPanelOpen(false);
+    setGwangjuMarkupPanelOpen(false);
+    setGwangjuConvertPreviewOpen(false);
+  }
+
+  function downloadGreetingKlic() {
+    try {
+      const klicDocument = createGreetingKlicDocument(
+        gwangjuConvertedSource,
+        gwangjuSelectedTemplateId
+      );
+      const blob = new Blob([JSON.stringify(klicDocument, null, 2)], {
+        type: 'application/json;charset=utf-8',
+      });
+      const url = URL.createObjectURL(blob);
+      const anchor = document.createElement('a');
+      anchor.href = url;
+      anchor.download = `${getGwangjuSafeFileName(activeGwangjuMenuLabel || '인사말')}.klic`;
+      document.body.appendChild(anchor);
+      anchor.click();
+      anchor.remove();
+      URL.revokeObjectURL(url);
+    } catch (error) {
+      triggerToast(error.message || '인사말 빌더 파일을 만들지 못했습니다.', 'error');
+    }
+  }
+
+  function loadGwangjuSavedSource(menuUrl = activeGwangjuMenuUrl) {
+    const saved = gwangjuSavedMarkupByUrl[menuUrl];
+    if (!saved?.source) return;
+    if (activeGwangjuUrlItem?.id && menuUrl !== activeGwangjuMenuUrl) {
+      setActiveGwangjuMenuBySite(prev => ({
+        ...prev,
+        [activeGwangjuUrlItem.id]: menuUrl,
+      }));
+    }
+    setGwangjuConvertedSource(saved.source);
+    setGwangjuSelectedTemplateId(saved.templateId || null);
+    setGwangjuMarkupPanelOpen(Boolean(gwangjuMarkupSource));
+    setGwangjuConvertPanelOpen(true);
+    setGwangjuConvertPreviewOpen(false);
+  }
+
+  function openGwangjuStyleGuide() {
+    window.open('/api/gwangju-assets/pub/guide.html', '_blank', 'noopener,noreferrer');
+  }
+
+  const isGwangjuConvertedSaved = Boolean(
+    activeGwangjuMenuUrl &&
+    gwangjuConvertedSource &&
+    gwangjuSavedMarkupByUrl[activeGwangjuMenuUrl]?.source === gwangjuConvertedSource
+  );
+
+  async function crawlGwangjuHeaderMenus(id) {
+    setActiveGwangjuUrlId(id);
+    const item = gwangjuUrlItems.find(entry => entry.id === id);
+    const targetUrl = normalizeGwangjuUrl(item?.value);
+    if (!targetUrl) {
+      setGwangjuUrlItems(prev => prev.map(entry => (
+        entry.id === id ? { ...entry, error: 'URL을 입력하세요.', menus: [] } : entry
+      )));
+      return;
+    }
+    if (!isValidUrl(targetUrl)) {
+      setGwangjuUrlItems(prev => prev.map(entry => (
+        entry.id === id ? { ...entry, error: '올바른 URL 형식이 아닙니다.', menus: [] } : entry
+      )));
+      return;
+    }
+
+    setGwangjuUrlItems(prev => prev.map(entry => (
+      entry.id === id ? { ...entry, value: targetUrl } : entry
+    )));
+
+    setGwangjuUrlItems(prev => prev.map(entry => (
+      entry.id === id ? { ...entry, loading: true, error: '', menus: [] } : entry
+    )));
+
+    try {
+      const res = await fetch('/api/gwangju-header-menu', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ url: targetUrl }),
+      });
+      const data = await readGwangjuJsonResponse(res, '메뉴 크롤링에 실패했습니다.');
+      if (!res.ok) throw new Error(data.error || '크롤링에 실패했습니다.');
+
+      setGwangjuUrlItems(prev => prev.map(entry => (
+        entry.id === id
+          ? { ...entry, loading: false, siteName: data.siteName || entry.siteName || '', menus: data.menus || [], error: data.menus?.length ? '' : '대상 메뉴 영역에서 메뉴를 찾지 못했습니다.' }
+          : entry
+      )));
+    } catch (error) {
+      setGwangjuUrlItems(prev => prev.map(entry => (
+        entry.id === id ? { ...entry, loading: false, error: error.message, menus: [] } : entry
+      )));
+    }
+  }
+
+  function escapeGwangjuHtml(value) {
+    return String(value ?? '')
+      .replace(/&/g, '&amp;')
+      .replace(/</g, '&lt;')
+      .replace(/>/g, '&gt;')
+      .replace(/"/g, '&quot;')
+      .replace(/'/g, '&#39;');
+  }
+
+  function openGwangjuWorkWindow() {
+    const width = window.screen?.availWidth || 1440;
+    const height = window.screen?.availHeight || 900;
+    const workWindow = window.open(
+      'about:blank',
+      '_blank',
+      `width=${width},height=${height},left=0,top=0,resizable=yes,scrollbars=yes`
+    );
+    if (workWindow) {
+      try {
+        workWindow.moveTo(0, 0);
+        workWindow.resizeTo(width, height);
+      } catch {}
+      workWindow.focus();
+    }
+    return workWindow;
+  }
+
+  function writeGwangjuWorkWindow(workWindow, sites, loading = false) {
+    if (!workWindow || workWindow.closed) return;
+    const safeSites = sites.map((site, index) => ({
+      siteName: site.siteName || getGwangjuTabLabel(site, index),
+      value: site.value || '',
+      error: site.error || '',
+      loading: Boolean(site.loading),
+      menus: (site.menus || []).filter(menu => menu.label).map(menu => ({
+        label: menu.label,
+        url: menu.url || '',
+      })),
+    }));
+    const json = JSON.stringify(safeSites).replace(/</g, '\\u003c');
+    const parentStylesheetLinks = Array.from(document.querySelectorAll('link[rel="stylesheet"]'))
+      .map(link => {
+        const href = link.href || link.getAttribute('href');
+        if (!href) return '';
+        const media = link.media ? ` media="${link.media.replace(/"/g, '&quot;')}"` : '';
+        return `<link rel="stylesheet" href="${href.replace(/"/g, '&quot;')}"${media}>`;
+      })
+      .join('\n  ');
+    workWindow.document.open();
+    workWindow.document.write(`<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>광주학교통합 크롤링 작업창</title>
+  ${parentStylesheetLinks}
+  <style>
+    * { box-sizing: border-box; }
+    body { margin: 0; font-family: Arial, "Malgun Gothic", sans-serif; color: #1a2a4a; background: #f4f6fa; }
+    .work-wrap { height: 100vh; display: flex; flex-direction: column; padding: 14px; gap: 10px; }
+    .work-head { display: flex; align-items: center; justify-content: space-between; min-height: 42px; }
+    .work-title { margin: 0; font-size: 18px; }
+    .work-hint { margin: 0; color: #68758a; font-size: 13px; }
+    .site-tabs { display: flex; gap: 6px; overflow-x: auto; padding-bottom: 8px; border-bottom: 1px solid #dbe2ee; }
+    .site-tab { min-height: 34px; padding: 0 12px; border: 1px solid #d8deea; border-radius: 6px; background: #fff; color: #5f6b7d; font-weight: 700; cursor: pointer; white-space: nowrap; }
+    .site-tab.active { border-color: #0070c8; color: #0070c8; }
+    .workspace { flex: 1; min-height: 0; display: grid; grid-template-columns: 280px minmax(0, 1fr); gap: 10px; }
+    .menu-list { min-height: 0; overflow-y: auto; display: flex; flex-direction: column; gap: 6px; padding: 10px; border: 1px solid #dbe2ee; border-radius: 6px; background: #fff; }
+    .menu-btn { min-height: 38px; padding: 8px 10px; border: 1px solid #cfd7e6; border-radius: 6px; background: #fff; color: #1a2a4a; text-align: left; font: inherit; font-weight: 500; cursor: pointer; line-height: 1.35; }
+    .menu-btn.active, .menu-btn:hover { border-color: #0070c8; color: #0070c8; background: #f0f8ff; }
+    .preview { min-width: 0; min-height: 0; border: 1px solid #dbe2ee; border-radius: 6px; background: #fff; overflow: hidden; }
+    iframe { display: block; width: 100%; height: 100%; border: 0; }
+    .message { padding: 18px; color: #5f6b7d; }
+    .error { color: #d23d3d; }
+  </style>
+</head>
+<body>
+  <div class="work-wrap">
+    <div class="work-head">
+      <h1 class="work-title">광주학교통합 크롤링 작업창</h1>
+      <p class="work-hint">${loading ? '크롤링 중입니다.' : '사이트 탭과 메뉴를 선택해 화면을 확인하세요.'}</p>
+    </div>
+    <div id="siteTabs" class="site-tabs"></div>
+    <div class="workspace">
+      <div id="menuList" class="menu-list"></div>
+      <div id="preview" class="preview"></div>
+    </div>
+  </div>
+  <script>
+  (() => {
+    const sites = ${json};
+    let activeSite = 0;
+    const activeMenuBySite = {};
+    const esc = value => String(value ?? '').replace(/[&<>"']/g, ch => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[ch]));
+
+    function render() {
+      const siteTabs = document.getElementById('siteTabs');
+      const menuList = document.getElementById('menuList');
+      const preview = document.getElementById('preview');
+      siteTabs.innerHTML = '';
+      menuList.innerHTML = '';
+      preview.innerHTML = '';
+
+      if (!sites.length) {
+        menuList.innerHTML = '<div class="message">크롤링할 사이트가 없습니다.</div>';
+        return;
+      }
+
+      sites.forEach((site, index) => {
+        const btn = document.createElement('button');
+        btn.className = 'site-tab' + (index === activeSite ? ' active' : '');
+        btn.type = 'button';
+        btn.textContent = site.siteName || site.value || ('사이트 ' + (index + 1));
+        btn.onclick = () => { activeSite = index; render(); };
+        siteTabs.appendChild(btn);
+      });
+
+      const site = sites[activeSite];
+      if (site.error) {
+        menuList.innerHTML = '<div class="message error">' + esc(site.error) + '</div>';
+      }
+      if (!site.menus?.length) {
+        if (!site.error) menuList.innerHTML = '<div class="message">추출된 메뉴가 없습니다.</div>';
+        preview.innerHTML = '<div class="message">미리보기할 메뉴가 없습니다.</div>';
+        return;
+      }
+
+      const firstUrlMenu = site.menus.find(menu => menu.url) || site.menus[0];
+      const activeUrl = activeMenuBySite[activeSite] || firstUrlMenu.url || '';
+      site.menus.forEach(menu => {
+        const btn = document.createElement('button');
+        btn.type = 'button';
+        btn.className = 'menu-btn' + (menu.url && menu.url === activeUrl ? ' active' : '');
+        btn.textContent = menu.label;
+        btn.title = menu.url || menu.label;
+        btn.onclick = () => {
+          if (menu.url) {
+            activeMenuBySite[activeSite] = menu.url;
+            render();
+          }
+        };
+        menuList.appendChild(btn);
+      });
+
+      if (activeUrl) {
+        const iframe = document.createElement('iframe');
+        iframe.src = activeUrl;
+        iframe.sandbox = 'allow-same-origin allow-scripts allow-forms allow-popups allow-downloads';
+        iframe.title = firstUrlMenu.label || '메뉴 미리보기';
+        preview.appendChild(iframe);
+      } else {
+        preview.innerHTML = '<div class="message">미리보기할 메뉴 URL이 없습니다.</div>';
+      }
+    }
+
+    render();
+  })();
+  </script>
+</body>
+</html>`);
+    workWindow.document.close();
+  }
+
+  async function crawlAllGwangjuHeaderMenus() {
+    const crawlTargets = gwangjuUrlItems
+      .filter(item => item.value?.trim())
+      .slice(0, GWANGJU_MAX_URLS)
+      .map(item => ({ ...item, value: normalizeGwangjuUrl(item.value) }));
+    setShowGwangjuInlineResults(true);
+    setGwangjuCrawlProgress({ done: 0, total: crawlTargets.length });
+
+    setGwangjuUrlItems(prev => prev.map(entry => (
+      crawlTargets.some(target => target.id === entry.id)
+        ? { ...entry, value: normalizeGwangjuUrl(entry.value), loading: true, error: '', menus: [] }
+        : entry
+    )));
+
+    const crawledItems = await Promise.all(crawlTargets.map(async item => {
+      try {
+        if (!item.value || !isValidUrl(item.value)) {
+          return { ...item, loading: false, error: '올바른 URL 형식이 아닙니다.', menus: [] };
+        }
+        const res = await fetch('/api/gwangju-header-menu', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ url: item.value }),
+        });
+        const data = await readGwangjuJsonResponse(res, '메뉴 크롤링에 실패했습니다.');
+        if (!res.ok) throw new Error(data.error || '크롤링에 실패했습니다.');
+        return {
+          ...item,
+          loading: false,
+          siteName: data.siteName || item.siteName || '',
+          menus: data.menus || [],
+          error: data.menus?.length ? '' : '대상 메뉴 영역에서 메뉴를 찾지 못했습니다.',
+        };
+      } catch (error) {
+        return { ...item, loading: false, error: error.message, menus: [] };
+      } finally {
+        setGwangjuCrawlProgress(prev => ({ ...prev, done: prev.done + 1 }));
+      }
+    }));
+
+    setGwangjuUrlItems(prev => prev.map(entry => {
+      const crawled = crawledItems.find(item => item.id === entry.id);
+      return crawled || entry;
+    }));
+    if (crawledItems[0]) setActiveGwangjuUrlId(crawledItems[0].id);
+  }
 
   function getRootLabel(root) {
     if (root?.label) return root.label;
@@ -2141,7 +3122,7 @@ export default function UrlCrawlMarkup() {
   return (
     <div className="crawl-page">
       {toast.show && <div key={toast.id} className="toast-popup">{toast.message}</div>}
-      {(extracting || classifying) && mode === 'url' && (
+      {(extracting || classifying) && projectType === 'chungnam' && mode === 'url' && (
         <div className="url-extract-overlay">
           <div className="url-extract-overlay-card">
             <p className="url-extract-overlay-label">
@@ -2174,6 +3155,26 @@ export default function UrlCrawlMarkup() {
           </div>
         </div>
       )}
+      {isGwangjuCrawling && projectType === 'gwangju' && (
+        <div className="url-extract-overlay">
+          <div className="url-extract-overlay-card">
+            <p className="url-extract-overlay-label">
+              사이트 크롤링 중 ({gwangjuCrawlProgress.done} / {gwangjuCrawlProgress.total})
+            </p>
+            <div className="url-extract-progress-track">
+              <div
+                className="url-extract-progress-fill"
+                style={{
+                  width: `${Math.round(gwangjuCrawlProgress.done / Math.max(gwangjuCrawlProgress.total, 1) * 100)}%`,
+                }}
+              />
+            </div>
+            <p className="url-extract-overlay-pct">
+              {Math.round(gwangjuCrawlProgress.done / Math.max(gwangjuCrawlProgress.total, 1) * 100)}%
+            </p>
+          </div>
+        </div>
+      )}
       <div className="crawl-page-inner">
         <div className="crawl-title-row">
           <h2 className="crawl-title">크롤링 마크업</h2>
@@ -2181,6 +3182,455 @@ export default function UrlCrawlMarkup() {
         </div>
 
         {/* ─── 모드 탭 ─── */}
+        <div className="crawl-project-switch" aria-label="프로젝트 선택">
+          <label className={`crawl-project-option ${projectType === 'gwangju' ? 'is-active' : ''}`}>
+            <input
+              type="checkbox"
+              checked={projectType === 'gwangju'}
+              onChange={() => setProjectType('gwangju')}
+            />
+            <span>광주학교통합</span>
+          </label>
+          <label className={`crawl-project-option ${projectType === 'chungnam' ? 'is-active' : ''}`}>
+            <input
+              type="checkbox"
+              checked={projectType === 'chungnam'}
+              onChange={() => setProjectType('chungnam')}
+            />
+            <span>충남학교통합</span>
+          </label>
+        </div>
+
+        {projectType === 'gwangju' && (
+          <div className="gwangju-url-panel" aria-label="광주학교통합 URL 입력">
+            {gwangjuUrlItems.map((item, index) => (
+              <div key={item.id} className="gwangju-url-item">
+                <div className="gwangju-url-row">
+                  <input
+                    className="gwangju-url-input"
+                    type="text"
+                    placeholder="url을 입력하세요"
+                    value={item.value}
+                    onChange={e => updateGwangjuUrlInput(item.id, e.target.value)}
+                    onFocus={() => setActiveGwangjuUrlId(item.id)}
+                    onKeyDown={e => {
+                      if (e.key === 'Enter' && !item.loading) crawlGwangjuHeaderMenus(item.id);
+                    }}
+                    disabled={item.loading}
+                  />
+                  <button
+                    type="button"
+                    className="gwangju-url-icon-btn gwangju-url-icon-btn--add"
+                    onClick={addGwangjuUrlInput}
+                    aria-label="URL 입력 추가"
+                    title="URL 입력 추가"
+                    disabled={item.loading || gwangjuUrlItems.length >= GWANGJU_MAX_URLS}
+                  >
+                    +
+                  </button>
+                  {index > 0 && (
+                    <button
+                      type="button"
+                      className="gwangju-url-icon-btn gwangju-url-icon-btn--remove"
+                      onClick={() => removeGwangjuUrlInput(item.id)}
+                      aria-label="URL 입력 삭제"
+                      title="URL 입력 삭제"
+                      disabled={item.loading}
+                    >
+                      ×
+                    </button>
+                  )}
+                </div>
+              </div>
+            ))}
+            <p className="gwangju-url-limit-note">※ 최대 10개 URL 크롤링이 가능합니다.</p>
+            {hasGwangjuUrlInput && (
+              <div className="gwangju-crawl-actions">
+                <button
+                  type="button"
+                  className="gwangju-url-search-btn gwangju-url-search-btn--main"
+                  onClick={crawlAllGwangjuHeaderMenus}
+                  disabled={isGwangjuCrawling}
+                  aria-label="크롤링"
+                >
+                  {isGwangjuCrawling ? '크롤링 중' : '크롤링'}
+                </button>
+              </div>
+            )}
+            {showGwangjuInlineResults && hasGwangjuCrawlResult && (
+              <div className="gwangju-site-results gwangju-work-layer">
+                <div className="gwangju-work-layer-head">
+                  <div>
+                    <h2>광주학교통합 크롤링 작업창</h2>
+                    <p>{isGwangjuCrawling ? '크롤링 중입니다.' : '사이트 탭과 메뉴를 선택해 화면을 확인하세요.'}</p>
+                  </div>
+                  <div className="gwangju-work-layer-actions">
+                    <button
+                      type="button"
+                      className="gwangju-work-layer-load"
+                      onClick={openGwangjuStyleGuide}
+                    >
+                      스타일가이드 보기
+                    </button>
+                    <button
+                      type="button"
+                      className="gwangju-work-layer-close"
+                      onClick={() => setShowGwangjuInlineResults(false)}
+                      aria-label="작업창 닫기"
+                    >
+                      ×
+                    </button>
+                  </div>
+                </div>
+                <div className="gwangju-site-tabs" aria-label="사이트별 크롤링 결과">
+                  {gwangjuUrlItems.map((item, index) => (
+                    <button
+                      key={item.id}
+                      type="button"
+                      className={`gwangju-site-tab ${activeGwangjuUrlItem?.id === item.id ? 'is-active' : ''}`}
+                      onClick={() => {
+                        setActiveGwangjuUrlId(item.id);
+                        closeGwangjuMarkupPanels();
+                      }}
+                      title={item.value || getGwangjuTabLabel(item, index)}
+                    >
+                      {getGwangjuTabLabel(item, index)}
+                      {item.menus?.length > 0 && <span>{item.menus.length}</span>}
+                    </button>
+                  ))}
+                  <button
+                    type="button"
+                    className="gwangju-file-download-btn"
+                    onClick={downloadGwangjuSavedMarkupZip}
+                    disabled={!hasGwangjuSavedMarkup}
+                  >
+                    파일다운로드
+                  </button>
+                </div>
+                <div className="gwangju-site-panel">
+                  {activeGwangjuUrlItem?.error && (
+                    <p className="gwangju-url-error">{activeGwangjuUrlItem.error}</p>
+                  )}
+                  {activeGwangjuUrlItem?.loading && (
+                    <p className="gwangju-url-status">메뉴를 크롤링하고 있습니다.</p>
+                  )}
+                  {activeGwangjuUrlItem?.menus?.length > 0 ? (
+                    <div className="gwangju-menu-workspace">
+                      <div className="gwangju-menu-list" aria-label="크롤링된 메뉴 목록">
+                        {activeGwangjuUrlItem.menus.map((menu, menuIndex) => (
+                          menu.depth === 1 ? (
+                            <h2
+                              key={`${menu.label}-${menu.url || menuIndex}`}
+                              className="gwangju-menu-depth-title"
+                            >
+                              {menu.label}
+                            </h2>
+                          ) : (
+                            <div
+                              key={`${menu.label}-${menu.url || menuIndex}`}
+                              className="gwangju-menu-row"
+                            >
+                            <button
+                              type="button"
+                              className={`gwangju-menu-btn ${activeGwangjuMenuUrl === menu.url ? 'is-active' : ''}`}
+                              title={menu.url || menu.label}
+                              onClick={() => {
+                                if (menu.url) {
+                                  setActiveGwangjuMenuBySite(prev => ({
+                                    ...prev,
+                                    [activeGwangjuUrlItem.id]: menu.url,
+                                  }));
+                                  closeGwangjuMarkupPanels();
+                                }
+                            }}
+                          >
+                              <span className="gwangju-menu-btn-label">{menu.label}</span>
+                              {menu.url && gwangjuSavedMarkupByUrl[menu.url] && (
+                                <span className="gwangju-menu-saved-badge">저장됨</span>
+                              )}
+                            </button>
+                            <button
+                              type="button"
+                              className="gwangju-menu-history-btn"
+                              onClick={() => loadGwangjuSavedSource(menu.url)}
+                              disabled={!menu.url || !gwangjuSavedMarkupByUrl[menu.url]?.source}
+                              title={`${menu.label} 이전 마크업 불러오기`}
+                              aria-label={`${menu.label} 이전 마크업 불러오기`}
+                            >
+                              <span>이전</span>
+                              <span>마크업</span>
+                            </button>
+                            <button
+                              type="button"
+                              className="gwangju-menu-delete-btn"
+                              onClick={() => removeGwangjuMenu(activeGwangjuUrlItem.id, menu)}
+                              aria-label={`${menu.label} 메뉴 삭제`}
+                            >
+                              삭제
+                            </button>
+                            </div>
+                          )
+                        ))}
+                      </div>
+                      <div className="gwangju-menu-preview">
+                        <div className="gwangju-preview-toolbar">
+                          <button
+                            type="button"
+                            className="gwangju-markup-btn"
+                            onClick={fetchGwangjuMarkupSource}
+                            disabled={!activeGwangjuMenuUrl || gwangjuMarkupLoading}
+                          >
+                            {gwangjuMarkupLoading ? '소스 가져오는 중' : '마크업하기'}
+                          </button>
+                        </div>
+                        <div className={`gwangju-markup-source-panel ${gwangjuMarkupPanelOpen ? 'is-open' : ''} ${gwangjuConvertPanelOpen ? 'has-convert-panel' : ''}`}>
+                          <div className="gwangju-convert-trigger">
+                            <button
+                              type="button"
+                              className="gwangju-basic-pulse-btn"
+                              onClick={() => applyGwangjuConvertTemplate(null)}
+                              disabled={!gwangjuMarkupSource || gwangjuMarkupLoading}
+                              aria-label="기본 마크업 적용"
+                            >
+                              기본<br />마크업
+                            </button>
+                            <button
+                              type="button"
+                              className="gwangju-convert-pulse-btn"
+                              onClick={() => setGwangjuConvertMenuOpen(open => !open)}
+                              disabled={!gwangjuMarkupSource || gwangjuMarkupLoading}
+                              aria-label="디자인 마크업으로 변환"
+                              aria-expanded={gwangjuConvertMenuOpen}
+                            >
+                              디자인<br />마크업
+                            </button>
+                            {gwangjuConvertMenuOpen && (
+                              <div className="gwangju-convert-menu" role="menu" aria-label="변환 템플릿 선택">
+                                {GWANGJU_CONVERT_CATEGORIES.map(cat => {
+                                  const variants = ALL_TEMPLATES.filter(t => t.category === cat.key);
+                                  const hasVariants = variants.length > 0;
+                                  const submenuOpen = gwangjuConvertSubmenuCategory === cat.key;
+                                  return (
+                                    <div key={cat.key} className="gwangju-convert-menu-row">
+                                      <button
+                                        type="button"
+                                        role="menuitem"
+                                        className={`gwangju-convert-menu-item ${submenuOpen ? 'is-active' : ''}`}
+                                        disabled={!cat.ready}
+                                        aria-expanded={hasVariants ? submenuOpen : undefined}
+                                        onClick={() => handleGwangjuConvertCategoryClick(cat)}
+                                      >
+                                        <span>{cat.label}</span>
+                                        {!cat.ready && <span className="gwangju-convert-menu-badge">준비중</span>}
+                                        {cat.ready && hasVariants && <span className="gwangju-convert-menu-arrow">›</span>}
+                                      </button>
+                                      {hasVariants && submenuOpen && (
+                                        <div className="gwangju-convert-submenu" role="menu" aria-label={`${cat.label} 타입 선택`}>
+                                          {variants.map(tpl => (
+                                            <button
+                                              key={tpl.id}
+                                              type="button"
+                                              role="menuitem"
+                                              className="gwangju-convert-menu-item"
+                                              title={tpl.desc}
+                                              onClick={() => applyGwangjuConvertTemplate(tpl)}
+                                            >
+                                              {tpl.label}
+                                            </button>
+                                          ))}
+                                        </div>
+                                      )}
+                                    </div>
+                                  );
+                                })}
+                              </div>
+                            )}
+                          </div>
+                          <div className="gwangju-markup-source-head">
+                            <div>
+                              <h3>페이지 소스</h3>
+                              <p>{gwangjuMarkupSelector || '#content / #subPage'}</p>
+                            </div>
+                            <button
+                              type="button"
+                              className="gwangju-markup-source-close"
+                              onClick={() => {
+                                setGwangjuMarkupPanelOpen(false);
+                                setGwangjuConvertPanelOpen(false);
+                                setGwangjuConvertPreviewOpen(false);
+                                setGwangjuConvertMenuOpen(false);
+                                setGwangjuConvertSubmenuCategory(null);
+                              }}
+                              aria-label="소스 패널 닫기"
+                            >
+                              ×
+                            </button>
+                          </div>
+                          {gwangjuMarkupSourceUrl && (
+                            <div className="gwangju-markup-source-url" title={gwangjuMarkupSourceUrl}>
+                              {gwangjuMarkupSourceUrl}
+                            </div>
+                          )}
+                          {gwangjuMarkupLoading && (
+                            <p className="gwangju-markup-source-status">소스를 가져오고 있습니다.</p>
+                          )}
+                          {gwangjuMarkupError && (
+                            <div className="gwangju-markup-source-error-box">
+                              <p className="gwangju-markup-source-error">{gwangjuMarkupError}</p>
+                              <button
+                                type="button"
+                                className="gwangju-markup-retry-btn"
+                                onClick={fetchGwangjuMarkupSource}
+                                disabled={!activeGwangjuMenuUrl || gwangjuMarkupLoading}
+                              >
+                                재검색
+                              </button>
+                            </div>
+                          )}
+                          {!gwangjuMarkupLoading && !gwangjuMarkupError && (
+                            <textarea
+                              className="gwangju-markup-source-textarea"
+                              value={gwangjuMarkupSource}
+                              readOnly
+                              placeholder="마크업하기를 누르면 #content 또는 #subPage 소스가 표시됩니다."
+                            />
+                          )}
+                        </div>
+                        <div className={`gwangju-convert-panel ${gwangjuConvertPanelOpen ? 'is-open' : ''}`}>
+                          <div className="gwangju-convert-panel-head">
+                            <div>
+                              <h3>광주 소스 변환</h3>
+                              <p>변환 결과 영역</p>
+                            </div>
+                            <div className="gwangju-convert-head-actions">
+                              <button
+                                type="button"
+                                className="gwangju-convert-preview-btn"
+                                onClick={() => setGwangjuConvertPreviewOpen(true)}
+                                disabled={!gwangjuConvertedSource}
+                              >
+                                미리보기
+                              </button>
+                              <button
+                                type="button"
+                                className="gwangju-convert-load-btn"
+                                onClick={() => loadGwangjuSavedSource()}
+                                disabled={!gwangjuSavedMarkupByUrl[activeGwangjuMenuUrl]?.source}
+                              >
+                                불러오기
+                              </button>
+                              <button
+                                type="button"
+                                className="gwangju-markup-source-close"
+                                onClick={() => {
+                                  setGwangjuConvertPanelOpen(false);
+                                  setGwangjuConvertPreviewOpen(false);
+                                }}
+                                aria-label="변환 패널 닫기"
+                              >
+                                ×
+                              </button>
+                            </div>
+                          </div>
+                          <textarea
+                            className="gwangju-convert-textarea"
+                            value={gwangjuConvertedSource}
+                            onChange={event => setGwangjuConvertedSource(event.target.value)}
+                            placeholder="내일 변환 소스가 이 영역에 연결됩니다."
+                          />
+                          <div className="gwangju-convert-panel-footer">
+                            <button
+                              type="button"
+                              className="gwangju-convert-klic-btn"
+                              onClick={downloadGreetingKlic}
+                              disabled={
+                                !gwangjuConvertedSource ||
+                                !gwangjuSelectedTemplateId?.startsWith('greeting-')
+                              }
+                            >
+                              빌더 파일(.klic)
+                            </button>
+                            <button
+                              type="button"
+                              className={`gwangju-convert-save-btn ${isGwangjuConvertedSaved ? 'is-saved' : ''}`}
+                              onClick={saveGwangjuConvertedSource}
+                              disabled={!activeGwangjuMenuUrl}
+                            >
+                              {isGwangjuConvertedSaved ? '✓ 저장됨' : '저장'}
+                            </button>
+                          </div>
+                        </div>
+                        {gwangjuConvertPreviewOpen && (
+                          <div className="gwangju-convert-preview-dim" role="dialog" aria-modal="true">
+                            <div className="gwangju-convert-preview-modal">
+                              <div className="gwangju-convert-preview-head">
+                                <h3>현재 사이트 vs 변환 결과 비교</h3>
+                                <button
+                                  type="button"
+                                  className="gwangju-markup-source-close"
+                                  onClick={() => setGwangjuConvertPreviewOpen(false)}
+                                  aria-label="미리보기 닫기"
+                                >
+                                  ×
+                                </button>
+                              </div>
+                              <div className="gwangju-convert-preview-compare">
+                                <div className="gwangju-convert-preview-pane">
+                                  <p className="gwangju-convert-preview-pane-label">현재 사이트</p>
+                                  {activeGwangjuMenuUrl ? (
+                                    <iframe
+                                      className="gwangju-convert-preview-frame"
+                                      title="현재 사이트"
+                                      src={activeGwangjuMenuUrl}
+                                      sandbox="allow-same-origin allow-scripts allow-forms allow-popups allow-downloads"
+                                    />
+                                  ) : (
+                                    <p className="gwangju-url-status">비교할 원본 URL이 없습니다.</p>
+                                  )}
+                                </div>
+                                <div className="gwangju-convert-preview-pane">
+                                  <p className="gwangju-convert-preview-pane-label">변환 결과</p>
+                                  <iframe
+                                    className="gwangju-convert-preview-frame"
+                                    title="변환 소스 미리보기"
+                                    srcDoc={buildGwangjuPreviewDoc(gwangjuConvertedSource)}
+                                  />
+                                </div>
+                              </div>
+                            </div>
+                          </div>
+                        )}
+                        {activeGwangjuMenuUrl ? (
+                          <div className="gwangju-menu-iframe-wrap">
+                            <div className="gwangju-menu-iframe-bar">
+                              {(activeGwangjuUrlItem?.siteName || getGwangjuTabLabel(activeGwangjuUrlItem, 0))} - {activeGwangjuMenuUrl}
+                            </div>
+                            <iframe
+                              className="gwangju-menu-iframe"
+                              src={activeGwangjuMenuUrl}
+                              sandbox="allow-same-origin allow-scripts allow-forms allow-popups allow-downloads"
+                              title={activeGwangjuMenuLabel || '메뉴 미리보기'}
+                            />
+                          </div>
+                        ) : (
+                          <p className="gwangju-url-status">미리보기할 메뉴 URL이 없습니다.</p>
+                        )}
+                      </div>
+                    </div>
+                  ) : (
+                    !activeGwangjuUrlItem?.error && !activeGwangjuUrlItem?.loading && (
+                      <p className="gwangju-url-status">크롤링 버튼을 누르면 이 사이트의 메뉴가 표시됩니다.</p>
+                    )
+                  )}
+                </div>
+              </div>
+            )}
+          </div>
+        )}
+
+        {projectType === 'chungnam' && (
+        <>
+
         <div className="crawl-mode-tabs">
           <button
             className={`crawl-mode-tab ${mode === 'url' ? 'is-active' : ''}`}
@@ -2628,6 +4078,8 @@ export default function UrlCrawlMarkup() {
               </>
             )}
           </div>
+        )}
+        </>
         )}
       </div>
       {showUrlExportModal && (

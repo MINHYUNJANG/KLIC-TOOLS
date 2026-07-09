@@ -1,0 +1,300 @@
+<!DOCTYPE html>
+<html lang="ko" class="map-builder-root">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>KLIC TOOLs - 오시는길 빌더</title>
+	<link rel="stylesheet" href="/00_common/font/RemixIcon_Fonts_v4.7.0/remixicon.css" media="all">
+	<link rel="stylesheet" href="/00_common/font/pretendard/pretendard-gov.css" media="all">
+	<!-- <link rel="stylesheet" href="/css/web/apple/cmsBasic.css" media="all"> -->
+	<link rel="stylesheet" href="/00_common/css/basic.css" media="all">
+	<link rel="stylesheet" href="/00_common/css/theme.css" media="all">
+	<link rel="stylesheet" href="/00_common/css/con_com.css" media="all">
+	<link rel="stylesheet" href="/00_common/css/sub_com.css" media="all">
+	<link rel="stylesheet" href="/builder/map/css/common.css" media="all">
+	<link rel="stylesheet" href="/builder/map/css/map_common.css" media="all">
+	<link rel="stylesheet" href="/builder/common/css/cms-builder-skin.css" media="all">
+	<link rel="stylesheet" href="/builder/common/css/builder-option-panel.css" media="all">
+	<link rel="stylesheet" href="/builder/common/css/klic-confirm.css" media="all">
+	<style>
+		.map-builder-page .deco-fab,
+		.map-builder-page .deco-studio-drawer,
+		.map-builder-page #overlayEditToggle,
+		.map-builder-page #overlayEditDone {display:none!important;}
+		.map-builder-page .sidebar-tabs {grid-template-columns:repeat(2,minmax(0,1fr));}
+	</style>
+</head>
+<body class="builder-page basic-builder-page map-builder-page">
+	<div class="app-shell">
+		<div id="headerSentinel" class="header-sentinel"></div>
+<header class="topbar">
+	<div class="topbar-brand">
+		<a class="topbar-title-link" href="#" aria-label="오시는길 빌더 홈">
+			<div class="title-row">
+				<strong>오시는길 빌더</strong>
+			</div>
+		</a>
+	</div>
+<div class="topbar-actions">
+		<span id="layoutStatus">0개 블록</span>
+		<span id="canvasSizeControl" class="canvas-size-control" aria-label="캔버스 너비"></span>
+		<span class="topbar-action-divider" aria-hidden="true"></span>
+		<button type="button" class="ghost-button topbar-icon-only" id="clearCanvas">
+			<i class="ri-refresh-line" aria-hidden="true"></i>
+			<span class="topbar-tooltip">캔버스 초기화</span>
+		</button>
+		<button type="button" class="ghost-button topbar-icon-only markup-toggle" id="markupToggle" aria-expanded="false" aria-controls="markupPanel">
+			<i class="ri-code-s-slash-line" aria-hidden="true"></i>
+			<span class="topbar-tooltip">마크업 보기</span>
+		</button>
+		<div class="device-switcher device-dropdown" id="deviceSwitcher" aria-label="반응형 미리보기">
+			<button type="button" class="ghost-button topbar-icon-only device-dropdown-trigger" id="deviceDropdownTrigger">
+				<i class="ri-computer-line device-dropdown-icon" aria-hidden="true"></i>
+				<i class="ri-arrow-down-s-line device-dropdown-arrow" aria-hidden="true"></i>
+				<span class="topbar-tooltip">캔버스 반응형</span>
+			</button>
+			<div class="device-dropdown-menu" id="deviceDropdownMenu" hidden>
+				<button type="button" class="device-btn is-active" data-device="pc" title="PC">
+					<i class="ri-computer-line" aria-hidden="true"></i>
+				</button>
+				<button type="button" class="device-btn" data-device="tablet" title="태블릿">
+					<i class="ri-tablet-line" aria-hidden="true"></i>
+				</button>
+				<button type="button" class="device-btn" data-device="mobile" title="모바일">
+					<i class="ri-cellphone-line" aria-hidden="true"></i>
+				</button>
+			</div>
+		</div>
+				<button type="button" class="ghost-button topbar-icon-only" id="helpModeToggle" aria-pressed="false">
+			<i class="ri-question-line" aria-hidden="true"></i>
+			<span class="topbar-tooltip">튜토리얼</span>
+		</button>
+				<button type="button" class="preview-button" id="previewToggle">
+			<i class="ri-eye-line" aria-hidden="true"></i>
+			미리보기
+		</button>
+				<button type="button" class="ghost-button" id="loadKlic">
+			<i class="ri-upload-2-line" aria-hidden="true"></i>
+			불러오기
+		</button>
+		<input type="file" id="klicFileInput" accept=".klic" style="display:none;">
+			</div>
+	<div class="topbar-preview-group">
+		<button type="button" class="preview-return-button" id="previewReturn">
+			<i class="ri-arrow-left-line" aria-hidden="true"></i>
+			캔버스로 돌아가기
+		</button>
+		<div class="topbar-preview-actions">
+			<button type="button" class="primary-button" id="savePreviewImage">
+				<i class="ri-image-line" aria-hidden="true"></i>
+				이미지 저장
+			</button>
+			<button type="button" class="primary-button" id="savePdfButton">
+				<i class="ri-file-pdf-line" aria-hidden="true"></i>
+				파일 저장
+			</button>
+						<button type="button" class="ghost-button" id="previewMarkupOpen">
+				<i class="ri-code-s-slash-line" aria-hidden="true"></i>
+				마크업 보기
+			</button>
+					</div>
+	</div>
+</header>
+
+<div class="save-modal" id="saveFileModal" hidden>
+	<div class="save-modal-backdrop" id="saveFileBackdrop"></div>
+	<div class="save-modal-inner">
+		<div class="save-modal-head">
+			<h2>파일 저장</h2>
+			<button type="button" class="ghost-button save-modal-close" id="saveFileClose" aria-label="닫기">
+				<i class="ri-close-line" aria-hidden="true"></i>
+			</button>
+		</div>
+		<div class="save-modal-body">
+			<label class="save-modal-label" for="saveFileNameInput">파일 이름</label>
+			<div class="save-modal-input-row">
+				<input type="text" class="save-modal-input" id="saveFileNameInput" placeholder="파일 이름 입력" maxlength="100">
+			</div>
+			<label class="save-modal-label" style="margin-top:16px;">저장 형식 (복수 선택 가능)</label>
+			<div class="save-modal-formats">
+				<label class="save-modal-format-option" data-save-format-option="klic">
+					<input type="checkbox" name="saveFileFormat" value="klic" checked disabled> .klic <span style="opacity:0.6;font-size:0.85em;">(필수)</span>
+				</label>
+				<label class="save-modal-format-option" data-save-format-option="pdf">
+					<input type="checkbox" name="saveFileFormat" value="pdf"> PDF
+				</label>
+				<label class="save-modal-format-option" data-save-format-option="hwpx" style="opacity:0.4;pointer-events:none;">
+					<input type="checkbox" name="saveFileFormat" value="hwpx" disabled> HWPX
+				</label>
+			</div>
+		</div>
+		<div class="save-modal-footer">
+			<button type="button" class="ghost-button" id="saveFileCancel">취소</button>
+			<div class="save-file-progress" id="saveFileProgress" hidden>
+				<div class="save-progress-bar"><div class="save-progress-fill" id="saveProgressFill"></div></div>
+				<span class="save-progress-msg" id="saveProgressMsg"></span>
+			</div>
+			<button type="button" class="navy-button" id="saveFileConfirm">
+				<i class="ri-download-line" aria-hidden="true"></i>
+				다운로드
+			</button>
+		</div>
+	</div>
+</div>
+<script>
+(function() {
+	var pdfBtn = document.getElementById('savePdfButton');
+	var modal = document.getElementById('saveFileModal');
+	var closeModal = function() {
+		if (!modal) return;
+		modal.hidden = true;
+		modal.setAttribute('hidden', 'hidden');
+		var progress = document.getElementById('saveFileProgress');
+		if (progress) progress.hidden = true;
+		var confirmBtn = document.getElementById('saveFileConfirm');
+		if (confirmBtn) confirmBtn.disabled = false;
+	};
+	document.getElementById('saveFileClose')?.addEventListener('click', closeModal);
+	document.getElementById('saveFileCancel')?.addEventListener('click', closeModal);
+	document.getElementById('saveFileBackdrop')?.addEventListener('click', closeModal);
+	document.addEventListener('keydown', function(event) {
+		if (event.key === 'Escape' && modal && !modal.hidden) closeModal();
+	});
+	if (!pdfBtn) return;
+	pdfBtn.addEventListener('click', function() {
+		if (window.__builderSaveFileOpenBound === true) return;
+		if (window.__builderSaveFileOpenBound === true) return;
+		// .klic은 필수 항목으로 항상 선택, PDF/HWPX는 선택 사항으로 해제
+		document.querySelectorAll('input[name="saveFileFormat"]').forEach(function(cb) {
+			cb.checked = (cb.value === 'klic');
+		});
+		// 파일명 비어있으면 기본값
+		var nameInput = document.getElementById('saveFileNameInput');
+		if (nameInput && !nameInput.value.trim()) nameInput.value = '저장';
+		// 모달 열기
+		if (modal) {
+			modal.hidden = false;
+			modal.removeAttribute('hidden');
+		}
+	});
+})();
+</script>
+
+
+		<main class="builder" id="builderMain">
+			<aside class="sidebar" aria-label="오시는길 블록 도구">
+				<section class="tool-section">
+					<div class="sidebar-tab-header">
+						<div class="sidebar-tabs">
+							<button type="button" class="sidebar-tab-btn" data-sidebar-tab="custom">디자인 템플릿</button>
+							<button type="button" class="sidebar-tab-btn is-active" data-sidebar-tab="blocks">디자인 블록</button>
+						</div>
+
+						<div class="filter-scroll-shell" data-tab-filter="blocks">
+							<button type="button" class="filter-scroll-arrow filter-scroll-arrow--left" aria-hidden="true" tabindex="-1"><i class="ri-arrow-left-s-line"></i></button>
+							<div class="component-filters" aria-label="오시는길 블록 필터">
+								<button type="button" class="is-active" data-template-filter="all">전체</button>
+								<button type="button" data-template-filter="map">지도</button>
+							</div>
+							<button type="button" class="filter-scroll-arrow filter-scroll-arrow--right" aria-hidden="true" tabindex="-1"><i class="ri-arrow-right-s-line"></i></button>
+						</div>
+
+						<div class="filter-scroll-shell" data-tab-filter="custom">
+							<button type="button" class="filter-scroll-arrow filter-scroll-arrow--left" aria-hidden="true" tabindex="-1"><i class="ri-arrow-left-s-line"></i></button>
+							<div class="component-filters design-template-filters" aria-label="디자인 템플릿 필터">
+								<button type="button" class="is-active" data-design-template-filter="all">전체</button>
+							</div>
+							<button type="button" class="filter-scroll-arrow filter-scroll-arrow--right" aria-hidden="true" tabindex="-1"><i class="ri-arrow-right-s-line"></i></button>
+						</div>
+					</div>
+
+					<div class="sidebar-tab-panel is-hidden sidebar-ready-panel" id="panelCustom">
+						<div class="component-list is-empty-state" id="customTemplateList" aria-label="오시는길 디자인 템플릿">
+							<div class="template-empty">준비된 오시는길 디자인 템플릿이 없습니다.</div>
+						</div>
+					</div>
+
+					<div class="sidebar-tab-panel" id="panelBlocks">
+						<div class="component-list is-empty-state" id="componentList" aria-label="드래그 가능한 오시는길 블록">
+							<div class="template-loading">
+								<span class="template-loading-spinner" aria-hidden="true"></span>
+								템플릿을 불러오는 중입니다.
+							</div>
+						</div>
+					</div>
+				</section>
+			</aside>
+
+			<section class="workspace" aria-label="오시는길 작업 영역">
+				<div class="canvas-wrapper" id="canvasWrapper">
+					<div class="canvas-guide" aria-hidden="true"></div>
+					<div class="canvas-grid is-empty" id="canvasGrid" aria-label="오시는길 블록 배열 영역">
+						<div class="canvas-empty">왼쪽 디자인 블록을 여기로 드래그하세요</div>
+					</div>
+					<div class="overlay-layer" id="overlayLayer" aria-hidden="true"></div>
+				</div>
+			</section>
+
+			<div class="right-col">
+				<aside class="canvas-panel" id="canvasPanel" aria-label="캔버스 설정"></aside>
+				<aside class="options-panel" id="optionsPanel" aria-label="스타일 옵션">
+					<button type="button" class="options-panel-close" data-options-panel-close aria-label="옵션 닫기">
+						<i class="ri-arrow-right-s-line" aria-hidden="true"></i>
+					</button>
+					<div class="options-panel-empty">
+						<i class="ri-cursor-line" aria-hidden="true"></i>
+						<p>블록을 클릭하면<br>스타일을 편집할 수 있습니다.</p>
+					</div>
+				</aside>
+			</div>
+		</main>
+	</div>
+
+	<aside class="markup-panel" id="markupPanel" role="dialog" aria-modal="true" aria-label="생성된 마크업">
+		<div class="markup-backdrop" id="markupBackdrop"></div>
+		<div class="markup-panel-inner">
+			<div class="markup-head">
+				<div class="markup-tabs">
+					<button type="button" class="markup-tab is-active" data-markup-tab="html">HTML</button>
+					<button type="button" class="markup-tab" data-markup-tab="css">CSS</button>
+					<button type="button" class="markup-tab" data-markup-tab="all">전체보기</button>
+				</div>
+				<div class="markup-head-actions">
+					<button type="button" class="primary-button copy-markup-button" id="copyMarkup">
+						<i class="ri-file-copy-line" aria-hidden="true"></i>복사
+					</button>
+					<button type="button" class="ghost-button markup-close-btn" id="markupClose" aria-label="닫기">
+						<i class="ri-close-line" aria-hidden="true"></i>
+					</button>
+				</div>
+			</div>
+			<textarea id="markupOutput" spellcheck="false" aria-label="생성된 HTML 마크업"></textarea>
+			<p class="copy-state" id="copyState" aria-live="polite"></p>
+		</div>
+	</aside>
+
+	<div class="icon-drawer" id="iconDrawer">
+		<div class="icon-drawer-backdrop" id="iconDrawerBackdrop"></div>
+		<div class="icon-drawer-panel">
+			<div class="icon-drawer-head">
+				<strong>아이콘 선택</strong>
+				<button type="button" class="ghost-button" id="iconDrawerClose">
+					<i class="ri-close-line" aria-hidden="true"></i>
+				</button>
+			</div>
+			<div class="icon-drawer-body">
+				<nav class="icon-tree" id="iconTree"></nav>
+				<div class="icon-grid-area" id="iconGridArea">
+					<p class="icon-grid-empty">왼쪽에서 카테고리를 선택하세요.</p>
+				</div>
+			</div>
+		</div>
+	</div>
+
+	<script charset="UTF-8" class="daum_roughmap_loader_script" src="https://ssl.daumcdn.net/dmaps/map_js_init/roughmapLoader.js"></script>
+	<script src="https://cdn.jsdelivr.net/npm/html-to-image@1.11.11/dist/html-to-image.min.js"></script>
+	<script src="https://cdn.jsdelivr.net/npm/jspdf@2.5.1/dist/jspdf.umd.min.js"></script>
+	<script src="/00_common/js/builder-shared.js"></script>
+	<script src="/builder/map/js/content-common.js?v=6"></script>
+</body>
+</html>

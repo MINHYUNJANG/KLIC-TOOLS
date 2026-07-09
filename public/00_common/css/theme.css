@@ -1,0 +1,132 @@
+/* Theme variables */
+:root {
+  /* DEFAULT LINE & BACKGROUND */
+  --color-gray-line: #ccc;
+  --color-gray-line-light: #ddd;
+  --color-gray-bg: #f5f5f5;
+  --color-dis: #666;
+
+  /* SYSTEM COLOR */
+  --color-dgr: #E43030;
+  --color-warn: #F8910D;
+  --color-suc: #00995E;
+  --color-info: #2067D5;
+
+  /* DEFAULT THEME(blue) */
+  --color-primary: #272EB9;
+  --color-primary-rgb: 39, 46, 185;
+
+  --color-secondary: #6168F3;
+  --color-secondary-rgb: 97, 104, 243;
+
+  --color-tertiary: #F6F7FF;
+  --color-tertiary-rgb: 246, 247, 255;
+
+  --color-accent: #C0066B;
+  --color-accent-rgb: 192, 6, 107;
+}
+
+/* BURGUNDY */
+[data-theme="burgundy"] {
+  --color-primary: #730027;
+  --color-primary-rgb: 115, 0, 39;
+
+  --color-secondary: #ff6d97;
+  --color-secondary-rgb: 255, 109, 151;
+
+  --color-tertiary: #fff3f6;
+  --color-tertiary-rgb: 255, 243, 246;
+
+  --color-accent: #6770c5;
+  --color-accent-rgb: 103, 112, 197;
+}
+
+/* CORAL */
+[data-theme="coral"] {
+  --color-primary: #ff8251;
+  --color-primary-rgb: 255, 130, 81;
+
+  --color-secondary: #55433c;
+  --color-secondary-rgb: 85, 67, 60;
+
+  --color-tertiary: #bda79e;
+  --color-tertiary-rgb: 189, 167, 158;
+
+  --color-accent: #FFFFCD;
+  --color-accent-rgb: 255, 255, 205;
+}
+
+/* GREEN */
+[data-theme="green"] {
+  --color-primary: #00a66e;
+  --color-primary-rgb: 0, 166, 110;
+
+  --color-secondary: #5eb951;
+  --color-secondary-rgb: 94, 185, 81;
+
+  --color-tertiary: #def8d6;
+  --color-tertiary-rgb: 222, 248, 214;
+
+  --color-accent: #6168F3;
+  --color-accent-rgb: 97, 104, 243;
+}
+
+/* PINE GREEN */
+[data-theme="pine-green"] {
+  --color-primary: #268F87;
+  --color-primary-rgb: 38, 143, 135;
+
+  --color-secondary: #2FCFAF;
+  --color-secondary-rgb: 47, 207, 175;
+
+  --color-tertiary: #F3FAF9;
+  --color-tertiary-rgb: 243, 250, 249;
+
+  --color-accent: #FFFFCD;
+  --color-accent-rgb: 255, 255, 205;
+}
+
+/* BLUE */
+[data-theme="blue"] {
+  --color-primary: #272EB9;
+  --color-primary-rgb: 39, 46, 185;
+
+  --color-secondary: #6168F3;
+  --color-secondary-rgb: 97, 104, 243;
+
+  --color-tertiary: #F6F7FF;
+  --color-tertiary-rgb: 246, 247, 255;
+
+  --color-accent: #C0066B;
+  --color-accent-rgb: 192, 6, 107;
+}
+
+/* NAVY */
+[data-theme="navy"] {
+  --color-primary: #002454;
+  --color-primary-rgb: 0, 36, 84;
+
+  --color-secondary: #1854A3;
+  --color-secondary-rgb: 24, 84, 163;
+
+  --color-tertiary: #EFF6FF;
+  --color-tertiary-rgb: 239, 246, 255;
+
+  --color-accent: #f9f871;
+  --color-accent-rgb: 249, 248, 113;
+}
+
+/* PLUM */
+[data-theme="plum"] {
+  --color-primary: #934176;
+  --color-primary-rgb: 147, 65, 118;
+
+  --color-secondary: #9677b0;
+  --color-secondary-rgb: 150, 119, 176;
+
+  --color-tertiary: #ffe5fe;
+  --color-tertiary-rgb: 255, 229, 254;
+
+  --color-accent: #4e415f;
+  --color-accent-rgb: 78, 65, 95;
+}

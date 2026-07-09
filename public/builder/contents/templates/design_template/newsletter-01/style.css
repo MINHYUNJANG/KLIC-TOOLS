@@ -1,0 +1,290 @@
+/* ── 가정통신문 디자인 템플릿 (소프트 파스텔) ──────────────────── */
+@import url('https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css');
+
+.canvas-grid {
+  justify-content: center;
+}
+
+.nl-content-area { --txt-size : initial; }
+
+.nl-template-01 * {
+  box-sizing: border-box;
+}
+
+.nl-template-01 {
+  font-family: var(--nl-font-family, 'Pretendard', 'Malgun Gothic', '맑은 고딕', 'Apple SD Gothic Neo', sans-serif);
+  overflow: hidden;
+  /* box-shadow: 0 4px 24px rgba(74, 141, 170, 0.10), 0 1px 4px rgba(74, 141, 170, 0.06); */
+
+  width: 100%;
+  margin: 0 auto;
+
+  position: relative;
+  background: #055bb9;
+  padding: 1.25rem;
+}
+
+.nl-template-01:before {
+  position: absolute;
+  content: "";
+  background: url('/builder/contents/templates/common/newsletter/pattern-01.png');
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%,-50%);
+  width: 100%;
+  height: 100%;
+  opacity: 0.15;
+}
+
+.nl-template-01 .nl-frame {
+  position: relative;
+  background: #fff;
+  padding: 2.1rem 2rem 1.55rem;
+}
+
+.nl-template-01 .nl-frame::before,
+.nl-template-01 .nl-frame::after { position: absolute; content: ""; top: -0.65rem; background: url('/builder/contents/templates/common/newsletter/icon-01.png')no-repeat; width: 3.4rem; height: 2.3rem; background-size: contain; }
+
+.nl-template-01 .nl-frame::before { left: 2rem; }
+.nl-template-01 .nl-frame::after { right: 2rem; }
+
+/* ── Section 1: 헤더 ── */
+.nl-template-01 .nl-header-section {
+  border: 1px solid #055BB9;
+  position: relative;
+  height: 5rem;
+}
+
+/* 로고 | 타이틀 | 학교명 행 */
+.nl-template-01 .nl-header-inner {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+  background: #fff;
+}
+
+/* 좌측: 로고 프레임 */
+.nl-template-01 .nl-header-left {
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  width: 7rem;
+  padding: 0.9rem;
+}
+
+.nl-template-01 .nl-logo-frame {
+  width: 5.5rem;
+  height: 3rem;
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  flex-shrink: 0;
+  border-radius: 6px;
+  transition: border-color 0.2s;
+}
+
+/* 로고 미등록 시 시각적 플레이스홀더 */
+.nl-template-01 .nl-logo-frame[data-has-logo="0"] {
+  border: 1.5px dashed #9ec6d8;
+  background: rgba(255, 255, 255, 0.65);
+}
+
+.nl-template-01 .nl-logo-frame[data-has-logo="0"]::after {
+  content: '로고 이미지';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  font-size: 0.68em;
+  color: #8ab2c6;
+  white-space: nowrap;
+  letter-spacing: 0.05em;
+  pointer-events: none;
+}
+
+.nl-template-01 .nl-logo-img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+}
+
+/* 중앙: 타이틀 */
+.nl-template-01 .nl-header-center {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex: 1;
+  border-left: 1px solid #055BB9;
+  border-right: 1px solid #055BB9;
+  height: 100%;
+}
+
+.nl-template-01 .nl-main-title {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: #055bb9;
+  flex: 1;
+  text-align: center;
+  letter-spacing: 10px;
+}
+
+/* 우측: 학교명 */
+.nl-template-01 .nl-header-right {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+  height: 100%;
+  width: 7rem;
+  padding: 0.5rem;
+}
+
+.nl-template-01 .nl-school-name {
+  font-size: 0.8rem;
+  font-weight: 700;
+  color: #121212;
+}
+
+/* 부서명/연락처 행 */
+.nl-template-01 .nl-header-info {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  flex-direction: column;
+  margin-top: 0.2rem;
+}
+
+.nl-template-01 .nl-dept,
+.nl-template-01 .nl-phone {
+  font-size: 0.75rem;
+  color: #121212;
+  font-weight: 400;
+  line-height: 1.4;
+}
+
+/* ── Section 2: 제목 ── */
+.nl-template-01 .nl-subject-section {
+  border-left: 1px solid #055BB9;
+  border-right: 1px solid #055BB9;
+  border-bottom: 1px solid #055BB9;
+}
+
+.nl-template-01 .nl-subject-row {
+  display: flex;
+  min-height: 2rem;
+}
+
+.nl-template-01 .nl-subject-label {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0.5rem;
+  background: #F3F9FF;
+  font-size: 0.8rem;
+  font-weight: 700;
+  color: #121212;
+  width: 7rem;
+}
+
+.nl-template-01 .nl-subject-text {
+  display: flex;
+  align-items: center;
+  padding: 0.5rem 1.1rem;
+  font-size: 0.8rem;
+  font-weight: 700;
+  color: #121212;
+  flex: 1;
+  border-left: 1px solid #055BB9;
+  background: #F3F9FF;
+}
+
+/* ── Section 3: 본문 ── */
+.nl-template-01 .nl-content-section {
+  border: 1px solid #055bb9;
+  border-top: none;
+  background: #fff;
+}
+
+.nl-template-01 .nl-content-area {
+  min-height: 25rem;
+  padding: 1.5rem;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-start;
+  align-content: flex-start;
+  justify-content: space-between;
+}
+
+.nl-template-01 .nl-content-area.nl-body-drop-over {
+  outline: 2px dashed #4a8daa;
+  outline-offset: -4px;
+  background: #f0f7fb;
+}
+
+/* 리스트 행: 블록 드래그 오버 상태 */
+.nl-template-01 [data-list-row].list-row-drop-over {
+  outline: 2px dashed #4a8daa;
+  outline-offset: 2px;
+  background: #f0f7fb;
+  border-radius: 3px;
+  min-width: 80px;
+  display: inline-block;
+}
+
+/* 본문에 삽입된 블록 */
+.nl-template-01 .nl-block-insert {
+  position: relative;
+  margin: 0;
+  width: 100%;
+}
+
+/* body 블록 컨트롤 오버레이 -> contents_common.css의 .inner-block-actions / .inner-block-btn 사용 */
+
+/* ── Section 4: 푸터 ── */
+.nl-template-01 .nl-footer-section {
+  background: #F3F9FF;
+  border: 1px solid #055BB9;
+  border-top: none;
+  padding: 1.15rem 1rem;
+}
+
+.nl-template-01 .nl-footer-inner {
+  text-align: center;
+  position: relative;
+}
+
+.nl-template-01 .nl-footer-date {
+  font-size: 0.8rem;
+  font-weight: 700;
+  color: #333333;
+  margin-bottom: 0.25rem;
+}
+
+.nl-template-01 .nl-footer-sign {
+  font-size: 0.8rem;
+  font-weight: 700;
+  color: #055BB9;
+}
+
+/* ── 본문 폰트사이즈 조정 (속성 패널 → --nl-content-fs 변수로 제어, 기본값 19px) ── */
+.nl-template-01 .nl-content-area {
+  font-size: var(--nl-content-fs, 15px);
+}
+.nl-template-01 .nl-content-area .txt-st.laed    { font-size: calc(var(--nl-content-fs, 15px) * 1.15); }
+.nl-template-01 .nl-content-area .txt-st.contents { font-size: calc(var(--nl-content-fs, 15px) * 1.2); }
+.nl-template-01 .nl-content-area .txt-st.unit    { font-size: var(--nl-content-fs, 15px); }
+.nl-template-01 .nl-content-area .txt-st.item    { font-size: calc(var(--nl-content-fs, 15px) * 0.85); }
+
+.nl-template-01 .nl-content-area .bu-st1:not(.list):before,
+.nl-template-01 .nl-content-area .bu-st1.list > li:before { width: calc(var(--nl-content-fs, 15px) * 0.4); height: calc(var(--nl-content-fs, 15px) * 0.4); margin-left: calc(var(--nl-content-fs, 15px) * -0.75); margin-right: calc(var(--nl-content-fs, 15px) * 0.4); }
+
+.nl-template-01 .nl-content-area .bu-st2:not(.list):before,
+.nl-template-01 .nl-content-area .bu-st2.list > li:before { width: calc(var(--nl-content-fs, 15px) * 0.5); margin-left: calc(var(--nl-content-fs, 15px) * -0.75); margin-right: calc(var(--nl-content-fs, 15px) * 0.4); }
+
+.nl-template-01 .nl-content-area *[class*='bu-st']:not(.list),
+.nl-template-01 .nl-content-area *[class*='bu-st'].list > li { padding-left: calc(var(--nl-content-fs, 15px) * 1); }
+

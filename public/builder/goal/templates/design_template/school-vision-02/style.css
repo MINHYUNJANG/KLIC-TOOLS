@@ -1,0 +1,221 @@
+.school-vision-02 {
+	--sv02-pink:   #E91989;
+	--sv02-light:  #FFF0F7;
+	--sv02-border: #F0AECF;
+	display: grid;
+	gap: 0;
+	width: 100%;
+	background: #fff;
+	color: #111;
+	font-family: Pretendard, sans-serif;
+}
+
+.school-vision-02 h4,
+.school-vision-02 p,
+.school-vision-02 ul {
+	margin: 0;
+}
+
+/* ── 섹션 공통 ─────────────────────────────── */
+.sv02-section {
+	display: grid;
+	gap: 16px;
+}
+
+/* ── 화살표 구분자 섹션 ──────────────────────── */
+.sv02-section.sv02-divider {
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	padding: 4px 0;
+	color: var(--sv02-pink);
+	gap: 0;
+}
+
+/* ── 라벨 (—— 텍스트 ——) ─────────────────── */
+.sv02-box-label {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	gap: 14px;
+	color: var(--sv02-pink);
+	font-size: 15px;
+	font-weight: 700;
+}
+
+.sv02-box-label::before,
+.sv02-box-label::after {
+	content: '';
+	flex: 1;
+	max-width: 120px;
+	height: 1px;
+	background: var(--sv02-pink);
+}
+
+/* ── 비전/교육상 박스 ────────────────────── */
+.sv02-box {
+	border: 1.5px solid var(--sv02-pink);
+	border-radius: 10px;
+	padding: 22px 40px;
+	display: grid;
+	gap: 14px;
+	text-align: center;
+}
+
+.sv02-vision-text {
+	font-size: 22px;
+	font-weight: 700;
+	line-height: 1.6;
+}
+
+.sv02-eduimage-text {
+	font-size: 20px;
+	font-weight: 900;
+}
+
+/* ── 4대 상 카드 ─────────────────────────── */
+.sv02-cards-grid {
+	display: grid;
+	grid-template-columns: repeat(4, minmax(0, 1fr));
+	gap: 12px;
+}
+
+.sv02-cards-grid article {
+	border: 1.5px solid var(--sv02-pink);
+	border-radius: 10px;
+	padding: 22px 16px 26px;
+	display: grid;
+	gap: 12px;
+	text-align: center;
+}
+
+.sv02-cards-grid h4 {
+	color: var(--sv02-pink);
+	font-size: 18px;
+	font-weight: 900;
+}
+
+.sv02-cards-grid article > p {
+	font-size: 15px;
+	color: #555;
+	line-height: 1.65;
+}
+
+/* ── 7대 역량 배지 ───────────────────────── */
+.sv02-comp-list {
+	display: grid;
+	grid-template-columns: repeat(7, minmax(0, 1fr));
+	gap: 8px;
+}
+
+.sv02-comp-list span {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	text-align: center;
+	min-height: 62px;
+	border: 1.5px solid #ddd;
+	border-radius: 8px;
+	padding: 10px 8px;
+	font-size: 13.5px;
+	font-weight: 600;
+	color: #333;
+	line-height: 1.45;
+}
+
+/* ── 교육철학 4개 카드 ───────────────────── */
+.sv02-philo-grid {
+	display: grid;
+	grid-template-columns: repeat(4, minmax(0, 1fr));
+	gap: 12px;
+}
+
+.sv02-philo-grid article {
+	background: var(--sv02-light);
+	border-radius: 10px;
+	padding: 20px 16px;
+	display: grid;
+	gap: 12px;
+}
+
+.sv02-philo-grid h4 {
+	color: var(--sv02-pink);
+	font-size: 16px;
+	font-weight: 900;
+	line-height: 1.55;
+	text-align: center;
+	padding-bottom: 12px;
+	border-bottom: 1px solid var(--sv02-border);
+}
+
+.sv02-badge {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	min-height: 36px;
+	border-radius: 999px;
+	background: var(--sv02-pink);
+	color: #fff;
+	font-size: 14px;
+	font-weight: 700;
+}
+
+.sv02-philo-grid ul {
+	list-style: none;
+	padding: 0;
+	display: grid;
+	gap: 5px;
+}
+
+.sv02-philo-grid li {
+	display: flex;
+	align-items: flex-start;
+	gap: 6px;
+	font-size: 13px;
+	color: #333;
+	line-height: 1.5;
+}
+
+.sv02-philo-grid li::before {
+	content: '•';
+	color: var(--sv02-pink);
+	flex-shrink: 0;
+	margin-top: 1px;
+}
+
+/* ── 학교 자율과제 ───────────────────────── */
+.sv02-project-area {
+	gap: 14px;
+}
+
+.sv02-project-title {
+	text-align: center;
+	font-size: 18px;
+	font-weight: 900;
+}
+
+.sv02-project-grid {
+	display: grid;
+	grid-template-columns: repeat(3, minmax(0, 1fr));
+	gap: 12px;
+}
+
+.sv02-project-grid article {
+	background: var(--sv02-light);
+	border-radius: 10px;
+	padding: 20px 16px;
+	display: grid;
+	gap: 8px;
+	text-align: center;
+}
+
+.sv02-project-grid h4 {
+	font-size: 16px;
+	font-weight: 900;
+	color: #222;
+}
+
+.sv02-project-grid article > p {
+	font-size: 13px;
+	color: #666;
+}

@@ -1,0 +1,89 @@
+﻿.list-011 {
+	display: flex;
+	flex-direction: column;
+	width: 100%;
+	box-sizing: border-box;
+}
+
+.list-011 .organ-head {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	width: 100%;
+	padding: 10px 20px;
+	min-height: var(--title-height, auto);
+	background: var(--title-bg, #4B5563);
+	border-radius: 999px;
+	box-sizing: border-box;
+}
+
+.list-011 .organ-head p {
+	color: var(--title-text, #ffffff);
+	font-size: var(--title-size, 15px);
+	font-weight: var(--title-weight, 600);
+	text-align: center;
+	letter-spacing: -0.3px;
+	white-space: pre-line;
+}
+
+/* ul wrapper: 헤드와의 간격 + 헤드→첫 항목 세로선 */
+.list-011 .organ-body {
+	position: relative;
+	list-style: none;
+	padding: 0;
+	margin: 10px 0 0 0;
+	display: flex;
+	flex-direction: column;
+}
+
+.list-011 .organ-body::before {
+	content: '';
+	position: absolute;
+	top: -10px;
+	left: 50%;
+	transform: translateX(-50%);
+	width: 1px;
+	height: 10px;
+	background: #999;
+}
+
+/* 각 항목 알약 */
+.list-011 .organ-item {
+	position: relative;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	width: 100%;
+	padding: 10px 20px;
+	min-height: var(--body-height, auto);
+	background: var(--body-bg, #ffffff);
+	border: 1.5px solid var(--body-border, #d1d5db);
+	border-radius: 999px;
+	box-sizing: border-box;
+	color: var(--body-text, #374151);
+	font-size: var(--body-size, 14px);
+	font-weight: var(--body-weight, 400);
+	text-align: center;
+	letter-spacing: -0.3px;
+	line-height: 1.6;
+	white-space: pre-line;
+}
+
+/* 항목 사이 간격 + 세로선 */
+.list-011 .organ-item + .organ-item {
+	margin-top: 10px;
+}
+
+.list-011 .organ-item + .organ-item::before {
+	content: '';
+	position: absolute;
+	top: -10px;
+	left: 50%;
+	transform: translateX(-50%);
+	width: 1px;
+	height: 10px;
+	background: #999;
+}
+
+/* ── 리스트 행 인라인 액션 버튼 ── */
+.list-011 .list-row-inline-actions {right: 0;}

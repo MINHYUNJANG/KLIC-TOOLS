@@ -1,0 +1,101 @@
+.klic-confirm-layer {
+	position: fixed;
+	inset: 0;
+	z-index: 12000;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	padding: 20px;
+	box-sizing: border-box;
+}
+
+.klic-confirm-backdrop {
+	position: absolute;
+	inset: 0;
+	background: rgba(15, 23, 42, .48);
+}
+
+.klic-confirm-dialog {
+	position: relative;
+	z-index: 1;
+	display: grid;
+	gap: 12px;
+	width: min(360px, 100%);
+	padding: 22px;
+	border: 1px solid #d8e0ea;
+	border-radius: 8px;
+	background: #fff;
+	box-shadow: 0 22px 60px rgba(15, 23, 42, .28);
+	text-align: center;
+	box-sizing: border-box;
+}
+
+.klic-confirm-icon {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	width: 42px;
+	height: 42px;
+	margin: 0 auto;
+	border-radius: 50%;
+	background: #fff3e7;
+	color: #df6b00;
+	font-size: 22px;
+}
+
+.klic-confirm-dialog strong {
+	color: #172033;
+	font-size: 18px;
+	font-weight: 900;
+}
+
+.klic-confirm-dialog p {
+	margin: 0;
+	color: #556070;
+	font-size: 13px;
+	line-height: 1.6;
+	word-break: keep-all;
+}
+
+.klic-confirm-dialog p strong {
+	color: #d32f2f;
+	font-size: inherit;
+	font-weight: 800;
+}
+
+.klic-confirm-actions {
+	display: flex;
+	justify-content: center;
+	gap: 8px;
+	margin-top: 4px;
+}
+
+.klic-confirm-actions button {
+	min-width: 86px;
+	min-height: 34px;
+	border: 1px solid #cfd6e2;
+	border-radius: 5px;
+	padding: 0 14px;
+	font-size: 13px;
+	font-weight: 700;
+	cursor: pointer;
+}
+
+.klic-confirm-actions .ghost-button {
+	background: #fff;
+	color: #333;
+}
+
+.klic-confirm-actions .ghost-button:hover {
+	background: #f5f7fa;
+}
+
+.klic-confirm-actions .primary-button {
+	border-color: #0081dd;
+	background: #0081dd;
+	color: #fff;
+}
+
+.klic-confirm-actions .primary-button:hover {
+	background: #054ca4;
+}

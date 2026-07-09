@@ -1,0 +1,9 @@
+/* 배달의민족 주아체 */
+@font-face {
+    font-family: 'BMJUA';
+    font-style: normal;
+    font-weight: normal;
+    src: local('BMJUA'),
+		url('BMJUA.woff2') format('woff2'), 
+        url('BMJUA.woff') format('woff');
+}

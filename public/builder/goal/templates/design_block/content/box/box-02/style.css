@@ -1,0 +1,14 @@
+﻿.box-02 {
+	/* 본문 */
+	--body-align: left;
+	--body-border: #CEDEFF;
+	--body-text: #000;
+	--body-weight: 600;
+
+	display: flex;
+	min-height: 100%;
+	padding: 16px;
+	border-radius: 10px;
+	border: 2px solid var(--body-border);
+	background: #fff;
+}

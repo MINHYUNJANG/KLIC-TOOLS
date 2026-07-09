@@ -1,0 +1,25 @@
+﻿.box-012 {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	width: 100%;
+	border-radius: 0;
+}
+
+.box-012 > p {
+	width: 100%;
+	min-height: var(--title-height, auto);
+	padding: 10px 20px;
+	border: 3px solid transparent;
+	background:
+		linear-gradient(var(--title-bg, #ffffff), var(--title-bg, #ffffff)) padding-box,
+		linear-gradient(to right, var(--title-border, #36B0F7), var(--title-border2, #3259E5)) border-box;
+	box-sizing: border-box;
+	border-radius: 0;
+	color: var(--title-text, #000000);
+	font-size: var(--title-size, 16px);
+	font-weight: var(--title-weight, 600);
+	text-align: center;
+	letter-spacing: -0.3px;
+	white-space: pre-line;
+}

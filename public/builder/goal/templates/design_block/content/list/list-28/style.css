@@ -1,0 +1,80 @@
+﻿.list-28 {
+	/* 타이틀 */
+	--title-align: center;
+	--title-bg: #0077D1;
+	--title-text: #fff;
+	
+	/* 본문 */
+	--body-border: #0077D1;
+
+	min-height: 100%;
+	flex-direction: row;
+	gap: 0.5rem;
+}
+
+.list-28 .tit-wrap{
+	flex: 1;
+	max-width: 7.5rem;
+	min-height: 100%;
+	align-items: center;
+	justify-content: center;
+	padding: 1rem;
+	border-radius: 0.75rem;
+	background: var(--title-bg);
+}
+
+.list-28 .txt-wrap {
+	flex: 2;
+	padding: 1rem;
+	border-radius: 0.75rem;
+	background: #fff;
+	border: 1px solid var(--body-border);
+}
+
+.list-28 .txt-wrap ul[data-depth="1"] {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 0.3rem;
+}
+
+.list-28 .txt-wrap ul[data-depth="1"] > li{
+	width: 100%;
+} 
+
+.list-28 .edit-list {
+    --ls-color-1: #0077D1;
+    --ls-color-2: #333;
+    --ls-color-3: #333;
+}
+
+@media (max-width: 1240px) {
+
+	.builder-columns.columns-3:has(.list-28){
+		grid-template-columns: repeat(2, 1fr);
+	}
+}
+
+@media (max-width: 960px) {
+
+	.builder-columns.columns-3:has(.list-28),
+	.builder-columns.columns-2:has(.list-28){
+		grid-template-columns: repeat(1, 1fr);
+	}
+}
+
+@media (max-width: 460px) {
+
+	.builder-columns:has(.list-28){
+		gap: 0.75rem;
+	}
+
+	.list-28{
+		flex-direction: column;
+		gap: 0.25rem;
+	}
+
+	.list-28 .tit-wrap{ 
+		max-width: 100%;
+		padding: 0.6rem;
+	}
+}

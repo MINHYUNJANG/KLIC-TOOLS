@@ -1,0 +1,57 @@
+﻿.list-014 {
+	display: flex;
+	flex-direction: column;
+	width: 100%;
+	border: 1px solid var(--body-border, #e2e8f0);
+	border-radius: 15px;
+	overflow: hidden;
+	box-sizing: border-box;
+}
+
+.list-014 .organ-head {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	width: 100%;
+	min-height: var(--title-height, auto);
+	padding: 10px 20px;
+	background: var(--title-bg, #4B7BE5);
+	box-sizing: border-box;
+}
+
+.list-014 .organ-head p {
+	color: var(--title-text, #ffffff);
+	font-size: var(--title-size, 15px);
+	font-weight: var(--title-weight, 700);
+	text-align: center;
+	letter-spacing: -0.3px;
+	white-space: pre-line;
+}
+
+.list-014 .organ-body {
+	flex: 1;
+	list-style: none;
+	padding: 8px 12px;
+	margin: 0;
+	background: var(--body-bg, #ffffff);
+	display: flex;
+	flex-direction: column;
+}
+
+.list-014 .organ-item {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	min-height: var(--body-height, auto);
+	padding: 6px 8px;
+	color: var(--body-text, #374151);
+	font-size: var(--body-size, 14px);
+	font-weight: var(--body-weight, 400);
+	text-align: center;
+	letter-spacing: -0.3px;
+	line-height: 1.5;
+	white-space: pre-line;
+}
+
+/* ── 리스트 행 인라인 액션 버튼 ── */
+.list-014 .list-row-inline-actions {right: 0;}

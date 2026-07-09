@@ -1,0 +1,113 @@
+﻿.mix-09 {
+	/* 타이틀 */
+	--title-align: center;
+	--title-bg: #E3ECFA;
+	--title-text: #000;
+	
+	/* 본문 */
+	--body-align: center;
+	--body-border: #D3DCEA;
+	--body-text: #000;
+
+	display: flex;
+	flex-direction: row;
+	flex-wrap: wrap;
+	gap: 0.5rem;
+}
+
+.mix-09 .tit-wrap {
+	width: 100%;
+	text-align: var(--title-align);
+	display: block;
+	margin-bottom: 0.5rem;
+}
+
+.mix-09 .tit-wrap .tit{ 
+	width: auto;
+	display: inline-block;
+	min-width: 140px;
+	padding: 12px 24px;
+	border-radius: 30px;
+	background: var(--title-bg);
+	text-align: center;
+}
+
+.mix-09 .txt-wrap {
+	flex: 1;
+	width: auto;
+	min-width: 0px;
+	min-height: 100%;
+	display: flex;
+	align-items: center;
+	line-height: 1.5;
+	word-break: keep-all;
+	border-radius: 15px;
+	padding: 16px;
+	background: #fff;
+	border: 1px solid var(--body-border);
+	box-shadow: 0 0 10px rgba(0,0,0,0.1);
+}
+
+.mix-09 .txt-wrap > p{
+	width: 100%;
+}
+
+@media (max-width: 1240px) {
+
+	/* ---- 디자인블록 정렬 ---- */
+	.block-item.item-6.mix-09 .inner{
+		grid-template-columns: repeat(6, 1fr);
+	}
+	.block-item.item-5.mix-09 .inner {
+		grid-template-columns: repeat(5, 1fr);
+	}
+}
+
+@media (max-width: 1024px) {
+
+	/* ---- 디자인블록 정렬 ---- */
+	.block-item.item-6.mix-09 .inner,
+	.block-item.item-5.mix-09 .inner {
+		grid-template-columns: repeat(3, 1fr);
+	}
+	.block-item.item-4.mix-09 .inner {
+		grid-template-columns: repeat(4, 1fr);
+	}
+}
+
+@media (max-width: 768px) {
+	.mix-09 .tit-wrap{ margin-bottom: 0;}
+	.block-item.item-4.mix-09 .inner {
+		grid-template-columns: repeat(2, 1fr);
+	}
+
+}
+
+@media (max-width: 640px) {
+	.block-item.item-3.mix-09 .inner {
+		grid-template-columns: repeat(3, 1fr);
+	}
+
+}
+
+@media (max-width: 540px) {
+	
+	.mix-09 .txt-wrap{ padding: 10px 16px;}
+	.block-item.item-6.mix-09 .inner,
+	.block-item.item-5.mix-09 .inner {
+		grid-template-columns: repeat(2, 1fr);
+	}
+
+}
+
+@media (max-width: 380px) {
+	
+	.block-item.item-6.mix-09 .inner,
+	.block-item.item-5.mix-09 .inner,
+	.block-item.item-4.mix-09 .inner,
+	.block-item.item-3.mix-09 .inner,
+	.block-item.item-2.mix-09 .inner {
+		grid-template-columns: repeat(1, 1fr);
+	}
+
+}

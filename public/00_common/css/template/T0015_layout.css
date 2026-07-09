@@ -1,0 +1,66 @@
+
+/* 통합검색 */
+.totalSearch { position:relative; width: 11rem; height: 2rem; border-radius: 0.5rem; overflow: hidden; background:#eaeaea; }
+.totalSearch input { padding: 0 2.25rem 0 0.5rem; width: 100%; height: 1.8rem; line-height: 1.8rem; font-size: 0.6rem; border: none; font-family: '돋움', Dotum; background:none; }
+.totalSearch button { position: absolute; bottom:0; right:0; padding: 0; background:#ff8d11; border-radius:0.5rem; width: 2rem; height: 2rem; line-height:38px; color:#fff; border: none; font-size:1.1rem; z-index:2; /*.9rem */ }
+.totalSearch input::-webkit-input-placeholder { color: #555; }
+.totalSearch input::placeholder { color: #555; }
+
+#header:before { height:1px; background:#e2e2e2; } /* header 하단 라인 */
+
+/* gnb color */
+/* gnb : default */
+#gnb{ background:#fff; }/* gnb 배경색 */
+#gnb .depth01 > ul > li.on > a{ color:#0987ed !important; } /* 1차메뉴 active 텍스트 색상 */
+#gnb .depth01 > ul > li > a{ color:#222222; }/* 1차메뉴 텍스트 색상 */
+#gnb .depth01 > ul > li > a:before{ background:#0987ed;} /* 1차메뉴 active underline 색상*/
+#gnb .depth01 > ul > li > a > span:before{background:#f4f7fc; } /* 1차메뉴 active 그림자 색상 */
+#gnb .depth02 > ul > li > a{ color:#111; }/* 2차메뉴 텍스트 색상 */
+/* gnb : fullDown */
+#nav.fullDown #gnb:before { height:1px; background:#e2e2e2; } /* 메뉴하단라인 */
+#nav.fullDown .active .depth01 > ul > li > a{ color:#222222; }
+#nav.fullDown .depth02 > ul > li > a:hover,
+#nav.fullDown .depth02 > ul > li > a:focus,
+#nav.fullDown .depth02 > ul > li.active > a{ color:#fff; background:#0987ed; }/* 2차메뉴 active 효과 */
+/* gnb : oneDown */
+#nav.oneDown #gnb:before { height:1px; background:#e2e2e2; } /* 메뉴하단라인 */
+#nav.oneDown .depth02{ border:2px solid #0987ed;}/* 2차메뉴 border-color */
+#nav.oneDown .depth02 > ul > li > a:hover,
+#nav.oneDown .depth02 > ul > li > a:focus,
+#nav.oneDown .depth02 > ul > li.dep.active > a{ color:#0987ed; font-weight:600; }/* 2차메뉴 active 텍스트 색상 */
+/* gnb : oneFull */
+#nav.oneFull #gnb:before { height:1px; background:#e2e2e2; } /* 메뉴하단라인 */
+#nav.oneFull .depth02 > ul > li > a:hover,
+#nav.oneFull .depth02 > ul > li > a:focus,
+#nav.oneFull .depth02 > ul > li.dep.active > a{ color:#fff; background:#0987ed; }/* 2차메뉴 active 배경색 */
+#nav.oneFull .depth03 > ul > li > a:before{background:#0987ed;}/* 3차메뉴 블릿 색상 */
+
+/* footer */
+#footer { border-top:1px solid #d1d8e4; color:#000; background: #ebebeb; }/* footer 배경, 폰트색상, border */
+.footer_link li a:before{ border-left:1px solid #939393; }/* footer link 영역 라인색상 */
+.footer_link li a strong { color: #0987ed; }/* footer link 강조 폰트색상 */
+#footer .copyright { color:#000; }/* copyright 폰트색상 */
+#footer .btn_top{ background:#0987ed; color:#fff;}/* footer 상단이동 버튼 색상 */
+
+/* 방문자수 */
+.visitant{background:#0987ed; }
+.visitant h2 {margin-bottom:0;}
+.visitant ul li{ color:#fff;}
+.visitant ul li strong { color:#fff;}
+.visitant ul li + li:before{ border-left:1px solid #ccc;}
+
+/* moblie  */
+#header .mBtn.mSearch{ border-radius:0.5rem; background: #ff8d11; color:#fff;}/* 모바일 검색 버튼 */
+#header .mBtn.mNav{ border-radius:0.5rem; background: #0987ed; color:#fff;}/* 모바일 메뉴 버튼 */
+
+/* moblie navigation  */
+#mNav #mNavClose {  border-radius:0.5rem; background: #0987ed; color:#fff;}/* 모바일 메뉴 닫기 버튼 */
+#mgnb .depth02{ background:#f7faff;}/* 2차메뉴 배경 */
+#mgnb .depth02 > ul > li:before{ background:#0987ed;}/* 2차메뉴 블릿 색상*/
+#mgnb .depth03{ border-top:2px solid #0987ed;}/* 3차메뉴 border 색상 */
+#mgnb .depth01 > ul > li.active > a { color: #fff; background-color:#0987ed; }/* 1차메뉴 active */
+#mgnb .depth02 > ul > li.active > a { color: #0987ed; }/* 2차메뉴 active */
+
+/* moblie search  */
+#mSearch .btnSearch { background: #ff8d11; color:#fff; }
+#mSearch .btnClose { border-radius:0.5rem; background:#ff8d11; color:#fff; }

@@ -1,25 +1,56 @@
 import { useState } from 'react';
 
 const navItems = [
-  { label: '크롤링 마크업', href: '#' },
-  // { label: '콘텐츠 일괄 마크업', href: '#' },
-  { label: 'MCP 마크업', href: '#', dividerAfter: true },
-  { label: '테이블 변환', href: '#', dividerAfter: true },
-  { label: 'KL서브콘텐츠빌더', href: 'https://klic-tools-lac.vercel.app/', external: true, dividerAfter: true },
   {
-    label: '웹검사도구',
+    label: '마크업 도구',
+    id: 'markup-tools',
     href: '#',
     children: [
-      { label: '웹표준검사', href: '#' },
-      { label: '웹접근성검사', href: '#' },
+      { label: '학교통합 마크업', id: 'school-integrated-markup', href: '#' },
+      { label: 'MCP 마크업', id: 'mcp-markup', href: '#' },
+      { label: '테이블 변환도구', id: 'table-transform', href: '#' },
     ],
   },
-  { label: '대체텍스트 생성', href: '#' },
+  {
+    label: 'CMS빌더',
+    id: 'cms-builder',
+    href: '#',
+    children: [
+      {
+        label: '템플릿빌더',
+        id: 'template-builder',
+        href: '#',
+        children: [
+          { label: '인사말빌더', id: 'greeting-builder', href: '#' },
+          { label: '연혁빌더', id: 'history-builder', href: '#' },
+          { label: '역대교장빌더', id: 'principal-builder', href: '#' },
+          { label: '학교상징빌더', id: 'symbol-builder', href: '#' },
+        ],
+      },
+      { label: '콘텐츠빌더', id: 'content-builder', href: '#' },
+      { label: '교육목표빌더', id: 'goal-builder', href: '#' },
+      { label: '조직도빌더', id: 'organization-builder', href: '#' },
+      { label: '오시는길빌더', id: 'location-builder', href: '#' },
+    ],
+  },
+  {
+    label: '웹검사 도구',
+    id: 'web-inspection',
+    href: '#',
+    children: [
+      { label: '웹표준검사', id: 'web-standard', href: '#' },
+      { label: '웹접근성검사', id: 'web-accessibility', href: '#' },
+      { label: '대체텍스트 생성', id: 'alt-text', href: '#' },
+    ],
+  },
 ];
 
 export default function Header({ currentPage, setCurrentPage }) {
   const [menuOpen, setMenuOpen] = useState(false);
   const [hoveredItem, setHoveredItem] = useState(null);
+  const includesCurrentPage = item => (
+    item.id === currentPage || item.children?.some(child => includesCurrentPage(child))
+  );
 
   function handleNavClick(e, item) {
     if (item.children) {
@@ -31,7 +62,7 @@ export default function Header({ currentPage, setCurrentPage }) {
       return;
     }
     e.preventDefault();
-    setCurrentPage(item.label);
+    setCurrentPage(item.id);
     setMenuOpen(false);
   }
 
@@ -47,7 +78,7 @@ export default function Header({ currentPage, setCurrentPage }) {
             {navItems.map((item) => (
               <li
                 key={item.label}
-                className={`nav-item ${(currentPage === item.label || item.children?.some(c => c.label === currentPage)) ? 'is-active' : ''} ${hoveredItem === item.label ? 'is-active' : ''} ${item.dividerAfter ? 'has-divider' : ''}`}
+                className={`nav-item ${includesCurrentPage(item) ? 'is-active' : ''} ${hoveredItem === item.label ? 'is-active' : ''}`}
                 onMouseEnter={() => setHoveredItem(item.label)}
                 onMouseLeave={() => setHoveredItem(null)}
               >
@@ -64,7 +95,7 @@ export default function Header({ currentPage, setCurrentPage }) {
                 {item.children && (
                   <ul className="nav-submenu" aria-label={`${item.label} 하위 메뉴`}>
                     {item.children.map((child) => (
-                      <li key={child.label}>
+                      <li key={child.label} className={`nav-submenu-item ${child.children ? 'has-children' : ''}`}>
                         {child.disabled ? (
                           <span className="nav-submenu-link is-disabled" aria-disabled="true">
                             {child.label}
@@ -75,16 +106,38 @@ export default function Header({ currentPage, setCurrentPage }) {
                             className="nav-submenu-link"
                             target={child.external ? '_blank' : undefined}
                             rel={child.external ? 'noreferrer' : undefined}
+                            aria-haspopup={child.children ? 'true' : undefined}
                             onClick={(e) => {
-                              if (!child.external) {
+                              if (child.children) {
                                 e.preventDefault();
-                                setCurrentPage(child.label);
+                              } else if (!child.external) {
+                                e.preventDefault();
+                                setCurrentPage(child.id);
                               }
-                              setMenuOpen(false);
+                              if (!child.children) setMenuOpen(false);
                             }}
                           >
                             {child.label}
                           </a>
+                        )}
+                        {child.children && (
+                          <ul className="nav-thirdmenu" aria-label={`${child.label} 하위 메뉴`}>
+                            {child.children.map(grandchild => (
+                              <li key={grandchild.label}>
+                                <a
+                                  href={grandchild.href}
+                                  className="nav-submenu-link"
+                                  onClick={(e) => {
+                                    e.preventDefault();
+                                    setCurrentPage(grandchild.id);
+                                    setMenuOpen(false);
+                                  }}
+                                >
+                                  {grandchild.label}
+                                </a>
+                              </li>
+                            ))}
+                          </ul>
                         )}
                       </li>
                     ))}
@@ -96,7 +149,10 @@ export default function Header({ currentPage, setCurrentPage }) {
         </nav>
 
         <div className="header-actions">
-          <a href="https://uimoa.klic.kr/" target="_blank" rel="noreferrer" className="btn-login">UIMOA</a>
+          <a href="https://uimoa.klic.kr/" target="_blank" rel="noreferrer" className="btn-login">
+            <img src="/uimoa-icon.png" alt="" className="btn-login-icon" aria-hidden="true" />
+            <span>UIMOA</span>
+          </a>
           <button
             className="btn-hamburger"
             onClick={() => setMenuOpen(!menuOpen)}

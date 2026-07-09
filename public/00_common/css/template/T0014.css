@@ -1,0 +1,88 @@
+﻿
+/* 메인 컨테이너 */
+#container { position:relative; z-index:2; width:100%; }
+#container *{ scrollbar-arrow-color: #ddd; scrollbar-Track-Color: #ddd; scrollbar-base-color: #aaa; scrollbar-Face-Color: #aaa; scrollbar-3dLight-Color: #aaa; scrollbar-DarkShadow-Color: #aaa; scrollbar-Highlight-Color: #aaa; scrollbar-Shadow-Color: #aaa;}
+#container ::-webkit-scrollbar { width: 5px; height: 3px; }
+#container ::-webkit-scrollbar-thumb { background-color: #aaa; border-radius:10px; }
+#container ::-webkit-scrollbar-track { background-color: #ddd; border-radius:10px; }
+
+.MC_wrap1 .container {display: flex; justify-content: space-between; align-items: center;}
+.MC_wrap2 { position: relative; margin-top: 2rem; }
+.MC_wrap3 { position: relative; margin-top: 1.85rem; }
+.MC_wrap3 .container { padding: 2.2rem 0 0; }
+.MC_wrap3 .container::before { position: absolute; right: -8.35rem; top: 0; width: 200vw; height: 100%; background: #fff3f8; border-radius: 0 5rem 0 0; content: "";}
+
+.con_wrap { position: relative; display: flex; flex-flow: row; justify-content: space-between; padding: 2.8rem 0 3rem; }
+.con_wrap::before { position: absolute; bottom: 0; left: -9.35rem; width: 200vw; height: 100%; background: #fff; border-radius: 5rem 0 0 0; content: ""; }
+
+.MC_box1 { position: relative; order: 1; width: 43.5rem; height:28.8rem; padding: 1.9rem 0; } /* 메인비주얼 */
+.MC_box1::before { position: absolute; top: 0; left: 2.8rem; width: 180%; height: 100%; background: #c1eaf0; border-radius: 8rem 0 0 8rem; content: ""; }
+.MC_box1::after { position: absolute; top: 6rem; right: -15rem; width: 11.2rem; height: 19.6rem; background: url('/images/template/T0014/main/0014_con_bg01.png') no-repeat center; content: ""; }
+.MC_box2 { position: relative; padding-top: 1.9rem; width: calc(100% - 46.5rem);} /* 바로가기 */
+.MC_box3 { position: relative; width: 48%; height: 16.6rem; float: left; } /* 게시판1 */
+.MC_box4 { position: relative; width: 48%; height: 16.6rem; float: right; } /* 게시판2 */
+.MC_box5 { position: relative; width: 100%; height: 17rem; margin-bottom: 3rem; } /* 갤러리 */
+.MC_box6 { position: relative; width: 17.5rem; height: 13.85rem; float: left; margin-right: 1.5rem; } /* 팝업존 */
+.MC_box7 { position: relative; width: calc(50% - 10.25rem); height: 13.85rem; margin-right: 1.5rem; float: left; } /* 식단 */
+.MC_box8 { position: relative; width: calc(50% - 10.25rem); height: 13.85rem; float: right; } /* 캘린더 */
+
+
+@media (max-width:1240px){
+
+    .MC_wrap3 {margin-top: 1.5rem;}
+    .MC_wrap3 .container { padding: 1.8rem 1rem 0; }
+    
+    .con_wrap {padding: 1.8rem 0 2rem;}
+
+    .MC_box1 { width: 39.6rem; }
+	.MC_box1::before { border-radius: 0 0 0 2.5rem; }
+    .MC_box2 { width: calc(100% - 41.5rem); }
+    .MC_box5 {margin-bottom: 2rem;}
+    
+}
+ 
+@media (max-width:1100px){
+    .MC_wrap1 .container {display: block;}
+    .MC_wrap2 { margin-top: 1.5rem; }
+
+    .MC_box1 { position: relative; width: 100%; height: auto; padding: 1.5rem 0; }  /* 메인비주얼 */
+    .MC_box2 { width: 100%; height: auto; }  /* 바로가기 */
+    .MC_box6 {margin-right: 0.75rem;}
+    .MC_box7 {width: calc(50% - 9.5rem); margin-right: 0.75rem;}
+    .MC_box8 {width: calc(50% - 9.5rem);}
+}
+ 
+@media (max-width:1024px){
+    #container {padding-top: 3.3rem;}
+}
+
+@media (max-width:960px){
+    .con_wrap { flex-wrap: wrap; }
+
+    .MC_box3 { width: 100%; height: auto; } /* 게시판1 */
+    .MC_box4 { width: 100%; height: auto; margin-top: 1rem; } /* 게시판2 */
+    .MC_box6 { width: 100%; height: auto; margin-bottom: 2rem; } /* 팝업존 */
+    .MC_box7 { width: 48%; margin-right: 0; } /* 식단 */
+    .MC_box8 { width: 48%; } /* 캘린더 */
+    
+}
+
+@media (max-width:700px){
+
+    .MC_box5 { width: 100%; height: auto; } /* 갤러리 */
+    .MC_box6 { width: 100%; height: auto; } /* 식단 */
+    .MC_box7 { width: 100%; height: auto; } /* 캘린더 */
+    .MC_box8 { width: 100%; height: auto; margin-top: 2rem; } /* 팝업존 */
+    
+}
+
+@media (max-width:480px){
+    .MC_wrap3 { margin-top: 1.2rem; }
+    .MC_wrap3::before { height: 10rem; }
+
+    .MC_box1 { padding: 1.25rem 0; }  /* 메인비주얼 */
+	.MC_box1::before { border-radius: 0 0 0 1.5rem; }
+    .MC_box2 { margin-top: 1.2rem; padding: 0 0.5rem; } /* 바로가기 */
+    .MC_box4 { margin-top: 1.2em; } /* 게시판2 */
+
+}

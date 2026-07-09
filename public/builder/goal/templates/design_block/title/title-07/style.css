@@ -1,0 +1,37 @@
+﻿.title-07 {
+	--title-align: center;
+	--title-border: #FF4D94;
+	--title-text: #000000;
+
+	margin-bottom: 5px;
+}
+.title-07:before{ 
+	content:""; 
+	position:absolute; 
+	left:0;
+	top: 5px;
+	width: 100%;
+	height: 100%;
+	border-radius: 50px;
+	background: var(--title-border);
+	opacity: 0.2;
+	z-index: 0;
+}
+
+.title-07 .tit-wrap {
+
+	display: flex;
+	align-items: center;
+	padding: 24px;
+	border-radius: 50px;
+	border: 2px dotted var(--title-border);
+	min-height: 100%;
+	background:#fff;
+	position: relative;
+	z-index: 1;
+}
+
+.title-07 .tit {
+	line-height: 1.5;
+	word-break: keep-all;
+}

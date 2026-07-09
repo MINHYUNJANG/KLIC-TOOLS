@@ -1,0 +1,30 @@
+﻿.box-03 {
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	gap: 10px;
+	border: 1.5px solid var(--body-border);
+	border-radius: 10px;
+	padding: clamp(16px, 2.5vw, 24px);
+	background: var(--body-bg);
+}
+
+.box-03-label {
+	color: var(--title-text, #2d93e4);
+	font-size: clamp(14px, 1.8vw, 18px);
+	font-weight: 700;
+}
+
+.box-03 p {
+	color: var(--body-text, #555);
+	font-size: var(--body-size, clamp(12px, 1.4vw, 15px));
+	font-weight: 400;
+	line-height: 1.6;
+	text-align: var(--body-align, center);
+}
+
+.box-03-sub {
+	color: #000;
+	font-size: clamp(12px, 1.4vw, 15px);
+	font-weight: 700;
+}

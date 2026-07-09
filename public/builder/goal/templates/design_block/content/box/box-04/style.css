@@ -1,0 +1,24 @@
+﻿.box-04 {
+	/* 타이틀 */
+	--title-align: center;
+	--title-text: #000;
+	--title-weight: 600;
+
+	/* 본문 */
+	--body-align: center;
+	--body-border: #AFD4F8;
+	--body-text: #565656;
+
+	display: flex;
+	min-height: 100%;
+	gap: 5px;
+	padding: 16px;
+	border-radius: 5px;
+	background: #fff;
+	border: 1px solid var(--body-border);
+}
+
+.box-04 .txt-wrap .icon img{
+	width: 5.5rem;
+	height: auto;
+}

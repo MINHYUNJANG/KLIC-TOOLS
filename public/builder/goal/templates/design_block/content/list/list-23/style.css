@@ -1,0 +1,90 @@
+﻿.list-23 {
+	/* 타이틀 */
+	--title-align: left;
+	--title-bg: #1A7BDA;
+	--title-border: #1A7BDA;
+	--title-text: #000;
+
+	min-height: 100%;
+	border-radius: 0.5rem;
+	border: 1px solid var(--title-border);
+	flex-direction: row;
+}
+
+.list-23 .icon {
+	flex: 1;
+	display: flex;
+	max-width: 6.25rem;
+	min-height: 100%;
+	align-items: center;
+	justify-content: center;
+	background: var(--title-bg);
+	padding: 0.5rem;
+}
+
+.list-23 .icon img{
+	width: auto;
+	height: 2.5rem;
+}
+
+.list-23 .inner{
+	flex: 3;
+	padding: 1rem;
+}
+
+.list-23 .tit-wrap{
+	display: block;
+	margin-bottom: 0.75rem;
+}
+
+.list-23 .txt-wrap {
+	flex: 1;
+}
+
+.list-23 .txt-wrap ul[data-depth="1"] {
+	flex: 1;
+	display: flex;
+	flex-wrap: wrap;
+	gap: 0.3rem;
+}
+
+.list-23 .txt-wrap ul[data-depth="1"] > li{
+	width: 100%;
+} 
+
+.list-23 .edit-list {
+    --ls-color-1: #666;
+    --ls-color-2: #555;
+    --ls-color-3: #555;
+}
+
+@media screen and (max-width: 1150px) {
+
+	.builder-columns.columns-3{
+		grid-template-columns: repeat(2, 1fr);
+	}
+}
+
+@media screen and (max-width: 860px) {
+
+	.builder-columns.columns-2,
+	.builder-columns.columns-3{
+		grid-template-columns: repeat(1, 1fr);
+	}
+}
+
+@media screen and (max-width: 460px) {
+
+	.list-23{
+		flex-direction: column;
+	}
+
+	.list-23 .icon{ 
+		width: 100%;
+		max-width: 100%;
+	}
+
+	.list-23 .icon img{
+		height: 2.25rem;
+	}
+}

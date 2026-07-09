@@ -1,0 +1,38 @@
+{
+	"addDirection": "row",
+	"max": "5",
+	"_comment": "styleOptions hide 값: borderColor, backgroundColor, textColor, fontWeight, fontSize, textAlign",
+	"styleOptions": {
+		"title": { "hide": ["borderColor"] },
+		"body": { "hide": ["backgroundColor"] }
+	},
+	"recommend": {
+		"category": "title",
+		"colors": [
+			"navy",
+			"blue",
+			"white"
+		],
+		"tone": [
+			"formal",
+			"clear",
+			"public"
+		],
+		"style": [
+			"headline",
+			"label",
+			"line"
+		],
+		"keywords": [
+			"목표",
+			"비전",
+			"중점",
+			"제목"
+		],
+		"matchWith": [
+			"box",
+			"list",
+			"divider"
+		]
+	}
+}

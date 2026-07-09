@@ -1,0 +1,33 @@
+{
+	"addDirection": "column",
+	"max": 1,
+	"recommend": {
+		"category": "mix",
+		"colors": [
+			"blue",
+			"navy",
+			"white"
+		],
+		"tone": [
+			"balanced",
+			"clean",
+			"formal"
+		],
+		"style": [
+			"layout",
+			"section",
+			"combo"
+		],
+		"keywords": [
+			"구성",
+			"조합",
+			"영역",
+			"안내"
+		],
+		"matchWith": [
+			"box",
+			"list",
+			"title"
+		]
+	}
+}

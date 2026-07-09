@@ -1,0 +1,68 @@
+﻿.tv-01 {
+	padding: clamp(16px, 2.5vw, 28px);
+}
+
+.tv-01-row {
+	display: flex;
+	align-items: center;
+	gap: clamp(8px, 1.2vw, 16px);
+	width: 100%;
+}
+
+.tv-01-label-wrap {
+	display: flex;
+	align-items: center;
+	gap: 6px;
+	flex-shrink: 0;
+	width: clamp(80px, 14%, 165px);
+}
+
+.tv-01-label-text {
+	font-size: var(--title-size, clamp(14px, 1.8vw, 20px));
+	font-weight: 600;
+	color: var(--title-text, #000);
+	white-space: nowrap;
+	background: none;
+	text-align: var(--title-align, center);
+}
+
+.tv-01-dots {
+	display: flex;
+	gap: 4px;
+	align-items: center;
+}
+
+.tv-01-dot {
+	width: 5px;
+	height: 5px;
+	border-radius: 50%;
+	background: #d9d9d9;
+	flex-shrink: 0;
+}
+
+.tv-01-cards {
+	flex: 1;
+	display: grid;
+	grid-template-columns: repeat(3, 1fr);
+	gap: clamp(6px, 1vw, 10px);
+}
+
+.tv-01-card {
+	background: var(--body-bg);
+	border-radius: 10px;
+	padding: clamp(14px, 2vw, 20px) clamp(10px, 1.5vw, 16px);
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	min-height: clamp(70px, 9vw, 100px);
+	text-align: center;
+	font-size: clamp(12px, 1.4vw, 16px);
+	font-weight: 500;
+	color: var(--body-text, #000);
+	line-height: 1.5;
+}
+
+.tv-01 .template-title {
+	background: none;
+}
+

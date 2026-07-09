@@ -1,0 +1,51 @@
+﻿ 
+/*-----------------------------------------------------------
+Author :GH, Park
+Creative date :2021. 10. 21
+-----------------------------------------------------------*/
+
+[class^="MC_wrap"]:after{display:block; clear:both; content:""; }
+.MC_wrap1{position:relative; } 
+.MC_wrap1:before{position:absolute; top:-1px; left:50%; z-index:-1; -webkit-transform:translateX(-50%); transform:translateX(-50%); width:100%; height:26.45rem; background:url('/00_common/images/template/T4001_main/4001_bg_wrap1.png')no-repeat top center/100% auto; content:""; }
+.MC_wrap2{position:relative; margin:2rem 0; }
+.MC_wrap2 .container{padding-left:14.5rem; }
+.MC_wrap3{position:relative; margin-bottom:3rem; }
+.MC_wrap3 .container{padding-left:14.5rem; }
+
+.MC_box1{position:relative; height:25.5rem; padding-top:4rem; } /* 메인비주얼 */
+.MC_box2{position:relative; width:calc(50% - 1rem); float:left; }/* 게시판01 */
+.MC_box3{position:relative; width:calc(50% - 1rem); margin-left:2rem; float:left; }/* 게시판02 */
+.MC_box4{position:relative; }/* 학교앨범 */
+
+@media (max-width:1400px){
+	.MC_wrap1:before{background:url('/00_common/images/template/T4001_main/4001_bg_wrap1.png')no-repeat top center/120% auto; }
+}
+
+@media (max-width:1024px){
+	.MC_wrap2 .container{padding-left:0; }
+	.MC_wrap3 .container{padding-left:0; }
+}
+
+@media (max-width:960px){
+	.MC_wrap1:before{width:104%; }
+	
+	/* 메인비주얼 */
+	.MC_box1{height:auto; padding-top:1.25rem; }
+}
+
+@media (max-width:768px){
+    .MC_wrap1{margin-top:0; }
+    .MC_wrap2{margin:1rem 0; }
+    .MC_wrap3{margin-bottom:1.5rem; }
+ 
+	.MC_box2{width:100%; height:auto; float:none; }/* 게시판01 */
+	.MC_box3{width:100%; height:auto; float:none; margin:1rem 0 0; }/* 게시판02 */
+}
+@media (max-width:600px){
+}
+
+@media (max-width:480px){
+}
+
+
+ 

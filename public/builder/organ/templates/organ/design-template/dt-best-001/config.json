@@ -1,0 +1,4 @@
+{
+  "templateFilters": ["best"],
+  "sections": ["box-009", "divider-001", "divider-001", {"type": "list-009", "columns": 5}]
+}

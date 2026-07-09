@@ -1,0 +1,19 @@
+﻿.mix-01 {
+	border: 1px solid #dde3ed;
+	border-radius: 6px;
+	overflow: hidden;
+	width: 100%;
+	box-sizing: border-box;
+}
+/* ?꾩씠?쒖씠 ?ㅼ뼱?ㅻ㈃ ?뚮몢由??쒓굅 */
+.mix-01:has(.mix-inner-slot:not(.mix-slot-empty)) {
+	border: none;
+}
+.mix-01-body {
+	background-color: var(--body-bg, #F0F3F6);
+}
+/* ?꾩씠?쒖씠 ?ㅼ뼱?ㅻ㈃ ?щ챸 諛곌꼍 */
+.mix-01-body:not(.mix-slot-empty) {
+	background-color: transparent;
+}
+

@@ -1,0 +1,21 @@
+{
+	"addDirection": "column",
+	"max": 1,
+	"defaultInnerType": "list-01",
+	"styleOptions": {
+		"body": {
+			"label": "배경",
+			"fields": [
+				{ "key": "backgroundColor", "label": "배경", "default": "#ffffff" }
+			]
+		}
+	},
+	"recommend": {
+		"category": "mix",
+		"colors": ["blue", "navy", "white"],
+		"tone": ["balanced", "clean", "formal"],
+		"style": ["layout", "section", "combo"],
+		"keywords": ["구성", "조합", "영역", "안내"],
+		"matchWith": ["box", "list", "title"]
+	}
+}

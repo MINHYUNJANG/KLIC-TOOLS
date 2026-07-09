@@ -79,6 +79,40 @@ export const applyVerticalHeaders = (table, isVerticalHeader) => {
     });
 };
 
+const getMaxColumnCount = (table) => {
+    return Array.from(table.rows).reduce((max, row) => {
+        const count = Array.from(row.cells).reduce((sum, cell) => {
+            return sum + parseInt(cell.getAttribute('colspan') || '1', 10);
+        }, 0);
+        return Math.max(max, count);
+    }, 0);
+};
+
+const shouldUseWideScroll = (table) => {
+    const maxCols = getMaxColumnCount(table);
+    if (maxCols >= 8) return true;
+
+    const headerTextLength = Array.from(table.querySelectorAll('thead th, tr:first-child th, tr:first-child td'))
+        .reduce((sum, cell) => sum + cell.textContent.replace(/\s+/g, '').length, 0);
+    return maxCols >= 6 && headerTextLength >= 36;
+};
+
+const applyWideScrollClass = (table) => {
+    if (!shouldUseWideScroll(table)) return;
+    const parent = table.parentElement;
+    if (!parent || parent.tagName.toLowerCase() !== 'div') return;
+    if (!/\btbl-st\b/.test(parent.className || '')) return;
+    parent.classList.add('scroll-w');
+
+    const scrollWrap = parent.parentElement;
+    if (scrollWrap && scrollWrap.tagName.toLowerCase() === 'div' && /\bscroll-wrap\b/.test(scrollWrap.className || '')) return;
+
+    const wrapper = document.createElement('div');
+    wrapper.className = 'scroll-wrap';
+    parent.parentNode.insertBefore(wrapper, parent);
+    wrapper.appendChild(parent);
+};
+
 export const applyTableSemantics = (table, wClass, type, isNested, isWrapDiv, headerRows, headerCols, colWidths) => {
     if (isWrapDiv) {
         table.removeAttribute('class');
@@ -249,4 +283,5 @@ export const applyTableSemantics = (table, wClass, type, isNested, isWrapDiv, he
     if (newThead.hasChildNodes()) table.appendChild(newThead);
     table.appendChild(newTbody);
     applyColGroupHelper(table, colWidths);
+    applyWideScrollClass(table);
 };

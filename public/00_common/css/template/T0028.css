@@ -1,0 +1,112 @@
+﻿/* 메인 컨테이너 */
+#container {position: relative; width:100%; z-index: 2;}
+/* #container * { scrollbar-arrow-color: #ddd; scrollbar-Track-Color: #ddd; scrollbar-base-color: #aaa; scrollbar-Face-Color: #aaa; scrollbar-3dLight-Color: #aaa; scrollbar-DarkShadow-Color: #aaa; scrollbar-Highlight-Color: #aaa; scrollbar-Shadow-Color: #aaa;} */
+#container ::-webkit-scrollbar { width: 5px; height: 3px; }
+#container ::-webkit-scrollbar-thumb { background-color: #aaa; border-radius:10px; }
+#container ::-webkit-scrollbar-track { background-color: #ddd; border-radius:10px; }
+
+.container {max-width: 70rem;}
+.container:after {clear: both; display: block; content: "";}
+
+.MC_wrap1 {background: #d4f1f7 url('/images/template/T0028/main/0028_bg_wrap01.png') no-repeat center / cover;}
+.MC_wrap2 {background: #eaecf6 url('/images/template/T0028/main/0028_bg_wrap02.png') no-repeat left top;}
+.MC_wrap2 .inBoxL {width: calc(100% - 20rem); float: left;}
+.MC_wrap2 .inBoxR {width: 17rem; float: right;}
+.MC_wrap3 {background: #fff url('/images/template/T0028/main/0028_bg_wrap03.png') no-repeat center top;}
+
+.MC_box1 {width: 45rem; height: 29.5rem; float: left;} /* 메인비주얼 */
+.MC_box2 {width: 22rem; height: 15.75rem; float: right;} /* 팝업존 */
+
+.MC_box3 {height: 13rem;} /* 공지사항 */
+.MC_box4 {margin-top: 2.75rem; height: 14.25rem;} /* 보도자료 */
+.MC_box5 {margin-top: -2rem; height: 20.25rem;} /* 채용공고 */
+.MC_box6 {position: relative; height: 11.75rem;} /* 주민참여예산제 */
+.MC_box6:before {position: absolute; bottom: -7rem; right: -8rem; width: 12.35rem; height: 21.5rem; background: url('/images/template/T0028/main/0028_bg_wrap02_2.png') no-repeat center top; content: "";}
+
+.MC_box7 {width: 100%; height: 7rem; float: left;} /* 바로가기2 */
+.MC_box8 {position: relative; margin-top: 3rem; width: 68.5%; height: 21rem; float: left;} /* 사용자 서비스 */
+.MC_box8:before {position: absolute; top: -3rem; left: -3rem; content: url('/images/template/T0028/main/0028_bg_wrap03_2.png');}
+.MC_box9 {margin-top: 3rem; width: 31.5%; height: 21rem; float: right;} /* 바로가기3 */
+
+/* 풀페이지 */
+@media (min-width: 1241px) {
+	/* header */
+	.up_pop {position: fixed; top: 0; left: 0; width: 100%; display: none;}
+	#header {position: fixed; top: 0; left: 0; width: 100%;}
+	#gnb {padding: 0 4.25rem 0 12.5rem;}
+	.fp-viewing-firstPage .openPop .up_pop {display: block;}
+	.fp-viewing-firstPage .openPop #header {top: 140px;}
+	.fp-viewing-firstPage #gnb {padding: 0;}
+
+	/* 섹션 1 제외, 섹션 2 ~ 헤더영역 디자인 변경 */
+	body:not(.fp-viewing-firstPage) #header {height: 3rem;}
+	body:not(.fp-viewing-firstPage) #header .top {padding: 0; height: 0;}
+	body:not(.fp-viewing-firstPage) #header:before, 
+	body:not(.fp-viewing-firstPage) .box_search_0, 
+	body:not(.fp-viewing-firstPage) #header .topUtil {display: none;}
+	body:not(.fp-viewing-firstPage) #header h1 {position: fixed; top: 0.5rem; left: 1rem; z-index: 100;}
+	body:not(.fp-viewing-firstPage) #header h1 a img {max-height: 1.75rem;}
+	body:not(.fp-viewing-firstPage) .fullmenu {top: 0.25rem; right: 1rem; z-index: 100;}
+	body.fp-viewing-fourthPage .MC_wrap3 .fp-tableCell {vertical-align: bottom;}
+
+	.openPop .quickMenu {top: 8.5rem;}
+
+	/* footer */
+	#myMenu {position: fixed; top: 50%; right: 2rem; transform: translateY(-50%); -webkit-transform: translateY(-50%); z-index: 100;}
+	#myMenu > li {margin: 0.5rem 0;}
+	#myMenu > li > a {position: relative; display: block; padding-right: 1rem; text-align: right; font-size: 0.7rem; color: #666;}
+	#myMenu > li > a:before {position: absolute; top: 0.25rem; right: 0; width: 0.4rem; height: 0.4rem; background: #8b92ab; border-radius: 50%; content: "";}
+	#myMenu > li.active > a {font-weight: 600; color: #0d69cd;}
+	#myMenu > li.active > a:before {background: #0d69cd;}
+}
+
+@media (max-width: 1400px) {
+	.MC_wrap2 .inBoxL {width: calc(100% - 18.5rem);}
+
+	.MC_box1 {width: calc(66% - 0.75rem); height: auto;} /* 메인비주얼 */
+	.MC_box2 {width: calc(34% - 0.75rem); height: auto;} /* 팝업존 */
+	.MC_box6:before {bottom: -7.4rem; right: -3.5rem; width: 9rem; background-size: contain;}
+}
+
+@media (max-width: 1240px) {
+	/* 풀페이지 */
+	#myMenu {display: none;}
+
+	.MC_wrap1 {padding: 1.5rem 0 2.5rem;}
+	.MC_wrap2 {padding: 1.5rem 0;}
+	.MC_wrap3 {padding-top: 1.5rem;}
+
+	.MC_box8 {margin-top: 1.5rem; width: 100%; height: auto;} /* 사용자 서비스 */
+	.MC_box8:before {display: none;}
+	.MC_box9 {margin-top: 0; width: 100%; height: auto;} /* 바로가기3 */
+}
+
+@media (max-width: 768px) {
+	.MC_wrap1 {padding-bottom: 10rem; background-position: right bottom; background-size: contain;}
+
+	.MC_box1 {width: 100%;} /* 메인비주얼 */
+	.MC_box2 {margin-top: 2.5rem; width: 100%; height: 12.5rem;} /* 팝업존 */
+	.MC_box3 {height: auto;} /* 공지사항 */
+	.MC_box4 {margin-top: 1.5rem; height: auto;} /* 보도자료 */
+	.MC_box5 {margin-top: 0; height: auto;} /* 채용공고 */
+	.MC_box6 {height: auto;} /* 주민참여예산제 */
+}
+
+@media (max-width: 600px) {	
+	.MC_wrap2 .inBoxL {width: 100%;}
+	.MC_wrap2 .inBoxR {margin-top: 1.5rem; width: 100%;}
+}
+
+@media (max-width: 480px) {	
+	.MC_wrap1 {padding-bottom: 7rem;}
+
+	.MC_box7 {height: auto;} /* 바로가기2 */
+}
+
+@media (max-width: 380px) {	
+	.MC_wrap1 {padding-bottom: 5rem;}
+}
+
+@media (max-width: 320px) {	
+	.MC_box2 {height: auto;} /* 팝업존 */
+}

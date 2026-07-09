@@ -1,0 +1,24 @@
+﻿.th-02-title {
+	margin-bottom: clamp(6px, 1vw, 10px);
+	color: var(--title-text, #f83170);
+	font-size: var(--title-size, clamp(16px, 2.2vw, 24px));
+	font-weight: 700;
+	text-align: var(--title-align, center);
+}
+
+.th-02-box {
+	border: 2px solid var(--body-border);
+	border-radius: 15px;
+	padding: clamp(18px, 2.5vw, 28px) clamp(16px, 3vw, 30px);
+	background: var(--body-bg);
+	text-align: center;
+}
+
+.th-02-box p {
+	color: var(--body-text, #000);
+	font-size: var(--body-size, clamp(13px, 1.6vw, 18px));
+	font-weight: 500;
+	line-height: 1.5;
+	text-align: var(--body-align, center);
+}
+

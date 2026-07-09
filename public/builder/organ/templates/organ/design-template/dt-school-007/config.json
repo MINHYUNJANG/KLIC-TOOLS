@@ -1,0 +1,13 @@
+{
+  "templateFilters": ["school"],
+  "sections": [
+    {"type": "box-013", "blockWidth": 250, "data": {"title": "교장"}},
+    {"type": "divider-001", "style": {"connectorHeight": "40"}},
+    {"type": "wing-011", "data": {"title": "행정실"}},
+    {"type": "divider-001", "style": {"connectorHeight": "20"}},
+    {"type": "box-013", "blockWidth": 250, "data": {"title": "교감"}},
+    {"type": "divider-001", "style": {"connectorHeight": "30"}},
+    "divider-001",
+    {"type": "list-013", "columns": 4, "gap": 80}
+  ]
+}

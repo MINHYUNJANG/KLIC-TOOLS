@@ -1,0 +1,14 @@
+{
+  "addDirection": "column",
+  "templateFilters": ["tab"],
+  "tabDefaults": {
+    "items": [
+      {"text": "본문 탭: Active", "type": "normal", "content": "본문 탭 Active 내용입니다."},
+      {"text": "본문 탭: Hover", "type": "normal", "content": "본문 탭 Hover 내용입니다."},
+      {"text": "본문 탭: Enable", "type": "normal", "content": "본문 탭 Enable 내용입니다."},
+      {"text": "본문 탭: Focus", "type": "new_window", "content": "본문 탭 Focus 내용입니다."},
+      {"text": "본문 탭: Disabled", "type": "disabled", "content": "본문 탭 Disabled 내용입니다."}
+    ],
+    "cols": "4"
+  }
+}

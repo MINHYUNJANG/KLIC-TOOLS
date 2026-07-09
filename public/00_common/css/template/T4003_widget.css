@@ -1,0 +1,133 @@
+﻿
+/*-----------------------------------------------------------
+Author :GH, Park
+Creative date :2021. 10. 21
+-----------------------------------------------------------*/
+
+/* imgcut */
+.imgcut .img{position:relative; }
+.imgcut .img > img{position:absolute; top:50%; left:50%; -webkit-transform:translate(-50%, -50%); transform:translate(-50%, -50%); transition:0.5s; -webkit-transition:0.5s; }
+.imgcut a{display:block; overflow:hidden; }
+.imgcut a:hover .img > img,
+.imgcut a:focus .img > img{-webkit-transform:translate(-50%, -50%) scale(1.1); transform:translate(-50%, -50%) scale(1.1); }
+
+/* btn_more */
+.btn_more{position:absolute; display:block; top:-.3rem; right:1.2rem; width:2.55rem; height:2.6rem; background:#0085d1; border-radius:1rem 0 1rem 0; }
+.btn_more:before{position:absolute; z-index:-1; top:0; right:-.5rem; width:100%; height:100%; background:#555; border-radius:.5rem; content:""; }
+.btn_more i{position:absolute; top:50%; left:50%; -webkit-transform:translate(-50%, -50%); transform:translate(-50%, -50%); color:#fff; font-size:1.2rem; -webkit-transition:0.3s; transition:0.3s; }
+.btn_more:hover i{transform:rotate(180deg); -webkit-transform:translate(-50%, -50%) rotate(180deg); -ms-transform:translate(-50%, -50%) rotate(180deg); }
+
+/* heading */
+.heading1{position:relative; display:inline-block; min-width:6.5rem; padding:.5rem 1rem; border-radius:1.5rem; background:#0085d1; color:#fff; text-align:center; overflow:hidden; white-space:nowrap; font-size:.8rem; font-weight:500; }
+
+/* 메인비주얼 */
+.MVisual4003{position:relative; height:100%; border-radius:1.5rem; overflow:hidden; }
+.MVisual4003 #m_visual li{overflow:hidden; }
+.MVisual4003 #m_visual li img{position:relative; display:block; width:100%; }
+.MVisual4003 .bx-wrapper{position:relative; }
+.MVisual4003 .bx-controls{position:absolute; bottom:1.5rem; left:50%; -webkit-transform:translateX(-50%); transform:translateX(-50%); }
+.MVisual4003 .bx-controls-direction{display:none; }
+.MVisual4003 .bx-controls a{display:inline-block; margin:0 3px; color:transparent; overflow:hidden; vertical-align:middle; }
+.MVisual4003 .bx-controls-auto{font-size:0; vertical-align:middle; }  
+.MVisual4003 .bx-controls-auto,
+.MVisual4003 .bx-pager,
+.MVisual4003 .bx-pager-item{display:inline-block; }
+.MVisual4003 .bx-controls-auto a{width:1rem; height:1rem; background:no-repeat center / 100%; }
+.MVisual4003 .bx-controls-auto a.bx-start{display:none; background-image:url('/00_common/images/con_com/btn_play.png'); }
+.MVisual4003 .bx-controls-auto a.bx-stop{display:inline-block; background-image:url('/00_common/images/con_com/btn_stop.png'); }
+.MVisual4003 .bx-pager{height:0.45rem; vertical-align:middle; }
+.MVisual4003 .bx-pager-item{height:100%; }
+.MVisual4003 .bx-pager a{width:0.45rem; height:100%; vertical-align:top; border:1px solid #3456b1 ; border-radius:50%; }
+.MVisual4003 .bx-pager a.active{background-color:#3456b1 ; }
+.MVisual4003 .motto_box{position:absolute; top:3rem; left:2.5rem;}
+.MVisual4003 .motto_box > strong{display:inline-block; padding:.75rem 1.5rem; background:#3f66cf; font-weight:500; color:#fff; font-size:1.25rem; border-radius:2rem; line-height:1; }
+.MVisual4003 .motto_box > span{display:block; margin-top:.5rem; font-size:1.75rem; font-weight:700; color:#fff; text-shadow:3px 3px 0 rgba(37,87,200,.3); }
+
+/* 게시판 */
+.notice4003{position:relative; height:100%; padding:1rem 1.5rem; }
+.notice4003:before{position:absolute; top:0; left: 0; width:100%; height:100%; border-radius:1.5rem; background:#fff; border:1px solid #bfbfbf; content:""; }
+.notice4003 .heading1{margin-bottom:.35rem; }
+.notice4003 .list_box{width:100%; } 
+.notice4003 .list_box > li{position:relative; padding:.225rem 0 .225rem .65rem; overflow:hidden; }
+.notice4003 .list_box > li:before{position:absolute; top:50%; left:0; width:.1rem; height:.1rem; -webkit-transform:translateY(-50%); transform:translateY(-50%); background:#0085d1; border-radius:.05rem; content:""; }
+.notice4003 .list_box > li > a{position:relative; display:block; color:#333; font-size:.7rem; overflow:hidden; } 
+.notice4003 .list_box > li > a .txt{float:left; width:calc(100% - 4rem); white-space:nowrap; text-overflow:ellipsis; overflow:hidden; }
+.notice4003 .list_box > li > a .date{float:left; width:4rem; color:#777; text-align:right; } 
+.notice4003.notice02 .heading1,
+.notice4003.notice02 .list_box > li:before,
+.notice4003.notice02 .btn_more{background:#f96b99; }
+/* active */
+.notice4003 .list_box > li > a:hover .txt,
+.notice4003 .list_box > li > a:focus .txt{text-decoration:underline; }
+
+.notice4003 .NoData {position:relative; display:table; width:100%; height:7.28rem; text-align:center; font-size:.75rem; background:#f3f3f3;}
+.notice4003 .NoData span {display:table-cell; vertical-align:middle;}
+
+/* 학교앨범 */
+.gallery4003{position:relative; width:100%; height:100%; padding:1rem 1.5rem; background:#edd5fd; border-radius:1.5rem; }
+.gallery4003 .heading1{margin-bottom:.35rem; background:#c476f8; } 
+.gallery4003 .gall_list{margin:-.375rem; }
+.gallery4003 .gall_list:after{display:block; clear:both; content:""; }
+.gallery4003 .gall_list > li{float:left; width:25%; padding:.375rem; text-align:center; }
+.gallery4003 .gall_list > li .img{display:block; width:100%; height:6.5rem; border-radius:1rem; border:1px solid #c476f8; }
+.gallery4003 .gall_list > li .img.private {display: flex; justify-content: center; align-items: center; text-align: center; line-height: 1.5; font-size: 0.8rem; color: #fff; background: #666; }
+.gallery4003 .gall_list > li .img.private i {font-size: 1.5rem;}
+.gallery4003 .gall_list > li .txt{display:block; margin-top:1rem; color:#000; font-size:.75rem; overflow:hidden; white-space:nowrap; text-overflow:ellipsis; }
+.gallery4003 .gall_list > li .date{display:block; margin-top:.25rem; color:#000; font-size:.75rem; }
+.gallery4003 .btn_more{background:#c476f8; } 
+
+.gallery4003 .NoData {display:table; width:100%; height:10.5rem; text-align:center; font-size:.75rem; background:#f3f3f3;}
+.gallery4003 .NoData span {display:table-cell; vertical-align:middle;}
+
+/* 배너존 */
+.banner_zone{line-height:1; border-top:1px solid #d1d8e4; }
+.banner_zone .container{position:relative; height:4rem; overflow:hidden; }
+.banner_zone h2{float:left; display:block; margin-top:1.5rem; width:4rem; font-size:0.85rem; font-weight:400; color:#191919; }
+.banner_zone .btn{float:left; margin-top:1.35rem; overflow:hidden; }
+.banner_zone .btn a{float:left; width:27px; height:28px; color:transparent; background:no-repeat center / 100%; overflow:hidden; }
+.banner_zone .btn a.prev{background-image:url('/00_common/images/common/btn_b_prev.png'); }
+.banner_zone .btn a.stop{background-image:url('/00_common/images/common/btn_b_stop.png'); }
+.banner_zone .btn a.play{display:none; background-image:url('/00_common/images/common/btn_b_play.png'); }
+.banner_zone .btn a.next{background-image:url('/00_common/images/common/btn_b_next.png'); }
+.banner_zone .btn a.list{background-image:url('/00_common/images/common/btn_b_list.png'); }
+.banner_zone .bx-wrapper{float:left; display:block; padding-top:0.75rem; padding-left:1.5rem; width:calc(100% - 10rem); overflow:hidden; }
+.banner_zone ul li{ display:inline-block; margin-bottom:0.75rem; padding:0 0.25rem; width:20%; }
+.banner_zone ul li a{display:block; height:2.5rem; line-height:2.3rem; text-align:center; border:1px solid #c8d1db; overflow:hidden; }
+.banner_zone ul li a img{width:100%; height:100%; }
+
+@media (max-width:1240px){
+}
+
+@media (max-width:1024px){}
+
+@media (max-width:960px){}
+
+@media (max-width:800px){}
+
+@media (max-width:768px){
+	/* 메인비주얼 */
+	.MVisual4003 .motto_box{top:1rem; left:1rem; }
+	.MVisual4003 .motto_box > strong{padding:.5rem .75rem; font-size:.85rem; }
+	.MVisual4003 .motto_box > span{margin-top:.25rem; font-size:1.3rem; }
+	
+	/* 학교앨범 */
+	.gallery4003 .gall_list > li{width:50%; }
+}  
+
+@media (max-width:480px){
+	/* 메인비주얼 */
+	.MVisual4003 .bx-controls{bottom:.5rem; }
+	.MVisual4003 .motto_box > strong{ font-size:.8rem; }
+	.MVisual4003 .motto_box > span{font-size:1rem; }
+	.MVisual4003 .motto_box > span br{display:none; }
+}
+
+@media (max-width:380px){ 
+	/* 학교앨범 */
+	.gallery4003 .gall_list > li .img{height:5rem; }
+	.gallery4003 .gall_list > li + li + li{display:none; }
+}
+@media (max-width:300px){ 
+	/* 학교앨범 */
+	.gallery4003 .gall_list > li{width:100%; }
+}

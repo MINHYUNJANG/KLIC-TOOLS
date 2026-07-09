@@ -1,0 +1,131 @@
+﻿.mix-08 {
+	/* 타이틀 */
+	--title-align: left;
+	--title-text: #000;
+	--title-border: #39A6F4;
+	
+	/* 본문 */
+	--body-align: left;
+	--body-text: #111;
+	--body-weight: 600;
+	
+	/* 서브 */
+	--sub-align: center;
+	--sub-size: 15px;
+	--sub-weight: 700;
+
+	display: flex;
+	flex-direction: row;
+	align-items: start;
+	gap: 1.5rem;
+}
+
+/* per-item 기본 글자색 — 서브 옵션에서 색상을 변경하면 --sub-text가 우선, 아니면 --item-text 사용 */
+.mix-08 [data-item-idx="0"] { --item-text: #06B5D6; }
+.mix-08 [data-item-idx="1"] { --item-text: #43AAF4; }
+.mix-08 [data-item-idx="2"] { --item-text: #AE50E4; }
+.mix-08 [data-item-idx="3"] { --item-text: #0DAAA8; }
+.mix-08 [data-item-idx="4"] { --item-text: #e68253; }
+
+.mix-08 .tit-wrap {
+	width: clamp(150px, 20%, 220px);
+	flex-shrink: 0;
+	text-align: var(--title-align);
+	display: flex;
+	justify-content: space-between;
+	margin-top: 1rem;
+}
+
+.mix-08 .tit-wrap .tit{
+	position:relative;
+	width: auto;
+	padding: 0 1rem;
+	background:#fff; 
+}
+
+.mix-08 .tit-wrap:before{
+	content:"";
+	position:absolute;
+	right: 0;
+	top: 50%;
+	width: 100%;
+	border-top: 1px dashed #E1E1E1;
+}
+
+.mix-08 .tit-wrap > span{
+	position: relative;
+	width: 9px;
+	height: 9px;
+	border-radius: 50%;
+	background: var(--title-border);
+	z-index: 1;
+	flex-shrink: 0;
+}
+
+.mix-08 .tit-wrap > span:before{
+	content:"";
+	position:absolute;
+	left: -5px;
+	top: -5px;
+	width: calc(100% + 10px);
+	height: calc(100% + 10px);
+	border-radius: 50%;
+	background: var(--title-border);
+	z-index: 1;
+	opacity: 0.2;
+}
+
+.mix-08 .inner {
+	position:relative;
+	flex: 1;
+	border-top: 1px solid #000;
+}
+
+.mix-08 .txt-wrap {
+	width: 100%;
+	display: flex;
+	align-items: center;
+	gap: 16px;
+	padding: 24px;
+	line-height: 1.5;
+	word-break: keep-all;	
+	border-bottom:1px solid #eee;
+}
+
+.mix-08 .txt-wrap .txt{
+	width: 100%; 
+	color: var(--body-text);
+}
+
+.mix-08 .txt-wrap .sub{
+	position:relative;
+	width: 30px;
+	height: 30px;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	border-radius: 50%;
+	color: var(--sub-text, var(--item-text)); 
+	font-size: var(--sub-size); 
+	font-weight: var(--sub-weight); 
+	flex-shrink: 0;
+	overflow: hidden;
+}
+	
+.mix-08 .txt-wrap .sub:before{
+	content:"";
+	position:absolute;
+	left: 0;
+	top: 0;
+	width: 100%;
+	height: 100%;
+	border-radius: 50%;
+	background: var(--sub-text, var(--item-text)); 
+	opacity: 0.2;
+}
+@media (max-width: 768px) {
+
+	.mix-08{ gap: 0.5rem;}
+	.mix-08 .tit-wrap{ width: calc(100% - 0.5rem); margin-right: 0.5rem;}
+	.mix-08 .txt-wrap{ padding: 12px;}
+}

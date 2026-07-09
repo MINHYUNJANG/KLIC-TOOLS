@@ -1,0 +1,56 @@
+﻿.list-10 {
+	display: grid;
+	grid-template-columns: clamp(16px, 2vw, 22px) 1fr;
+	border: 1px solid var(--body-border);
+	border-radius: 18px;
+	background: var(--body-bg);
+	overflow: hidden;
+}
+
+.list-10-bar {
+	background: var(--title-bg, #0c63b5);
+}
+
+.list-10-content {
+	padding: clamp(18px, 2.6vw, 30px);
+}
+
+.list-10 .template-title {
+	background: none;
+}
+
+.list-10-content strong {
+	display: block;
+	margin-bottom: clamp(14px, 2vw, 22px);
+	color: var(--title-text, #0c63b5);
+	font-size: var(--title-size, clamp(20px, 2.5vw, 32px));
+	font-weight: var(--title-weight, 900);
+	text-align: var(--title-align, center);
+}
+
+.list-10-content ul {
+	display: grid;
+	gap: clamp(8px, 1.3vw, 13px);
+}
+
+.list-10-content li {
+	position: relative;
+	padding-left: clamp(18px, 2.2vw, 24px);
+	color: var(--body-text, #1c2736);
+	font-size: var(--body-size, clamp(12px, 1.5vw, 17px));
+	font-weight: var(--body-weight, 600);
+	line-height: 1.5;
+	text-align: var(--body-align, center);
+}
+
+.list-10-content li::before {
+	content: "";
+	position: absolute;
+	top: 0.55em;
+	left: 0;
+	width: 8px;
+	height: 8px;
+	border-radius: 999px;
+	background: var(--title-bg, #0c63b5);
+}
+

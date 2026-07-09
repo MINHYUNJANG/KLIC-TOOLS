@@ -1,0 +1,26 @@
+﻿.box-006 {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	min-width: 280px;
+	min-height: var(--title-height, clamp(44px, 5vw, 85px));
+	padding: 12px 32px;
+	border-radius: 999px;
+	border: 1px solid transparent;
+	background:
+		linear-gradient(var(--body-bg, #ffffff), var(--body-bg, #ffffff)) padding-box,
+		linear-gradient(to bottom, var(--title-border, #ECEDF4), var(--title-border2, #485194)) border-box;
+	box-shadow: 0 0 15px rgba(20, 33, 118, 0.6);
+	box-sizing: border-box;
+	margin: 4px auto;
+}
+
+.box-006 p {
+	color: var(--title-text, #1c3478);
+	font-size: var(--title-size, 24px);
+	font-weight: var(--title-weight, 700);
+	text-align: center;
+	letter-spacing: -0.3px;
+	line-height: 1.4;
+	white-space: pre-line;
+}

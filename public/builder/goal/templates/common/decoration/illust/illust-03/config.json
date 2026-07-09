@@ -1,0 +1,13 @@
+{
+	"images": [
+		"01.png",
+		"02.png"
+	],
+	"recommend": {
+		"category": "decoration",
+		"colors": ["navy", "white"],
+		"tone": ["educational", "friendly"],
+		"style": ["illustration", "character"],
+		"keywords": ["illustration", "character"]
+	}
+}

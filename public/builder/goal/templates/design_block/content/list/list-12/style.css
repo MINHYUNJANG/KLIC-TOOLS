@@ -1,0 +1,51 @@
+﻿.list-12 {
+	/* 타이틀 */
+	--title-align: center;
+	--title-bg: #F1F8FC;
+	--title-text: #000;
+
+	/* 본문 */
+	--body-bg: #FAFAFA;
+
+	min-height: 100%;
+}
+
+.list-12 .tit-wrap{
+	flex-direction: column;
+	align-items: center;
+	gap: 0.8rem;
+	padding: 1.2rem 0.8rem;
+	background: var(--title-bg);
+}
+
+.list-12 .icon img{
+	width: auto;
+	height: 3rem;
+}
+
+.list-12 .txt-wrap {
+	flex: 1;
+	padding: 1rem;
+	background: var(--body-bg);
+}
+
+.list-12 .txt-wrap ul[data-depth="1"] {
+	flex: 1;
+	display: flex;
+	flex-wrap: wrap;
+	gap: 0.3rem;
+}
+
+.list-12 .txt-wrap ul[data-depth="1"] > li{
+	width: 100%;
+	padding: 0.4rem 0.8rem 0.4rem 1.75rem;
+	border-radius: 0.25rem;
+	font-size: 0.8rem;
+	background:#fff;
+} 
+
+.list-12 .edit-list {
+    --ls-color-1: #39A6F4;
+    --ls-color-2: #555;
+    --ls-color-3: #555;
+}

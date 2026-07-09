@@ -1,0 +1,968 @@
+﻿
+<!DOCTYPE html>
+<html lang="ko" class="tmpl2-builder-root">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>KLIC TOOLs - 연혁 템플릿 빌더</title>
+	<link rel="stylesheet" href="/00_common/font/RemixIcon_Fonts_v4.7.0/remixicon.css" media="all">
+	<link rel="stylesheet" href="/00_common/font/pretendard/pretendard-gov.css" media="all">
+	<!-- <link rel="stylesheet" href="/css/web/apple/cmsBasic.css" media="all"> -->
+	<link rel="stylesheet" href="/00_common/css/basic.css" media="all">
+	<link rel="stylesheet" href="/00_common/css/theme.css" media="all">
+	<link rel="stylesheet" href="/00_common/css/sub_com.css" media="all">
+	<link rel="stylesheet" href="/00_common/css/con_com.css" media="all">
+	<link rel="stylesheet" href="/00_common/js/swiper/swiper.min.css" media="all">
+	<link rel="stylesheet" href="/builder/template/css/contents_common.css?v=2" media="all">
+	<link rel="stylesheet" href="/builder/template/css/builder_common.css" media="all">
+	<link rel="stylesheet" href="/builder/common/css/cms-builder-skin.css" media="all">
+	<link rel="stylesheet" href="/builder/common/css/builder-option-panel.css" media="all">
+	<link rel="stylesheet" href="/builder/common/css/klic-confirm.css" media="all">
+	<style>
+		.tmpl2-builder-page .sidebar-tabs {grid-template-columns:1fr;}
+		.tmpl2-builder-page .sidebar-tab-btn {border-radius:5px;}
+		.tmpl2-builder-page .filter-scroll-shell[data-tab-filter="blocks"] {display:none!important;}
+	</style>
+		<style>
+		#previewToggle, .topbar-preview-group {display:none!important;}
+	</style>
+	</head>
+<body class="builder-page tmpl2-builder-page" data-template-preset="history">
+	<div class="app-shell">
+		<div id="headerSentinel" class="header-sentinel"></div>
+<header class="topbar">
+	<div class="topbar-brand">
+		<a class="topbar-title-link" href="#" aria-label="연혁 템플릿 빌더 홈">
+			<div class="title-row">
+				<strong>연혁 템플릿 빌더</strong>
+			</div>
+		</a>
+	</div>
+		<div class="topbar-extra" id="topbarExtra">
+		<div class="theme-switcher" id="themeSwitcher" aria-label="테마 선택">
+			<span class="theme-switcher-label">테마</span>
+			<div class="theme-swatches" role="radiogroup" aria-label="색상 테마">
+				<button type="button" class="theme-swatch" data-theme="purple" title="퍼플" aria-label="퍼플 테마"></button>
+				<button type="button" class="theme-swatch" data-theme="blue" title="블루" aria-label="블루 테마"></button>
+				<button type="button" class="theme-swatch" data-theme="green" title="그린" aria-label="그린 테마"></button>
+				<button type="button" class="theme-swatch" data-theme="navy" title="네이비" aria-label="네이비 테마"></button>
+				<button type="button" class="theme-swatch" data-theme="mint" title="민트" aria-label="민트 테마"></button>
+				<button type="button" class="theme-swatch" data-theme="orange" title="오렌지" aria-label="오렌지 테마"></button>
+			</div>
+		</div>
+		<span class="topbar-extra-bar" aria-hidden="true"></span>
+		<div class="color-picker-group" id="colorPickerGroup" aria-label="색상 사용자 지정">
+			<label class="color-picker-item">
+				<span class="color-picker-label">주색상</span>
+				<span class="color-picker-wrap">
+					<span class="color-picker-swatch" id="cpSwatchPrimary"></span>
+					<input type="color" class="color-picker-input" id="cpPrimary">
+				</span>
+			</label>
+			<label class="color-picker-item">
+				<span class="color-picker-label">보조색상</span>
+				<span class="color-picker-wrap">
+					<span class="color-picker-swatch" id="cpSwatchSecondary"></span>
+					<input type="color" class="color-picker-input" id="cpSecondary">
+				</span>
+			</label>
+			<label class="color-picker-item">
+				<span class="color-picker-label">포인트색상</span>
+				<span class="color-picker-wrap">
+					<span class="color-picker-swatch" id="cpSwatchAccent"></span>
+					<input type="color" class="color-picker-input" id="cpAccent">
+				</span>
+			</label>
+		</div>
+	</div>
+		<div class="topbar-actions">
+		<span id="layoutStatus">0개 블록</span>
+		<span id="canvasSizeControl" class="canvas-size-control" aria-label="캔버스 너비"></span>
+		<span class="topbar-action-divider" aria-hidden="true"></span>
+		<button type="button" class="ghost-button topbar-icon-only" id="clearCanvas">
+			<i class="ri-refresh-line" aria-hidden="true"></i>
+			<span class="topbar-tooltip">캔버스 초기화</span>
+		</button>
+		<button type="button" class="ghost-button topbar-icon-only markup-toggle" id="markupToggle" aria-expanded="false" aria-controls="markupPanel">
+			<i class="ri-code-s-slash-line" aria-hidden="true"></i>
+			<span class="topbar-tooltip">마크업 보기</span>
+		</button>
+		<div class="device-switcher device-dropdown" id="deviceSwitcher" aria-label="반응형 미리보기">
+			<button type="button" class="ghost-button topbar-icon-only device-dropdown-trigger" id="deviceDropdownTrigger">
+				<i class="ri-computer-line device-dropdown-icon" aria-hidden="true"></i>
+				<i class="ri-arrow-down-s-line device-dropdown-arrow" aria-hidden="true"></i>
+				<span class="topbar-tooltip">캔버스 반응형</span>
+			</button>
+			<div class="device-dropdown-menu" id="deviceDropdownMenu" hidden>
+				<button type="button" class="device-btn is-active" data-device="pc" title="PC">
+					<i class="ri-computer-line" aria-hidden="true"></i>
+				</button>
+				<button type="button" class="device-btn" data-device="tablet" title="태블릿">
+					<i class="ri-tablet-line" aria-hidden="true"></i>
+				</button>
+				<button type="button" class="device-btn" data-device="mobile" title="모바일">
+					<i class="ri-cellphone-line" aria-hidden="true"></i>
+				</button>
+			</div>
+		</div>
+				<button type="button" class="ghost-button topbar-icon-only" id="helpModeToggle" aria-pressed="false">
+			<i class="ri-question-line" aria-hidden="true"></i>
+			<span class="topbar-tooltip">튜토리얼</span>
+		</button>
+				<button type="button" class="preview-button" id="previewToggle">
+			<i class="ri-eye-line" aria-hidden="true"></i>
+			미리보기
+		</button>
+				<button type="button" class="ghost-button" id="loadKlic">
+			<i class="ri-upload-2-line" aria-hidden="true"></i>
+			불러오기
+		</button>
+		<input type="file" id="klicFileInput" accept=".klic" style="display:none;">
+			</div>
+	<div class="topbar-preview-group">
+		<button type="button" class="preview-return-button" id="previewReturn">
+			<i class="ri-arrow-left-line" aria-hidden="true"></i>
+			캔버스로 돌아가기
+		</button>
+		<div class="topbar-preview-actions">
+			<button type="button" class="primary-button" id="savePreviewImage">
+				<i class="ri-image-line" aria-hidden="true"></i>
+				이미지 저장
+			</button>
+			<button type="button" class="primary-button" id="savePdfButton">
+				<i class="ri-file-pdf-line" aria-hidden="true"></i>
+				파일 저장
+			</button>
+						<button type="button" class="ghost-button" id="previewMarkupOpen">
+				<i class="ri-code-s-slash-line" aria-hidden="true"></i>
+				마크업 보기
+			</button>
+					</div>
+	</div>
+</header>
+
+<div class="save-modal" id="saveFileModal" hidden>
+	<div class="save-modal-backdrop" id="saveFileBackdrop"></div>
+	<div class="save-modal-inner">
+		<div class="save-modal-head">
+			<h2>파일 저장</h2>
+			<button type="button" class="ghost-button save-modal-close" id="saveFileClose" aria-label="닫기">
+				<i class="ri-close-line" aria-hidden="true"></i>
+			</button>
+		</div>
+		<div class="save-modal-body">
+			<label class="save-modal-label" for="saveFileNameInput">파일 이름</label>
+			<div class="save-modal-input-row">
+				<input type="text" class="save-modal-input" id="saveFileNameInput" placeholder="파일 이름 입력" maxlength="100">
+			</div>
+			<label class="save-modal-label" style="margin-top:16px;">저장 형식 (복수 선택 가능)</label>
+			<div class="save-modal-formats">
+				<label class="save-modal-format-option" data-save-format-option="klic">
+					<input type="checkbox" name="saveFileFormat" value="klic" checked disabled> .klic <span style="opacity:0.6;font-size:0.85em;">(필수)</span>
+				</label>
+				<label class="save-modal-format-option" data-save-format-option="pdf">
+					<input type="checkbox" name="saveFileFormat" value="pdf"> PDF
+				</label>
+				<label class="save-modal-format-option" data-save-format-option="hwpx" style="opacity:0.4;pointer-events:none;">
+					<input type="checkbox" name="saveFileFormat" value="hwpx" disabled> HWPX
+				</label>
+			</div>
+		</div>
+		<div class="save-modal-footer">
+			<button type="button" class="ghost-button" id="saveFileCancel">취소</button>
+			<div class="save-file-progress" id="saveFileProgress" hidden>
+				<div class="save-progress-bar"><div class="save-progress-fill" id="saveProgressFill"></div></div>
+				<span class="save-progress-msg" id="saveProgressMsg"></span>
+			</div>
+			<button type="button" class="navy-button" id="saveFileConfirm">
+				<i class="ri-download-line" aria-hidden="true"></i>
+				다운로드
+			</button>
+		</div>
+	</div>
+</div>
+<script>
+(function() {
+	var pdfBtn = document.getElementById('savePdfButton');
+	var modal = document.getElementById('saveFileModal');
+	var closeModal = function() {
+		if (!modal) return;
+		modal.hidden = true;
+		modal.setAttribute('hidden', 'hidden');
+		var progress = document.getElementById('saveFileProgress');
+		if (progress) progress.hidden = true;
+		var confirmBtn = document.getElementById('saveFileConfirm');
+		if (confirmBtn) confirmBtn.disabled = false;
+	};
+	document.getElementById('saveFileClose')?.addEventListener('click', closeModal);
+	document.getElementById('saveFileCancel')?.addEventListener('click', closeModal);
+	document.getElementById('saveFileBackdrop')?.addEventListener('click', closeModal);
+	document.addEventListener('keydown', function(event) {
+		if (event.key === 'Escape' && modal && !modal.hidden) closeModal();
+	});
+	if (!pdfBtn) return;
+	pdfBtn.addEventListener('click', function() {
+		if (window.__builderSaveFileOpenBound === true) return;
+		if (window.__builderSaveFileOpenBound === true) return;
+		// .klic은 필수 항목으로 항상 선택, PDF/HWPX는 선택 사항으로 해제
+		document.querySelectorAll('input[name="saveFileFormat"]').forEach(function(cb) {
+			cb.checked = (cb.value === 'klic');
+		});
+		// 파일명 비어있으면 기본값
+		var nameInput = document.getElementById('saveFileNameInput');
+		if (nameInput && !nameInput.value.trim()) nameInput.value = '저장';
+		// 모달 열기
+		if (modal) {
+			modal.hidden = false;
+			modal.removeAttribute('hidden');
+		}
+	});
+})();
+</script>
+
+
+		<main class="builder" id="builderMain">
+			<aside class="sidebar" aria-label="템플릿 도구" data-help-tip="템플릿을 선택한 뒤 오른쪽 캔버스 영역으로 드래그하여 배치하세요">
+				<section class="tool-section">
+					<!-- 1차탭 + 2차필터 묶음 -->
+					<div class="sidebar-tab-header">
+						<!-- 1차탭 -->
+						<div class="sidebar-tabs">
+							<button type="button" class="sidebar-tab-btn is-active" data-sidebar-tab="blocks">디자인 템플릿</button>
+						</div>
+
+						<!-- 2차필터: 디자인 템플릿 탭용 -->
+						<div class="filter-scroll-shell" data-tab-filter="blocks" hidden>
+							<button type="button" class="filter-scroll-arrow filter-scroll-arrow--left" aria-hidden="true" tabindex="-1"><i class="ri-arrow-left-s-line"></i></button>
+							<div class="component-filters" aria-label="템플릿 필터">
+								<button type="button" class="is-active" data-template-filter="all">전체</button>
+							</div>
+							<button type="button" class="filter-scroll-arrow filter-scroll-arrow--right" aria-hidden="true" tabindex="-1"><i class="ri-arrow-right-s-line"></i></button>
+						</div>
+
+					</div><!-- /.sidebar-tab-header -->
+
+					<!-- 탭 패널: 디자인 템플릿 -->
+					<div class="sidebar-tab-panel" id="panelBlocks">
+						<div class="component-list" id="componentList" aria-label="드래그 가능한 템플릿">
+							<p class="template-loading">
+								<span class="template-loading-spinner" aria-hidden="true"></span>
+								템플릿을 불러오는 중입니다.
+							</p>
+						</div>
+					</div>
+
+				</section>
+			</aside>
+
+			<section class="workspace" aria-label="템플릿 작업 영역" data-help-tip="좌측 템플릿을 이 캔버스 영역으로 드래그하면 콘텐츠가 배치됩니다">
+				<div class="canvas-wrapper" id="canvasWrapper">
+					<div class="canvas-guide" aria-hidden="true"></div>
+					<div class="canvas-grid" id="canvasGrid" aria-label="디자인 템플릿 배열 영역"></div>
+					<div class="overlay-layer" id="overlayLayer" aria-hidden="true"></div>
+				</div>
+			</section>
+
+			<div class="right-col">
+				<aside class="block-props-panel options-panel" id="blockPropsPanel" aria-label="블록 속성">
+					<div class="block-props-head">
+						<strong class="block-props-name" id="blockPropsTitle">블록</strong>
+						<span>블록 옵션</span>
+						<button type="button" class="options-panel-close" data-options-panel-close aria-label="옵션 닫기">
+							<i class="ri-close-line" aria-hidden="true"></i>
+						</button>
+					</div>
+					<div class="block-props-body">
+			<div class="props-section">
+				<p class="props-section-label" data-help="블록의 가로 너비 비율, 상하좌우 외부 간격, 가로 정렬 방향을 조정합니다. 너비를 50% 이하로 좁히면 여러 블록을 한 줄에 나란히 배치할 수 있습니다.">블록 설정</p>
+				<div class="props-card">
+					<div class="props-row">
+						<span class="props-label">너비</span>
+						<select class="props-select" id="propBlockWidth">
+							<option value="">전체 너비</option>
+							<option value="auto">자동</option>
+							<option value="25%">25%</option>
+							<option value="33.333%">33%</option>
+							<option value="50%">50%</option>
+							<option value="66.666%">66%</option>
+							<option value="75%">75%</option>
+						</select>
+					</div>
+					<div class="props-row props-spacing-row">
+						<span class="props-label">간격</span>
+						<div class="props-spacing-grid">
+							<label class="props-spacing-field">
+								<span>Top</span>
+								<input type="number" class="props-input" id="propMarginTop" min="0" max="200" step="1" placeholder="0">
+							</label>
+							<label class="props-spacing-field">
+								<span>Bottom</span>
+								<input type="number" class="props-input" id="propMarginBottom" min="0" max="200" step="1" placeholder="10">
+							</label>
+							<label class="props-spacing-field">
+								<span>Left</span>
+								<input type="number" class="props-input" id="propMarginLeft" min="0" max="200" step="1" placeholder="0">
+							</label>
+							<label class="props-spacing-field">
+								<span>Right</span>
+								<input type="number" class="props-input" id="propMarginRight" min="0" max="200" step="1" placeholder="0">
+							</label>
+						</div>
+					</div>
+					<div class="props-row">
+						<span class="props-label">들여쓰기</span>
+						<label class="props-check-label">
+							<input type="checkbox" id="propBlockIndent">
+							<span>적용</span>
+						</label>
+					</div>
+					<div class="props-row props-row--last">
+						<span class="props-label">정렬</span>
+						<div class="props-align-btns" id="propBlockAlign">
+							<button type="button" class="props-align-btn" data-align="al" title="왼쪽 정렬" aria-label="왼쪽 정렬">
+								<i class="ri-align-left" aria-hidden="true"></i>
+							</button>
+							<button type="button" class="props-align-btn" data-align="ac" title="중앙 정렬" aria-label="중앙 정렬">
+								<i class="ri-align-center" aria-hidden="true"></i>
+							</button>
+							<button type="button" class="props-align-btn" data-align="ar" title="오른쪽 정렬" aria-label="오른쪽 정렬">
+								<i class="ri-align-right" aria-hidden="true"></i>
+							</button>
+						</div>
+					</div>
+				</div>
+			</div>
+			<div class="props-section" id="propsListMarkerSection" style="display:none">
+				<p class="props-section-label" data-help="최상위 항목의 순서 표기 방식을 선택합니다.">마커 스타일</p>
+				<div class="props-card">
+					<div class="props-row props-row--last">
+						<span class="props-label">순서 표기</span>
+						<div class="list-use-radios props-marker-radios" id="propListMarkerType">
+							<button type="button" class="list-use-radio props-marker-btn" data-marker="alpha">영문 (A, B)</button>
+							<button type="button" class="list-use-radio props-marker-btn" data-marker="num">숫자 (1, 2)</button>
+							<button type="button" class="list-use-radio props-marker-btn" data-marker="num0">숫자 (01, 02)</button>
+							<button type="button" class="list-use-radio props-marker-btn" data-marker="korean">한글 (가,나)</button>
+						</div>
+					</div>
+				</div>
+			</div>
+			<div class="props-section" id="propsLinkSection" style="display:none">
+				<p class="props-section-label" data-help="클릭 시 이동할 URL을 입력하고, 링크를 현재 탭에서 열지 새 탭에서 열지 선택합니다. 내부 페이지 링크도 입력 가능합니다.">링크 설정</p>
+				<div class="props-card">
+					<div class="props-row">
+						<span class="props-label">URL</span>
+						<input type="url" class="props-input props-input--wide" id="propLinkHref" placeholder="https://...">
+					</div>
+					<div class="props-row props-row--last">
+						<span class="props-label">이동 타입</span>
+						<select class="props-select" id="propLinkTarget">
+							<option value="_blank">새 창 (_blank)</option>
+							<option value="_self">현재 창 (_self)</option>
+							<option value="_parent">부모 창 (_parent)</option>
+							<option value="_top">최상위 창 (_top)</option>
+						</select>
+					</div>
+				</div>
+			</div>
+			<div class="props-section" id="propsInlineLinkSection" style="display:none">
+				<p class="props-section-label" data-help="블록 내에 포함된 링크의 텍스트와 주소를 수정합니다.">링크 편집</p>
+				<div id="propsInlineLinkList"></div>
+			</div>
+			<div class="props-section" id="propsDownloadSection" style="display:none">
+				<p class="props-section-label" data-help="버튼 클릭 시 다운로드할 파일을 지정합니다. 파일을 선택한 뒤 적용 버튼을 눌러 연결하세요.">다운로드 설정</p>
+				<div class="props-card">
+					<div class="props-row props-row--last">
+						<span class="props-label">파일 선택</span>
+						<input type="file" class="props-file-input" id="propDownloadFile">
+					</div>
+				</div>
+				<button type="button" class="props-add-row-btn" id="propsApplyDownload">
+					<i class="ri-check-line" aria-hidden="true"></i> 적용
+				</button>
+				<p class="props-notice" id="propsDownloadNotice" style="display:none">추후 작업예정입니다.</p>
+			</div>
+			<div class="props-section" id="propsBoxImgSection" style="display:none">
+				<p class="props-section-label" data-help="블록에 표시할 이미지를 업로드하고, 시각 장애인을 위한 이미지 설명(alt 텍스트)을 반드시 입력해 주세요. 접근성 기준에 필수입니다.">이미지 설정</p>
+				<div class="props-card">
+					<div class="props-row">
+						<span class="props-label">이미지 업로드</span>
+						<input type="file" class="props-file-input" id="propBoxImgFile" accept="image/*">
+					</div>
+					<div class="props-row props-row--last">
+						<span class="props-label">이미지 설명</span>
+						<input type="text" class="props-input props-input--wide" id="propBoxImgAlt" placeholder="alt 텍스트 입력">
+					</div>
+				</div>
+				<button type="button" class="props-add-row-btn" id="propsApplyBoxImg">
+					<i class="ri-check-line" aria-hidden="true"></i> 적용
+				</button>
+			</div>
+			<div class="props-section" id="propsSymbolBoxSection" style="display:none">
+				<p class="props-section-label" data-help="교표·교기·교화·교목·교가 영역을 각각 켜고 끌 수 있습니다. 체크를 해제하면 해당 영역이 화면에서 사라집니다. 현재 템플릿에 없는 영역은 목록에 나타나지 않습니다.">영역 표시</p>
+				<div class="props-card">
+					<div class="props-row" data-symbol-box-row="emblem">
+						<span class="props-label">교표</span>
+						<input type="checkbox" checked>
+					</div>
+					<div class="props-row" data-symbol-box-row="flag">
+						<span class="props-label">교기</span>
+						<input type="checkbox" checked>
+					</div>
+					<div class="props-row" data-symbol-box-row="flower">
+						<span class="props-label">교화</span>
+						<input type="checkbox" checked>
+					</div>
+					<div class="props-row" data-symbol-box-row="tree">
+						<span class="props-label">교목</span>
+						<input type="checkbox" checked>
+					</div>
+					<div class="props-row props-row--last" data-symbol-box-row="song">
+						<span class="props-label">교가</span>
+						<input type="checkbox" checked>
+					</div>
+				</div>
+			</div>
+			<div class="props-section" id="propsBoxIcoSection" style="display:none">
+				<p class="props-section-label" data-help="박스 블록 상단에 표시할 아이콘을 12가지 중에서 선택합니다. 콘텐츠 주제에 맞는 아이콘을 골라주세요.">아이콘 설정</p>
+				<div class="props-card">
+					<div class="props-row props-row--last">
+						<span class="props-label">아이콘 선택</span>
+						<select class="props-select" id="propBoxIco">
+							<option value="ico-box1">아이콘 1 (PC/문서)</option>
+							<option value="ico-box2">아이콘 2 (책/비교)</option>
+							<option value="ico-box3">아이콘 3 (3단 기둥)</option>
+							<option value="ico-box4">아이콘 4 (건물/집)</option>
+							<option value="ico-box5">아이콘 5 (캘린더)</option>
+							<option value="ico-box6">아이콘 6 (체크/달력)</option>
+							<option value="ico-box7">아이콘 7 (파일/인증)</option>
+							<option value="ico-box8">아이콘 8 (구분/섹션)</option>
+							<option value="ico-box9">아이콘 9 (그룹/채팅)</option>
+							<option value="ico-box10">아이콘 10 (말풍선/사람)</option>
+							<option value="ico-box11">아이콘 11 (보고서/차트)</option>
+							<option value="ico-box12">아이콘 12 (3D 패키지)</option>
+							<option value="ico-box13">아이콘 13 (3D 블록)</option>
+							<option value="ico-box14">아이콘 14 (파일/목록)</option>
+							<option value="ico-box15">아이콘 15 (큐브/네트워크)</option>
+							<option value="ico-box16">아이콘 16 (문서/패턴)</option>
+							<option value="ico-box17">아이콘 17 (문서/분석)</option>
+							<option value="ico-box18">아이콘 18 (데이터베이스)</option>
+							<option value="ico-box19">아이콘 19 (연결/파이프)</option>
+							<option value="ico-box20">아이콘 20 (소통/통신)</option>
+							<option value="ico-box21">아이콘 21 (동영상/재생)</option>
+							<option value="ico-box22">아이콘 22 (레이어/도형)</option>
+						</select>
+					</div>
+				</div>
+			</div>
+			<!-- 연혁 타입A 속성 패널 -->
+			<div class="props-section" id="propsHistoryTypeSection" style="display:none">
+				<div class="props-section-title-row">
+					<p class="props-section-label" data-help="연혁 타입A의 상단 디자인을 선택합니다. 타입B를 선택하면 배경 이미지가 있는 스타일로 표시됩니다.">타입 선택</p>
+					<div class="list-use-radios" id="propHistoryType">
+						<label class="list-use-radio" data-history-type="a">
+							<input type="radio" name="propHistoryType" value="a"> 타입 A
+						</label>
+						<label class="list-use-radio" data-history-type="b">
+							<input type="radio" name="propHistoryType" value="b"> 타입 B
+						</label>
+					</div>
+				</div>
+			</div>
+			<!-- 탭 속성 패널 -->
+			<div class="props-section" id="propsTabSection" style="display:none">
+				<div class="props-section-title-row">
+					<p class="props-section-label" data-help="탭 클릭 시 같은 페이지 안에서 전환할지, 지정한 페이지로 이동할지 설정합니다.">동작설정</p>
+					<div class="list-use-radios" id="propTabMode">
+						<label class="list-use-radio" data-tab-mode="panel">
+							<input type="radio" name="propTabMode" value="panel"> 페이지 내 전환
+						</label>
+						<label class="list-use-radio" data-tab-mode="link">
+							<input type="radio" name="propTabMode" value="link"> 페이지 이동
+						</label>
+					</div>
+				</div>
+				<div class="props-card" id="propsTabLinkCard">
+					<div class="props-tab-link-list" id="propsTabLinksContainer"></div>
+				</div>
+				<p class="props-section-label" data-help="한 줄에 표시할 탭 버튼 개수와 각 탭의 제목을 관리합니다. 탭이 많을수록 개수를 늘려주세요.">탭 설정</p>
+				<div class="props-card">
+					<div class="props-row props-row--last">
+						<span class="props-label">탭 열 수</span>
+						<select class="props-select" id="propTabCols">
+							<option value="2">2열</option>
+							<option value="3">3열</option>
+							<option value="4" selected>4열 (기본)</option>
+							<option value="5">5열</option>
+						</select>
+					</div>
+				</div>
+			</div>
+			<!-- 절차 속성 패널 -->
+			<div class="props-section" id="propsProcessSection" style="display:none">
+				<!-- 가로형 전용: 열 수 선택 -->
+				<div id="propsProcessHorizCard">
+					<p class="props-section-label" data-help="가로형 절차 블록에서 한 줄에 표시할 단계 수를 설정합니다.">열 수</p>
+					<div class="props-card">
+						<div class="props-row props-row--last">
+							<span class="props-label">열 수 선택</span>
+							<select class="props-select" id="propProcessCols">
+								<option value="2">2열</option>
+								<option value="3">3열</option>
+								<option value="4" selected>4열 (기본)</option>
+								<option value="5">5열</option>
+								<option value="6">6열</option>
+							</select>
+						</div>
+					</div>
+				</div>
+				<!-- 공통: 단계별 설명(sub) 관리 -->
+				<p class="props-section-label" data-help="각 절차 단계 아래에 표시되는 부연 설명 텍스트를 편집합니다.">단계 설명 관리</p>
+				<div class="props-card props-process-steps-card" id="propsProcessStepsContainer"></div>
+				<!-- 세로형 전용: 단계 추가 버튼 -->
+				<button type="button" class="props-add-row-btn" id="propsAddProcessStep" style="display:none">
+					<i class="ri-add-line" aria-hidden="true"></i> 단계 추가
+				</button>
+			</div>
+			<!-- 아코디언 속성 패널 -->
+			<div class="props-section" id="propsAccordionSection" style="display:none">
+				<p class="props-section-label" data-help="아코디언 제목의 텍스트 크기와 메뉴 항목 제목을 관리합니다. 항목 클릭 시 내용이 펼쳐지는 구조입니다.">아코디언 설정</p>
+				<div class="props-card">
+					<div class="props-row props-row--last">
+						<span class="props-label">크기</span>
+						<select class="props-select" id="propAccordionSize">
+							<option value="">기본</option>
+							<option value="size-md">중간 (size-md)</option>
+							<option value="size-lg">크게 (size-lg)</option>
+						</select>
+					</div>
+				</div>
+				<p class="props-section-label" style="margin-top:0.75rem">메뉴 항목 관리</p>
+				<div class="props-card props-accordion-items-card" id="propsAccordionItemsContainer"></div>
+				<button type="button" class="props-add-row-btn" id="propsAddAccordionItem" style="display:none">
+					<i class="ri-add-line" aria-hidden="true"></i> 메뉴 추가
+				</button>
+			</div>
+
+			<!-- 버튼레이아웃(button-00) 내부 버튼 속성 -->
+			<div class="props-section" id="propsButtonInnerSection" style="display:none">
+				<p class="props-section-label">버튼 속성 설정</p>
+				<div id="propsButtonInnerContainer"></div>
+			</div>
+
+			<!-- 버튼 속성 패널 -->
+			<div class="props-section" id="propsButtonSection" style="display:none">
+				<p class="props-section-label" data-help="버튼 높이(크기)와 링크 이동 방식을 설정합니다. 주요 CTA 버튼은 Extra Large 크기를 권장합니다.">버튼 설정</p>
+				<div class="props-card">
+					<div class="props-row">
+						<span class="props-label">크기</span>
+						<select class="props-select" id="propBtnSize">
+							<option value="">기본 (Medium)</option>
+							<option value="size-sm">Small</option>
+							<option value="size-lg">Large</option>
+							<option value="size-exlg">Extra Large</option>
+						</select>
+					</div>
+					<div class="props-row props-row--last">
+						<span class="props-label">이동 방식</span>
+						<select class="props-select" id="propBtnOpenType">
+							<option value="default">기본</option>
+							<option value="new-window">새창</option>
+						</select>
+					</div>
+				</div>
+				<!-- 아이콘 버튼(button-05, button-06) 전용 -->
+				<div id="propsButtonIconCard" style="display:none">
+					<p class="props-section-label" style="margin-top:0.75rem">아이콘 설정</p>
+					<div class="props-card">
+						<div class="props-row" id="propBtnIconRow">
+							<span class="props-label">아이콘 선택</span>
+							<select class="props-select" id="propBtnIcon">
+								<option value="ri-external-link-line">새창 아이콘</option>
+								<option value="ri-phone-fill">전화 아이콘</option>
+							</select>
+						</div>
+						<!-- 아이콘 위치: button-05 전용 -->
+						<div class="props-row props-row--last" id="propBtnIconPosRow">
+							<span class="props-label">아이콘 위치</span>
+							<select class="props-select" id="propBtnIconPos">
+								<option value="before">텍스트 앞</option>
+								<option value="after">텍스트 뒤</option>
+							</select>
+						</div>
+					</div>
+				</div>
+				<!-- 아이콘 전용 버튼(button-06) 숨김 텍스트 입력 -->
+				<div id="propsButtonHidCard" style="display:none">
+					<p class="props-section-label" style="margin-top:0.75rem">숨김 텍스트 (접근성)</p>
+					<div class="props-card">
+						<div class="props-row props-row--last" style="flex-direction:column;align-items:stretch;gap:0.3rem">
+							<span class="props-label">버튼 목적 입력</span>
+							<input type="text" class="props-input" id="propBtnHidText"
+								style="width:100%;text-align:left;height:1.5rem"
+								placeholder="예: 전화 연결, 새창으로 이동">
+						</div>
+					</div>
+					<button type="button" class="props-add-row-btn" id="propsApplyBtnHid">
+						<i class="ri-check-line" aria-hidden="true"></i> 적용
+					</button>
+				</div>
+				<!-- 주요버튼(button-01) 안내 문구 -->
+				<div id="propsButtonPriNotice" style="display:none">
+					<p class="props-notice" style="margin-top:0.5rem;display:block">주요버튼은 한 화면에 1개만 배치할 수 있습니다.</p>
+				</div>
+			</div>
+
+			<!-- 테이블 속성 패널 -->
+				<div class="props-section" id="propsTableSection" style="display:none">
+					<p class="props-section-label" data-help="열 수를 입력하고 너비를 자동(균등) 또는 수동으로 나눌 수 있습니다. 가로 스크롤은 좁은 화면에서 테이블이 옆으로 밀리지 않도록 합니다.">테이블 설정</p>
+					<div class="props-card">
+						<div class="props-row">
+							<span class="props-label">열 수</span>
+							<input type="number" class="props-input" id="propTableColCount" min="1" max="12" style="width:4rem">
+						</div>
+						<div class="props-row">
+							<span class="props-label">너비 조절</span>
+							<select class="props-select" id="propTableColWidthMode">
+								<option value="auto">자동 (균등)</option>
+								<option value="manual">수동 입력</option>
+							</select>
+						</div>
+						<div class="props-row props-row--last">
+							<span class="props-label">가로 스크롤</span>
+							<select class="props-select" id="propTableScroll">
+								<option value="">기본</option>
+								<option value="scroll-w">태블릿~</option>
+								<option value="scroll-m">모바일~</option>
+							</select>
+						</div>
+					</div>
+					<button type="button" class="props-add-row-btn props-table-draw-card" id="propsOpenTableDraw">
+						<i class="ri-grid-line" aria-hidden="true"></i> 테이블 그리기
+					</button>
+					<div id="propsTableColWidthsCard" style="display:none">
+						<p class="props-section-label" style="margin-top:0.5rem">열 너비 입력 <small style="font-weight:400;color:#888">(합계 100%)</small></p>
+						<div class="props-card" id="propsTableColWidthsContainer"></div>
+						<button type="button" class="props-add-row-btn" id="propsApplyTableColWidths">
+							<i class="ri-check-line" aria-hidden="true"></i> 적용
+						</button>
+						<p class="props-notice" id="propsTableColWidthsNotice" style="display:none">각 열 너비의 합계가 100%가 되어야 합니다.</p>
+					</div>
+					<div id="propsTableStructure"></div>
+				</div>
+
+				<!-- 가정통신문 헤더 속성 패널 -->
+				<div class="props-section" id="propsNewsletterHeaderSection" style="display:none">
+					<p class="props-section-label" data-help="가정통신문 헤더의 로고 이미지와 학교 정보를 설정합니다. 부서명·연락처를 비우면 우측에 표시되지 않습니다.">헤더 설정</p>
+					<div class="props-card">
+						<div class="props-row">
+							<span class="props-label">로고 이미지</span>
+							<input type="file" class="props-file-input" id="propNlLogoFile" accept="image/*">
+						</div>
+						<div class="props-row">
+							<span class="props-label">학교명</span>
+							<input type="text" class="props-input props-input--wide" id="propNlSchoolName" placeholder="○○학교">
+						</div>
+						<div class="props-row">
+							<span class="props-label">부서명</span>
+							<input type="text" class="props-input props-input--wide" id="propNlDept" placeholder="(없으면 비워두세요)">
+						</div>
+						<div class="props-row props-row--last">
+							<span class="props-label">연락처</span>
+							<input type="text" class="props-input props-input--wide" id="propNlPhone" placeholder="(없으면 비워두세요)">
+						</div>
+					</div>
+					<button type="button" class="props-add-row-btn" id="propsApplyNlHeader">
+						<i class="ri-check-line" aria-hidden="true"></i> 적용
+					</button>
+					<p class="props-section-label" style="margin-top:0.75rem">본문 설정</p>
+					<div class="props-card">
+						<div class="props-row props-row--last">
+							<span class="props-label">본문 폰트크기</span>
+							<div style="display:flex;align-items:center;gap:3px">
+								<button type="button" id="propNlBodyFsDown" style="width:1.4rem;min-height:1.5rem;font-size:0.75rem;border:1px solid var(--line);border-radius:4px;background:#fff;cursor:pointer;padding:0;display:flex;align-items:center;justify-content:center;flex-shrink:0">−</button>
+								<input type="number" class="props-input" id="propNlBodyFontSize" min="12" max="30" step="1" value="15" style="width:2.5rem;text-align:center">
+								<span class="props-unit">px</span>
+								<button type="button" id="propNlBodyFsUp" style="width:1.4rem;min-height:1.5rem;font-size:0.75rem;border:1px solid var(--line);border-radius:4px;background:#fff;cursor:pointer;padding:0;display:flex;align-items:center;justify-content:center;flex-shrink:0">+</button>
+							</div>
+						</div>
+					</div>
+				</div>
+
+				<!-- 가정통신문 푸터 속성 패널 -->
+				<div class="props-section" id="propsNewsletterFooterSection" style="display:none">
+					<p class="props-section-label" data-help="가정통신문 하단의 날짜와 학교장 서명 정보를 설정합니다.">날짜 · 서명 설정</p>
+					<div class="props-card">
+						<div class="props-row">
+							<span class="props-label">날짜</span>
+							<input type="text" class="props-input" id="propNlYear" placeholder="20__" style="width:3rem">
+							<span class="props-unit" style="margin:0 2px">년</span>
+							<input type="text" class="props-input" id="propNlMonth" placeholder="__" style="width:2.2rem">
+							<span class="props-unit" style="margin:0 2px">월</span>
+							<input type="text" class="props-input" id="propNlDay" placeholder="__" style="width:2.2rem">
+							<span class="props-unit" style="margin:0 2px">일</span>
+						</div>
+						<div class="props-row">
+							<span class="props-label">학교명</span>
+							<input type="text" class="props-input props-input--wide" id="propNlFooterSchool" placeholder="○○학교">
+						</div>
+						<div class="props-row props-row--last">
+							<span class="props-label">직인</span>
+							<select class="props-select" id="propNlStamp">
+								<option value="use">직인 사용</option>
+								<option value="omit">직인 미사용</option>
+							</select>
+						</div>
+					</div>
+					<button type="button" class="props-add-row-btn" id="propsApplyNlFooter">
+						<i class="ri-check-line" aria-hidden="true"></i> 적용
+					</button>
+				</div>
+
+
+				<!-- 개인정보처리방침 변수 속성 패널 -->
+			<div class="props-section" id="propsPrivacyVarsSection" style="display:none">
+				<p class="props-section-label" data-help="개인정보처리방침 전체에 반복되는 학교명, 홈페이지 주소, 시행일을 한 번에 설정합니다.">학교 정보 설정</p>
+				<div class="props-card">
+					<div class="props-row">
+						<span class="props-label">학교명</span>
+						<input type="text" class="props-input props-input--wide" id="propPpSchoolName" placeholder="○○학교">
+					</div>
+					<div class="props-row">
+						<span class="props-label">홈페이지 주소</span>
+						<input type="text" class="props-input props-input--wide" id="propPpSchoolUrl" placeholder="https://school.go.kr">
+					</div>
+					<div class="props-row props-row--last">
+						<span class="props-label">시행일</span>
+						<input type="date" class="props-input props-input--wide" id="propPpStartDate">
+					</div>
+				</div>
+				<button type="button" class="props-add-row-btn" id="propPpApplyBtn">
+					<i class="ri-check-line" aria-hidden="true"></i> 적용
+				</button>
+			</div>
+
+			<!-- 개인정보처리방침 아이콘 설정 (title-02 전용) -->
+				<div class="props-section" id="propsPrivacyIconSection" style="display:none">
+					<!-- 앵커 ID 표시 (title-02에만 표시, 순서 기반 자동 배정) -->
+					<div class="props-card" id="propsAnchorIdCard" style="display:none">
+						<div class="props-row props-row--last">
+							<span class="props-label" data-help="목차 순서에 따라 자동으로 배정됩니다. 순서를 변경하면 자동으로 갱신됩니다.">앵커 ID</span>
+							<input type="text" class="props-input props-input--wide" id="propAnchorId" readonly placeholder="순서에 따라 자동 배정">
+						</div>
+					</div>
+					<p class="props-section-label" data-help="개인정보처리방침 항목 앞에 표시할 아이콘을 선택합니다. 이미 선택된 아이콘을 다시 클릭하면 선택이 해제됩니다.">아이콘 설정</p>
+					<div class="props-privacy-icon-grid" id="propsPrivacyIconGrid">
+						<button type="button" class="props-privacy-icon-btn" data-icon-src="/builder/template/templates/common/privacy/policy_icon01.png" title="아이콘 1"><img data-src="/builder/template/templates/common/privacy/policy_icon01.png" alt="아이콘 1"></button>
+						<button type="button" class="props-privacy-icon-btn" data-icon-src="/builder/template/templates/common/privacy/policy_icon02.png" title="아이콘 2"><img data-src="/builder/template/templates/common/privacy/policy_icon02.png" alt="아이콘 2"></button>
+						<button type="button" class="props-privacy-icon-btn" data-icon-src="/builder/template/templates/common/privacy/policy_icon03.png" title="아이콘 3"><img data-src="/builder/template/templates/common/privacy/policy_icon03.png" alt="아이콘 3"></button>
+						<button type="button" class="props-privacy-icon-btn" data-icon-src="/builder/template/templates/common/privacy/policy_icon04.png" title="아이콘 4"><img data-src="/builder/template/templates/common/privacy/policy_icon04.png" alt="아이콘 4"></button>
+						<button type="button" class="props-privacy-icon-btn" data-icon-src="/builder/template/templates/common/privacy/policy_icon05.png" title="아이콘 5"><img data-src="/builder/template/templates/common/privacy/policy_icon05.png" alt="아이콘 5"></button>
+						<button type="button" class="props-privacy-icon-btn" data-icon-src="/builder/template/templates/common/privacy/policy_icon06.png" title="아이콘 6"><img data-src="/builder/template/templates/common/privacy/policy_icon06.png" alt="아이콘 6"></button>
+						<button type="button" class="props-privacy-icon-btn" data-icon-src="/builder/template/templates/common/privacy/policy_icon07.png" title="아이콘 7"><img data-src="/builder/template/templates/common/privacy/policy_icon07.png" alt="아이콘 7"></button>
+						<button type="button" class="props-privacy-icon-btn" data-icon-src="/builder/template/templates/common/privacy/policy_icon08.png" title="아이콘 8"><img data-src="/builder/template/templates/common/privacy/policy_icon08.png" alt="아이콘 8"></button>
+						<button type="button" class="props-privacy-icon-btn" data-icon-src="/builder/template/templates/common/privacy/policy_icon09.png" title="아이콘 9"><img data-src="/builder/template/templates/common/privacy/policy_icon09.png" alt="아이콘 9"></button>
+						<button type="button" class="props-privacy-icon-btn" data-icon-src="/builder/template/templates/common/privacy/policy_icon10.png" title="아이콘 10"><img data-src="/builder/template/templates/common/privacy/policy_icon10.png" alt="아이콘 10"></button>
+						<button type="button" class="props-privacy-icon-btn" data-icon-src="/builder/template/templates/common/privacy/policy_icon11.png" title="아이콘 11"><img data-src="/builder/template/templates/common/privacy/policy_icon11.png" alt="아이콘 11"></button>
+						<button type="button" class="props-privacy-icon-btn" data-icon-src="/builder/template/templates/common/privacy/policy_icon12.png" title="아이콘 12"><img data-src="/builder/template/templates/common/privacy/policy_icon12.png" alt="아이콘 12"></button>
+						<button type="button" class="props-privacy-icon-btn" data-icon-src="/builder/template/templates/common/privacy/policy_icon13.png" title="아이콘 13"><img data-src="/builder/template/templates/common/privacy/policy_icon13.png" alt="아이콘 13"></button>
+						<button type="button" class="props-privacy-icon-btn" data-icon-src="/builder/template/templates/common/privacy/policy_icon14.png" title="아이콘 14"><img data-src="/builder/template/templates/common/privacy/policy_icon14.png" alt="아이콘 14"></button>
+						<button type="button" class="props-privacy-icon-btn" data-icon-src="/builder/template/templates/common/privacy/policy_icon15.png" title="아이콘 15"><img data-src="/builder/template/templates/common/privacy/policy_icon15.png" alt="아이콘 15"></button>
+						<button type="button" class="props-privacy-icon-btn" data-icon-src="/builder/template/templates/common/privacy/policy_icon16.png" title="아이콘 16"><img data-src="/builder/template/templates/common/privacy/policy_icon16.png" alt="아이콘 16"></button>
+						<button type="button" class="props-privacy-icon-btn" data-icon-src="/builder/template/templates/common/privacy/policy_icon17.png" title="아이콘 17"><img data-src="/builder/template/templates/common/privacy/policy_icon17.png" alt="아이콘 17"></button>
+						<button type="button" class="props-privacy-icon-btn" data-icon-src="/builder/template/templates/common/privacy/policy_icon18.png" title="아이콘 18"><img data-src="/builder/template/templates/common/privacy/policy_icon18.png" alt="아이콘 18"></button>
+						<button type="button" class="props-privacy-icon-btn" data-icon-src="/builder/template/templates/common/privacy/policy_icon19.png" title="아이콘 19"><img data-src="/builder/template/templates/common/privacy/policy_icon19.png" alt="아이콘 19"></button>
+						<button type="button" class="props-privacy-icon-btn" data-icon-src="/builder/template/templates/common/privacy/policy_icon20.png" title="아이콘 20"><img data-src="/builder/template/templates/common/privacy/policy_icon20.png" alt="아이콘 20"></button>
+						<button type="button" class="props-privacy-icon-btn" data-icon-src="/builder/template/templates/common/privacy/policy_icon21.png" title="아이콘 21"><img data-src="/builder/template/templates/common/privacy/policy_icon21.png" alt="아이콘 21"></button>
+						<button type="button" class="props-privacy-icon-btn" data-icon-src="/builder/template/templates/common/privacy/policy_icon22.png" title="아이콘 22"><img data-src="/builder/template/templates/common/privacy/policy_icon22.png" alt="아이콘 22"></button>
+						<button type="button" class="props-privacy-icon-btn" data-icon-src="/builder/template/templates/common/privacy/policy_icon23.png" title="아이콘 23"><img data-src="/builder/template/templates/common/privacy/policy_icon23.png" alt="아이콘 23"></button>
+						<button type="button" class="props-privacy-icon-btn" data-icon-src="/builder/template/templates/common/privacy/policy_icon24.png" title="아이콘 24"><img data-src="/builder/template/templates/common/privacy/policy_icon24.png" alt="아이콘 24"></button>
+						<button type="button" class="props-privacy-icon-btn" data-icon-src="/builder/template/templates/common/privacy/policy_icon25.png" title="아이콘 25"><img data-src="/builder/template/templates/common/privacy/policy_icon25.png" alt="아이콘 25"></button>
+						<button type="button" class="props-privacy-icon-btn" data-icon-src="/builder/template/templates/common/privacy/policy_icon26.png" title="아이콘 26"><img data-src="/builder/template/templates/common/privacy/policy_icon26.png" alt="아이콘 26"></button>
+						<button type="button" class="props-privacy-icon-btn" data-icon-src="/builder/template/templates/common/privacy/policy_icon27.png" title="아이콘 27"><img data-src="/builder/template/templates/common/privacy/policy_icon27.png" alt="아이콘 27"></button>
+						<button type="button" class="props-privacy-icon-btn" data-icon-src="/builder/template/templates/common/privacy/policy_icon28.png" title="아이콘 28"><img data-src="/builder/template/templates/common/privacy/policy_icon28.png" alt="아이콘 28"></button>
+						<button type="button" class="props-privacy-icon-btn" data-icon-src="/builder/template/templates/common/privacy/policy_icon29.png" title="아이콘 29"><img data-src="/builder/template/templates/common/privacy/policy_icon29.png" alt="아이콘 29"></button>
+						<button type="button" class="props-privacy-icon-btn" data-icon-src="/builder/template/templates/common/privacy/policy_icon30.png" title="아이콘 30"><img data-src="/builder/template/templates/common/privacy/policy_icon30.png" alt="아이콘 30"></button>
+						<button type="button" class="props-privacy-icon-btn" data-icon-src="/builder/template/templates/common/privacy/policy_icon31.png" title="아이콘 31"><img data-src="/builder/template/templates/common/privacy/policy_icon31.png" alt="아이콘 31"></button>
+						<button type="button" class="props-privacy-icon-btn" data-icon-src="/builder/template/templates/common/privacy/policy_icon32.png" title="아이콘 32"><img data-src="/builder/template/templates/common/privacy/policy_icon32.png" alt="아이콘 32"></button>
+						<button type="button" class="props-privacy-icon-btn" data-icon-src="/builder/template/templates/common/privacy/policy_icon33.png" title="아이콘 33"><img data-src="/builder/template/templates/common/privacy/policy_icon33.png" alt="아이콘 33"></button>
+						<button type="button" class="props-privacy-icon-btn" data-icon-src="/builder/template/templates/common/privacy/policy_icon34.png" title="아이콘 34"><img data-src="/builder/template/templates/common/privacy/policy_icon34.png" alt="아이콘 34"></button>
+						<button type="button" class="props-privacy-icon-btn" data-icon-src="/builder/template/templates/common/privacy/policy_icon35.png" title="아이콘 35"><img data-src="/builder/template/templates/common/privacy/policy_icon35.png" alt="아이콘 35"></button>
+					</div>
+				</div>
+
+				<div class="props-section" id="propsDiscloserSection" style="display:none">
+				<p class="props-section-label">Discloser 설정</p>
+				<div class="props-card">
+					<div class="props-row" style="flex-direction:column;align-items:stretch;gap:0.3rem">
+						<span class="props-label">버튼 제목</span>
+						<input type="text" class="props-input" id="propDiscloserTitle"
+							style="width:100%;text-align:left;height:1.5rem"
+							placeholder="버튼 제목 입력">
+					</div>
+					<div class="props-row props-row--last" style="flex-direction:column;align-items:stretch;gap:0.3rem">
+						<span class="props-label">내용</span>
+						<textarea class="props-input" id="propDiscloserContent"
+							style="width:100%;height:4rem;resize:vertical;text-align:left;line-height:1.4;padding:0.3rem 6px"
+							placeholder="내용 입력 (비우면 '내용이 없습니다.' 표시)"></textarea>
+					</div>
+				</div>
+			</div>
+					</div>
+				</aside>
+			</div>
+		</main>
+
+	</div>
+
+	
+	<!-- 인라인 스마트 블록 속성 팝업 -->
+	<div class="inline-prop-popup" id="inlinePropPopup" role="dialog" aria-label="인라인 요소 속성 설정">
+		<div class="inline-prop-popup__row">
+			<span class="inline-prop-popup__label">텍스트</span>
+			<input type="text" class="inline-prop-popup__input" id="inlinePropText" placeholder="표시할 텍스트">
+		</div>
+		<div class="inline-prop-popup__link" id="inlinePropLinkSection">
+			<div class="inline-prop-popup__row">
+				<span class="inline-prop-popup__label">URL</span>
+				<input type="url" class="inline-prop-popup__input" id="inlinePropHref" placeholder="https://">
+			</div>
+			<div class="inline-prop-popup__row" id="inlinePropTargetRow">
+				<span class="inline-prop-popup__label">이동 타입</span>
+				<select class="inline-prop-popup__select" id="inlinePropTarget">
+					<option value="_blank">새 창 (_blank)</option>
+					<option value="_self">현재 창 (_self)</option>
+					<option value="_parent">부모 창 (_parent)</option>
+					<option value="_top">최상위 창 (_top)</option>
+				</select>
+			</div>
+		</div>
+		<div class="inline-prop-popup__download" id="inlinePropDownloadSection" style="display:none">
+			<p class="inline-prop-popup__notice">추후 작업예정입니다.</p>
+		</div>
+		<div class="inline-prop-popup__actions">
+			<button type="button" class="inline-prop-popup__cancel" id="inlinePropCancel">취소</button>
+			<button type="button" class="inline-prop-popup__confirm" id="inlinePropConfirm">삽입</button>
+		</div>
+	</div>
+
+	<aside class="markup-panel" id="markupPanel" role="dialog" aria-modal="true" aria-label="생성된 마크업">
+		<div class="markup-backdrop" id="markupBackdrop"></div>
+		<div class="markup-panel-inner">
+			<div class="markup-head">
+				<div class="markup-tabs">
+					<button type="button" class="markup-tab is-active" data-markup-tab="html">HTML</button>
+					<button type="button" class="markup-tab" data-markup-tab="css">CSS</button>
+					<button type="button" class="markup-tab" data-markup-tab="all">전체보기</button>
+				</div>
+				<div class="markup-head-actions">
+					<button type="button" class="primary-button copy-markup-button" id="copyMarkup">
+						<i class="ri-file-copy-line" aria-hidden="true"></i>
+						복사
+					</button>
+					<button type="button" class="ghost-button markup-close-btn" id="markupClose" aria-label="닫기">
+						<i class="ri-close-line" aria-hidden="true"></i>
+					</button>
+				</div>
+			</div>
+			<textarea id="markupOutput" spellcheck="false" aria-label="생성된 HTML 마크업"></textarea>
+			<p class="copy-state" id="copyState" aria-live="polite"></p>
+		</div>
+	</aside>
+
+	<div class="icon-drawer" id="iconDrawer">
+		<div class="icon-drawer-backdrop" id="iconDrawerBackdrop"></div>
+		<div class="icon-drawer-panel">
+			<div class="icon-drawer-head">
+				<strong>아이콘 선택</strong>
+				<button type="button" class="ghost-button" id="iconDrawerClose">
+					<i class="ri-close-line" aria-hidden="true"></i>
+				</button>
+			</div>
+			<div class="icon-drawer-body">
+				<nav class="icon-tree" id="iconTree"></nav>
+				<div class="icon-grid-area" id="iconGridArea">
+					<p class="icon-grid-empty">왼쪽에서 카테고리를 선택하세요.</p>
+				</div>
+			</div>
+		</div>
+	</div>
+
+	<!-- 가정통신문 인라인 텍스트 서식 툴바 -->
+	<div id="nlInlineToolbar" class="nl-inline-toolbar" role="toolbar" aria-label="텍스트 서식">
+		<label class="nl-itb-item" title="글자 색상">
+			<span>글자</span>
+			<input type="color" id="nlItbColor" value="#222222">
+		</label>
+		<div class="nl-itb-sep"></div>
+		<label class="nl-itb-select-wrap" title="폰트 크기">
+			<select id="nlItbSize" aria-label="폰트 크기">
+				<option value="">-</option>
+				<option value="14">14</option>
+				<option value="15">15</option>
+				<option value="16">16</option>
+				<option value="18">18</option>
+				<option value="20">20</option>
+				<option value="22">22</option>
+				<option value="24">24</option>
+				<option value="26">26</option>
+			</select>
+			<span class="nl-itb-unit">px</span>
+		</label>
+		<div class="nl-itb-sep"></div>
+		<label class="nl-itb-select-wrap" title="굵기">
+			<span>굵기</span>
+			<select id="nlItbWeight" aria-label="굵기">
+				<option value="400">R</option>
+				<option value="500">M</option>
+				<option value="700">B</option>
+				<option value="800">E</option>
+			</select>
+		</label>
+		<button type="button" class="nl-itb-btn nl-itb-reset" id="nlItbReset" title="서식 초기화">
+			<i class="ri-format-clear" aria-hidden="true"></i>
+		</button>
+		<button type="button" class="nl-itb-btn nl-itb-apply" id="nlItbApplySize" title="서식 적용 (Enter)">
+			<i class="ri-check-line" aria-hidden="true"></i>
+			<span>적용</span>
+		</button>
+	</div>
+
+	<!-- 테이블 셀 span 팝오버 -->
+	<div id="tableCellSpanPopover" class="table-span-popover">
+		<p class="table-span-popover-title">셀 병합 (colspan / rowspan)</p>
+		<div class="table-span-popover-row">
+			<label for="tableCellColspan">가로</label>
+			<input type="number" id="tableCellColspan" min="1" max="12" value="1">
+		</div>
+		<div class="table-span-popover-row">
+			<label for="tableCellRowspan">세로</label>
+			<input type="number" id="tableCellRowspan" min="1" max="12" value="1">
+		</div>
+		<button type="button" id="tableCellSpanApply" class="table-span-apply-btn">적용</button>
+	</div>
+
+	<script src="https://cdn.jsdelivr.net/npm/html-to-image@1.11.11/dist/html-to-image.min.js"></script>
+	<script src="https://cdn.jsdelivr.net/npm/jszip@3.10.1/dist/jszip.min.js"></script>
+	<script src="https://cdn.jsdelivr.net/npm/jspdf@2.5.1/dist/jspdf.umd.min.js"></script>
+	<script src="/00_common/js/jquery.min.js"></script>
+	<script src="/00_common/js/swiper/swiper.min.js"></script>
+	<script src="/00_common/js/con_com.js?v=4"></script>
+	<script src="/00_common/js/sub_com.js?v=5"></script>
+	<script src="/00_common/js/builder-shared.js"></script>
+	<script src="/builder/common/js/cntnts-file-manager.js?v=3"></script>
+	<script>
+		window.TEMPLATE2_BUILDER_CONFIG = {
+			preset: 'history',
+			cntntsType: 'history',
+			manifest: '/builder/template/templates/history/manifest.json',
+			visibleBlockFilters: 'all',
+			visibleDesignFilters: 'all',
+			defaultSidebarTab: 'blocks',
+			designBlockManifest: '/builder/template/templates/design_block/manifest.json'
+		};
+	</script>
+	<script src="/builder/template/js/content-common.js?v=25"></script>
+</body>
+</html>
+
+ 

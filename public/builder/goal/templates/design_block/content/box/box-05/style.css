@@ -1,0 +1,34 @@
+﻿.box-05 {
+
+	/* 본문 */
+	--body-align: center;
+	--body-border: #0077D1;
+	--body-text: #222;
+}
+
+.box-05 .inner{
+	position: relative;
+	display: flex;
+	min-height: 100%;
+	padding: 24px 16px;
+	border-radius: 20px;
+	background: #fff;
+	border: 1px solid var(--body-border);
+	overflow: hidden;
+}
+
+.box-05 .txt-wrap{
+	position: relative;
+	z-index: 1;
+}
+
+.box-05 .icon{
+	position:absolute; 
+	right: 0;
+	bottom: 0;
+}
+
+.box-05 .icon{
+	width: 5.5rem;
+	height: auto;
+}

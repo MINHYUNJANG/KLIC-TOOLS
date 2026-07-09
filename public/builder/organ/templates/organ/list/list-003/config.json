@@ -1,0 +1,19 @@
+{
+	"category": "list",
+	"addDirection": "column",
+	"max": "6",
+	"styleOptions": {
+		"title": {
+			"fields": [
+				{ "key": "backgroundColor", "label": "배경", "default": "#1c3478" },
+				{ "key": "textColor",       "label": "글자", "default": "#ffffff" }
+			]
+		},
+		"body": {
+			"fields": [
+				{ "key": "backgroundColor", "label": "배경", "default": "#ECEDF4" },
+				{ "key": "textColor",       "label": "글자", "default": "#333333" }
+			]
+		}
+	}
+}

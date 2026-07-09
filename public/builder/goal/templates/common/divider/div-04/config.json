@@ -1,0 +1,32 @@
+{
+	"max": "1",
+	"recommend": {
+		"category": "divider",
+		"colors": [
+			"navy",
+			"gray",
+			"white"
+		],
+		"tone": [
+			"clean",
+			"formal",
+			"organized"
+		],
+		"style": [
+			"line",
+			"connector",
+			"simple"
+		],
+		"keywords": [
+			"구분",
+			"연결",
+			"흐름",
+			"단계"
+		],
+		"matchWith": [
+			"box",
+			"list",
+			"title"
+		]
+	}
+}

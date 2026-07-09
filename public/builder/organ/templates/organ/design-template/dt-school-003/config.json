@@ -1,0 +1,10 @@
+{
+  "templateFilters": ["school"],
+  "sections": [
+    {"type": "box-007", "blockWidth": 200},
+    "divider-001",
+    {"type": "wing-007", "classes": {"direction": "left"}},
+    "divider-001",
+    {"type": "list-006", "columns": 4, "gap": 50}
+  ]
+}

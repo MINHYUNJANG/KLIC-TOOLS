@@ -1,0 +1,54 @@
+﻿.tv-02 {
+	padding: clamp(16px, 2.5vw, 28px);
+}
+
+.tv-02-row {
+	display: flex;
+	align-items: center;
+	gap: clamp(6px, 1vw, 10px);
+	width: 100%;
+}
+
+.tv-02-left {
+	background: var(--title-bg, #1b276f);
+	border-radius: 50px;
+	padding: clamp(10px, 1.5vw, 14px) clamp(16px, 2.5vw, 28px);
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	gap: 8px;
+	white-space: nowrap;
+	flex-shrink: 0;
+}
+
+.tv-02-left span {
+	font-size: var(--title-size, clamp(13px, 1.6vw, 18px));
+	font-weight: 700;
+	color: var(--title-text, #fff);
+}
+
+.tv-02-arrow {
+	width: clamp(12px, 1.4vw, 16px);
+	height: clamp(12px, 1.4vw, 16px);
+	border-top: 2.5px solid var(--title-text, #fff);
+	border-right: 2.5px solid var(--title-text, #fff);
+	transform: rotate(45deg);
+	flex-shrink: 0;
+}
+
+.tv-02-right {
+	flex: 1;
+	background: var(--body-bg);
+	border-radius: 50px;
+	padding: clamp(10px, 1.5vw, 14px) clamp(16px, 2.5vw, 28px);
+	display: flex;
+	align-items: center;
+	min-width: 0;
+	font-size: var(--body-size, clamp(12px, 1.4vw, 16px));
+	font-weight: 500;
+	color: var(--body-text, #fff);
+	line-height: 1.5;
+	word-break: keep-all;
+	text-align: var(--body-align, center);
+}
+

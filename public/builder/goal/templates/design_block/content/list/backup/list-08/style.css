@@ -1,0 +1,46 @@
+﻿.list-08 {
+	padding: clamp(20px, 3vw, 34px);
+	border: 2px solid var(--body-border);
+	border-radius: 20px;
+	background: var(--body-bg);
+}
+
+.list-08 .template-title {
+	background: none;
+}
+
+.list-08-title {
+	display: block;
+	margin-bottom: clamp(14px, 2vw, 22px);
+	color: var(--title-text, #0b7d59);
+	font-size: var(--title-size, clamp(20px, 2.4vw, 32px));
+	font-weight: var(--title-weight, 900);
+	text-align: var(--title-align, center);
+}
+
+.list-08-list {
+	display: grid;
+	gap: clamp(9px, 1.4vw, 14px);
+}
+
+.list-08-list li {
+	position: relative;
+	padding-left: clamp(20px, 2.4vw, 28px);
+	color: var(--body-text, #17251f);
+	font-size: var(--body-size, clamp(12px, 1.5vw, 17px));
+	font-weight: var(--body-weight, 600);
+	line-height: 1.5;
+	text-align: var(--body-align, center);
+}
+
+.list-08-list li::before {
+	content: "";
+	position: absolute;
+	top: 0.55em;
+	left: 0;
+	width: 10px;
+	height: 10px;
+	border-radius: 999px;
+	background: var(--title-bg, #19a979);
+}
+

@@ -1,0 +1,5 @@
+{
+  "addDirection": "column",
+  "smartInline": true,
+  "inlineHtml": "<a href=\"\" target=\"_blank\" title=\"새창\" class=\"txt-st link\">텍스트 <i class=\"ri-external-link-line\" aria-hidden=\"true\"></i></a>"
+}
