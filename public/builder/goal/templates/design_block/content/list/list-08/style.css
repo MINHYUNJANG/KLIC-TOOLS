@@ -1,0 +1,31 @@
+﻿.list-08 {
+	/* 타이틀 */
+	--title-align: center;
+	--title-text: #169139;
+
+	/* 본문 */
+	--body-align: center;
+	--body-text: #4A4A4A;
+
+	min-height: 100%;
+	border-radius: 1rem;
+	padding: 1.5rem 1rem;
+	border: 1px solid #ccc;
+}
+
+.list-08 .edit-list {
+    --ls-color-1: #169139;
+    --ls-color-2: #4A4A4A;
+    --ls-color-3: #4A4A4A;
+}
+
+.list-08 .edit-list[data-depth="1"] {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 0.3rem;
+	margin-top: 1rem;
+}
+
+.list-08 .edit-list[data-depth="1"] > li{
+	width: 100%;
+} 

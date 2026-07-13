@@ -1,0 +1,29 @@
+﻿.box-23 {	
+	/* 타이틀 */
+	--title-align: center;
+	--title-text: #F83170;
+	--title-bg: #FFEBF1;
+
+	/* 본문 */
+	--body-align: center;
+	--body-text: #000;
+	--body-border: #F83170;
+
+	min-height: 100%;
+	border-radius: 0.5rem;
+	border: 1px solid var(--body-border);
+}
+
+.box-23 .tit-wrap{ 
+	border-radius: 0.5rem 0.5rem 0 0;
+	padding: 0.8rem;
+	background: var(--title-bg);
+}
+
+.box-23 .txt-wrap{ 
+	flex: 1;
+	border-radius: 0 0 0.5rem 0.5rem;
+	padding: 1.2rem 0.8rem;
+	text-align: center;
+	background: #fff;
+}

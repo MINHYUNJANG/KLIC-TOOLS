@@ -1,0 +1,13 @@
+{
+  "templateFilters": ["office"],
+  "sections": [
+    {"type": "box-005", "blockWidth": 280},
+    "divider-001",
+    "wing-005",
+    "divider-001",
+    {"type": "box-005", "data": {"title": "00본부"}, "style": {"titleBackgroundColor": "#000000"}, "marginBottom": 20},
+    {"type": "list-001", "columns": 3, "style": {"titleBorderColor": "#000000", "titleTextColor": "#000000"}, "marginBottom": 40},
+    {"type": "box-005", "data": {"title": "00본부"}, "style": {"titleBackgroundColor": "#000000"}, "marginBottom": 20},
+    {"type": "list-001", "columns": 4, "style": {"titleBorderColor": "#000000", "titleTextColor": "#000000"}, "marginBottom": 0}
+  ]
+}

@@ -1,0 +1,47 @@
+﻿.box-14 {
+	/* 타이틀 */
+	--title-align: center;
+	--title-bg: #5d9bf7;
+	--title-text: #ffffff;
+
+	/* 본문 */
+	--body-bg: #ffffff;
+	--body-text: #000;
+	--body-align: center;
+
+	/* 서브 */
+	--sub-text: #5d9bf7;
+	--sub-weight: 600;
+	--sub-size: 16px;
+	--sub-align: center;
+
+	display: flex;
+	flex-direction: column;
+	gap: 12px;
+	border-radius: 20px;
+	padding: 16px;
+	background: var(--title-bg);
+	min-height: 100%;
+}
+
+.box-14 .txt-wrap {
+	flex: 1;
+	display: flex;
+	flex-direction: column;
+	gap: 8px;
+	border-radius: 15px;
+	padding: 16px;
+	background: var(--body-bg);
+}
+
+.box-14 .txt-wrap p {
+	line-height: 1.6;
+	flex: 1;
+}
+
+.box-14 .txt-wrap .sub {
+	color: var(--sub-text);
+	font-size: var(--sub-size);
+	font-weight: var(--sub-weight);
+	text-align: var(--sub-align);
+}

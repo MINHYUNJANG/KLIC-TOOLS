@@ -1,0 +1,23 @@
+﻿.box-010 {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	width: 100%;
+	box-sizing: border-box;
+}
+
+.box-010 > p {
+	width: 100%;
+	min-height: var(--title-height, clamp(44px, 5.5vw, 60px));
+	padding: 14px 32px;
+	background: var(--title-bg, #1c3478);
+	border-radius: 8px;
+	box-sizing: border-box;
+	color: var(--title-text, #ffffff);
+	font-size: var(--title-size, 18px);
+	font-weight: var(--title-weight, 700);
+	text-align: center;
+	letter-spacing: -0.3px;
+	line-height: 1.4;
+	white-space: pre-line;
+}

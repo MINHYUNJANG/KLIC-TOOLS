@@ -1,0 +1,25 @@
+﻿.box-15 {
+	/* 본문 */
+	--body-border: #d9dde2;
+	--body-bg: #ffffff;
+	--body-text: #000;
+	--body-align: center;
+	--body-weight: 600;
+
+	display: flex;
+	align-items: center;
+	justify-content: start;
+	min-height: 100%;
+	border: 1.5px solid var(--body-border);
+	border-radius: 10px;
+	padding: 25px 16px;
+	background: var(--body-bg);
+}
+
+.box-15 .txt-wrap {
+	width: 100%;
+}
+
+.box-15 .txt-wrap p {
+	letter-spacing: -0.02em;
+}

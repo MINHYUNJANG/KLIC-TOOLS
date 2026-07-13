@@ -1,0 +1,17 @@
+{
+  "templateFilters": ["school"],
+  "sections": [
+    {"type": "box-002", "blockWidth": 150, "data": {"title": "회장"}},
+    {"type": "divider-001", "style": {"connectorHeight": "30"}},
+    {"type": "box-002", "blockWidth": 150, "style": {"titleBackgroundColor": "#308cf0"}, "data": {"title": "부회장"}},
+    {"type": "divider-001", "style": {"connectorHeight": "20"}},
+    "wing-010",
+    {"type": "divider-001", "style": {"connectorHeight": "15"}},
+    {"type": "wing-010", "data": {"title": "2학년 회장"}},
+    {"type": "divider-001", "style": {"connectorHeight": "15"}},
+    {"type": "wing-010", "data": {"title": "3학년 회장"}},
+    {"type": "divider-001", "style": {"connectorHeight": "15"}},
+    "divider-001",
+    {"type": "list-011", "columns": 6}
+  ]
+}

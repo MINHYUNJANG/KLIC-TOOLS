@@ -1,0 +1,19 @@
+{
+	"category": "box",
+	"addDirection": "row",
+	"max": "6",
+	"styleOptions": {
+		"title": {
+			"fields": [
+				{ "key": "backgroundColor", "label": "배경",      "default": "#2a449e" },
+				{ "key": "textColor",       "label": "제목 글자", "default": "#ffffff" },
+				{ "key": "minHeight",       "label": "높이",      "type": "number", "min": 20, "max": 300 }
+			]
+		},
+		"body": {
+			"fields": [
+				{ "key": "textColor", "label": "서브 글자", "default": "#c5cdf0" }
+			]
+		}
+	}
+}

@@ -1,0 +1,61 @@
+﻿.tv-11 {
+	padding: clamp(16px, 2.5vw, 28px);
+}
+
+.tv-11-wrap {
+	background: var(--body-bg);
+	border: 2px solid var(--body-border);
+	border-radius: 15px;
+	padding: clamp(14px, 2vw, 20px) clamp(16px, 2.5vw, 28px);
+	display: flex;
+	align-items: stretch;
+	gap: clamp(12px, 2vw, 20px);
+	width: 100%;
+}
+
+.tv-11-label {
+	background: var(--title-bg, #ea8342);
+	border-radius: 12px;
+	width: clamp(70px, 12%, 140px);
+	flex-shrink: 0;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	font-size: var(--title-size, clamp(13px, 1.6vw, 20px));
+	font-weight: 600;
+	color: var(--title-text, #fff);
+	text-align: center;
+	padding: 8px;
+}
+
+.tv-11-list {
+	flex: 1;
+	display: flex;
+	flex-direction: column;
+	gap: clamp(6px, 1vw, 10px);
+	justify-content: center;
+	list-style: none;
+	padding: 0;
+	margin: 0;
+}
+
+.tv-11-list li {
+	position: relative;
+	padding-left: clamp(14px, 1.8vw, 18px);
+	font-size: clamp(12px, 1.4vw, 16px);
+	font-weight: 400;
+	color: var(--body-text, #101010);
+	line-height: 1.6;
+}
+
+.tv-11-list li::before {
+	content: "";
+	position: absolute;
+	top: 0.65em;
+	left: 0;
+	width: 6px;
+	height: 6px;
+	border-radius: 50%;
+	background: var(--body-border);
+}
+

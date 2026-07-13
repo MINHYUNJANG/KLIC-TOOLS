@@ -1,0 +1,48 @@
+﻿.list-06 {
+	padding: clamp(20px, 3vw, 34px);
+	border-radius: 18px;
+	background: var(--body-bg);
+}
+
+.list-06 .template-title {
+	background: none;
+}
+
+.list-06-title {
+	display: block;
+	margin-bottom: clamp(16px, 2.2vw, 24px);
+	color: var(--title-text, #26344a);
+	font-size: var(--title-size, clamp(20px, 2.4vw, 32px));
+	font-weight: var(--title-weight, 900);
+	text-align: var(--title-align, center);
+}
+
+.list-06-grid {
+	display: grid;
+	grid-template-columns: repeat(2, minmax(0, 1fr));
+	gap: clamp(10px, 1.5vw, 16px);
+}
+
+.list-06-grid p {
+	position: relative;
+	min-height: clamp(58px, 7vw, 82px);
+	padding: clamp(14px, 1.8vw, 20px);
+	border-radius: 14px;
+	background: #fff;
+	color: var(--body-text, #182433);
+	font-size: clamp(12px, 1.5vw, 17px);
+	font-weight: var(--body-weight, 600);
+	line-height: 1.45;
+	text-align: center;
+}
+
+.list-06-grid p::before {
+	content: "";
+	display: block;
+	width: 8px;
+	height: 8px;
+	margin: 0 auto 8px;
+	border-radius: 999px;
+	background: var(--title-bg, #4f86d9);
+}
+

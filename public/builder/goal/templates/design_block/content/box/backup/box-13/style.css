@@ -1,0 +1,44 @@
+﻿.box-13 {
+	/* 본문 */
+	--body-bg: #0085d8;
+	--body-text: #ffffff;
+	--body-align: center;
+
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	gap: 0;
+	min-height: 100%;
+}
+
+.box-13 .icon {
+	position: relative;
+	z-index: 2;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	width: 90px;
+	height: 90px;
+	margin-bottom: -30px;
+	border: 2px solid var(--body-bg);
+	border-radius: 50%;
+	background: #fff;
+}
+
+.box-13 .icon img {
+	width: 60px;
+	height: auto;
+}
+
+.box-13 .txt-wrap {
+	flex: 1;
+	width: 100%;
+	border-radius: 20px;
+	padding: 40px 16px 16px;
+	background: var(--body-bg);
+}
+
+.box-13 .txt-wrap p {
+	color: var(--body-text);
+	line-height: 1.6;
+}

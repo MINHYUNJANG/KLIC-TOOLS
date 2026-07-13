@@ -1,0 +1,35 @@
+﻿.tv-03 {
+	padding: clamp(16px, 2.5vw, 28px);
+}
+
+.tv-03-wrap {
+	background: var(--body-bg);
+	border: 2px solid var(--body-border);
+	border-radius: 50px;
+	padding: clamp(10px, 1.5vw, 14px) clamp(16px, 2.5vw, 24px);
+	display: flex;
+	align-items: center;
+	gap: clamp(12px, 2vw, 20px);
+	width: 100%;
+}
+
+.tv-03-badge {
+	background: var(--title-bg, #10a53a);
+	border-radius: 50px;
+	padding: clamp(8px, 1.2vw, 12px) clamp(16px, 2.5vw, 24px);
+	flex-shrink: 0;
+	font-size: var(--title-size, clamp(14px, 1.8vw, 20px));
+	font-weight: 700;
+	color: var(--title-text, #fff);
+	letter-spacing: -0.02em;
+	text-align: var(--title-align, center);
+}
+
+.tv-03-text {
+	font-size: var(--body-size, clamp(14px, 1.8vw, 20px));
+	font-weight: 600;
+	color: var(--body-text, #101010);
+	word-break: keep-all;
+	text-align: var(--body-align, center);
+}
+

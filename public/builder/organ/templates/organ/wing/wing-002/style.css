@@ -1,0 +1,169 @@
+﻿.wing-002 {
+	width: 100%;
+	box-sizing: border-box;
+}
+
+.wing-002 .organ-inner {
+	display: flex;
+	align-items: center;
+	width: 100%;
+	padding: 0 10%;
+}
+
+/* 왼쪽 영역 */
+.wing-002 .organ-left {
+	flex: 1;
+	display: flex;
+	justify-content: flex-start;
+	align-items: center;
+	min-width: 0;
+}
+
+/* 중앙 세로선 축 */
+.wing-002 .organ-axis {
+	width: 0;
+	align-self: stretch;
+	position: relative;
+	flex-shrink: 0;
+}
+
+.wing-002 .organ-axis::before {
+	content: '';
+	position: absolute;
+	top: 0;
+	bottom: 0;
+	left: 0;
+	width: 0;
+	border-right: var(--connector-size, 1px) var(--connector-dash, solid) var(--connector-color, #aaaaaa);
+	transform: translateX(calc(var(--connector-size, 1px) * -0.5));
+}
+
+/* .wing-002 .organ-dot {
+	position: absolute;
+	top: 50%;
+	left: 0;
+	transform: translate(-50%, -50%);
+	width: 7px;
+	height: 7px;
+	border-radius: 50%;
+	background: var(--connector-color, #aaaaaa);
+	display: block;
+	z-index: 1;
+} */
+
+/* 오른쪽 영역 */
+.wing-002 .organ-right {
+	flex: 1;
+	display: flex;
+	justify-content: flex-end;
+	align-items: center;
+	min-width: 0;
+}
+
+/* 수평 연결선 */
+.wing-002 .organ-line {
+	display: block;
+	flex: 1;
+	height: 0;
+	border-top: var(--connector-size, 1px) var(--connector-dash, solid) var(--connector-color, #aaaaaa);
+}
+
+/* 박스 */
+.wing-002 .organ-box {
+	border: 1px solid var(--title-border, #cccccc);
+	background: var(--title-bg, #ffffff);
+	padding: clamp(10px, 1.2vw, 14px) clamp(12px, 1.5vw, 16px);
+	min-width: 180px;
+	min-height: var(--title-height, auto);
+	box-sizing: border-box;
+}
+
+.wing-002 .organ-body {
+	list-style: none;
+	padding: 0;
+	margin: 0;
+}
+
+.wing-002 .organ-item {
+	position: relative;
+	padding-left: 14px;
+	color: var(--title-text, #333333);
+	font-size: var(--title-size, 14px);
+	font-weight: var(--title-weight, 400);
+	line-height: 1.9;
+	letter-spacing: -0.2px;
+}
+
+.wing-002 .organ-item::before {
+	content: '·';
+	position: absolute;
+	left: 2px;
+}
+
+/* 오른쪽 박스 독립 스타일 */
+.wing-002 .organ-right .organ-box {
+	background: var(--right-title-bg, #ffffff);
+	border-color: var(--right-title-border, #cccccc);
+	min-height: var(--right-title-height, auto);
+}
+.wing-002 .organ-right .organ-item {
+	color: var(--right-title-text, #333333);
+	font-size: var(--right-title-size, 14px);
+	font-weight: var(--right-title-weight, 400);
+}
+
+/* 배치 방향 클래스 */
+.wing-002.left .organ-right {
+	visibility: hidden;
+}
+
+.wing-002.right .organ-left {
+	visibility: hidden;
+}
+
+
+/* 빌더 모바일 캔버스 미리보기 */
+body:not(.preview-mode)[data-preview-device="mobile"] .wing-002 .organ-inner {
+	position: relative;
+	flex-direction: column;
+	gap: 20px;
+	padding: 0;
+}
+body:not(.preview-mode)[data-preview-device="mobile"] .wing-002 .organ-line {display: none;}
+body:not(.preview-mode)[data-preview-device="mobile"] .wing-002 .organ-box {
+	width: 100%;
+	z-index: 1;
+}
+body:not(.preview-mode)[data-preview-device="mobile"] .wing-002 .organ-axis {
+	position: absolute;
+	left: 50%;
+	height: 100%;
+}
+body:not(.preview-mode)[data-preview-device="mobile"] .wing-002.right .organ-left,
+body:not(.preview-mode)[data-preview-device="mobile"] .wing-002.left .organ-right {display: none;}
+
+/* 반응형 */
+@media (max-width:580px) {
+	.wing-002 .organ-inner {
+		position: relative;
+		flex-direction: column;
+		gap: 20px;
+		padding: 0;
+	}
+
+	.wing-002 .organ-line {display: none;}
+
+	.wing-002 .organ-box {
+		width: 100%;
+		z-index: 1;
+	}
+
+	.wing-002 .organ-axis {
+		position: absolute;
+		left: 50%;
+		height: 100%;
+	}
+
+	.wing-002.right .organ-left,
+	.wing-002.left .organ-right {display: none;}
+}

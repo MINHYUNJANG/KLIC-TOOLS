@@ -1,0 +1,33 @@
+{
+	"addDirection": "column",
+	"max": "5",
+	"recommend": {
+		"category": "list",
+		"colors": [
+			"blue",
+			"navy",
+			"white"
+		],
+		"tone": [
+			"clean",
+			"formal",
+			"public"
+		],
+		"style": [
+			"list",
+			"card",
+			"line"
+		],
+		"keywords": [
+			"학교",
+			"공지",
+			"교육청",
+			"안내"
+		],
+		"matchWith": [
+			"icon",
+			"divider",
+			"title"
+		]
+	}
+}

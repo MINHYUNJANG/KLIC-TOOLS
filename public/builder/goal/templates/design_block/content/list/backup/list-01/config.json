@@ -1,0 +1,37 @@
+{
+	"addDirection": "column",
+	"max": "3",
+	"styleOptions": {
+		"title": {
+			"label": "숫자",
+			"fields": [
+				{ "key": "backgroundColor", "label": "배경", "default": "#0b67c2" },
+				{ "key": "textColor", "label": "글자", "default": "#ffffff" }
+			]
+		},
+		"body": {
+			"label": "본문",
+			"fields": [
+				{ "key": "borderColor", "label": "선", "default": "#d8e0ec" },
+				{ "key": "backgroundColor", "label": "배경", "default": "#ffffff" },
+				{ "key": "textColor", "label": "글자", "default": "#182233" }
+			]
+		},
+		"tag": {
+			"label": "태그",
+			"cssClass": ".b28-row span",
+			"fields": [
+				{ "key": "backgroundColor", "label": "배경", "default": "#eef5ff" },
+				{ "key": "textColor", "label": "글자", "default": "#0b67c2" }
+			]
+		}
+	},
+	"recommend": {
+		"category": "list",
+		"colors": ["blue", "navy", "white"],
+		"tone": ["clean", "formal", "public"],
+		"style": ["list", "card", "line"],
+		"keywords": ["학교", "공지", "교육청", "안내"],
+		"matchWith": ["icon", "divider", "title"]
+	}
+}

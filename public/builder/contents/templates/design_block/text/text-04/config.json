@@ -1,0 +1,5 @@
+{
+  "addDirection": "column",
+  "smartInline": true,
+  "inlineHtml": "<a href=\"\" title=\"다운로드\" class=\"txt-st link\">다운로드<i class=\"ri-download-2-line\" aria-hidden=\"true\"></i></a>"
+}

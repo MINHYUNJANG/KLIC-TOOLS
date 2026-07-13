@@ -1,0 +1,33 @@
+{
+	"addDirection": "row",
+	"max": "3",
+	"recommend": {
+		"category": "title",
+		"colors": [
+			"navy",
+			"blue",
+			"white"
+		],
+		"tone": [
+			"formal",
+			"clear",
+			"public"
+		],
+		"style": [
+			"headline",
+			"label",
+			"line"
+		],
+		"keywords": [
+			"목표",
+			"비전",
+			"중점",
+			"제목"
+		],
+		"matchWith": [
+			"box",
+			"list",
+			"divider"
+		]
+	}
+}

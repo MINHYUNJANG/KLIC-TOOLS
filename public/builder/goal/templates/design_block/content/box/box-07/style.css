@@ -1,0 +1,24 @@
+﻿.box-07 {
+	/* 본문 */
+	--body-align: center;
+	--body-bg: #EDF3FF;
+	--body-text: #000;
+
+	display: flex;
+	gap: 8px;
+	min-height: 100%;
+	padding: 24px 16px;
+	border-radius: 10px;
+	background: var(--body-bg);
+}
+
+.box-07 .txt-wrap{
+	display: flex;
+	flex-direction: column;
+	gap: 8px;
+	align-items: center;
+}
+
+.box-07 .txt-wrap .txt{
+	width: 100%;
+}

@@ -1,0 +1,67 @@
+﻿.list-005 {
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	width: 100%;
+	box-sizing: border-box;
+	gap: clamp(8px, 1.2vw, 12px);
+}
+
+.list-005 .organ-head {
+	background: var(--title-bg, #b8cce4);
+	border-radius: 999px;
+	padding: clamp(7px, 1vw, 10px) clamp(24px, 4vw, 40px);
+	text-align: center;
+}
+
+.list-005 .organ-head p {
+	color: var(--title-text, #333333);
+	font-size: var(--title-size, 15px);
+	font-weight: var(--title-weight, 600);
+	letter-spacing: -0.3px;
+	white-space: pre-line;
+}
+
+.list-005 .organ-body {
+	width: 100%;
+	flex: 1;
+	border: 1.5px solid var(--body-border, #b8cce4);
+	border-radius: clamp(10px, 1.5vw, 14px);
+	padding: clamp(14px, 2vw, 20px);
+	background: var(--body-bg, #ffffff);
+	box-sizing: border-box;
+}
+
+.list-005 .organ-subtitle {
+	color: var(--body-text, #333333);
+	font-size: var(--body-size, 14px);
+	font-weight: 600;
+	text-align: center;
+	margin: 0 0 clamp(8px, 1.2vw, 12px);
+	letter-spacing: -0.2px;
+}
+
+.list-005 .organ-list {
+	list-style: none;
+	padding: 0;
+	margin: 0;
+	display: flex;
+	flex-direction: column;
+	gap: 5px;
+}
+
+.list-005 .organ-item {
+	color: var(--body-text, #333333);
+	font-size: var(--body-size, 13px);
+	line-height: 1.55;
+	padding-left: 14px;
+	position: relative;
+	letter-spacing: -0.2px;
+}
+
+.list-005 .organ-item::before {
+	content: "•";
+	position: absolute;
+	left: 0;
+	color: var(--body-text, #333333);
+}

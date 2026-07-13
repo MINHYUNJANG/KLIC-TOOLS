@@ -1,0 +1,22 @@
+﻿.box-001 {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	width: clamp(130px, 16vw, 140px);
+	height: clamp(130px, 16vw, 140px);
+	border-radius: 50%;
+	background: linear-gradient(135deg, var(--title-bg, #2d7d52) 0%, var(--title-bg2, #1a5a8a) 100%);
+	margin: 0 auto;
+	padding: 20px;
+	box-sizing: border-box;
+	box-shadow: 2px 3px 6px rgba(0, 0, 0, 0.2);
+}
+
+.box-001 p {
+	color: var(--title-text, #ffffff);
+	font-size: var(--title-size, 18px);
+	font-weight: var(--title-weight, 700);
+	text-align: center;
+	letter-spacing: -0.3px;
+	line-height: 1.4;
+}

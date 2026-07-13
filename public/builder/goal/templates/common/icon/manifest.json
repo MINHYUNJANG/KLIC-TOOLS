@@ -1,0 +1,2524 @@
+[
+  {
+    "label": "캐릭터아이콘",
+    "folder": "character",
+    "groups": [
+      {
+        "id": "01",
+        "label": "01",
+        "icons": [
+          {
+            "src": "templates/common/icon/character/01/character_01_001.png",
+            "name": "character_01_001"
+          },
+          {
+            "src": "templates/common/icon/character/01/character_01_002.png",
+            "name": "character_01_002"
+          },
+          {
+            "src": "templates/common/icon/character/01/character_01_003.png",
+            "name": "character_01_003"
+          },
+          {
+            "src": "templates/common/icon/character/01/character_01_004.png",
+            "name": "character_01_004"
+          },
+          {
+            "src": "templates/common/icon/character/01/character_01_005.png",
+            "name": "character_01_005"
+          },
+          {
+            "src": "templates/common/icon/character/01/character_01_006.png",
+            "name": "character_01_006"
+          },
+          {
+            "src": "templates/common/icon/character/01/character_01_007.png",
+            "name": "character_01_007"
+          },
+          {
+            "src": "templates/common/icon/character/01/character_01_008.png",
+            "name": "character_01_008"
+          },
+          {
+            "src": "templates/common/icon/character/01/character_01_009.png",
+            "name": "character_01_009"
+          },
+          {
+            "src": "templates/common/icon/character/01/character_01_010.png",
+            "name": "character_01_010"
+          },
+          {
+            "src": "templates/common/icon/character/01/character_01_011.png",
+            "name": "character_01_011"
+          },
+          {
+            "src": "templates/common/icon/character/01/character_01_012.png",
+            "name": "character_01_012"
+          },
+          {
+            "src": "templates/common/icon/character/01/character_01_013.png",
+            "name": "character_01_013"
+          },
+          {
+            "src": "templates/common/icon/character/01/character_01_014.png",
+            "name": "character_01_014"
+          },
+          {
+            "src": "templates/common/icon/character/01/character_01_015.png",
+            "name": "character_01_015"
+          },
+          {
+            "src": "templates/common/icon/character/01/character_01_016.png",
+            "name": "character_01_016"
+          },
+          {
+            "src": "templates/common/icon/character/01/character_01_017.png",
+            "name": "character_01_017"
+          },
+          {
+            "src": "templates/common/icon/character/01/character_01_018.png",
+            "name": "character_01_018"
+          },
+          {
+            "src": "templates/common/icon/character/01/character_01_019.png",
+            "name": "character_01_019"
+          },
+          {
+            "src": "templates/common/icon/character/01/character_01_020.png",
+            "name": "character_01_020"
+          },
+          {
+            "src": "templates/common/icon/character/01/character_01_021.png",
+            "name": "character_01_021"
+          },
+          {
+            "src": "templates/common/icon/character/01/character_01_022.png",
+            "name": "character_01_022"
+          },
+          {
+            "src": "templates/common/icon/character/01/character_01_023.png",
+            "name": "character_01_023"
+          },
+          {
+            "src": "templates/common/icon/character/01/character_01_024.png",
+            "name": "character_01_024"
+          },
+          {
+            "src": "templates/common/icon/character/01/character_01_025.png",
+            "name": "character_01_025"
+          },
+          {
+            "src": "templates/common/icon/character/01/character_01_026.png",
+            "name": "character_01_026"
+          },
+          {
+            "src": "templates/common/icon/character/01/character_01_027.png",
+            "name": "character_01_027"
+          },
+          {
+            "src": "templates/common/icon/character/01/character_01_028.png",
+            "name": "character_01_028"
+          },
+          {
+            "src": "templates/common/icon/character/01/character_01_029.png",
+            "name": "character_01_029"
+          },
+          {
+            "src": "templates/common/icon/character/01/character_01_030.png",
+            "name": "character_01_030"
+          },
+          {
+            "src": "templates/common/icon/character/01/character_01_031.png",
+            "name": "character_01_031"
+          },
+          {
+            "src": "templates/common/icon/character/01/character_01_032.png",
+            "name": "character_01_032"
+          }
+        ]
+      },
+      {
+        "id": "02",
+        "label": "02",
+        "icons": [
+          {
+            "src": "templates/common/icon/character/02/character_02_001.png",
+            "name": "character_02_001"
+          },
+          {
+            "src": "templates/common/icon/character/02/character_02_002.png",
+            "name": "character_02_002"
+          },
+          {
+            "src": "templates/common/icon/character/02/character_02_003.png",
+            "name": "character_02_003"
+          },
+          {
+            "src": "templates/common/icon/character/02/character_02_004.png",
+            "name": "character_02_004"
+          },
+          {
+            "src": "templates/common/icon/character/02/character_02_005.png",
+            "name": "character_02_005"
+          },
+          {
+            "src": "templates/common/icon/character/02/character_02_006.png",
+            "name": "character_02_006"
+          },
+          {
+            "src": "templates/common/icon/character/02/character_02_007.png",
+            "name": "character_02_007"
+          },
+          {
+            "src": "templates/common/icon/character/02/character_02_008.png",
+            "name": "character_02_008"
+          },
+          {
+            "src": "templates/common/icon/character/02/character_02_009.png",
+            "name": "character_02_009"
+          },
+          {
+            "src": "templates/common/icon/character/02/character_02_010.png",
+            "name": "character_02_010"
+          },
+          {
+            "src": "templates/common/icon/character/02/character_02_011.png",
+            "name": "character_02_011"
+          },
+          {
+            "src": "templates/common/icon/character/02/character_02_012.png",
+            "name": "character_02_012"
+          },
+          {
+            "src": "templates/common/icon/character/02/character_02_013.png",
+            "name": "character_02_013"
+          },
+          {
+            "src": "templates/common/icon/character/02/character_02_014.png",
+            "name": "character_02_014"
+          },
+          {
+            "src": "templates/common/icon/character/02/character_02_015.png",
+            "name": "character_02_015"
+          },
+          {
+            "src": "templates/common/icon/character/02/character_02_016.png",
+            "name": "character_02_016"
+          }
+        ]
+      },
+      {
+        "id": "03",
+        "label": "03",
+        "icons": [
+          {
+            "src": "templates/common/icon/character/03/character_03_001.png",
+            "name": "character_03_001"
+          },
+          {
+            "src": "templates/common/icon/character/03/character_03_002.png",
+            "name": "character_03_002"
+          },
+          {
+            "src": "templates/common/icon/character/03/character_03_003.png",
+            "name": "character_03_003"
+          },
+          {
+            "src": "templates/common/icon/character/03/character_03_004.png",
+            "name": "character_03_004"
+          },
+          {
+            "src": "templates/common/icon/character/03/character_03_005.png",
+            "name": "character_03_005"
+          },
+          {
+            "src": "templates/common/icon/character/03/character_03_006.png",
+            "name": "character_03_006"
+          },
+          {
+            "src": "templates/common/icon/character/03/character_03_007.png",
+            "name": "character_03_007"
+          },
+          {
+            "src": "templates/common/icon/character/03/character_03_008.png",
+            "name": "character_03_008"
+          },
+          {
+            "src": "templates/common/icon/character/03/character_03_009.png",
+            "name": "character_03_009"
+          },
+          {
+            "src": "templates/common/icon/character/03/character_03_010.png",
+            "name": "character_03_010"
+          },
+          {
+            "src": "templates/common/icon/character/03/character_03_011.png",
+            "name": "character_03_011"
+          },
+          {
+            "src": "templates/common/icon/character/03/character_03_012.png",
+            "name": "character_03_012"
+          },
+          {
+            "src": "templates/common/icon/character/03/character_03_013.png",
+            "name": "character_03_013"
+          },
+          {
+            "src": "templates/common/icon/character/03/character_03_014.png",
+            "name": "character_03_014"
+          },
+          {
+            "src": "templates/common/icon/character/03/character_03_015.png",
+            "name": "character_03_015"
+          },
+          {
+            "src": "templates/common/icon/character/03/character_03_016.png",
+            "name": "character_03_016"
+          },
+          {
+            "src": "templates/common/icon/character/03/character_03_017.png",
+            "name": "character_03_017"
+          },
+          {
+            "src": "templates/common/icon/character/03/character_03_018.png",
+            "name": "character_03_018"
+          },
+          {
+            "src": "templates/common/icon/character/03/character_03_019.png",
+            "name": "character_03_019"
+          },
+          {
+            "src": "templates/common/icon/character/03/character_03_020.png",
+            "name": "character_03_020"
+          },
+          {
+            "src": "templates/common/icon/character/03/character_03_021.png",
+            "name": "character_03_021"
+          },
+          {
+            "src": "templates/common/icon/character/03/character_03_022.png",
+            "name": "character_03_022"
+          },
+          {
+            "src": "templates/common/icon/character/03/character_03_023.png",
+            "name": "character_03_023"
+          },
+          {
+            "src": "templates/common/icon/character/03/character_03_024.png",
+            "name": "character_03_024"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "label": "플랫아이콘",
+    "folder": "flat",
+    "groups": [
+      {
+        "id": "01",
+        "label": "01",
+        "icons": [
+          {
+            "src": "templates/common/icon/flat/01/flat_01_001.png",
+            "name": "flat_01_001"
+          },
+          {
+            "src": "templates/common/icon/flat/01/flat_01_002.png",
+            "name": "flat_01_002"
+          },
+          {
+            "src": "templates/common/icon/flat/01/flat_01_003.png",
+            "name": "flat_01_003"
+          },
+          {
+            "src": "templates/common/icon/flat/01/flat_01_004.png",
+            "name": "flat_01_004"
+          },
+          {
+            "src": "templates/common/icon/flat/01/flat_01_005.png",
+            "name": "flat_01_005"
+          },
+          {
+            "src": "templates/common/icon/flat/01/flat_01_006.png",
+            "name": "flat_01_006"
+          },
+          {
+            "src": "templates/common/icon/flat/01/flat_01_007.png",
+            "name": "flat_01_007"
+          },
+          {
+            "src": "templates/common/icon/flat/01/flat_01_008.png",
+            "name": "flat_01_008"
+          },
+          {
+            "src": "templates/common/icon/flat/01/flat_01_009.png",
+            "name": "flat_01_009"
+          },
+          {
+            "src": "templates/common/icon/flat/01/flat_01_010.png",
+            "name": "flat_01_010"
+          },
+          {
+            "src": "templates/common/icon/flat/01/flat_01_011.png",
+            "name": "flat_01_011"
+          },
+          {
+            "src": "templates/common/icon/flat/01/flat_01_012.png",
+            "name": "flat_01_012"
+          },
+          {
+            "src": "templates/common/icon/flat/01/flat_01_013.png",
+            "name": "flat_01_013"
+          },
+          {
+            "src": "templates/common/icon/flat/01/flat_01_014.png",
+            "name": "flat_01_014"
+          },
+          {
+            "src": "templates/common/icon/flat/01/flat_01_015.png",
+            "name": "flat_01_015"
+          },
+          {
+            "src": "templates/common/icon/flat/01/flat_01_016.png",
+            "name": "flat_01_016"
+          }
+        ]
+      },
+      {
+        "id": "02",
+        "label": "02",
+        "icons": [
+          {
+            "src": "templates/common/icon/flat/02/flat_02_001.png",
+            "name": "flat_02_001"
+          },
+          {
+            "src": "templates/common/icon/flat/02/flat_02_002.png",
+            "name": "flat_02_002"
+          },
+          {
+            "src": "templates/common/icon/flat/02/flat_02_003.png",
+            "name": "flat_02_003"
+          },
+          {
+            "src": "templates/common/icon/flat/02/flat_02_004.png",
+            "name": "flat_02_004"
+          },
+          {
+            "src": "templates/common/icon/flat/02/flat_02_005.png",
+            "name": "flat_02_005"
+          },
+          {
+            "src": "templates/common/icon/flat/02/flat_02_006.png",
+            "name": "flat_02_006"
+          },
+          {
+            "src": "templates/common/icon/flat/02/flat_02_007.png",
+            "name": "flat_02_007"
+          },
+          {
+            "src": "templates/common/icon/flat/02/flat_02_008.png",
+            "name": "flat_02_008"
+          },
+          {
+            "src": "templates/common/icon/flat/02/flat_02_009.png",
+            "name": "flat_02_009"
+          },
+          {
+            "src": "templates/common/icon/flat/02/flat_02_010.png",
+            "name": "flat_02_010"
+          },
+          {
+            "src": "templates/common/icon/flat/02/flat_02_011.png",
+            "name": "flat_02_011"
+          },
+          {
+            "src": "templates/common/icon/flat/02/flat_02_012.png",
+            "name": "flat_02_012"
+          },
+          {
+            "src": "templates/common/icon/flat/02/flat_02_013.png",
+            "name": "flat_02_013"
+          },
+          {
+            "src": "templates/common/icon/flat/02/flat_02_014.png",
+            "name": "flat_02_014"
+          },
+          {
+            "src": "templates/common/icon/flat/02/flat_02_015.png",
+            "name": "flat_02_015"
+          },
+          {
+            "src": "templates/common/icon/flat/02/flat_02_016.png",
+            "name": "flat_02_016"
+          }
+        ]
+      },
+      {
+        "id": "03",
+        "label": "03",
+        "icons": [
+          {
+            "src": "templates/common/icon/flat/03/flat_03_001.png",
+            "name": "flat_03_001"
+          },
+          {
+            "src": "templates/common/icon/flat/03/flat_03_002.png",
+            "name": "flat_03_002"
+          },
+          {
+            "src": "templates/common/icon/flat/03/flat_03_003.png",
+            "name": "flat_03_003"
+          },
+          {
+            "src": "templates/common/icon/flat/03/flat_03_004.png",
+            "name": "flat_03_004"
+          },
+          {
+            "src": "templates/common/icon/flat/03/flat_03_005.png",
+            "name": "flat_03_005"
+          },
+          {
+            "src": "templates/common/icon/flat/03/flat_03_006.png",
+            "name": "flat_03_006"
+          },
+          {
+            "src": "templates/common/icon/flat/03/flat_03_007.png",
+            "name": "flat_03_007"
+          },
+          {
+            "src": "templates/common/icon/flat/03/flat_03_008.png",
+            "name": "flat_03_008"
+          },
+          {
+            "src": "templates/common/icon/flat/03/flat_03_009.png",
+            "name": "flat_03_009"
+          },
+          {
+            "src": "templates/common/icon/flat/03/flat_03_010.png",
+            "name": "flat_03_010"
+          },
+          {
+            "src": "templates/common/icon/flat/03/flat_03_011.png",
+            "name": "flat_03_011"
+          },
+          {
+            "src": "templates/common/icon/flat/03/flat_03_012.png",
+            "name": "flat_03_012"
+          },
+          {
+            "src": "templates/common/icon/flat/03/flat_03_013.png",
+            "name": "flat_03_013"
+          },
+          {
+            "src": "templates/common/icon/flat/03/flat_03_014.png",
+            "name": "flat_03_014"
+          },
+          {
+            "src": "templates/common/icon/flat/03/flat_03_015.png",
+            "name": "flat_03_015"
+          },
+          {
+            "src": "templates/common/icon/flat/03/flat_03_016.png",
+            "name": "flat_03_016"
+          },
+          {
+            "src": "templates/common/icon/flat/03/flat_03_017.png",
+            "name": "flat_03_017"
+          },
+          {
+            "src": "templates/common/icon/flat/03/flat_03_018.png",
+            "name": "flat_03_018"
+          },
+          {
+            "src": "templates/common/icon/flat/03/flat_03_019.png",
+            "name": "flat_03_019"
+          },
+          {
+            "src": "templates/common/icon/flat/03/flat_03_020.png",
+            "name": "flat_03_020"
+          }
+        ]
+      },
+      {
+        "id": "04",
+        "label": "04",
+        "icons": [
+          {
+            "src": "templates/common/icon/flat/04/flat_04_001.png",
+            "name": "flat_04_001"
+          },
+          {
+            "src": "templates/common/icon/flat/04/flat_04_002.png",
+            "name": "flat_04_002"
+          },
+          {
+            "src": "templates/common/icon/flat/04/flat_04_003.png",
+            "name": "flat_04_003"
+          },
+          {
+            "src": "templates/common/icon/flat/04/flat_04_004.png",
+            "name": "flat_04_004"
+          },
+          {
+            "src": "templates/common/icon/flat/04/flat_04_005.png",
+            "name": "flat_04_005"
+          },
+          {
+            "src": "templates/common/icon/flat/04/flat_04_006.png",
+            "name": "flat_04_006"
+          },
+          {
+            "src": "templates/common/icon/flat/04/flat_04_007.png",
+            "name": "flat_04_007"
+          },
+          {
+            "src": "templates/common/icon/flat/04/flat_04_008.png",
+            "name": "flat_04_008"
+          },
+          {
+            "src": "templates/common/icon/flat/04/flat_04_009.png",
+            "name": "flat_04_009"
+          },
+          {
+            "src": "templates/common/icon/flat/04/flat_04_010.png",
+            "name": "flat_04_010"
+          },
+          {
+            "src": "templates/common/icon/flat/04/flat_04_011.png",
+            "name": "flat_04_011"
+          },
+          {
+            "src": "templates/common/icon/flat/04/flat_04_012.png",
+            "name": "flat_04_012"
+          },
+          {
+            "src": "templates/common/icon/flat/04/flat_04_013.png",
+            "name": "flat_04_013"
+          },
+          {
+            "src": "templates/common/icon/flat/04/flat_04_014.png",
+            "name": "flat_04_014"
+          },
+          {
+            "src": "templates/common/icon/flat/04/flat_04_015.png",
+            "name": "flat_04_015"
+          },
+          {
+            "src": "templates/common/icon/flat/04/flat_04_016.png",
+            "name": "flat_04_016"
+          }
+        ]
+      },
+      {
+        "id": "05",
+        "label": "05",
+        "icons": [
+          {
+            "src": "templates/common/icon/flat/05/flat_05_001.png",
+            "name": "flat_05_001"
+          },
+          {
+            "src": "templates/common/icon/flat/05/flat_05_002.png",
+            "name": "flat_05_002"
+          },
+          {
+            "src": "templates/common/icon/flat/05/flat_05_003.png",
+            "name": "flat_05_003"
+          },
+          {
+            "src": "templates/common/icon/flat/05/flat_05_004.png",
+            "name": "flat_05_004"
+          },
+          {
+            "src": "templates/common/icon/flat/05/flat_05_005.png",
+            "name": "flat_05_005"
+          },
+          {
+            "src": "templates/common/icon/flat/05/flat_05_006.png",
+            "name": "flat_05_006"
+          },
+          {
+            "src": "templates/common/icon/flat/05/flat_05_007.png",
+            "name": "flat_05_007"
+          },
+          {
+            "src": "templates/common/icon/flat/05/flat_05_008.png",
+            "name": "flat_05_008"
+          },
+          {
+            "src": "templates/common/icon/flat/05/flat_05_009.png",
+            "name": "flat_05_009"
+          },
+          {
+            "src": "templates/common/icon/flat/05/flat_05_010.png",
+            "name": "flat_05_010"
+          },
+          {
+            "src": "templates/common/icon/flat/05/flat_05_011.png",
+            "name": "flat_05_011"
+          },
+          {
+            "src": "templates/common/icon/flat/05/flat_05_012.png",
+            "name": "flat_05_012"
+          },
+          {
+            "src": "templates/common/icon/flat/05/flat_05_013.png",
+            "name": "flat_05_013"
+          },
+          {
+            "src": "templates/common/icon/flat/05/flat_05_014.png",
+            "name": "flat_05_014"
+          },
+          {
+            "src": "templates/common/icon/flat/05/flat_05_015.png",
+            "name": "flat_05_015"
+          },
+          {
+            "src": "templates/common/icon/flat/05/flat_05_016.png",
+            "name": "flat_05_016"
+          },
+          {
+            "src": "templates/common/icon/flat/05/flat_05_017.png",
+            "name": "flat_05_017"
+          },
+          {
+            "src": "templates/common/icon/flat/05/flat_05_018.png",
+            "name": "flat_05_018"
+          },
+          {
+            "src": "templates/common/icon/flat/05/flat_05_019.png",
+            "name": "flat_05_019"
+          },
+          {
+            "src": "templates/common/icon/flat/05/flat_05_020.png",
+            "name": "flat_05_020"
+          },
+          {
+            "src": "templates/common/icon/flat/05/flat_05_021.png",
+            "name": "flat_05_021"
+          },
+          {
+            "src": "templates/common/icon/flat/05/flat_05_022.png",
+            "name": "flat_05_022"
+          },
+          {
+            "src": "templates/common/icon/flat/05/flat_05_023.png",
+            "name": "flat_05_023"
+          },
+          {
+            "src": "templates/common/icon/flat/05/flat_05_024.png",
+            "name": "flat_05_024"
+          }
+        ]
+      },
+      {
+        "id": "06",
+        "label": "06",
+        "icons": [
+          {
+            "src": "templates/common/icon/flat/06/flat_06_001.png",
+            "name": "flat_06_001"
+          },
+          {
+            "src": "templates/common/icon/flat/06/flat_06_002.png",
+            "name": "flat_06_002"
+          },
+          {
+            "src": "templates/common/icon/flat/06/flat_06_003.png",
+            "name": "flat_06_003"
+          },
+          {
+            "src": "templates/common/icon/flat/06/flat_06_004.png",
+            "name": "flat_06_004"
+          },
+          {
+            "src": "templates/common/icon/flat/06/flat_06_005.png",
+            "name": "flat_06_005"
+          },
+          {
+            "src": "templates/common/icon/flat/06/flat_06_006.png",
+            "name": "flat_06_006"
+          },
+          {
+            "src": "templates/common/icon/flat/06/flat_06_007.png",
+            "name": "flat_06_007"
+          },
+          {
+            "src": "templates/common/icon/flat/06/flat_06_008.png",
+            "name": "flat_06_008"
+          },
+          {
+            "src": "templates/common/icon/flat/06/flat_06_009.png",
+            "name": "flat_06_009"
+          },
+          {
+            "src": "templates/common/icon/flat/06/flat_06_010.png",
+            "name": "flat_06_010"
+          },
+          {
+            "src": "templates/common/icon/flat/06/flat_06_011.png",
+            "name": "flat_06_011"
+          },
+          {
+            "src": "templates/common/icon/flat/06/flat_06_012.png",
+            "name": "flat_06_012"
+          },
+          {
+            "src": "templates/common/icon/flat/06/flat_06_013.png",
+            "name": "flat_06_013"
+          },
+          {
+            "src": "templates/common/icon/flat/06/flat_06_014.png",
+            "name": "flat_06_014"
+          },
+          {
+            "src": "templates/common/icon/flat/06/flat_06_015.png",
+            "name": "flat_06_015"
+          },
+          {
+            "src": "templates/common/icon/flat/06/flat_06_016.png",
+            "name": "flat_06_016"
+          },
+          {
+            "src": "templates/common/icon/flat/06/flat_06_017.png",
+            "name": "flat_06_017"
+          },
+          {
+            "src": "templates/common/icon/flat/06/flat_06_018.png",
+            "name": "flat_06_018"
+          },
+          {
+            "src": "templates/common/icon/flat/06/flat_06_019.png",
+            "name": "flat_06_019"
+          },
+          {
+            "src": "templates/common/icon/flat/06/flat_06_020.png",
+            "name": "flat_06_020"
+          },
+          {
+            "src": "templates/common/icon/flat/06/flat_06_021.png",
+            "name": "flat_06_021"
+          },
+          {
+            "src": "templates/common/icon/flat/06/flat_06_022.png",
+            "name": "flat_06_022"
+          },
+          {
+            "src": "templates/common/icon/flat/06/flat_06_023.png",
+            "name": "flat_06_023"
+          },
+          {
+            "src": "templates/common/icon/flat/06/flat_06_024.png",
+            "name": "flat_06_024"
+          }
+        ]
+      },
+      {
+        "id": "07",
+        "label": "07",
+        "icons": [
+          {
+            "src": "templates/common/icon/flat/07/flat_07_001.png",
+            "name": "flat_07_001"
+          },
+          {
+            "src": "templates/common/icon/flat/07/flat_07_002.png",
+            "name": "flat_07_002"
+          },
+          {
+            "src": "templates/common/icon/flat/07/flat_07_003.png",
+            "name": "flat_07_003"
+          },
+          {
+            "src": "templates/common/icon/flat/07/flat_07_004.png",
+            "name": "flat_07_004"
+          },
+          {
+            "src": "templates/common/icon/flat/07/flat_07_005.png",
+            "name": "flat_07_005"
+          },
+          {
+            "src": "templates/common/icon/flat/07/flat_07_006.png",
+            "name": "flat_07_006"
+          },
+          {
+            "src": "templates/common/icon/flat/07/flat_07_007.png",
+            "name": "flat_07_007"
+          },
+          {
+            "src": "templates/common/icon/flat/07/flat_07_008.png",
+            "name": "flat_07_008"
+          },
+          {
+            "src": "templates/common/icon/flat/07/flat_07_009.png",
+            "name": "flat_07_009"
+          },
+          {
+            "src": "templates/common/icon/flat/07/flat_07_010.png",
+            "name": "flat_07_010"
+          },
+          {
+            "src": "templates/common/icon/flat/07/flat_07_011.png",
+            "name": "flat_07_011"
+          },
+          {
+            "src": "templates/common/icon/flat/07/flat_07_012.png",
+            "name": "flat_07_012"
+          },
+          {
+            "src": "templates/common/icon/flat/07/flat_07_013.png",
+            "name": "flat_07_013"
+          },
+          {
+            "src": "templates/common/icon/flat/07/flat_07_014.png",
+            "name": "flat_07_014"
+          },
+          {
+            "src": "templates/common/icon/flat/07/flat_07_015.png",
+            "name": "flat_07_015"
+          },
+          {
+            "src": "templates/common/icon/flat/07/flat_07_016.png",
+            "name": "flat_07_016"
+          },
+          {
+            "src": "templates/common/icon/flat/07/flat_07_017.png",
+            "name": "flat_07_017"
+          },
+          {
+            "src": "templates/common/icon/flat/07/flat_07_018.png",
+            "name": "flat_07_018"
+          },
+          {
+            "src": "templates/common/icon/flat/07/flat_07_019.png",
+            "name": "flat_07_019"
+          },
+          {
+            "src": "templates/common/icon/flat/07/flat_07_020.png",
+            "name": "flat_07_020"
+          },
+          {
+            "src": "templates/common/icon/flat/07/flat_07_021.png",
+            "name": "flat_07_021"
+          },
+          {
+            "src": "templates/common/icon/flat/07/flat_07_022.png",
+            "name": "flat_07_022"
+          },
+          {
+            "src": "templates/common/icon/flat/07/flat_07_023.png",
+            "name": "flat_07_023"
+          },
+          {
+            "src": "templates/common/icon/flat/07/flat_07_024.png",
+            "name": "flat_07_024"
+          },
+          {
+            "src": "templates/common/icon/flat/07/flat_07_025.png",
+            "name": "flat_07_025"
+          },
+          {
+            "src": "templates/common/icon/flat/07/flat_07_026.png",
+            "name": "flat_07_026"
+          },
+          {
+            "src": "templates/common/icon/flat/07/flat_07_027.png",
+            "name": "flat_07_027"
+          },
+          {
+            "src": "templates/common/icon/flat/07/flat_07_028.png",
+            "name": "flat_07_028"
+          },
+          {
+            "src": "templates/common/icon/flat/07/flat_07_029.png",
+            "name": "flat_07_029"
+          },
+          {
+            "src": "templates/common/icon/flat/07/flat_07_030.png",
+            "name": "flat_07_030"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "label": "라인아이콘",
+    "folder": "line",
+    "groups": [
+      {
+        "id": "01",
+        "label": "01",
+        "icons": [
+          {
+            "src": "templates/common/icon/line/01/line_01_001.png",
+            "name": "line_01_001"
+          },
+          {
+            "src": "templates/common/icon/line/01/line_01_002.png",
+            "name": "line_01_002"
+          },
+          {
+            "src": "templates/common/icon/line/01/line_01_003.png",
+            "name": "line_01_003"
+          },
+          {
+            "src": "templates/common/icon/line/01/line_01_004.png",
+            "name": "line_01_004"
+          },
+          {
+            "src": "templates/common/icon/line/01/line_01_005.png",
+            "name": "line_01_005"
+          },
+          {
+            "src": "templates/common/icon/line/01/line_01_006.png",
+            "name": "line_01_006"
+          },
+          {
+            "src": "templates/common/icon/line/01/line_01_007.png",
+            "name": "line_01_007"
+          },
+          {
+            "src": "templates/common/icon/line/01/line_01_008.png",
+            "name": "line_01_008"
+          },
+          {
+            "src": "templates/common/icon/line/01/line_01_009.png",
+            "name": "line_01_009"
+          },
+          {
+            "src": "templates/common/icon/line/01/line_01_010.png",
+            "name": "line_01_010"
+          },
+          {
+            "src": "templates/common/icon/line/01/line_01_011.png",
+            "name": "line_01_011"
+          },
+          {
+            "src": "templates/common/icon/line/01/line_01_012.png",
+            "name": "line_01_012"
+          },
+          {
+            "src": "templates/common/icon/line/01/line_01_013.png",
+            "name": "line_01_013"
+          },
+          {
+            "src": "templates/common/icon/line/01/line_01_014.png",
+            "name": "line_01_014"
+          },
+          {
+            "src": "templates/common/icon/line/01/line_01_015.png",
+            "name": "line_01_015"
+          },
+          {
+            "src": "templates/common/icon/line/01/line_01_016.png",
+            "name": "line_01_016"
+          },
+          {
+            "src": "templates/common/icon/line/01/line_01_017.png",
+            "name": "line_01_017"
+          },
+          {
+            "src": "templates/common/icon/line/01/line_01_018.png",
+            "name": "line_01_018"
+          },
+          {
+            "src": "templates/common/icon/line/01/line_01_019.png",
+            "name": "line_01_019"
+          },
+          {
+            "src": "templates/common/icon/line/01/line_01_020.png",
+            "name": "line_01_020"
+          },
+          {
+            "src": "templates/common/icon/line/01/line_01_021.png",
+            "name": "line_01_021"
+          },
+          {
+            "src": "templates/common/icon/line/01/line_01_022.png",
+            "name": "line_01_022"
+          },
+          {
+            "src": "templates/common/icon/line/01/line_01_023.png",
+            "name": "line_01_023"
+          },
+          {
+            "src": "templates/common/icon/line/01/line_01_024.png",
+            "name": "line_01_024"
+          },
+          {
+            "src": "templates/common/icon/line/01/line_01_025.png",
+            "name": "line_01_025"
+          },
+          {
+            "src": "templates/common/icon/line/01/line_01_026.png",
+            "name": "line_01_026"
+          },
+          {
+            "src": "templates/common/icon/line/01/line_01_027.png",
+            "name": "line_01_027"
+          },
+          {
+            "src": "templates/common/icon/line/01/line_01_028.png",
+            "name": "line_01_028"
+          },
+          {
+            "src": "templates/common/icon/line/01/line_01_029.png",
+            "name": "line_01_029"
+          },
+          {
+            "src": "templates/common/icon/line/01/line_01_030.png",
+            "name": "line_01_030"
+          },
+          {
+            "src": "templates/common/icon/line/01/line_01_031.png",
+            "name": "line_01_031"
+          },
+          {
+            "src": "templates/common/icon/line/01/line_01_032.png",
+            "name": "line_01_032"
+          },
+          {
+            "src": "templates/common/icon/line/01/line_01_033.png",
+            "name": "line_01_033"
+          },
+          {
+            "src": "templates/common/icon/line/01/line_01_034.png",
+            "name": "line_01_034"
+          },
+          {
+            "src": "templates/common/icon/line/01/line_01_035.png",
+            "name": "line_01_035"
+          }
+        ]
+      },
+      {
+        "id": "02",
+        "label": "02",
+        "icons": [
+          {
+            "src": "templates/common/icon/line/02/line_02_001.png",
+            "name": "line_02_001"
+          },
+          {
+            "src": "templates/common/icon/line/02/line_02_002.png",
+            "name": "line_02_002"
+          },
+          {
+            "src": "templates/common/icon/line/02/line_02_003.png",
+            "name": "line_02_003"
+          },
+          {
+            "src": "templates/common/icon/line/02/line_02_004.png",
+            "name": "line_02_004"
+          },
+          {
+            "src": "templates/common/icon/line/02/line_02_005.png",
+            "name": "line_02_005"
+          },
+          {
+            "src": "templates/common/icon/line/02/line_02_006.png",
+            "name": "line_02_006"
+          },
+          {
+            "src": "templates/common/icon/line/02/line_02_007.png",
+            "name": "line_02_007"
+          },
+          {
+            "src": "templates/common/icon/line/02/line_02_008.png",
+            "name": "line_02_008"
+          },
+          {
+            "src": "templates/common/icon/line/02/line_02_009.png",
+            "name": "line_02_009"
+          },
+          {
+            "src": "templates/common/icon/line/02/line_02_010.png",
+            "name": "line_02_010"
+          },
+          {
+            "src": "templates/common/icon/line/02/line_02_011.png",
+            "name": "line_02_011"
+          },
+          {
+            "src": "templates/common/icon/line/02/line_02_012.png",
+            "name": "line_02_012"
+          },
+          {
+            "src": "templates/common/icon/line/02/line_02_013.png",
+            "name": "line_02_013"
+          },
+          {
+            "src": "templates/common/icon/line/02/line_02_014.png",
+            "name": "line_02_014"
+          },
+          {
+            "src": "templates/common/icon/line/02/line_02_015.png",
+            "name": "line_02_015"
+          },
+          {
+            "src": "templates/common/icon/line/02/line_02_016.png",
+            "name": "line_02_016"
+          },
+          {
+            "src": "templates/common/icon/line/02/line_02_017.png",
+            "name": "line_02_017"
+          },
+          {
+            "src": "templates/common/icon/line/02/line_02_018.png",
+            "name": "line_02_018"
+          },
+          {
+            "src": "templates/common/icon/line/02/line_02_019.png",
+            "name": "line_02_019"
+          },
+          {
+            "src": "templates/common/icon/line/02/line_02_020.png",
+            "name": "line_02_020"
+          },
+          {
+            "src": "templates/common/icon/line/02/line_02_021.png",
+            "name": "line_02_021"
+          },
+          {
+            "src": "templates/common/icon/line/02/line_02_022.png",
+            "name": "line_02_022"
+          },
+          {
+            "src": "templates/common/icon/line/02/line_02_023.png",
+            "name": "line_02_023"
+          },
+          {
+            "src": "templates/common/icon/line/02/line_02_024.png",
+            "name": "line_02_024"
+          },
+          {
+            "src": "templates/common/icon/line/02/line_02_025.png",
+            "name": "line_02_025"
+          },
+          {
+            "src": "templates/common/icon/line/02/line_02_026.png",
+            "name": "line_02_026"
+          },
+          {
+            "src": "templates/common/icon/line/02/line_02_027.png",
+            "name": "line_02_027"
+          },
+          {
+            "src": "templates/common/icon/line/02/line_02_028.png",
+            "name": "line_02_028"
+          },
+          {
+            "src": "templates/common/icon/line/02/line_02_029.png",
+            "name": "line_02_029"
+          },
+          {
+            "src": "templates/common/icon/line/02/line_02_030.png",
+            "name": "line_02_030"
+          },
+          {
+            "src": "templates/common/icon/line/02/line_02_031.png",
+            "name": "line_02_031"
+          },
+          {
+            "src": "templates/common/icon/line/02/line_02_032.png",
+            "name": "line_02_032"
+          },
+          {
+            "src": "templates/common/icon/line/02/line_02_033.png",
+            "name": "line_02_033"
+          },
+          {
+            "src": "templates/common/icon/line/02/line_02_034.png",
+            "name": "line_02_034"
+          },
+          {
+            "src": "templates/common/icon/line/02/line_02_035.png",
+            "name": "line_02_035"
+          },
+          {
+            "src": "templates/common/icon/line/02/line_02_036.png",
+            "name": "line_02_036"
+          },
+          {
+            "src": "templates/common/icon/line/02/line_02_037.png",
+            "name": "line_02_037"
+          },
+          {
+            "src": "templates/common/icon/line/02/line_02_038.png",
+            "name": "line_02_038"
+          },
+          {
+            "src": "templates/common/icon/line/02/line_02_039.png",
+            "name": "line_02_039"
+          },
+          {
+            "src": "templates/common/icon/line/02/line_02_040.png",
+            "name": "line_02_040"
+          },
+          {
+            "src": "templates/common/icon/line/02/line_02_041.png",
+            "name": "line_02_041"
+          },
+          {
+            "src": "templates/common/icon/line/02/line_02_042.png",
+            "name": "line_02_042"
+          },
+          {
+            "src": "templates/common/icon/line/02/line_02_043.png",
+            "name": "line_02_043"
+          },
+          {
+            "src": "templates/common/icon/line/02/line_02_044.png",
+            "name": "line_02_044"
+          },
+          {
+            "src": "templates/common/icon/line/02/line_02_045.png",
+            "name": "line_02_045"
+          },
+          {
+            "src": "templates/common/icon/line/02/line_02_046.png",
+            "name": "line_02_046"
+          },
+          {
+            "src": "templates/common/icon/line/02/line_02_047.png",
+            "name": "line_02_047"
+          },
+          {
+            "src": "templates/common/icon/line/02/line_02_048.png",
+            "name": "line_02_048"
+          },
+          {
+            "src": "templates/common/icon/line/02/line_02_049.png",
+            "name": "line_02_049"
+          }
+        ]
+      },
+      {
+        "id": "03",
+        "label": "03",
+        "icons": [
+          {
+            "src": "templates/common/icon/line/03/line_03_001.png",
+            "name": "line_03_001"
+          },
+          {
+            "src": "templates/common/icon/line/03/line_03_002.png",
+            "name": "line_03_002"
+          },
+          {
+            "src": "templates/common/icon/line/03/line_03_003.png",
+            "name": "line_03_003"
+          },
+          {
+            "src": "templates/common/icon/line/03/line_03_004.png",
+            "name": "line_03_004"
+          },
+          {
+            "src": "templates/common/icon/line/03/line_03_005.png",
+            "name": "line_03_005"
+          },
+          {
+            "src": "templates/common/icon/line/03/line_03_006.png",
+            "name": "line_03_006"
+          },
+          {
+            "src": "templates/common/icon/line/03/line_03_007.png",
+            "name": "line_03_007"
+          },
+          {
+            "src": "templates/common/icon/line/03/line_03_008.png",
+            "name": "line_03_008"
+          },
+          {
+            "src": "templates/common/icon/line/03/line_03_009.png",
+            "name": "line_03_009"
+          },
+          {
+            "src": "templates/common/icon/line/03/line_03_010.png",
+            "name": "line_03_010"
+          },
+          {
+            "src": "templates/common/icon/line/03/line_03_011.png",
+            "name": "line_03_011"
+          },
+          {
+            "src": "templates/common/icon/line/03/line_03_012.png",
+            "name": "line_03_012"
+          },
+          {
+            "src": "templates/common/icon/line/03/line_03_013.png",
+            "name": "line_03_013"
+          },
+          {
+            "src": "templates/common/icon/line/03/line_03_014.png",
+            "name": "line_03_014"
+          },
+          {
+            "src": "templates/common/icon/line/03/line_03_015.png",
+            "name": "line_03_015"
+          },
+          {
+            "src": "templates/common/icon/line/03/line_03_016.png",
+            "name": "line_03_016"
+          },
+          {
+            "src": "templates/common/icon/line/03/line_03_017.png",
+            "name": "line_03_017"
+          },
+          {
+            "src": "templates/common/icon/line/03/line_03_018.png",
+            "name": "line_03_018"
+          },
+          {
+            "src": "templates/common/icon/line/03/line_03_019.png",
+            "name": "line_03_019"
+          },
+          {
+            "src": "templates/common/icon/line/03/line_03_020.png",
+            "name": "line_03_020"
+          },
+          {
+            "src": "templates/common/icon/line/03/line_03_021.png",
+            "name": "line_03_021"
+          },
+          {
+            "src": "templates/common/icon/line/03/line_03_022.png",
+            "name": "line_03_022"
+          },
+          {
+            "src": "templates/common/icon/line/03/line_03_023.png",
+            "name": "line_03_023"
+          },
+          {
+            "src": "templates/common/icon/line/03/line_03_024.png",
+            "name": "line_03_024"
+          },
+          {
+            "src": "templates/common/icon/line/03/line_03_025.png",
+            "name": "line_03_025"
+          },
+          {
+            "src": "templates/common/icon/line/03/line_03_026.png",
+            "name": "line_03_026"
+          },
+          {
+            "src": "templates/common/icon/line/03/line_03_027.png",
+            "name": "line_03_027"
+          },
+          {
+            "src": "templates/common/icon/line/03/line_03_028.png",
+            "name": "line_03_028"
+          },
+          {
+            "src": "templates/common/icon/line/03/line_03_029.png",
+            "name": "line_03_029"
+          }
+        ]
+      },
+      {
+        "id": "04",
+        "label": "04",
+        "icons": [
+          {
+            "src": "templates/common/icon/line/04/line_04_001.png",
+            "name": "line_04_001"
+          },
+          {
+            "src": "templates/common/icon/line/04/line_04_002.png",
+            "name": "line_04_002"
+          },
+          {
+            "src": "templates/common/icon/line/04/line_04_003.png",
+            "name": "line_04_003"
+          },
+          {
+            "src": "templates/common/icon/line/04/line_04_004.png",
+            "name": "line_04_004"
+          },
+          {
+            "src": "templates/common/icon/line/04/line_04_005.png",
+            "name": "line_04_005"
+          },
+          {
+            "src": "templates/common/icon/line/04/line_04_006.png",
+            "name": "line_04_006"
+          },
+          {
+            "src": "templates/common/icon/line/04/line_04_007.png",
+            "name": "line_04_007"
+          },
+          {
+            "src": "templates/common/icon/line/04/line_04_008.png",
+            "name": "line_04_008"
+          },
+          {
+            "src": "templates/common/icon/line/04/line_04_009.png",
+            "name": "line_04_009"
+          },
+          {
+            "src": "templates/common/icon/line/04/line_04_010.png",
+            "name": "line_04_010"
+          },
+          {
+            "src": "templates/common/icon/line/04/line_04_011.png",
+            "name": "line_04_011"
+          },
+          {
+            "src": "templates/common/icon/line/04/line_04_012.png",
+            "name": "line_04_012"
+          },
+          {
+            "src": "templates/common/icon/line/04/line_04_013.png",
+            "name": "line_04_013"
+          },
+          {
+            "src": "templates/common/icon/line/04/line_04_014.png",
+            "name": "line_04_014"
+          },
+          {
+            "src": "templates/common/icon/line/04/line_04_015.png",
+            "name": "line_04_015"
+          },
+          {
+            "src": "templates/common/icon/line/04/line_04_016.png",
+            "name": "line_04_016"
+          },
+          {
+            "src": "templates/common/icon/line/04/line_04_017.png",
+            "name": "line_04_017"
+          },
+          {
+            "src": "templates/common/icon/line/04/line_04_018.png",
+            "name": "line_04_018"
+          },
+          {
+            "src": "templates/common/icon/line/04/line_04_019.png",
+            "name": "line_04_019"
+          },
+          {
+            "src": "templates/common/icon/line/04/line_04_020.png",
+            "name": "line_04_020"
+          }
+        ]
+      },
+      {
+        "id": "05",
+        "label": "05",
+        "icons": [
+          {
+            "src": "templates/common/icon/line/05/line_05_001.png",
+            "name": "line_05_001"
+          },
+          {
+            "src": "templates/common/icon/line/05/line_05_002.png",
+            "name": "line_05_002"
+          },
+          {
+            "src": "templates/common/icon/line/05/line_05_003.png",
+            "name": "line_05_003"
+          },
+          {
+            "src": "templates/common/icon/line/05/line_05_004.png",
+            "name": "line_05_004"
+          },
+          {
+            "src": "templates/common/icon/line/05/line_05_005.png",
+            "name": "line_05_005"
+          },
+          {
+            "src": "templates/common/icon/line/05/line_05_006.png",
+            "name": "line_05_006"
+          },
+          {
+            "src": "templates/common/icon/line/05/line_05_007.png",
+            "name": "line_05_007"
+          },
+          {
+            "src": "templates/common/icon/line/05/line_05_008.png",
+            "name": "line_05_008"
+          },
+          {
+            "src": "templates/common/icon/line/05/line_05_009.png",
+            "name": "line_05_009"
+          },
+          {
+            "src": "templates/common/icon/line/05/line_05_010.png",
+            "name": "line_05_010"
+          },
+          {
+            "src": "templates/common/icon/line/05/line_05_011.png",
+            "name": "line_05_011"
+          },
+          {
+            "src": "templates/common/icon/line/05/line_05_012.png",
+            "name": "line_05_012"
+          },
+          {
+            "src": "templates/common/icon/line/05/line_05_013.png",
+            "name": "line_05_013"
+          },
+          {
+            "src": "templates/common/icon/line/05/line_05_014.png",
+            "name": "line_05_014"
+          },
+          {
+            "src": "templates/common/icon/line/05/line_05_015.png",
+            "name": "line_05_015"
+          },
+          {
+            "src": "templates/common/icon/line/05/line_05_016.png",
+            "name": "line_05_016"
+          },
+          {
+            "src": "templates/common/icon/line/05/line_05_017.png",
+            "name": "line_05_017"
+          },
+          {
+            "src": "templates/common/icon/line/05/line_05_018.png",
+            "name": "line_05_018"
+          },
+          {
+            "src": "templates/common/icon/line/05/line_05_019.png",
+            "name": "line_05_019"
+          },
+          {
+            "src": "templates/common/icon/line/05/line_05_020.png",
+            "name": "line_05_020"
+          },
+          {
+            "src": "templates/common/icon/line/05/line_05_021.png",
+            "name": "line_05_021"
+          },
+          {
+            "src": "templates/common/icon/line/05/line_05_022.png",
+            "name": "line_05_022"
+          },
+          {
+            "src": "templates/common/icon/line/05/line_05_023.png",
+            "name": "line_05_023"
+          },
+          {
+            "src": "templates/common/icon/line/05/line_05_024.png",
+            "name": "line_05_024"
+          }
+        ]
+      },
+      {
+        "id": "06",
+        "label": "06",
+        "icons": [
+          {
+            "src": "templates/common/icon/line/06/line_06_001.png",
+            "name": "line_06_001"
+          },
+          {
+            "src": "templates/common/icon/line/06/line_06_002.png",
+            "name": "line_06_002"
+          },
+          {
+            "src": "templates/common/icon/line/06/line_06_003.png",
+            "name": "line_06_003"
+          },
+          {
+            "src": "templates/common/icon/line/06/line_06_004.png",
+            "name": "line_06_004"
+          },
+          {
+            "src": "templates/common/icon/line/06/line_06_005.png",
+            "name": "line_06_005"
+          },
+          {
+            "src": "templates/common/icon/line/06/line_06_006.png",
+            "name": "line_06_006"
+          },
+          {
+            "src": "templates/common/icon/line/06/line_06_007.png",
+            "name": "line_06_007"
+          },
+          {
+            "src": "templates/common/icon/line/06/line_06_008.png",
+            "name": "line_06_008"
+          },
+          {
+            "src": "templates/common/icon/line/06/line_06_009.png",
+            "name": "line_06_009"
+          },
+          {
+            "src": "templates/common/icon/line/06/line_06_010.png",
+            "name": "line_06_010"
+          },
+          {
+            "src": "templates/common/icon/line/06/line_06_011.png",
+            "name": "line_06_011"
+          },
+          {
+            "src": "templates/common/icon/line/06/line_06_012.png",
+            "name": "line_06_012"
+          },
+          {
+            "src": "templates/common/icon/line/06/line_06_013.png",
+            "name": "line_06_013"
+          },
+          {
+            "src": "templates/common/icon/line/06/line_06_014.png",
+            "name": "line_06_014"
+          },
+          {
+            "src": "templates/common/icon/line/06/line_06_015.png",
+            "name": "line_06_015"
+          },
+          {
+            "src": "templates/common/icon/line/06/line_06_016.png",
+            "name": "line_06_016"
+          },
+          {
+            "src": "templates/common/icon/line/06/line_06_017.png",
+            "name": "line_06_017"
+          },
+          {
+            "src": "templates/common/icon/line/06/line_06_018.png",
+            "name": "line_06_018"
+          },
+          {
+            "src": "templates/common/icon/line/06/line_06_019.png",
+            "name": "line_06_019"
+          },
+          {
+            "src": "templates/common/icon/line/06/line_06_020.png",
+            "name": "line_06_020"
+          },
+          {
+            "src": "templates/common/icon/line/06/line_06_021.png",
+            "name": "line_06_021"
+          },
+          {
+            "src": "templates/common/icon/line/06/line_06_022.png",
+            "name": "line_06_022"
+          },
+          {
+            "src": "templates/common/icon/line/06/line_06_023.png",
+            "name": "line_06_023"
+          },
+          {
+            "src": "templates/common/icon/line/06/line_06_024.png",
+            "name": "line_06_024"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "label": "기타",
+    "folder": "misc",
+    "groups": [
+      {
+        "id": "01",
+        "label": "01",
+        "icons": [
+          {
+            "src": "templates/common/icon/misc/01/misc_01_001.png",
+            "name": "misc_01_001"
+          },
+          {
+            "src": "templates/common/icon/misc/01/misc_01_002.png",
+            "name": "misc_01_002"
+          },
+          {
+            "src": "templates/common/icon/misc/01/misc_01_003.png",
+            "name": "misc_01_003"
+          },
+          {
+            "src": "templates/common/icon/misc/01/misc_01_004.png",
+            "name": "misc_01_004"
+          },
+          {
+            "src": "templates/common/icon/misc/01/misc_01_005.png",
+            "name": "misc_01_005"
+          },
+          {
+            "src": "templates/common/icon/misc/01/misc_01_006.png",
+            "name": "misc_01_006"
+          },
+          {
+            "src": "templates/common/icon/misc/01/misc_01_007.png",
+            "name": "misc_01_007"
+          },
+          {
+            "src": "templates/common/icon/misc/01/misc_01_008.png",
+            "name": "misc_01_008"
+          },
+          {
+            "src": "templates/common/icon/misc/01/misc_01_009.png",
+            "name": "misc_01_009"
+          },
+          {
+            "src": "templates/common/icon/misc/01/misc_01_010.png",
+            "name": "misc_01_010"
+          },
+          {
+            "src": "templates/common/icon/misc/01/misc_01_011.png",
+            "name": "misc_01_011"
+          },
+          {
+            "src": "templates/common/icon/misc/01/misc_01_012.png",
+            "name": "misc_01_012"
+          },
+          {
+            "src": "templates/common/icon/misc/01/misc_01_013.png",
+            "name": "misc_01_013"
+          },
+          {
+            "src": "templates/common/icon/misc/01/misc_01_014.png",
+            "name": "misc_01_014"
+          },
+          {
+            "src": "templates/common/icon/misc/01/misc_01_015.png",
+            "name": "misc_01_015"
+          },
+          {
+            "src": "templates/common/icon/misc/01/misc_01_016.png",
+            "name": "misc_01_016"
+          },
+          {
+            "src": "templates/common/icon/misc/01/misc_01_017.png",
+            "name": "misc_01_017"
+          },
+          {
+            "src": "templates/common/icon/misc/01/misc_01_018.png",
+            "name": "misc_01_018"
+          },
+          {
+            "src": "templates/common/icon/misc/01/misc_01_019.png",
+            "name": "misc_01_019"
+          },
+          {
+            "src": "templates/common/icon/misc/01/misc_01_020.png",
+            "name": "misc_01_020"
+          },
+          {
+            "src": "templates/common/icon/misc/01/misc_01_021.png",
+            "name": "misc_01_021"
+          },
+          {
+            "src": "templates/common/icon/misc/01/misc_01_022.png",
+            "name": "misc_01_022"
+          },
+          {
+            "src": "templates/common/icon/misc/01/misc_01_023.png",
+            "name": "misc_01_023"
+          },
+          {
+            "src": "templates/common/icon/misc/01/misc_01_024.png",
+            "name": "misc_01_024"
+          },
+          {
+            "src": "templates/common/icon/misc/01/misc_01_025.png",
+            "name": "misc_01_025"
+          },
+          {
+            "src": "templates/common/icon/misc/01/misc_01_026.png",
+            "name": "misc_01_026"
+          },
+          {
+            "src": "templates/common/icon/misc/01/misc_01_027.png",
+            "name": "misc_01_027"
+          },
+          {
+            "src": "templates/common/icon/misc/01/misc_01_028.png",
+            "name": "misc_01_028"
+          },
+          {
+            "src": "templates/common/icon/misc/01/misc_01_029.png",
+            "name": "misc_01_029"
+          },
+          {
+            "src": "templates/common/icon/misc/01/misc_01_030.png",
+            "name": "misc_01_030"
+          }
+        ]
+      },
+      {
+        "id": "02",
+        "label": "02",
+        "icons": [
+          {
+            "src": "templates/common/icon/misc/02/misc_02_001.png",
+            "name": "misc_02_001"
+          },
+          {
+            "src": "templates/common/icon/misc/02/misc_02_002.png",
+            "name": "misc_02_002"
+          },
+          {
+            "src": "templates/common/icon/misc/02/misc_02_003.png",
+            "name": "misc_02_003"
+          },
+          {
+            "src": "templates/common/icon/misc/02/misc_02_004.png",
+            "name": "misc_02_004"
+          },
+          {
+            "src": "templates/common/icon/misc/02/misc_02_005.png",
+            "name": "misc_02_005"
+          },
+          {
+            "src": "templates/common/icon/misc/02/misc_02_006.png",
+            "name": "misc_02_006"
+          },
+          {
+            "src": "templates/common/icon/misc/02/misc_02_007.png",
+            "name": "misc_02_007"
+          },
+          {
+            "src": "templates/common/icon/misc/02/misc_02_008.png",
+            "name": "misc_02_008"
+          },
+          {
+            "src": "templates/common/icon/misc/02/misc_02_009.png",
+            "name": "misc_02_009"
+          },
+          {
+            "src": "templates/common/icon/misc/02/misc_02_010.png",
+            "name": "misc_02_010"
+          },
+          {
+            "src": "templates/common/icon/misc/02/misc_02_011.png",
+            "name": "misc_02_011"
+          },
+          {
+            "src": "templates/common/icon/misc/02/misc_02_012.png",
+            "name": "misc_02_012"
+          },
+          {
+            "src": "templates/common/icon/misc/02/misc_02_013.png",
+            "name": "misc_02_013"
+          },
+          {
+            "src": "templates/common/icon/misc/02/misc_02_014.png",
+            "name": "misc_02_014"
+          },
+          {
+            "src": "templates/common/icon/misc/02/misc_02_015.png",
+            "name": "misc_02_015"
+          },
+          {
+            "src": "templates/common/icon/misc/02/misc_02_016.png",
+            "name": "misc_02_016"
+          },
+          {
+            "src": "templates/common/icon/misc/02/misc_02_017.png",
+            "name": "misc_02_017"
+          },
+          {
+            "src": "templates/common/icon/misc/02/misc_02_018.png",
+            "name": "misc_02_018"
+          },
+          {
+            "src": "templates/common/icon/misc/02/misc_02_019.png",
+            "name": "misc_02_019"
+          },
+          {
+            "src": "templates/common/icon/misc/02/misc_02_020.png",
+            "name": "misc_02_020"
+          },
+          {
+            "src": "templates/common/icon/misc/02/misc_02_021.png",
+            "name": "misc_02_021"
+          },
+          {
+            "src": "templates/common/icon/misc/02/misc_02_022.png",
+            "name": "misc_02_022"
+          },
+          {
+            "src": "templates/common/icon/misc/02/misc_02_023.png",
+            "name": "misc_02_023"
+          },
+          {
+            "src": "templates/common/icon/misc/02/misc_02_024.png",
+            "name": "misc_02_024"
+          }
+        ]
+      },
+      {
+        "id": "03",
+        "label": "03",
+        "icons": [
+          {
+            "src": "templates/common/icon/misc/03/misc_03_001.png",
+            "name": "misc_03_001"
+          },
+          {
+            "src": "templates/common/icon/misc/03/misc_03_002.png",
+            "name": "misc_03_002"
+          },
+          {
+            "src": "templates/common/icon/misc/03/misc_03_003.png",
+            "name": "misc_03_003"
+          },
+          {
+            "src": "templates/common/icon/misc/03/misc_03_004.png",
+            "name": "misc_03_004"
+          },
+          {
+            "src": "templates/common/icon/misc/03/misc_03_005.png",
+            "name": "misc_03_005"
+          },
+          {
+            "src": "templates/common/icon/misc/03/misc_03_006.png",
+            "name": "misc_03_006"
+          },
+          {
+            "src": "templates/common/icon/misc/03/misc_03_007.png",
+            "name": "misc_03_007"
+          },
+          {
+            "src": "templates/common/icon/misc/03/misc_03_008.png",
+            "name": "misc_03_008"
+          },
+          {
+            "src": "templates/common/icon/misc/03/misc_03_009.png",
+            "name": "misc_03_009"
+          },
+          {
+            "src": "templates/common/icon/misc/03/misc_03_010.png",
+            "name": "misc_03_010"
+          },
+          {
+            "src": "templates/common/icon/misc/03/misc_03_011.png",
+            "name": "misc_03_011"
+          },
+          {
+            "src": "templates/common/icon/misc/03/misc_03_012.png",
+            "name": "misc_03_012"
+          },
+          {
+            "src": "templates/common/icon/misc/03/misc_03_013.png",
+            "name": "misc_03_013"
+          },
+          {
+            "src": "templates/common/icon/misc/03/misc_03_014.png",
+            "name": "misc_03_014"
+          },
+          {
+            "src": "templates/common/icon/misc/03/misc_03_015.png",
+            "name": "misc_03_015"
+          },
+          {
+            "src": "templates/common/icon/misc/03/misc_03_016.png",
+            "name": "misc_03_016"
+          },
+          {
+            "src": "templates/common/icon/misc/03/misc_03_017.png",
+            "name": "misc_03_017"
+          },
+          {
+            "src": "templates/common/icon/misc/03/misc_03_018.png",
+            "name": "misc_03_018"
+          },
+          {
+            "src": "templates/common/icon/misc/03/misc_03_019.png",
+            "name": "misc_03_019"
+          },
+          {
+            "src": "templates/common/icon/misc/03/misc_03_020.png",
+            "name": "misc_03_020"
+          },
+          {
+            "src": "templates/common/icon/misc/03/misc_03_021.png",
+            "name": "misc_03_021"
+          },
+          {
+            "src": "templates/common/icon/misc/03/misc_03_022.png",
+            "name": "misc_03_022"
+          },
+          {
+            "src": "templates/common/icon/misc/03/misc_03_023.png",
+            "name": "misc_03_023"
+          },
+          {
+            "src": "templates/common/icon/misc/03/misc_03_024.png",
+            "name": "misc_03_024"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "label": "픽토그램",
+    "folder": "pictogram",
+    "groups": [
+      {
+        "id": "01",
+        "label": "01",
+        "icons": [
+          {
+            "src": "templates/common/icon/pictogram/01/pictogram_01_001.png",
+            "name": "pictogram_01_001"
+          },
+          {
+            "src": "templates/common/icon/pictogram/01/pictogram_01_002.png",
+            "name": "pictogram_01_002"
+          },
+          {
+            "src": "templates/common/icon/pictogram/01/pictogram_01_003.png",
+            "name": "pictogram_01_003"
+          },
+          {
+            "src": "templates/common/icon/pictogram/01/pictogram_01_004.png",
+            "name": "pictogram_01_004"
+          },
+          {
+            "src": "templates/common/icon/pictogram/01/pictogram_01_005.png",
+            "name": "pictogram_01_005"
+          },
+          {
+            "src": "templates/common/icon/pictogram/01/pictogram_01_006.png",
+            "name": "pictogram_01_006"
+          },
+          {
+            "src": "templates/common/icon/pictogram/01/pictogram_01_007.png",
+            "name": "pictogram_01_007"
+          },
+          {
+            "src": "templates/common/icon/pictogram/01/pictogram_01_008.png",
+            "name": "pictogram_01_008"
+          },
+          {
+            "src": "templates/common/icon/pictogram/01/pictogram_01_009.png",
+            "name": "pictogram_01_009"
+          },
+          {
+            "src": "templates/common/icon/pictogram/01/pictogram_01_010.png",
+            "name": "pictogram_01_010"
+          },
+          {
+            "src": "templates/common/icon/pictogram/01/pictogram_01_011.png",
+            "name": "pictogram_01_011"
+          },
+          {
+            "src": "templates/common/icon/pictogram/01/pictogram_01_012.png",
+            "name": "pictogram_01_012"
+          },
+          {
+            "src": "templates/common/icon/pictogram/01/pictogram_01_013.png",
+            "name": "pictogram_01_013"
+          },
+          {
+            "src": "templates/common/icon/pictogram/01/pictogram_01_014.png",
+            "name": "pictogram_01_014"
+          },
+          {
+            "src": "templates/common/icon/pictogram/01/pictogram_01_015.png",
+            "name": "pictogram_01_015"
+          },
+          {
+            "src": "templates/common/icon/pictogram/01/pictogram_01_016.png",
+            "name": "pictogram_01_016"
+          },
+          {
+            "src": "templates/common/icon/pictogram/01/pictogram_01_017.png",
+            "name": "pictogram_01_017"
+          },
+          {
+            "src": "templates/common/icon/pictogram/01/pictogram_01_018.png",
+            "name": "pictogram_01_018"
+          },
+          {
+            "src": "templates/common/icon/pictogram/01/pictogram_01_019.png",
+            "name": "pictogram_01_019"
+          },
+          {
+            "src": "templates/common/icon/pictogram/01/pictogram_01_020.png",
+            "name": "pictogram_01_020"
+          },
+          {
+            "src": "templates/common/icon/pictogram/01/pictogram_01_021.png",
+            "name": "pictogram_01_021"
+          },
+          {
+            "src": "templates/common/icon/pictogram/01/pictogram_01_022.png",
+            "name": "pictogram_01_022"
+          },
+          {
+            "src": "templates/common/icon/pictogram/01/pictogram_01_023.png",
+            "name": "pictogram_01_023"
+          },
+          {
+            "src": "templates/common/icon/pictogram/01/pictogram_01_024.png",
+            "name": "pictogram_01_024"
+          },
+          {
+            "src": "templates/common/icon/pictogram/01/pictogram_01_025.png",
+            "name": "pictogram_01_025"
+          },
+          {
+            "src": "templates/common/icon/pictogram/01/pictogram_01_026.png",
+            "name": "pictogram_01_026"
+          },
+          {
+            "src": "templates/common/icon/pictogram/01/pictogram_01_027.png",
+            "name": "pictogram_01_027"
+          },
+          {
+            "src": "templates/common/icon/pictogram/01/pictogram_01_028.png",
+            "name": "pictogram_01_028"
+          },
+          {
+            "src": "templates/common/icon/pictogram/01/pictogram_01_029.png",
+            "name": "pictogram_01_029"
+          },
+          {
+            "src": "templates/common/icon/pictogram/01/pictogram_01_030.png",
+            "name": "pictogram_01_030"
+          },
+          {
+            "src": "templates/common/icon/pictogram/01/pictogram_01_031.png",
+            "name": "pictogram_01_031"
+          },
+          {
+            "src": "templates/common/icon/pictogram/01/pictogram_01_032.png",
+            "name": "pictogram_01_032"
+          },
+          {
+            "src": "templates/common/icon/pictogram/01/pictogram_01_033.png",
+            "name": "pictogram_01_033"
+          },
+          {
+            "src": "templates/common/icon/pictogram/01/pictogram_01_034.png",
+            "name": "pictogram_01_034"
+          },
+          {
+            "src": "templates/common/icon/pictogram/01/pictogram_01_035.png",
+            "name": "pictogram_01_035"
+          },
+          {
+            "src": "templates/common/icon/pictogram/01/pictogram_01_036.png",
+            "name": "pictogram_01_036"
+          },
+          {
+            "src": "templates/common/icon/pictogram/01/pictogram_01_037.png",
+            "name": "pictogram_01_037"
+          },
+          {
+            "src": "templates/common/icon/pictogram/01/pictogram_01_038.png",
+            "name": "pictogram_01_038"
+          },
+          {
+            "src": "templates/common/icon/pictogram/01/pictogram_01_039.png",
+            "name": "pictogram_01_039"
+          },
+          {
+            "src": "templates/common/icon/pictogram/01/pictogram_01_040.png",
+            "name": "pictogram_01_040"
+          },
+          {
+            "src": "templates/common/icon/pictogram/01/pictogram_01_041.png",
+            "name": "pictogram_01_041"
+          },
+          {
+            "src": "templates/common/icon/pictogram/01/pictogram_01_042.png",
+            "name": "pictogram_01_042"
+          }
+        ]
+      },
+      {
+        "id": "02",
+        "label": "02",
+        "icons": [
+          {
+            "src": "templates/common/icon/pictogram/02/pictogram_02_001.png",
+            "name": "pictogram_02_001"
+          },
+          {
+            "src": "templates/common/icon/pictogram/02/pictogram_02_002.png",
+            "name": "pictogram_02_002"
+          },
+          {
+            "src": "templates/common/icon/pictogram/02/pictogram_02_003.png",
+            "name": "pictogram_02_003"
+          },
+          {
+            "src": "templates/common/icon/pictogram/02/pictogram_02_004.png",
+            "name": "pictogram_02_004"
+          },
+          {
+            "src": "templates/common/icon/pictogram/02/pictogram_02_005.png",
+            "name": "pictogram_02_005"
+          },
+          {
+            "src": "templates/common/icon/pictogram/02/pictogram_02_006.png",
+            "name": "pictogram_02_006"
+          },
+          {
+            "src": "templates/common/icon/pictogram/02/pictogram_02_007.png",
+            "name": "pictogram_02_007"
+          },
+          {
+            "src": "templates/common/icon/pictogram/02/pictogram_02_008.png",
+            "name": "pictogram_02_008"
+          },
+          {
+            "src": "templates/common/icon/pictogram/02/pictogram_02_009.png",
+            "name": "pictogram_02_009"
+          },
+          {
+            "src": "templates/common/icon/pictogram/02/pictogram_02_010.png",
+            "name": "pictogram_02_010"
+          },
+          {
+            "src": "templates/common/icon/pictogram/02/pictogram_02_011.png",
+            "name": "pictogram_02_011"
+          },
+          {
+            "src": "templates/common/icon/pictogram/02/pictogram_02_012.png",
+            "name": "pictogram_02_012"
+          },
+          {
+            "src": "templates/common/icon/pictogram/02/pictogram_02_013.png",
+            "name": "pictogram_02_013"
+          },
+          {
+            "src": "templates/common/icon/pictogram/02/pictogram_02_014.png",
+            "name": "pictogram_02_014"
+          },
+          {
+            "src": "templates/common/icon/pictogram/02/pictogram_02_015.png",
+            "name": "pictogram_02_015"
+          },
+          {
+            "src": "templates/common/icon/pictogram/02/pictogram_02_016.png",
+            "name": "pictogram_02_016"
+          },
+          {
+            "src": "templates/common/icon/pictogram/02/pictogram_02_017.png",
+            "name": "pictogram_02_017"
+          },
+          {
+            "src": "templates/common/icon/pictogram/02/pictogram_02_018.png",
+            "name": "pictogram_02_018"
+          },
+          {
+            "src": "templates/common/icon/pictogram/02/pictogram_02_019.png",
+            "name": "pictogram_02_019"
+          },
+          {
+            "src": "templates/common/icon/pictogram/02/pictogram_02_020.png",
+            "name": "pictogram_02_020"
+          },
+          {
+            "src": "templates/common/icon/pictogram/02/pictogram_02_021.png",
+            "name": "pictogram_02_021"
+          },
+          {
+            "src": "templates/common/icon/pictogram/02/pictogram_02_022.png",
+            "name": "pictogram_02_022"
+          },
+          {
+            "src": "templates/common/icon/pictogram/02/pictogram_02_023.png",
+            "name": "pictogram_02_023"
+          },
+          {
+            "src": "templates/common/icon/pictogram/02/pictogram_02_024.png",
+            "name": "pictogram_02_024"
+          }
+        ]
+      },
+      {
+        "id": "03",
+        "label": "03",
+        "icons": [
+          {
+            "src": "templates/common/icon/pictogram/03/pictogram_03_001.png",
+            "name": "pictogram_03_001"
+          },
+          {
+            "src": "templates/common/icon/pictogram/03/pictogram_03_002.png",
+            "name": "pictogram_03_002"
+          },
+          {
+            "src": "templates/common/icon/pictogram/03/pictogram_03_003.png",
+            "name": "pictogram_03_003"
+          },
+          {
+            "src": "templates/common/icon/pictogram/03/pictogram_03_004.png",
+            "name": "pictogram_03_004"
+          },
+          {
+            "src": "templates/common/icon/pictogram/03/pictogram_03_005.png",
+            "name": "pictogram_03_005"
+          },
+          {
+            "src": "templates/common/icon/pictogram/03/pictogram_03_006.png",
+            "name": "pictogram_03_006"
+          },
+          {
+            "src": "templates/common/icon/pictogram/03/pictogram_03_007.png",
+            "name": "pictogram_03_007"
+          },
+          {
+            "src": "templates/common/icon/pictogram/03/pictogram_03_008.png",
+            "name": "pictogram_03_008"
+          },
+          {
+            "src": "templates/common/icon/pictogram/03/pictogram_03_009.png",
+            "name": "pictogram_03_009"
+          },
+          {
+            "src": "templates/common/icon/pictogram/03/pictogram_03_010.png",
+            "name": "pictogram_03_010"
+          },
+          {
+            "src": "templates/common/icon/pictogram/03/pictogram_03_011.png",
+            "name": "pictogram_03_011"
+          },
+          {
+            "src": "templates/common/icon/pictogram/03/pictogram_03_012.png",
+            "name": "pictogram_03_012"
+          }
+        ]
+      },
+      {
+        "id": "04",
+        "label": "04",
+        "icons": [
+          {
+            "src": "templates/common/icon/pictogram/04/pictogram_04_001.png",
+            "name": "pictogram_04_001"
+          },
+          {
+            "src": "templates/common/icon/pictogram/04/pictogram_04_002.png",
+            "name": "pictogram_04_002"
+          },
+          {
+            "src": "templates/common/icon/pictogram/04/pictogram_04_003.png",
+            "name": "pictogram_04_003"
+          },
+          {
+            "src": "templates/common/icon/pictogram/04/pictogram_04_004.png",
+            "name": "pictogram_04_004"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "label": "픽셀아이콘",
+    "folder": "pixel",
+    "groups": [
+      {
+        "id": "01",
+        "label": "01",
+        "icons": [
+          {
+            "src": "templates/common/icon/pixel/01/pixel_01_001.png",
+            "name": "pixel_01_001"
+          },
+          {
+            "src": "templates/common/icon/pixel/01/pixel_01_002.png",
+            "name": "pixel_01_002"
+          },
+          {
+            "src": "templates/common/icon/pixel/01/pixel_01_003.png",
+            "name": "pixel_01_003"
+          },
+          {
+            "src": "templates/common/icon/pixel/01/pixel_01_004.png",
+            "name": "pixel_01_004"
+          },
+          {
+            "src": "templates/common/icon/pixel/01/pixel_01_005.png",
+            "name": "pixel_01_005"
+          },
+          {
+            "src": "templates/common/icon/pixel/01/pixel_01_006.png",
+            "name": "pixel_01_006"
+          },
+          {
+            "src": "templates/common/icon/pixel/01/pixel_01_007.png",
+            "name": "pixel_01_007"
+          },
+          {
+            "src": "templates/common/icon/pixel/01/pixel_01_008.png",
+            "name": "pixel_01_008"
+          },
+          {
+            "src": "templates/common/icon/pixel/01/pixel_01_009.png",
+            "name": "pixel_01_009"
+          },
+          {
+            "src": "templates/common/icon/pixel/01/pixel_01_010.png",
+            "name": "pixel_01_010"
+          },
+          {
+            "src": "templates/common/icon/pixel/01/pixel_01_011.png",
+            "name": "pixel_01_011"
+          },
+          {
+            "src": "templates/common/icon/pixel/01/pixel_01_012.png",
+            "name": "pixel_01_012"
+          },
+          {
+            "src": "templates/common/icon/pixel/01/pixel_01_013.png",
+            "name": "pixel_01_013"
+          },
+          {
+            "src": "templates/common/icon/pixel/01/pixel_01_014.png",
+            "name": "pixel_01_014"
+          },
+          {
+            "src": "templates/common/icon/pixel/01/pixel_01_015.png",
+            "name": "pixel_01_015"
+          },
+          {
+            "src": "templates/common/icon/pixel/01/pixel_01_016.png",
+            "name": "pixel_01_016"
+          }
+        ]
+      },
+      {
+        "id": "02",
+        "label": "02",
+        "icons": [
+          {
+            "src": "templates/common/icon/pixel/02/pixel_02_001.png",
+            "name": "pixel_02_001"
+          },
+          {
+            "src": "templates/common/icon/pixel/02/pixel_02_002.png",
+            "name": "pixel_02_002"
+          },
+          {
+            "src": "templates/common/icon/pixel/02/pixel_02_003.png",
+            "name": "pixel_02_003"
+          },
+          {
+            "src": "templates/common/icon/pixel/02/pixel_02_004.png",
+            "name": "pixel_02_004"
+          },
+          {
+            "src": "templates/common/icon/pixel/02/pixel_02_005.png",
+            "name": "pixel_02_005"
+          },
+          {
+            "src": "templates/common/icon/pixel/02/pixel_02_006.png",
+            "name": "pixel_02_006"
+          },
+          {
+            "src": "templates/common/icon/pixel/02/pixel_02_007.png",
+            "name": "pixel_02_007"
+          },
+          {
+            "src": "templates/common/icon/pixel/02/pixel_02_008.png",
+            "name": "pixel_02_008"
+          },
+          {
+            "src": "templates/common/icon/pixel/02/pixel_02_009.png",
+            "name": "pixel_02_009"
+          }
+        ]
+      }
+    ]
+  }
+]

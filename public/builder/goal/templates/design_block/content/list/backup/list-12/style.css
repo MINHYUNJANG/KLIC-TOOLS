@@ -1,0 +1,58 @@
+﻿.list-12 {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	padding: clamp(18px, 2.6vw, 30px);
+	border-radius: 22px;
+	background: var(--body-bg);
+}
+
+.list-12-card {
+	position: relative;
+	width: min(100%, 320px);
+	padding: clamp(34px, 4.5vw, 52px) clamp(20px, 3vw, 34px) clamp(22px, 3vw, 34px);
+	border-radius: 999px 999px 28px 28px;
+	background: #fff;
+	text-align: center;
+	border: 1px solid var(--body-border);
+}
+
+.list-12-card span {
+	position: absolute;
+	top: 0;
+	left: 50%;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	width: clamp(54px, 7vw, 74px);
+	height: clamp(54px, 7vw, 74px);
+	border-radius: 999px;
+	background: var(--title-bg, #0b69c7);
+	color: var(--title-text, #fff);
+	font-size: clamp(16px, 2vw, 24px);
+	font-weight: var(--title-weight, 900);
+	transform: translate(-50%, -45%);
+}
+
+.list-12 .list-12-card strong {
+	background: none;
+	color: var(--title-bg, #0b69c7);
+}
+
+.list-12-card strong {
+	display: block;
+	margin-bottom: clamp(10px, 1.4vw, 14px);
+	color: var(--title-text, #0b69c7);
+	font-size: var(--title-size, clamp(19px, 2.4vw, 30px));
+	font-weight: var(--title-weight, 900);
+	text-align: var(--title-align, center);
+}
+
+.list-12-card p {
+	color: var(--body-text, #1b2938);
+	font-size: var(--body-size, clamp(12px, 1.5vw, 17px));
+	font-weight: var(--body-weight, 600);
+	line-height: 1.55;
+	text-align: var(--body-align, center);
+}
+

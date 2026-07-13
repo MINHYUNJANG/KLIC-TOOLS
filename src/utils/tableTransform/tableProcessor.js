@@ -29,6 +29,17 @@ export const processTableOnlyColor = (tableDocHtml, config, colWidths) => {
     return processTableOnlyBase(tableDocHtml, config, colWidths, true, config.tableIsColorClassMode);
 };
 
+export const mergeAdjacentTable = (baseTable, nextTable) => {
+    if (!baseTable || !nextTable) return false;
+
+    const baseBody = baseTable.tBodies?.[0] || baseTable;
+    const nextRows = Array.from(nextTable.rows || []);
+    if (!baseBody || nextRows.length === 0) return false;
+
+    nextRows.forEach(row => baseBody.appendChild(row.cloneNode(true)));
+    return true;
+};
+
 const restoreOriginHtml = (container) => {
     container.querySelectorAll('[data-origin-html]').forEach(el => {
         el.innerHTML = el.getAttribute('data-origin-html');

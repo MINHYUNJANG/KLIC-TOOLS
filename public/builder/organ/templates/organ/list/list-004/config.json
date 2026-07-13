@@ -1,0 +1,19 @@
+{
+	"category": "list",
+	"addDirection": "row",
+	"max": "6",
+	"styleOptions": {
+		"title": {
+			"fields": [
+				{ "key": "backgroundColor", "label": "헤더 배경",  "default": "#8b84c8" },
+				{ "key": "textColor",       "label": "헤더 글자",  "default": "#ffffff" }
+			]
+		},
+		"body": {
+			"fields": [
+				{ "key": "backgroundColor", "label": "아이템 배경", "default": "#7a93b8" },
+				{ "key": "textColor",       "label": "아이템 글자", "default": "#ffffff" }
+			]
+		}
+	}
+}

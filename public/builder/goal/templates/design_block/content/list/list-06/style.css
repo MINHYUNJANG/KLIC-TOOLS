@@ -1,0 +1,20 @@
+﻿.list-06 {
+	/* 타이틀 */
+	--title-align: center;
+	--title-bg: #2F333F;
+	--title-text: #fff;
+
+	min-height: 100%;
+	display: block;
+}
+
+.builder-columns:has(.list-06){
+	gap: 1rem 10px;
+}
+
+.list-06 .tit-wrap {
+	border-radius: 2rem;
+	padding: 0.8rem;
+	margin-bottom: 0.8rem;
+	background: var(--title-bg);
+}

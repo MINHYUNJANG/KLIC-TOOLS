@@ -1,0 +1,37 @@
+﻿.box-17 {
+	display: flex;
+	align-items: center;
+	gap: clamp(8px, 1.2vw, 12px);
+	border-radius: 5px;
+	padding: clamp(10px, 1.5vw, 16px) clamp(12px, 2vw, 24px);
+	background: var(--body-bg);
+}
+
+.box-17-left {
+	display: flex;
+	flex-shrink: 0;
+	align-items: center;
+	gap: 6px;
+}
+
+.box-17-icon,
+.box-17-left span {
+	color: var(--title-text, #434343);
+	font-size: var(--title-size, clamp(11px, 1.3vw, 13px));
+	font-weight: 700;
+	text-align: var(--title-align, center);
+}
+
+.box-17-div {
+	flex-shrink: 0;
+	width: 1px;
+	height: 14px;
+	background: #cbd4d8;
+}
+
+.box-17 p {
+	color: var(--body-text, #101010);
+	font-size: var(--body-size, clamp(12px, 1.4vw, 15px));
+	font-weight: 400;
+	text-align: var(--body-align, center);
+}

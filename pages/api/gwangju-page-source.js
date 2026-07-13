@@ -112,6 +112,37 @@ function absolutizeSource($, $root, pageUrl) {
   });
 }
 
+function removeMobileDuplicateMarkup($, $root) {
+  const mobileOnlySelectors = [
+    '.m_view',
+    '.m-view',
+    '.mo_view',
+    '.mo-view',
+    '.m_only',
+    '.m-only',
+    '.mo_only',
+    '.mo-only',
+    '.mobile_view',
+    '.mobile-view',
+    '.mobile_only',
+    '.mobile-only',
+    '[data-device="mobile"]',
+    '[data-view="mobile"]',
+    '[data-display="mobile"]',
+  ];
+
+  $root.find(mobileOnlySelectors.join(', ')).remove();
+
+  // 클래스 토큰의 대소문자 차이도 대응한다. "mobile-menu"처럼 기능 자체가
+  // 모바일인 요소까지 넓게 지우지 않고, view/only 조합만 모바일 중복으로 본다.
+  $root.find('[class]').each((_, el) => {
+    const classNames = String($(el).attr('class') || '').split(/\s+/);
+    if (classNames.some(name => /^(?:m|mo|mobile)[_-](?:view|only)$/i.test(name))) {
+      $(el).remove();
+    }
+  });
+}
+
 export default async function handler(req, res) {
   if (req.method !== 'POST') return res.status(405).json({ error: 'Method not allowed' });
 
@@ -130,6 +161,7 @@ export default async function handler(req, res) {
 
     const $source = target.$el.clone();
     $source.find('#subTop, #leftMn, .guide_box, .subConBox .leftMn, .leftquick, .btn_top').remove();
+    removeMobileDuplicateMarkup($, $source);
     absolutizeSource($, $source, finalUrl);
 
     res.json({

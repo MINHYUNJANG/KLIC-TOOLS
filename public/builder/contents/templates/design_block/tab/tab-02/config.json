@@ -1,0 +1,17 @@
+{
+  "addDirection": "column",
+  "templateFilters": ["tab"],
+  "blockRules": {
+    "requiresPredecessorType": ["tab-01"],
+    "errorMessage": "2차 탭은 상위에 1차 탭이 있어야 배치할 수 있습니다."
+  },
+  "tabDefaults": {
+    "items": [
+      {"text": "2차 탭: Active", "type": "normal", "content": "2차 탭 Active 내용입니다."},
+      {"text": "2차 탭: Hover", "type": "normal", "content": "2차 탭 Hover 내용입니다."},
+      {"text": "2차 탭: Enable", "type": "normal", "content": "2차 탭 Enable 내용입니다."},
+      {"text": "2차 탭: Focus", "type": "new_window", "content": "2차 탭 Focus 내용입니다."}
+    ],
+    "cols": "4"
+  }
+}

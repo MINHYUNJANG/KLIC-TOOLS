@@ -1,0 +1,1 @@
+{"addDirection":"column","blockRules":{"requiresPredecessorType":["title-01"],"errorMessage":"콘텐츠 타이틀(h4)은 반드시 섹션 타이틀(h3) 하위에 위치해야 합니다."}}

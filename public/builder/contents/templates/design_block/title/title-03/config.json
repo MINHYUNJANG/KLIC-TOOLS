@@ -1,0 +1,1 @@
+{"addDirection":"column","blockRules":{"requiresPredecessorType":["title-02"],"errorMessage":"유닛 타이틀(h5)은 반드시 콘텐츠 타이틀(h4) 하위에 위치해야 합니다."}}

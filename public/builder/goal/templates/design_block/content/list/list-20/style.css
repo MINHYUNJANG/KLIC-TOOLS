@@ -1,0 +1,72 @@
+﻿.list-20 {
+	/* 타이틀 */
+	--title-align: left;
+	--title-bg: #fff;
+	--title-text: #000;
+
+	/* 서브 */
+	--sub-align: center;
+	--sub-bg: #2F384E;
+	--sub-text: #fff;
+
+	min-height: 100%;
+	border-radius: 1rem;
+}
+
+.list-20 .tit-wrap{
+	gap: 0.5rem;
+	padding: 0.8rem 1.2rem;
+	border-radius: 1rem;
+	border: 1px solid #D4DAE0;
+	background: var(--title-bg);
+
+}
+
+.list-20 .tit-wrap .sub{
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	min-width: 2rem;
+	min-height: 2rem;
+	border-radius: 0.6rem;
+	flex-shrink: 0;
+	font-weight: 600;
+	background: var(--sub-bg);
+}
+
+.list-20 .tit-wrap .tit{
+	flex: 1;
+	width: auto;
+}
+
+.list-20 .txt-wrap {
+	padding: 2rem 1rem 1rem;
+	margin-top: -1rem;
+	border-radius: 0 0 1rem 1rem;
+	border: 1px solid #D4DAE0;
+	border-top: 0;
+	background: #F6F6F6;
+}
+
+.list-20 .txt-wrap ul[data-depth="1"] {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 0.3rem;
+}
+
+.list-20 .txt-wrap ul[data-depth="1"] > li{
+	width: 100%;
+} 
+
+.list-20 .edit-list {
+    --ls-color-1: #000;
+    --ls-color-2: #333;
+    --ls-color-3: #333;
+}
+
+@media screen and (min-width: 1241px) {
+
+	.builder-columns.columns-5 .list-20 .tit-wrap{ 
+		padding: 0.8rem 0.6rem;
+	}
+}

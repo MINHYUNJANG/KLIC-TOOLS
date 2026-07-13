@@ -1,0 +1,73 @@
+﻿.list-27 {
+	/* 타이틀 */
+	--title-align: center;
+	--title-border: #FF4531;
+	--title-text: #FF4531;
+
+	min-height: 100%;
+	flex-direction: row;
+	gap: 0.5rem;
+	padding: 1rem;
+	border-radius: 0.75rem;
+	background: #fff;
+	border: 2px solid var(--title-border);
+}
+
+.list-27 .tit-wrap{
+	flex: 1;
+	min-height: 100%;
+	align-items: center;
+	justify-content: center;
+	word-break: keep-all;
+}
+
+.list-27 .txt-wrap {
+	flex: 2;
+}
+
+.list-27 .txt-wrap ul[data-depth="1"] {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 0.3rem;
+}
+
+.list-27 .txt-wrap ul[data-depth="1"] > li{
+	width: 100%;
+} 
+
+.list-27 .edit-list {
+    --ls-color-1: #FF4531;
+    --ls-color-2: #333;
+    --ls-color-3: #333;
+}
+
+@media (max-width: 1240px) {
+
+	.builder-columns.columns-3:has(.list-27){
+		grid-template-columns: repeat(2, 1fr);
+	}
+}
+
+@media (max-width: 960px) {
+
+	.builder-columns.columns-3:has(.list-27),
+	.builder-columns.columns-2:has(.list-27){
+		grid-template-columns: repeat(1, 1fr);
+	}
+}
+
+@media (max-width: 460px) {
+
+	.builder-columns:has(.list-27){
+		gap: 0.75rem;
+	}
+
+	.list-27{
+		flex-direction: column;
+		gap: 0.8rem;
+	}
+
+	.list-27 .tit-wrap{ 
+		max-width: 100%;
+	}
+}

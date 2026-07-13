@@ -1,0 +1,312 @@
+@charset "utf-8";
+
+button {cursor:pointer;}
+
+/* 로그인 : Start *******************************************************************************************************************************************************************************************************/
+/* 로그인 : 회원로그인 / SNS로그인 / 휴대전화 본인확인 / 나이스 아이핀(I-PIN)인증 공통 */
+.mber_login_box {position:relative; padding:0.5rem; overflow:hidden;}
+.mber_login_box .mber_login_OR {display:block; position:absolute; left:50%; top:3.75rem; width:2.5rem; height:20.9rem; margin-left:-1.25rem;}
+.mber_login_box .mber_login_OR:before {content:""; display:block; position:absolute; left:50%; top:0; width:1px; height:100%; border-left:1px dashed #bec3cc;}
+.mber_login_box .mber_login_OR:after {content:"OR"; display:block; position:absolute; left:50%; top:50%; width:2.5rem; height:2.5rem; margin:-1.25rem 0 0 -1.25rem; padding-right:0.35rem; line-height:2.5rem; font-size:1.1rem; font-style:italic; text-align:center; color:#fff; background:#7995b8; border-radius:1.25rem;}
+
+.mber_login_box h3.login_tit {margin-top:0.5rem; line-height:2rem; color:#111; font-size:1.5rem; font-weight:400;}
+.mber_login_box h3.login_tit span {color:#044ca4;}
+.mber_login_box p.login_info {padding-bottom:0.7rem; font-size:0.7rem; color:#666; word-break:keep-all; border-bottom:1px dashed #c4c4c4;}
+
+/* 회원로그인 */
+.mber_login_box .mber_login {position:relative; width:40%; height:20.9rem; margin:3.25rem auto 0; padding:3.25rem 2.5rem 1.75rem; border:1px solid #c9c9c9; box-shadow:4px 3px 3px 0 rgba(0, 0, 0, 0.1);}
+.mber_login_box .mber_login:before {content:""; display:block; position:absolute; left:50%; top:-3.25rem; width:6.5rem; height:6.5rem; margin-left:-3.25rem; background:#eee url('/images/web/apple/member/ico_login.png') no-repeat; background-size: contain; border-radius:3.25rem;}
+
+.mber_login_box .mber_login ul li {position:relative; height:2.25rem; margin:0.25rem 0; padding-left:2.5rem; border-bottom:1px solid #000; overflow: hidden;}
+.mber_login_box .mber_login ul li label {position:absolute; left:0; top:0; display:block; width:2.25rem; height:2.25rem; text-indent:-10000em;}
+.mber_login_box .mber_login ul li.mber_id label {background:url('/images/web/apple/member/ico_login_id.png') no-repeat center;}
+.mber_login_box .mber_login ul li.mber_pw label {background:url('/images/web/apple/member/ico_login_pw.png') no-repeat center;}
+/* .mber_login_box .mber_login ul li input {width:100%; height:2.25rem; font-size:0.7rem; line-height:2.25rem; color:#444; vertical-align:middle; border:none;} */
+.mber_login_box .mber_login ul li input {width:100%;height:2.25rem;font-size:0.7rem;line-height:2.25rem;color:#444;vertical-align:middle;border:none;font-family: auto;} /* 210910수정 */
+.mber_login_box .mber_login .btnLogin {position:relative; width:100%; height:2.25rem; margin:1.25rem 0 0.75rem; line-height:2.25rem; color:#fff; font-size:0.8rem; font-weight:400; text-align:center; border:1px solid #00377b; background:#044ca4; overflow:hidden;}
+.mber_login_box .mber_login .btnLogin span {position:relative; display:block; z-index:2;}
+.mber_login_box .mber_login .btnLogin:before{content:''; position:absolute; bottom:-1.5rem; right:-1.5rem; width:1.5rem; height:1.5rem; border-radius:50%; background:rgba(0,0,0,0.5); z-index:1;} /* 첫번째 색상 */
+.mber_login_box .mber_login .btnLogin:after {content:''; position:absolute; bottom:-1.5rem; left:-1.5rem; width:1.5rem; height:1.5rem; border-radius:50%; background:#044ca4;  z-index:1;} /* 두번째 색상 */
+.mber_login_box .mber_login .btnLogin:hover:before {transform:scale(30); transition:all 0.4s;}
+.mber_login_box .mber_login .btnLogin:hover:after{transform:scale(30); transition:all 0.4s; transition-delay:0.3s;}
+
+.mber_login_box .mber_login .mber_btnEtc a {position:relative; display:inline-block; padding:0 0.5rem; color:#666; font-size:0.7rem; -webkit-transition:all 0.3s ease; -moz-transition:all 0.3s ease; -ms-transition:all 0.3s ease; transition:all 0.3s ease;}
+.mber_login_box .mber_login .mber_btnEtc a:before {content:""; display:block; position:absolute; left:0; top:50%; width:1px; height:0.45rem; margin-top:-0.25rem; border-left:1px dotted #9a9a9a;}
+.mber_login_box .mber_login .mber_btnEtc a:first-child {padding-left:0;}
+.mber_login_box .mber_login .mber_btnEtc a:first-child:before {display:none;}
+.mber_login_box .mber_login .mber_btnEtc a:hover {color:#044ca4; font-weight:400;}
+.mber_login_box .mber_login .mber_btnEtc a span {position:relative; display:block;}
+.mber_login_box .mber_login .mber_btnEtc a span:before{content:''; position:absolute; bottom:0; left:50%; width:0; height:1px; background:#044ca4; -webkit-transition:all 0.3s ease; -moz-transition:all 0.3s ease; -ms-transition:all 0.3s ease; transition:all 0.3s ease;}
+.mber_login_box .mber_login .mber_btnEtc a:hover span:before {content:''; position:absolute; bottom:0; left:50%; width:100%; height:1px; margin-left:-50%;}
+
+/* SNS로그인 */
+.mber_login_box .mber_snsL {position:relative; width:40%; height:20.9rem; margin:3.25rem auto 0; padding:3.25rem 2.5rem 1.75rem; border:1px solid #c9c9c9; box-shadow:4px 3px 3px 0 rgba(0, 0, 0, 0.1);}
+.mber_login_box .mber_snsL:before {content:""; display:block; position:absolute; left:50%; top:-3.25rem; width:6.5rem; height:6.5rem; margin-left:-3.25rem; background:#eee url('/images/web/apple/member/ico_sns_login.png') no-repeat; background-size: contain; border-radius:3.25rem;}
+.mber_login_box .mber_snsL .sns_login {margin-top:2rem;}
+.mber_login_box .mber_snsL .sns_login li {height:2.25rem; margin-bottom:0.15rem; line-height:2.25rem; font-size:0.8rem; overflow:hidden;}
+.mber_login_box .mber_snsL .sns_login li a {position:relative; display:block; color:#fff; font-weight:400;}
+.mber_login_box .mber_snsL .sns_login li a:before{content:''; position:absolute; top:0; right:0; bottom:0; left:0; z-index:1; width:120%; height:110%;  transform:translateX(-120%) skew(-15deg); transition:transform 0.7s cubic-bezier(0, 0, 0.21, 0.87) 0s;}
+.mber_login_box .mber_snsL .sns_login li a:hover:before,
+.mber_login_box .mber_snsL .sns_login li a:focus:before{transform:translateX(-10%) skew(-15deg) perspective(500px);}
+.mber_login_box .mber_snsL .sns_login li.login_sns_na a {background:#03a806;}
+.mber_login_box .mber_snsL .sns_login li.login_sns_na a:hover:before, .mber_login_box .mber_snsL .sns_login li.login_sns_na a:focus:before {background:#008c03;}
+.mber_login_box .mber_snsL .sns_login li.login_sns_ka a { color:#222; background:#ffd538;}
+.mber_login_box .mber_snsL .sns_login li.login_sns_ka a:hover:before, .mber_login_box .mber_snsL .sns_login li.login_sns_ka a:focus:before {background:#f1c51f;}
+.mber_login_box .mber_snsL .sns_login li.login_sns_fa a {background:#3b59dd;}
+.mber_login_box .mber_snsL .sns_login li.login_sns_fa a:hover:before, .mber_login_box .mber_snsL .sns_login li.login_sns_fa a:focus:before {background:#1d3ab7;}
+
+.mber_login_box .mber_snsL .sns_login li a span {position:relative; position:relative; display:block; padding-left:2.25rem; text-align:center; z-index:2;}
+.mber_login_box .mber_snsL .sns_login li.login_sns_na a span {background:url('/images/web/apple/member/btn_logo_naver.png') no-repeat left top;}
+.mber_login_box .mber_snsL .sns_login li.login_sns_ka a span { color:#222; background:url('/images/web/apple/member/btn_logo_kakao.png') no-repeat left top;}
+.mber_login_box .mber_snsL .sns_login li.login_sns_fa a span {background:url('/images/web/apple/member/btn_logo_face.png') no-repeat left top;}
+.mber_login_box .mber_snsL .sns_login_txt {margin-top:0.75rem; font-size:0.7rem; letter-spacing:-1px;}
+
+/* 비회원 로그인 */
+.nmbr_txtBox {padding-bottom:2rem; font-size:0.7rem; text-align:center;}
+.nmbr_txtBox dt {line-height:2rem; color:#111; font-size:1.7rem; font-weight:400;}
+.nmbr_txtBox dt span {color:#044ca4;}
+.nmbr_txtBox dd {margin-top:1rem;}
+.nmbr_txtBox dd.nmbr_txtBox_atte {margin-top:2rem; padding-top:2rem; border-top:1px dashed #bec3cc; }
+.nmbr_txtBox dd.nmbr_txtBox_atte span {display:inline-block; padding-left:1rem; background:url('/images/web/apple/member/bu_atte2.png') no-repeat left 4px;}
+
+/* 휴대전화 본인확인 & 나이스 아이핀(I-PIN)인증 공통 : 회원가입 3단계에도 같이 쓰임 */
+.mber_login_box .btn_nmbr_crtfc {position:relative; display:block; height:2.25rem; margin:1.25rem 0 0; line-height:2.25rem; color:#fff; font-size:0.8rem; font-weight:400; text-align:center; border:1px solid #00377b; background:#044ca4; overflow:hidden;}
+.mber_login_box .btn_nmbr_crtfc span {position:relative; display:block; background:url('/images/web/apple/member/login_btn_linkW.png') no-repeat 95% center; z-index:2;}
+.mber_login_box .btn_nmbr_crtfc:before{content:''; position:absolute; bottom:-1.5rem; right:-1.5rem; width:1.5rem; height:1.5rem; border-radius:50%; background:rgba(0,0,0,0.5); z-index:1;} /* 첫번째 색상 */
+.mber_login_box .btn_nmbr_crtfc:after {content:''; position:absolute; bottom:-1.5rem; left:-1.5rem; width:1.5rem; height:1.5rem; border-radius:50%; background:#044ca4;  z-index:1;} /* 두번째 색상 */
+.mber_login_box .btn_nmbr_crtfc:hover:before {transform:scale(30); transition:all 0.4s;}
+.mber_login_box .btn_nmbr_crtfc:hover:after{transform:scale(30); transition:all 0.4s; transition-delay:0.3s;}
+
+.mber_login_box .btn_nmbr_crtfcW {position:relative; display:block; height:2.25rem; margin:1rem 0 0; line-height:2.25rem; color:#044ca4; font-size:0.8rem; font-weight:400; text-align:center; border:1px solid #d1d1d1; background:#fff; overflow:hidden;}
+.mber_login_box .btn_nmbr_crtfcW span {position:relative; display:block; background:url('/images/web/apple/member/login_btn_linkB.png') no-repeat 95% center; z-index:2;}
+.mber_login_box .btn_nmbr_crtfcW:before{content:''; position:absolute; bottom:-1.5rem; right:-1.5rem; width:1.5rem; height:1.5rem; border-radius:50%; background:#e7f2ff; z-index:1;} /* 첫번째 색상 */
+.mber_login_box .btn_nmbr_crtfcW:after {content:''; position:absolute; bottom:-1.5rem; left:-1.5rem; width:1.5rem; height:1.5rem; border-radius:50%; background:#fff;  z-index:1;} /* 두번째 색상 */
+.mber_login_box .btn_nmbr_crtfcW:hover:before {transform:scale(30); transition:all 0.4s;}
+.mber_login_box .btn_nmbr_crtfcW:hover:after{transform:scale(30); transition:all 0.4s; transition-delay:0.3s;}
+
+.mber_login_box .nmbr_Tbu {position:relative; margin-top:1rem; padding-left:0.5rem; font-size:0.75rem; line-height:1.2rem; word-break:keep-all;}
+.mber_login_box .nmbr_Tbu:before {content:""; display:block; position:absolute; left:0; top:0.45rem; width:0.15rem; height:0.15rem; background:#0096ff; border-radius:0.1rem;}
+
+/* 휴대전화 본인확인 */
+.mber_login_box .nmbr_phone {position:relative; width:40%; height:20.9rem; margin:3.25rem auto 0; padding:3.25rem 2.5rem 1.75rem; border:1px solid #c9c9c9; background:#fcfcfc; box-shadow:4px 3px 3px 0 rgba(0, 0, 0, 0.1);}
+.mber_login_box .nmbr_phone:before {content:""; display:block; position:absolute; left:50%; top:-3.25rem; width:6.4rem; height:6.4rem; margin-left:-3.25rem; border:1px solid #c9c9c9; background:#fff url('/images/web/apple/member/ico_login_phone.png') no-repeat; background-size: contain; border-radius:3.25rem;}
+
+/* 나이스 아이핀(I-PIN)인증 */
+.mber_login_box .nmbr_ipin {position:relative; width:40%; height:20.9rem; margin:3.25rem auto 0; padding:3.25rem 2.5rem 1.75rem; border:1px solid #c9c9c9; background:#fcfcfc; box-shadow:4px 3px 3px 0 rgba(0, 0, 0, 0.1);}
+.mber_login_box .nmbr_ipin:before {content:""; display:block; position:absolute; left:50%; top:-3.25rem; width:6.4rem; height:6.4rem; margin-left:-3.25rem; border:1px solid #c9c9c9; background:#fff url('/images/web/apple/member/ico_login_ipin.png') no-repeat; background-size: contain; border-radius:3.25rem;}
+/* 로그인 : End *******************************************************************************************************************************************************************************************************/
+
+
+/* 회원가입 210929수정 : Start *******************************************************************************************************************************************************************************************************/
+/* 회원가입 step */
+.sbscrbStep{width:100%; padding:10px 0; box-sizing:border-box;}
+.sbscrbStep > ul.stepList {width:100%;float:left;background: #f5f6f7;padding: 1.5rem 0;border: 1px solid #b2b7c7;margin-bottom: 1.5rem;}
+.sbscrbStep > ul.stepList li {width: 20%;float:left;background:url("/00_common/images/member/arr_joinG.png") no-repeat right 50%;}
+.sbscrbStep > ul.stepList li:last-child {background:none;}
+.sbscrbStep > ul.stepList li img {display:block;margin:0px auto;padding:20px;background:#fff;border: 1px solid #b2b7c7;border-radius:100px;}
+.sbscrbStep > ul.stepList li img.stepOn {background:#fff;border: 1px solid #5074cf;}
+.sbscrbStep > ul.stepList li p {text-align:center;font-size: 0.7rem;font-weight:500;color:#5d5e65;padding-top: 0.5rem;}
+.sbscrbStep > ul.stepList li p.stepOn {font-weight:600;}
+.sbscrbStep > ul.stepList li p span {display:inline-block;width:100%;font-size:0.85rem;color: #254458;padding-top: 0.25rem;}
+.sbscrbStep > ul.stepList li p.stepOn span {color: #5074cf;}
+
+.sbscrbStep p {color:#555; font-size:0.77rem;}
+.sbscrbStep p.sbscrbNaming {float:left;width:100%;padding: 1rem 0;font-size: 1rem;letter-spacing: -0.5px;font-weight:600;box-sizing: border-box;border-top: 3px solid #254458;color: #254458;}
+.sbscrbStep p.sbscrbNaming > span {font-size: 0.75rem;width:100%;display:block;margin-top: 0.5rem;font-weight:400;color: #555;}
+
+.sbscrbStep .stplatBox h3.stplatTit {font-size:1rem;font-weight: 600;color: #254458;}
+.sbscrbStep .stplatBox h3.stplatTit span {font-size:0.8rem;font-weight: 500;color: #e13535;margin-left: 0.2rem;}
+
+
+/* 1.이용약관동의 */
+.stplatBox .box_agree {padding:15px;background:#f5f6f7;margin-top:0.5rem;border: 1px solid #b2b7c7;}
+.stplatBox .box_agree .agrScroll {height:15rem; margin-bottom:0.5rem; padding:0.75rem 1rem; border:1px solid #b2b7c7; background:#fff; overflow-y:auto;  font-size:12px; font-family:'NotoSans';}
+.stplatBox .box_agree .agrScroll .ruleTit{color:#000;letter-spacing:-1px;line-height:1rem;font-size: 0.75rem;font-weight:bold;font-family:'NotoSans';}
+.stplatBox .box_agree .agrScroll ul {width:100%; padding:0 0 1rem; color:#333; letter-spacing:-1px; line-height:1rem;}
+.stplatBox .box_agree .agrScroll ul li {padding-top:10px;font-weight:600;font-size: 0.7rem;line-height: 1.6;}
+.stplatBox .box_agree .agrScroll ul li span{display:block;font-weight:normal;padding-top:3px;margin-left:0.65rem;font-size: 0.65rem;}
+.stplatBox .box_agree .agrScroll ul li ol li,
+.stplatBox .box_agree .agrScroll ul li ul li {font-weight:normal;padding-top:0;padding-bottom:0;margin-left:0.65rem;font-size: 0.65rem;}
+.stplatBox + .stplatBox .box_agree .agrScroll ul li span {margin-left:0;}
+.stplatBox + .stplatBox .box_agree .agrScroll ul li ol li,
+.stplatBox + .stplatBox .box_agree .agrScroll ul li ul li {margin-left:0;}
+.stplatBox .box_agree .agrScroll ul.fw_normal li { padding-top:5px; font-weight:normal; }
+.stplatBox .box_agree .agrInput{ position:relative; padding-left:1.1rem; }
+.stplatBox .box_agree .agrInput label{color:#666; font-size:12px; font-family:'NotoSans';}
+.stplatBox + .stplatBox {padding-top:1.5rem;}
+
+
+/* 2.회원유형 */
+.TypeBox {width:100%; box-sizing:border-box;float:left;}
+.TypeBox ul.customersType {margin: -.45rem;text-align: center;}
+.TypeBox ul.customersType > li {display:inline-block;width:calc(50% - 2px);text-align: center;padding: .45rem;}
+.TypeBox ul.customersType > li a {display: block;width:100%;border: 1px solid #ddd;padding:30px 5px;transition: background 0.5s;transition: background 0.5s;box-sizing:border-box;}
+.TypeBox ul.customersType > li span {width:100%;display:block;color: #254458;padding: 0.5rem 0;font-size: 1.1rem;font-weight: 600;}
+.TypeBox ul.customersType > li a:hover {background: #f9f9f9;}
+.TypeBox ul.customersType > li a p {font-size:0.75rem; line-height:1.4;}
+.TypeBox ul.customersType > li a div {width: 60%;height: 50px;border-radius: 2rem;margin-top:25px;font-weight:600;background: #5074cf;color:#fff;margin: 1rem auto 0.5rem;line-height: 50px;font-size: 17px;font-weight: 400;}
+.TypeBox ul.customersType > li a:hover div {background:#3858a9;}
+
+/* 3.사용자 인증 */
+.sbscrbStep .crtfcBtn {margin-top:1.5rem;}
+.sbscrbStep .crtfcBtn a {width: 49%;padding: 1.2rem 1rem;text-align: center;}
+
+/* 4.회원정보 작성 */
+.sbscrbStep .tbl_st_row table {border-top:2px solid #254458;}
+.sbscrbStep p.sbscrTit {float:left;width:100%; padding:1rem 0 0.5rem; font-size:1rem; letter-spacing:-0.5px; font-weight:600; box-sizing:border-box; color:#254458;}
+.sbscrbStep .tbl_st_row table td {line-height:2;}
+.sbscrbStep .tbl_st_row table td span.passwordTxt {font-size:0.7rem;display: block;line-height: 1.4;margin-top: 0.3rem;}
+.sbscrbStep .tbl_st_row table td .inp_st {height:1.6rem;}
+.sbscrbStep .tbl_st_row table td .btn_line_style2 {padding: 0 0.5rem;border: 1px solid #c6c6c6;margin-left: 0.2rem;color: #444;}
+.sbscrbStep .tbl_st_row table td .btn_line_style2:hover {background:#444; border:1px solid #444; color:#fff;}
+
+/* 5.회원가입 완료 */
+.succesBox {float:left;width:100%;padding: 1rem 0;font-size: 1rem;letter-spacing: -0.5px;font-weight:600;box-sizing: border-box;border-top: 3px solid #254458;color: #254458;background: #f5f6f7;}
+.succesBox p {text-align:center;font-size:1.2rem;margin-top: 1rem;color: #254458;}
+.succesBox img {margin-top: 1.5rem;position:relative;left:50%;transform: translateX(-50%);}
+.succesBox .succesTxt > p {font-size: 0.8rem;color: #555;margin-bottom: 1rem;}
+/* 회원가입 : //210929 End *******************************************************************************************************************************************************************************************************/
+
+
+/* 210929수정 */
+@media screen and (max-width:1200px){ 
+
+	/* 로그인 : Start *******************************************************************************************************************************************************************************************************/
+	/* 로그인 */
+	.mber_login_box .mber_login_OR {position:relative; left:auto; top:auto; width:100%; height:4.5rem; margin:0;}
+	.mber_login_box .mber_login_OR:before {left:0; top:50%; width:100%; height:1px; border-top:1px dashed #bec3cc; border-left:none;}
+
+	.mber_login_box h3.login_tit, .mber_login_box p.login_info {text-align:center;}
+
+
+	/* 일반 로그인 */
+	.mber_login_box .mber_login.fl, .mber_login_box .mber_snsL.fr {float:none !important;}
+	.mber_login_box .mber_login,  .mber_login_box .mber_snsL {-webkit-box-sizing:border-box; -moz-box-sizing:border-box; box-sizing:border-box; }
+	.mber_login_box .mber_login {width:90%; height:auto; margin:3.25rem auto 0; padding:3.25rem 1.5rem 1.75rem; }
+
+	/* SNS 로그인 */
+	.mber_login_box .mber_snsL {width:90%; height:auto; margin:3.25rem auto 0; padding:3.25rem 1.5rem 1.75rem; }
+
+	/* 비회원 로그인 */
+	/* 휴대전화 본인확인 */
+	.mber_login_box .nmbr_phone.fl, .mber_login_box .nmbr_ipin.fr {float:none !important;}
+	.mber_login_box .nmbr_phone, .mber_login_box .nmbr_ipin {-webkit-box-sizing:border-box; -moz-box-sizing:border-box; box-sizing:border-box; }
+	.mber_login_box .nmbr_phone {width:90%; height:auto; margin:3.25rem auto 0; padding:3.25rem 1.5rem 1.75rem; }
+
+	/* 나이스 아이핀(I-PIN)인증 */
+	.mber_login_box .nmbr_ipin {width:90%; height:auto; margin:3.25rem auto 0; padding:3.25rem 1.5rem 1.75rem; }
+
+	/* 로그인 : End *******************************************************************************************************************************************************************************************************/
+
+
+
+
+}
+
+@media screen and (max-width:1000px){ 
+
+	
+
+}
+
+
+@media screen and (max-width:800px){ 
+
+	
+	/* 회원가입 210929수정 : Start *******************************************************************************************************************************************************************************************************/
+	
+	.sbscrbStep > ul.stepList li { width:33.33%;  margin:1rem 0;}
+
+	/* 회원가입 : End *******************************************************************************************************************************************************************************************************/
+	
+}
+
+
+@media screen and (max-width:600px){ 
+
+
+
+}
+
+@media screen and (max-width:560px){
+	
+	/* 회원가입 210929추가 */
+	/* 3. 사용자인증 */
+	.sbscrbStep .crtfcBtn a {width:100%;}
+	
+	}
+
+
+@media screen and (max-width:500px){ 
+
+	/* 로그인 : Start *******************************************************************************************************************************************************************************************************/
+	/* 로그인 */
+	.mber_login_box h3.login_tit { font-size:1.2rem;}
+	
+	/* 일반 로그인 */
+	.mber_login_box .mber_login {width:100%; margin:2rem auto 0; padding:2rem 1rem 1.5rem; }
+	.mber_login_box .mber_login:before {left:50%; top:-2rem; width:4rem; height:4rem; margin-left:-2rem;}
+
+	.mber_login_box .mber_login .mber_btnEtc a {padding:0 0.25rem;}
+
+	/* SNS 로그인 */
+	.mber_login_box .mber_snsL {width:100%; margin:2rem auto 0; padding:2rem 1rem 1.5rem; }
+	.mber_login_box .mber_snsL:before {left:50%; top:-2rem; width:4rem; height:4rem; margin-left:-2rem;}
+	.mber_login_box .mber_snsL .sns_login {margin-top:1rem;}
+
+	/* 비회원 로그인 */
+	.nmbr_txtBox {padding-bottom:1rem;}
+	.nmbr_txtBox dt {line-height:1.7rem; font-size:1.4rem;}
+	.nmbr_txtBox dd {margin-top:0.5rem;}
+	.nmbr_txtBox dd.nmbr_txtBox_atte {margin-top:1rem; padding-top:1rem;}
+	
+	/* 휴대전화 본인확인 */
+	.mber_login_box .nmbr_phone {width:100%; margin:2rem auto 0; padding:2rem 1rem 1.5rem; }
+	.mber_login_box .nmbr_phone:before {left:50%; top:-2rem; width:3.9rem; height:3.9rem; margin-left:-2rem;}
+
+	/* 나이스 아이핀(I-PIN)인증 */
+	.mber_login_box .nmbr_ipin {width:100%; margin:2rem auto 0; padding:2rem 1rem 1.5rem; }
+	.mber_login_box .nmbr_ipin:before {left:50%; top:-2rem; width:3.9rem; height:3.9rem; margin-left:-2rem;}
+	
+	/* 로그인 : End *******************************************************************************************************************************************************************************************************/
+
+    
+    /* 회원가입 210929추가 */
+	.sbscrbStep > ul.stepList li { width:50%;}
+	
+	/* 2.회원유형 선택 */
+	.TypeBox ul.customersType > li {width:100%; margin-left:0;}
+
+}
+
+@media screen and (max-width:428px){
+	
+	/* 회원가입 210929추가 */
+	.tbl_st_row table tbody .password th {line-height:1.4;}
+	.tbl_st_row table tbody .password td {line-height:2.5;}
+	
+	}
+
+@media screen and (max-width:380px){ 
+
+
+
+
+}
+
+@media screen and (max-width:358px){ 
+
+	/* 회원가입 210929추가 */
+	.sbscrbStep .tbl_st_row table td .btn_line_style2 {margin-left:0; margin-top:0.2rem;}
+	
+}
+
+@media screen and (max-width:320px){ 
+
+	/* 회원가입 210929추가 */
+	.tbl_st_row table tbody .password td {line-height:4;}
+	.sbscrbStep .tbl_st_row table td select {margin-bottom:0.4rem;
+
+
+}
+ /* //210929수정 */

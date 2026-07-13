@@ -1,0 +1,70 @@
+﻿.badge-wrap {
+	position: relative;
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+}
+
+.floating-badge {
+	position: relative;
+	z-index: 2;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	height: clamp(48px, 7vw, 64px);
+	margin-bottom: -28px;
+	border-radius: 50px;
+	padding: 0 clamp(24px, 4vw, 48px);
+}
+
+.floating-badge span {
+	color: var(--title-text);
+	font-size: var(--title-size, clamp(14px, 1.8vw, 20px));
+	font-weight: 600;
+	white-space: nowrap;
+	text-align: var(--title-align, center);
+}
+
+.th-08-badge {
+	width: auto;
+	min-width: clamp(200px, 45%, 500px);
+	background: var(--title-bg);
+}
+
+.th-08-box {
+	width: 100%;
+	border: 1.5px solid var(--body-border);
+	border-radius: 15px;
+	padding: clamp(36px, 5vw, 48px) clamp(20px, 4vw, 40px) clamp(20px, 3vw, 28px);
+	background: var(--body-bg);
+}
+
+.th-08-list {
+	display: flex;
+	flex-direction: column;
+	gap: clamp(8px, 1.2vw, 14px);
+}
+
+.th-08-item {
+	display: flex;
+	align-items: flex-start;
+	gap: 10px;
+}
+
+.th-08-dot {
+	flex-shrink: 0;
+	width: 6px;
+	height: 6px;
+	margin-top: 18px;
+	border-radius: 50%;
+	background: var(--title-bg);
+}
+
+.th-08-item p {
+	color: var(--body-text);
+	font-size: clamp(12px, 1.4vw, 16px);
+	font-weight: 500;
+	line-height: 1.6;
+	word-break: keep-all;
+}
+

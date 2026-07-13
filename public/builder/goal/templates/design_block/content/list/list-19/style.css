@@ -1,0 +1,37 @@
+﻿.list-19 {
+	/* 타이틀 */
+	--title-align: center;
+	--title-border: #83B9F4;
+	--title-text: #333;
+
+	min-height: 100%;
+	gap: 0.75rem;
+	padding: 1rem;
+	border-radius: 0.75rem;
+	border: 1px solid var(--title-border);
+}
+
+.list-19 .tit-wrap{
+	padding: 0.8rem 1.2rem;
+	border-bottom: 1px solid var(--title-border);
+}
+
+.list-19 .txt-wrap {
+	padding: 0.8rem 0.5rem;
+}
+
+.list-19 .txt-wrap ul[data-depth="1"] {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 0.3rem;
+}
+
+.list-19 .txt-wrap ul[data-depth="1"] > li{
+	width: 100%;
+} 
+
+.list-19 .edit-list {
+    --ls-color-1: #000;
+    --ls-color-2: #333;
+    --ls-color-3: #333;
+}

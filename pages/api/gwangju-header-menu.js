@@ -41,7 +41,7 @@ function isBoardLike(text, href, url) {
   return /(게시판|공지사항|가정통신문|자료실|갤러리|앨범|사진|자유게시|묻고답|질문|답변|q\s*&\s*a|\bqna\b|board|bbs|brd|notibbs|notice|gallery|album|photo|pds|data)/i.test(combined);
 }
 
-function isExcludedMenuLink($, el, text, href, url) {
+function isExcludedMenuLink($, el, text, href, url, preserveBoardHeading = false) {
   const $el = $(el);
   const target = normalizeText($el.attr('target')).toLowerCase();
   const onclick = normalizeText($el.attr('onclick')).toLowerCase();
@@ -51,9 +51,12 @@ function isExcludedMenuLink($, el, text, href, url) {
   if (target === '_blank' || rel.includes('external')) return true;
   if (/window\.open|openpopup|popup|newwindow|새창/.test(combined)) return true;
 
-  if (isBoardLike(text, href, url)) return true;
+  if (!preserveBoardHeading && isBoardLike(text, href, url)) return true;
 
-  if (/(통합검색|검색|로그인|로그아웃|회원|회원가입|마이페이지|비밀번호|인증|관리자|login|logout|member|mypage|auth|sso|admin|password|search|find)/i.test(combined)) {
+  if (/(통합검색|검색|로그인|로그아웃|회원|회원가입|마이페이지|비밀번호|인증|관리자|login|logout|member|mypage|auth|sso|password|search|find)/i.test(combined)) {
+    return true;
+  }
+  if (/(?:^|[/.?=&_-])admin(?:login|index|\/|\.php|$)|administrator(?:\/|login)/i.test(combined)) {
     return true;
   }
 
@@ -148,18 +151,52 @@ function extractHeaderMenus(html, pageUrl, siteHostname) {
         url = new URL(href, pageUrl).href;
       } catch {}
     }
-    if (isExcludedMenuLink($, el, text, href, url)) return;
+
+    const $root = $(el).closest('#header, #topMenu, #topmenuNavi, #gnb');
+    const rootListDepth = $root.parents('ul, ol').length;
+    const linkListDepth = $(el).parents('ul, ol').length;
+    const depth = Math.max(1, linkListDepth - rootListDepth);
+    if (isExcludedMenuLink($, el, text, href, url, depth === 1)) return;
     if (isDifferentDomain(url, siteHostname)) return;
 
     const key = `${text}|${url}`;
     if (seen.has(key)) return;
     seen.add(key);
 
-    const $root = $(el).closest('#header, #topMenu, #topmenuNavi, #gnb');
-    const rootListDepth = $root.parents('ul, ol').length;
-    const linkListDepth = $(el).parents('ul, ol').length;
-    const depth = Math.max(1, linkListDepth - rootListDepth);
     menus.push({ label: text, url, depth });
+  });
+
+  return menus;
+}
+
+function extractFooterPolicyMenus(html, pageUrl, siteHostname) {
+  const $ = cheerio.load(html);
+  const $footerRoots = $('#footer, footer, .footer, .footer_link, .f-menu, .fnb');
+  if (!$footerRoots.length) return [];
+
+  const policyPattern = /개인정보\s*(?:처리|보호)?\s*방침|영상정보\s*(?:처리기기)?\s*(?:운영\s*[·ㆍ및]?\s*관리\s*)?방침|저작권\s*(?:보호\s*)?(?:정책|지침|방침)|이메일\s*무단\s*수집\s*거부/i;
+  const seen = new Set();
+  const menus = [];
+
+  $footerRoots.find('a').each((_, el) => {
+    const text = normalizeText($(el).text() || $(el).attr('title') || $(el).attr('aria-label'));
+    if (!text || !policyPattern.test(text)) return;
+
+    const href = normalizeText($(el).attr('href'));
+    if (!href || href.startsWith('#') || href.startsWith('javascript:')) return;
+
+    let url;
+    try {
+      url = new URL(href, pageUrl).href;
+    } catch {
+      return;
+    }
+    if (isDifferentDomain(url, siteHostname)) return;
+
+    const key = `${text}|${url}`;
+    if (seen.has(key)) return;
+    seen.add(key);
+    menus.push({ label: text, url, depth: 2 });
   });
 
   return menus;
@@ -307,8 +344,14 @@ export default async function handler(req, res) {
     const siteHostname = new URL(finalUrl).hostname;
     const siteName = extractSiteName(html);
     const menus = extractHeaderMenus(html, finalUrl, siteHostname);
+    const footerPolicyMenus = extractFooterPolicyMenus(html, finalUrl, siteHostname);
     const menusWithTabs = await expandMenusWithTabs(menus, siteHostname);
-    res.json({ siteName, menus: menusWithTabs });
+    const existingUrls = new Set(menusWithTabs.map(menu => menu.url).filter(Boolean));
+    const uniqueFooterPolicyMenus = footerPolicyMenus.filter(menu => !existingUrls.has(menu.url));
+    const allMenus = uniqueFooterPolicyMenus.length
+      ? [...menusWithTabs, { label: '이용안내', url: '', depth: 1 }, ...uniqueFooterPolicyMenus]
+      : menusWithTabs;
+    res.json({ siteName, menus: allMenus });
   } catch (error) {
     res.status(500).json({ error: error.message || '크롤링에 실패했습니다.' });
   }

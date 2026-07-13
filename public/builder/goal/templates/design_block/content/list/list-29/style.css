@@ -1,0 +1,80 @@
+﻿.list-29 {
+	/* 타이틀 */
+	--title-align: center;
+	--title-bg: #A5C25B;
+	--title-text: #fff;
+
+	/* 본문 */
+	--body-bg: #F3FAE1;
+	--body-text: #111;
+}
+
+.list-29 .inner{
+	display: flex;
+	min-height: 100%;
+	border-radius: 0.75rem;
+	background: var(--body-bg);
+	overflow: hidden;
+}
+
+.list-29 .tit-wrap{
+	flex: 1;
+	max-width: 7.5rem;
+	min-height: 100%;
+	align-items: center;
+	justify-content: center;
+	padding: 1rem;
+	background: var(--title-bg);
+}
+
+.list-29 .txt-wrap {
+	flex: 2;
+	padding: 1rem;
+}
+
+.list-29 .txt-wrap ul[data-depth="1"] {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 0.3rem;
+}
+
+.list-29 .txt-wrap ul[data-depth="1"] > li{
+	width: 100%;
+} 
+
+.list-29 .edit-list {
+    --ls-color-1: #111;
+    --ls-color-2: #333;
+    --ls-color-3: #333;
+}
+
+.list-29 .edit-list li{
+	color: var(--body-text);
+}
+
+@media (max-width: 1240px) {
+
+	.builder-columns.columns-3:has(.list-29){
+		grid-template-columns: repeat(2, 1fr);
+	}
+}
+
+@media (max-width: 960px) {
+
+	.builder-columns.columns-3:has(.list-29),
+	.builder-columns.columns-2:has(.list-29){
+		grid-template-columns: repeat(1, 1fr);
+	}
+}
+
+@media (max-width: 460px) {
+
+	.list-29 .inner{
+		flex-direction: column;
+	}
+
+	.list-29 .tit-wrap{ 
+		max-width: 100%;
+		padding: 0.6rem;
+	}
+}

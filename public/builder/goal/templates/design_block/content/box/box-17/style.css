@@ -1,0 +1,33 @@
+﻿.box-17 {
+	/* 타이틀 */
+	--title-align: center;
+	--title-text: #5645B8;
+
+	/* 본문 */
+	--body-align: center;
+
+	/* 서브 */
+	--sub-bg: #5645B8;
+	--sub-text: #fff;
+	--sub-weight: 700;
+
+	position: relative;
+	min-height: 100%;
+	gap: 0.8rem;
+	padding: 1.5rem 1rem 0.5rem 3rem;
+}
+
+.box-17 .sub {
+	position: absolute;
+	top: 0;
+	left: 0;
+	z-index: 2;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	width: 2.5rem;
+	height: 2.5rem;
+	border-radius: 0.75rem 0.75rem 0 0.75rem;
+	background: var(--sub-bg);
+	font-size: 0.85rem;
+}

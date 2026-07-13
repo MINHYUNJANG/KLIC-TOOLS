@@ -1,0 +1,12 @@
+{
+  "templateFilters": ["office"],
+  "sections": [
+    {"type": "box-003", "blockWidth": 270},
+    {"type": "divider-001", "style": {"connectorHeight": "30"}},
+    "wing-003",
+    {"type": "divider-001", "style": {"connectorHeight": "30"}},
+    {"type": "box-003", "blockWidth": 270, "data": {"title": "관리이사", "body": "DIRECTOR"}},
+    "divider-001",
+    {"type": "list-004", "columns": 4, "gap": 50}
+  ]
+}

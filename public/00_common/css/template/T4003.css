@@ -1,0 +1,44 @@
+﻿ 
+/*-----------------------------------------------------------
+Author :GH, Park
+Creative date :2021. 10. 21
+-----------------------------------------------------------*/
+
+[class^="MC_wrap"]:after{display:block; clear:both; content:""; }
+.MC_wrap1{position:relative; margin-top:2.5rem; } 
+.MC_wrap2{position:relative; margin:1.5rem 0; }
+.MC_wrap3{position:relative; margin-bottom:3rem; }
+
+.MC_box1{position:relative; } /* 메인비주얼 */
+.MC_box2{position:relative; width:calc(50% - .75rem); height:12.5rem; float:left; }/* 게시판01 */
+.MC_box3{position:relative; width:calc(50% - .75rem); height:12.5rem; margin-left:1.5rem; float:left; }/* 게시판02 */
+.MC_box4{position:relative; }/* 학교앨범 */
+
+@media (max-width:1240px){
+}
+
+@media (max-width:1024px){
+	.MC_wrap1{margin-top:1.5rem; }
+}
+
+@media (max-width:960px){
+	/* 메인비주얼 */
+	.MC_box1{height:auto; }
+}
+
+@media (max-width:768px){
+    .MC_wrap1{margin-top:0; }
+    .MC_wrap2{margin:1rem 0; }
+    .MC_wrap3{margin-bottom:1.5rem; }
+ 
+	.MC_box2{width:100%; height:auto; float:none; }/* 게시판01 */
+	.MC_box3{width:100%; height:auto; float:none; margin:1rem 0 0; }/* 게시판02 */
+}
+@media (max-width:600px){
+}
+
+@media (max-width:480px){
+}
+
+
+ 

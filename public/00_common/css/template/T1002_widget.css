@@ -1,0 +1,368 @@
+﻿@import url("/00_common/font/Montserrat/fonts.css");
+
+h2.heading {margin-bottom: 1.5rem; max-width: calc(100% - 2.25rem); font-size: 1.1rem; font-weight: 700; color: #000;}
+
+.btn_more {position: absolute; right: 0; top: -0.25rem; width: 2.15rem; height: 2.15rem; line-height: 2.15rem; text-align: center; font-size: 1.25rem; color: #1a3c84; background: #cfdced; border-radius:50%; -webkit-transform: rotate(0); transform: rotate(0); -webkit-transition: all 0.15s; transition: all 0.15s;}
+.btn_more:focus,
+.btn_more:hover {color: #cfdced; background: #1a3c84; -webkit-transform: rotate(180deg); transform: rotate(180deg);}
+
+/* 메인비주얼 */
+.MVisual1002 {height: 100%;}
+.MVisual1002 .slider,
+.MVisual1002 .slick-list,
+.MVisual1002 .slick-track {height: 100%;}
+.MVisual1002 .item {line-height: 0; overflow: hidden;}
+.MVisual1002 .item img {position: relative; width: auto; height: 100%;}
+.MVisual1002 .control {position: absolute; left: 42rem; bottom: 5rem; height: 3.5rem; line-height: 3.5rem; z-index: 1;}
+.MVisual1002 .control .page {display: inline-block; margin-right: 1rem; font-family: 'Montserrat'; font-size: 1.1rem; color: #000001;}
+.MVisual1002 .control .page strong {position: relative; padding-right: 1.6rem; font-weight: 600; color: #1c4295;}
+.MVisual1002 .control .page strong:before {position: absolute; left: -0.6rem; top: 0; width: 9px; height: 9px; background: #1c4295; border-radius: 50%; content: '';}
+.MVisual1002 .control .page strong:after {position: absolute; right: 0.5rem; top: 50%; width: 0.6rem; height: 2px; background: #000001; content: '';}
+.MVisual1002 .control > a {display: inline-block; width: 1.5rem; text-align: center; vertical-align: top; font-size: 1.2rem; color: #000001; -webkit-transition: all 0.15s; transition: all 0.15s;}
+.MVisual1002 .control > a.stop,
+.MVisual1002 .control > a.play {font-size: 1rem;}
+.MVisual1002 .control > a.play {display: none;}
+/** 메인비주얼 active **/
+.MVisual1002 .control > a:hover,
+.MVisual1002 .control > a:focus {color: #1c4295;}
+
+/* 팝업존 */
+.pop1002 {position: relative;}
+.pop1002 h2.heading {margin-bottom: 0.75rem; max-width: calc(100% - 11rem); font-size: 1.2rem; color: #1c4295;}
+.pop1002 .pop_img {position: relative; height: 17rem; background: #dbdbdb; border-radius: 1.75rem 0 1.75rem 1.75rem; overflow: hidden;}
+.pop1002 .pop_img div,
+.pop1002 .pop_img .item {height: 100%;}
+.pop1002 .pop_img .item a {position: relative; display: block; height: 100%; line-height: 0; text-align: center; overflow: hidden;}
+.pop1002 .pop_img .item img {position: relative; width: auto; max-width: 100%; height: 100%;}
+.pop1002 .nss_pg {position: absolute; top: 0.25rem; right: 0; padding: 0 1.5rem; height: 2.5rem; line-height: 2.5rem; font-size: 1rem; color: #fff; background: #014099; border-radius: 1rem 1rem 0 1rem;}
+.pop1002 .page {display: inline-block; min-width:4rem; text-align:center; margin-right: 0.5rem; vertical-align: top; font-family: 'Montserrat';}
+.pop1002 .page strong {position: relative; display: inline-block; margin-right: 0.6rem; padding-right: 0.6rem; font-weight: 600; color: #72b3ff;}
+.pop1002 .page strong:before {position: absolute; top: calc(50% - 0.15rem); right: -0.15rem; width: 0.3rem; height: 0.3rem; background: #fff; border-radius: 50%; content: "";}
+.pop1002 .nss_pg a {position: relative; display: inline-block; width: 1.5rem; vertical-align: top; text-align: center; color: #fff;}
+.pop1002 .nss_pg .play {display: none;}
+/** 팝업존 :action **/
+.pop1002 .nss_pg a:hover,
+.pop1002 .nss_pg a:focus {color: #72b3ff;}
+.pop1002 a,
+.pop1002 :before {-webkit-transition: all 0.15s; transition: all 0.15s;}
+
+/* 바로가기 */
+.M_link1002 {position: relative; padding: 1.5rem 0;}
+.M_link1002::before {position: absolute; right: -8rem; top: 0; bottom: 0; display: block; width: 200%; background: #fff; border-radius: 0 1.5rem 1.5rem 0; box-shadow: 2px 2px 7px rgba(113,113,113,0.35); content: '';}
+.M_link1002 .link_slider {position: relative; width: 100%; text-align: center; overflow: hidden;}
+.M_link1002 .link_slider .item {display: inline-block; /*width: 100%;*/}
+.M_link1002 .link_slider .item a .img {margin: 0 auto 0.5rem auto; width: 5.5rem; height: 5.5rem; line-height: 5.3rem; background: #deeaf5; border:2px solid #deeaf5; border-radius: 50%; -webkit-transition: all 0.25s; transition: all 0.25s;}
+.M_link1002 .link_slider .item a .img img {max-width: 100%; vertical-align: middle;}
+.M_link1002 .link_slider .item a span {display: block; height: 2rem; line-height: 1rem; font-weight: 600; color: #000; overflow: hidden;}
+.M_link1002 > a {position: absolute; top: 50%; left: -2.75rem; width: 2.25rem; height: 2.25rem; line-height: 2.25rem; text-align: center; font-size: 1rem; background: #e3e5ea; border-radius: 50%; -webkit-transform: translateY(-50%); transform: translateY(-50%);}
+.M_link1002 > a.next {left: auto; right: -2.75rem;}
+/* 바로가기 : hover */
+.M_link1002 .link_slider .item a:hover .img,
+.M_link1002 .link_slider .item a:focus .img {background: #fff; border-color: #5888ed;}
+
+/* 게시판 */
+.notice1002 {position:relative; height:100%;}
+.notice1002 .titTab {width: 100%; height: 3.25rem; background: #fff; border: 1px solid #cbcbcb; border-radius: 1rem;}
+.notice1002 .titTab ul {display: flex; max-width: calc(100% - 3.75rem);}
+.notice1002 .titTab ul li {width: calc(100% / 3);}
+.notice1002 .titTab ul li a {position: relative; display: block; padding: 0 1rem; height: 3.25rem; line-height: 3.25rem; text-align: center;}
+.notice1002 .titTab ul li a:before {position: absolute; left: 0; top: -1px; display: block; width: 100%; height: 100%; background: transparent; border-radius: 1rem; content: "";}
+.notice1002 .titTab ul li a:after {position: absolute; right: 0; top: calc(50% - 0.5rem); width: 1px; height: 1rem; background: #ddd; content: "";}
+.notice1002 .titTab ul li:last-child a:after {display: none;}
+.notice1002 .titTab ul li a span {position: relative; display: block; font-size: 1rem; color: #666; white-space: nowrap; overflow: hidden;}
+.notice1002 .topList {position:relative; display: block; padding: 2.25rem 0 2.25rem 6rem; min-height: 7.25rem; overflow: hidden;}
+.notice1002 .topList dt {position: relative; height: 2rem; line-height: 2rem; font-size: 1rem; font-weight: 600; color: #222; white-space: nowrap; text-overflow: ellipsis; overflow: hidden; transition: color 0.3s; -webkit-transition: color 0.3s;}
+.notice1002 .topList p {height: 1.75rem; line-height: 1.75rem; font-size: 0.85rem; color: #444; white-space: nowrap; text-overflow: ellipsis; overflow: hidden;}
+.notice1002 .topList .date {position: absolute; top: 1.75rem; left: 0; padding-top: 2.75rem; width: 4.5rem; height: 4.5rem; line-height: 1; text-align: center; font-family: 'Montserrat'; font-size: 0.85rem; color: #111; background: #f1f1f1; border-radius: 50%; transition: background 0.3s; -webkit-transition: background 0.3s;}
+.notice1002 .topList .date em {position: absolute; top: 1rem; left: 50%; display: block; color: #094499; font-size: 1.5rem; font-weight: 700; transform: translateX(-50%); -webkit-transform: translateX(-50%); content: '';}
+.notice1002 .topList dl.new .date::before {position: absolute; top: -0.4rem; left: 0; width: 1.5rem; height: 1.5rem; line-height: 1.5rem; text-align: center; font-family: 'Montserrat'; font-size: 0.75rem; font-weight: 600; color: #fff; background: #ff6e0e; border-radius: 50%; content: "N"; z-index: 2;}
+.notice1002 .list_box {display: none; width: 100%;}
+.notice1002 .list_box ul {height: 8rem; overflow: hidden;}
+.notice1002 .list_box li {position: relative;}
+.notice1002 .list_box li a {display: block; line-height: 2rem;}
+.notice1002 .list_box li p {padding-left: 1.75rem; width:calc(100% - 4.5rem); font-size: 0.85rem; color: #333; text-overflow: ellipsis; white-space: nowrap; overflow: hidden;}
+.notice1002 .list_box li p::after {position: absolute; top: 0.85rem; left: 1rem; width: 4px; height: 4px; background: #00a78a; content: "";}
+.notice1002 .list_box li.new a p::before {display: inline-block; margin-right: 0.25rem; width: 1.5rem; height: 1.5rem; line-height: 1.5rem; text-align: center; font-family: 'Montserrat'; font-size: 0.75rem; color: #fff; background: #00a78a; border-radius: 50%; content: 'N';}
+.notice1002 .list_box li span {position: absolute; right: 0; top: 0; font-size: 0.75rem; color: #666;}
+.notice1002 .btn_more2 {position: absolute; right: 0; top: 0; width: 3.75rem; height: 3.25rem; border-left: 1px solid #ddd; background: url('/images/template/T1002/main/btn_noti.png') no-repeat center;}
+/* 게시판 : 데이터 없음 */
+.notice1002 .list_box li.no_data {text-align: center; line-height: 8rem;}
+.notice1002 .list_box dl.no_data dt {line-height: 4.2;}
+.notice1002 .list_box dl.no_data .date {padding-top: 1rem;}
+/* 게시판 : active */
+.notice1002 .titTab ul li a.current:before {background: #349f49;}
+.notice1002 .titTab ul li a.current:after {display: none;}
+.notice1002 .titTab ul li a:hover span,
+.notice1002 .titTab ul li a:focus span {color: #349f49; font-weight: 600;}
+.notice1002 .titTab ul li a.current span {color: #fff; font-weight: 700;}
+.notice1002 .topList:hover dt,
+.notice1002 .topList:hover dt {color: #1f56d2;}
+.notice1002 .list_box.on {display: block;}
+.notice1002 .list_box li a:hover,
+.notice1002 .list_box li a:focus {text-decoration: underline;}
+.notice1002 a,
+.notice1002 :before {transition: 0.15s; -webkit-transition: 0.15s;}
+
+/* 사용자 메뉴 */
+.userSrv_1002 {position: relative; height: 100%;}
+.userSrv_1002 .titTab {padding-bottom: 1.25rem; border-bottom: 4px solid #5888ed;}
+.userSrv_1002 .titTab ul:after {clear: both; display: block; content: "";}
+.userSrv_1002 .titTab li {position: relative; float: left; display: inline-block; margin-right: 0.25rem; width: calc(calc(100% - 0.5rem) / 3); vertical-align: top;}
+.userSrv_1002 .titTab li:last-child {margin-right: 0;}
+.userSrv_1002 .titTab li a {position: relative; display: flex; align-items: center; padding: 0 3.5rem 0 1.5rem; height: 3rem; font-size: 1rem; color: #2d2d2d; background: #dbe0e8; border-radius: 1.5rem;}
+.userSrv_1002 .titTab li a:after {position: absolute; top: 0; right: 0; width: 3.5rem; height: 100%; background: no-repeat left center; content: "";}
+.userSrv_1002 .titTab li a.type01:after {background-image: url('/images/template/T1003/main/bg_userSrv01.png');}
+.userSrv_1002 .titTab li a.type02:after {background-image: url('/images/template/T1003/main/bg_userSrv02.png');}
+.userSrv_1002 .titTab li a.type03:after {background-image: url('/images/template/T1003/main/bg_userSrv03.png');}
+.userSrv_1002 .titTab li a span {position: relative; display:block; overflow:hidden; white-space:nowrap;}
+.userSrv_1002 .tabWrap {margin-top: 0.5rem; height: calc(100% - 4.25rem); background: #fff; border: 1px solid #cbcbcb; border-radius: 1rem;}
+.userSrv_1002 .list_box {display: none; padding: 1rem;}
+.userSrv_1002 .list_box ul {height: 12.25rem; overflow-y: auto;}
+.userSrv_1002 .list_box li {float: left; width: 50%; border-bottom: 1px dotted #d1d1d1;}
+.userSrv_1002 .list_box li a {position: relative; display: flex; align-items: center; padding: 0 0.5rem 0 0; height: 3rem; font-size: 0.85rem; color: #111;}
+.userSrv_1002 .list_box li a span {display: inline-block; margin-right: 0.5rem; width: 2rem; height: 2rem; line-height: 2rem; text-align: center; font-size: 0; border:2px solid #e6e6e6; background: #e6e6e6; border-radius: 50%;}
+.userSrv_1002 .list_box li a span img {max-width: 100%; vertical-align: middle;}
+.userSrv_1002 .list_box li.no_data {width: 100%; line-height: 12.25rem; text-align: center;}
+/* 게시판 : active */
+.userSrv_1002 .titTab li a.current {color: #fff; background: #5888ed;}
+.userSrv_1002 .titTab li a.current:before {position: absolute; bottom: -0.5rem; left: calc(50% - 0.5rem); width: 1rem; height: 1rem; -webkit-transform: rotate(45deg); transform: rotate(45deg); background: #5888ed; content: "";}
+.userSrv_1002 .list_box.on {display: block;}
+.userSrv_1002 .list_box li a.on {font-weight: 700; color: #0091ff;}
+.userSrv_1002 .list_box li a.on span {border-color: #5984dd; background:none;}
+.userSrv_1002 .list_box li a,
+.userSrv_1002 .list_box li a::before,
+.userSrv_1002 .list_box li a::after {-webkit-transition: all 0.15s; transition: all 0.15s;}
+
+/* 갤러리 */
+.gallery1002 {position: relative; height: 100%;}
+.gallery1002 .topList {position: relative; float: left; width: 42.5%; height: 16rem;}
+.gallery1002 .topList .img {height: 16rem;border-radius: 1.25rem; overflow: hidden;}
+.gallery1002 .topList .img img {position: relative; top: 50%; left: 50%; width: auto; height: 100%; transform: translate(-50%, -50%); -webkit-transform: translate(-50%, -50%); transition: transform 0.3s; -webkit-transition: transform 0.3s;}
+.gallery1002 .topList .tit {position: absolute; bottom: 0; left: 0; margin-top: 0; padding: 0 1rem; width: 90%; height: 3.5rem; line-height: 3.5rem; font-size: 0.85rem; color: #111; background: #fff; border-radius: 0 1.25rem 0 0; text-overflow: ellipsis; overflow:hidden; white-space:nowrap;}
+.gallery1002 .topList .date {position: absolute; bottom: 2.5rem; left: 1rem; padding-top: 2.15rem; width: 3.5rem; height: 3.5rem; line-height: 1; text-align: center; font-family: 'Montserrat'; font-size: 0.7rem; color: #fff; background: #349f49; border-radius: 50%; transition: background 0.3s; -webkit-transition: background 0.3s;}
+.gallery1002 .topList .date em {position: absolute; top: 0.75rem; left: 50%; display: block; font-size: 1.35rem; font-weight: 700; transform: translateX(-50%); -webkit-transform: translateX(-50%); content: '';}
+.gallery1002 .slick-slider,
+.gallery1002 .slick-list,
+.gallery1002 .slick-track {height: 100%;}
+.gallery1002 .inBox {float: left; margin-left: 1.25rem; width: calc(57.5% - 1.25rem);}
+.gallery1002 .list_box {margin: 0 -0.625rem; width: calc(100% + 1.25rem); height:12.5rem; overflow:hidden;}
+.gallery1002 .list_box::after {clear: both; display: block; content: '';}
+.gallery1002 .list_box .item {float: left; padding: 0 0.625rem; width: 12.5rem; height: 12.5rem;}
+.gallery1002 .list_box .item a {position: relative; display: block;}
+.gallery1002 .list_box .img {height: 9rem; background: #e1e1e1; border-radius: 1rem; overflow: hidden;}
+.gallery1002 .list_box .img img {position: relative; top: 50%; left: 50%; width: auto; height: 100%; transform: translate(-50%, -50%); -webkit-transform: translate(-50%, -50%); transition: transform 0.3s; -webkit-transition: transform 0.3s;}
+.gallery1002 .list_box .tit {display: block; margin-top: 0.5rem; height: 1.5rem; line-height: 1.5rem; font-weight: 500; color: #111; white-space: nowrap; text-overflow: ellipsis; overflow: hidden;}
+.gallery1002 .list_box .date {display: block; height: 1.25rem; line-height: 1.25rem; font-size: 0.7rem; color: #666; overflow: hidden;}
+.gallery1002 .no_data {display: flex; align-items: center; justify-content: center; padding: 0 1rem; width: 100%; font-size: 0.9rem; background: rgba(0,0,0,0.05); border-radius: 2rem;}
+.gallery1002 .nss_pg {position: relative; margin-top: 1.5rem; display: block;}
+.gallery1002 .nss_pg:before {position: absolute; top: calc(50% - 2px); left: 6rem; width: calc(100% - 6rem); height: 3px; background: #98afce; content: "";}
+.gallery1002 .nss_pg a {position: relative; display: inline-block; width: 1.6rem; height: 1.6rem; line-height: 1.6rem; text-align: center; color: #fff; background: #0a3a7b; border-radius: 50%;}
+.gallery1002 .nss_pg .play {display: none;}
+/** 갤러리 : 비공개 이미지 **/
+.gallery1002 .img.private {display: flex; justify-content: center; align-items: center; text-align: center; line-height: 1.5; font-size: 0.8rem; color: #fff; padding:0 0.5rem; word-break: keep-all; background: #666; }
+.gallery1002 .img.private i {font-size: 1.5rem;}
+.gallery1002 .list_box .img.private{ background: #666; }
+/** 갤러리 : active **/
+.gallery1002 a:hover .img img,
+.gallery1002 a:focus .img img {transform: translate(-50%, -50%) scale(1.1); -webkit-transform: translate(-50%, -50%) scale(1.1);}
+.gallery1002 a:hover .tit,
+.gallery1002 a:focus .tit {text-decoration: underline;}
+.gallery1002 .nss_pg a:hover,
+.gallery1002 .nss_pg a:focus {color: #0a3a7b; background: #cfdced;}
+.gallery1002 a {-webkit-transition: all 0.15s; transition: all 0.15s;}
+
+/* 교육지원청 홍보 */
+.promo1002 {position: relative; height: 100%;}
+.promo1002 .list_box li a {position: relative; display: block; border-radius: 1.25rem; overflow: hidden; -webkit-transition: all 0.2s; transition: all 0.2s;}
+.promo1002 .list_box li a .img {position: relative; width: 100%; height: 12.75rem; background: rgba(0, 0, 0, 0.15); overflow: hidden; -webkit-transition: all 0.2s; transition: all 0.2s;}
+.promo1002 .list_box li a .img img {position: absolute; top: 50%; left: 50%; width: 100%; height: auto; transform: translate(-50%, -50%) scale(1.02); -webkit-transform: translate(-50%, -50%) scale(1.02); -webkit-transition: all 0.2s; -ms-transition: all 0.2s; transition: all 0.2s;}
+.promo1002 .list_box li a .tit {padding: 0 1.5rem; height: 3.25rem; line-height: 3.25rem; font-size: 0.9rem; font-weight: 500; color: #111; white-space: nowrap; text-overflow: ellipsis; background: #fff; overflow: hidden;}
+.promo1002 .list_box li:first-child a .tit {color: #fff; background: -webkit-linear-gradient(-45deg, rgba(5,100,172,1) 0%,rgba(95,192,223,1) 100%);}
+.promo1002 .list_box li a .detail {position: absolute; bottom: 2.5rem; left: 1rem; display: flex;justify-content: center; align-items: center; width: 3.25rem; height: 3.25rem; text-align: center; font-size: 0.8rem; font-weight: 500; color: #fff; background: #0a3a7b; border-radius: 50%; overflow: hidden;}
+.promo1002 .list_box li:nth-of-type(n+2) {display: none;}
+.promo1002 .list_box li.no_data {display: flex; align-items: center; justify-content: center; width: 100%; height: 16rem; font-size: 0.9rem; background: rgba(0,0,0,0.05);}
+/** 교육지원청 홍보 : 비공개 이미지 **/
+.promo1002 .list_box li a .img.private {display: flex; justify-content: center; align-items: center; text-align: center; line-height: 1.5; font-size: 0.8rem; color: #fff; padding:0 0.5rem; word-break: keep-all; background: #666; }
+.promo1002 .list_box li a .img.private i {font-size: 1.5rem;}
+/** 교육지원청 홍보 : active **/
+.promo1002 .list_box li a:hover .img img,
+.promo1002 .list_box li a:focus .img img {transform: translate(-50%, -50%) scale(1.1); -webkit-transform: translate(-50%, -50%) scale(1.1);}
+.promo1002 .list_box li a:hover .tit,
+.promo1002 .list_box li a:focus .tit {text-decoration: underline;}
+
+/* 배너존 */
+.banner_zone {line-height: 1; background: #fff; border-top: 1px solid #ccc; border-bottom: 1px solid #ccc;}
+.banner_zone .container {position: relative; height: 4rem; overflow: hidden;}
+.banner_zone .btn {float: left; margin-top: 1.1rem; overflow: hidden;}
+.banner_zone .btn a {float: left; margin-right: 0.25rem; width: 1.8rem; height: 1.8rem; line-height: 1.8rem; text-align: center; font-size: 1.1rem; color: #000; background: #f6f6f6; border-radius: 50%; overflow: hidden;}
+.banner_zone .btn a.play {display: none;}
+.banner_zone .bnWrap {float: left; padding-top: 0.75rem; padding-left: 1.5rem; width: calc(100% - 8.25rem); overflow: hidden;}
+.banner_zone .bnWrap a {display: block; height: 2.5rem; line-height: 2.3rem; text-align: center; margin:0 5px; border: 1px solid #c8d1db; overflow: hidden;}
+.banner_zone .bnWrap a img {max-width: 100%; max-height: 100%; vertical-align: middle;}
+/* 배너존 : active */
+.banner_zone .btn a:hover,
+.banner_zone .btn a:focus {background: #f1f1f1;}
+
+@media (max-width: 1440px) {
+
+	/* 메인비주얼 */
+    .MVisual1002 .item img{ margin-left:-4rem; }
+	.MVisual1002 .control {left: 33.5rem;}
+
+    .pop1002 .pop_img{ height:15.4rem;}
+}
+
+@media (max-width: 1310px) {
+
+    /* 메인비주얼 */
+    .MVisual1002 .control{ left:29rem; bottom:4rem; }
+
+    .pop1002 .pop_img{ height:13.5rem;}
+}
+
+@media (max-width: 1240px) {
+	/* 메인비주얼 */
+    .MVisual1002 .item img{ margin-left:-6.5rem; }
+    .MVisual1002 .control{ left:26.5rem;}
+
+    /* 바로가기 */
+    .M_link1002::before{right:-50%;}
+
+    /* 팝업존 */
+    .pop1002 .nss_pg{ padding:0 1rem;}
+
+	/* 포토갤러리 */
+	.gallery1002 .list_box ul li{width: 50%;}
+	.gallery1002 .list_box ul li:nth-of-type(n+3){display: none;}
+
+	/* 교육지원청 홍보 */
+	.promo1002 .list_box {margin: 0 -0.75rem; width: calc(100% + 1.5rem);}
+	.promo1002 .list_box li {float: left; margin: 0 0.75rem; width: calc(100% / 3 - 1.5rem);}
+	.promo1002 .list_box li:nth-of-type(n+2) {display: block;}
+}
+
+@media (max-width: 1024px) {
+
+	/* 사용자 메뉴 */
+	.userSrv_1002 .list_box li a span img { transform: scale(0.9); -webkit-transform: scale(0.9); }
+}
+
+@media (max-width: 1110px) {
+
+	/* 메인비주얼 */
+    .MVisual1002 .item img{ width:165%; height:auto; margin-left:0; }
+    .MVisual1002 .control{ left:auto; right:5%; }
+}
+
+
+@media (max-width: 960px) {
+
+	/* 메인비주얼 */
+	.MVisual1002 .control {left: auto; right: 1rem; bottom: 1rem; height: 2.5rem; line-height: 2.5rem;}
+}
+
+
+@media (max-width: 860px) {
+	/* 배너존 */
+	.banner_zone .btn {margin-top: 1.3rem;}
+	.banner_zone .btn a {width: 1.5rem; height: 1.5rem; line-height: 1.5rem; font-size: 1rem;}
+	.banner_zone .bnWrap {padding-left: 0.5rem; width: calc(100% - 7rem);}
+}
+
+@media (max-width: 768px) {
+	/* 메인비주얼 */
+	.MVisual1002 .control {bottom: 0.5rem; height: 1.5rem; line-height: 1.5rem;}
+	.MVisual1002 .control .page {margin-right: 0.5rem; font-size: 0.9rem;}
+	.MVisual1002 .control .page strong {padding-right: 1rem;}
+	.MVisual1002 .control .page strong:after {right: 0.25rem; width: 0.5rem;}
+
+	/* 팝업존 */
+	.pop1002 .pop_img{ height:auto;}
+	.pop1002 .pop_img .item img{ height:auto; max-width:100%; max-height:20rem;}
+
+	/* 갤러리 */
+	.gallery1002 .topList {width: calc(50% - 0.625rem);}
+	.gallery1002 .inBox {width: calc(50% - 0.625rem);}
+
+	/* 교육지원청 홍보 */
+	.promo1002 .list_box {margin: 0 -0.5rem; width: calc(100% + 1rem);}
+	.promo1002 .list_box li {margin: 0 0.5rem; width: calc(100% / 2 - 1rem);}
+	.promo1002 .list_box li:nth-of-type(n+3) {display: none;}
+}
+
+@media (max-width: 600px) {
+
+	/* 게시판 */
+	.notice1002 .topList{ padding:2rem 0 1rem 5.5rem;}
+	.notice1002 .titTab ul li a{ padding:0 0.75rem;}
+	.notice1002 .titTab ul li a span{ font-size:0.9rem;}
+
+	/* 바로가기 */
+	.M_link1002 .link_slider .item a .img{ width:4.5rem; height:4.5rem; line-height:4.3rem;}
+	.M_link1002 .link_slider .item a .img img{ width:3.25rem; height:auto;}
+
+	/* 교육지원청 홍보 */
+	.promo1002 .list_box {margin: 0; width: 100%;}
+	.promo1002 .list_box li {float: none; margin: 0; width: 100%;}
+	.promo1002 .list_box li:nth-of-type(n+2) {display: none;}
+
+	/* 사용자 메뉴 */
+	.userSrv_1002 .titTab li a{ font-size:0.9rem;}
+	.userSrv_1002 .list_box li a span{ border-width: 1px;}
+}
+
+@media (max-width: 480px) {
+	h2.heading{ margin-bottom:1rem;}
+
+	/* 갤러리 */
+	.gallery1002 .topList {width: 100%;}
+	.gallery1002 .inBox {display: none;}
+
+	/* 게시판 */
+	.notice1002 .titTab{ height:auto; border:0; border-radius:0;}
+	.notice1002 .titTab ul{ flex-wrap: wrap; max-width:calc(100% - 2.75rem);}
+	.notice1002 .titTab ul li{ flex:1; width:auto; max-width:calc(100% - 0.25rem); margin-right:0.25rem; margin-bottom:0.25rem;}
+	.notice1002 .titTab ul li a { height:2.75rem; line-height:2.75rem; border:1px solid #ddd; border-radius:0.75rem;}
+    .notice1002 .titTab ul li a:after{ display:none;}
+	.notice1002 .titTab ul li a:before{ border-radius:0.75rem;}
+	.notice1002 .topList{ min-height:6rem; padding:1.25rem 0 0.5rem 5.25rem;}
+	.notice1002 .topList .date{ top:1rem;}
+	.notice1002 .list_box li p{ padding-left:1.25rem;}
+	.notice1002 .list_box li p::after{ left:0.5rem;}
+	.notice1002 .btn_more2{ width:2.75rem; height:2.75rem; border:1px solid #ddd; border-radius:0.75rem; background-size:1.25rem auto;}
+
+	/* 사용자 메뉴 */
+	.userSrv_1002 .titTab{ padding-bottom:0.75rem;}
+	.userSrv_1002 .titTab li a{ height:2.5rem; padding:0 1rem; justify-content: center;}
+	.userSrv_1002 .titTab li a:after{ display:none;}
+	.userSrv_1002 .titTab li a.current:before{ bottom:-0.25rem;}
+	.userSrv_1002 .list_box li a span img{ width:1rem; height:auto;}
+
+    .gallery1002 .topList,
+    .gallery1002 .topList .img{ height:13rem;}
+
+    /* 갤러리 */
+    .promo1002 .list_box li a .img{ height:10rem;}
+}
+
+@media (max-width: 420px) {
+	/* 사용자 메뉴 */
+	.userSrv_1002 .list_box li{ width:100%;}
+}
+
+@media (max-width: 380px) {
+
+    /* 팝업존 */
+    .pop1002 h2.heading{ font-size:1.1rem;}
+	.pop1002 .nss_pg{ padding:0 1rem;}
+	.pop1002 .nss_pg a{ width:1.25rem;}
+}
+
+@media (max-width: 320px) {
+
+    /* 팝업존 */
+    .pop1002 h2.heading{ max-width:calc(100% - 7rem);}
+	.pop1002 .page{ display:none;}
+}
+
+

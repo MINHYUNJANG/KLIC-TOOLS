@@ -1,0 +1,66 @@
+﻿.list-01 {
+	/* 타이틀 */
+	--title-align: center;
+	--title-bg: #528BF0;
+	--title-text: #fff;
+
+	min-height: 100%;
+	border-radius: 0.5rem;
+	border: 1px solid #ccc;
+}
+
+.list-01 .tit-wrap {
+	border-radius: 0.5rem;
+	padding: 0.8rem;
+	background: var(--title-bg);
+}
+
+.list-01 .txt-wrap {
+	flex: 1;
+	padding: 0.8rem;
+	border-radius: 0 0 1rem 1rem;
+}
+
+.list-01 .txt-wrap ul[data-depth="1"] {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 0.3rem;
+}
+
+.list-01 .txt-wrap ul[data-depth="1"] > li{
+	width: 100%;
+	padding: 0.4rem 0.75rem 0.4rem 1.75rem;
+	border-radius: 0.4rem;
+	font-size: 0.8rem;
+	background:#F2F2F2;
+} 
+
+.list-01 .edit-list {
+    --ls-color-1: #555;
+    --ls-color-2: #555;
+    --ls-color-3: #555;
+}
+
+@media (max-width: 1100px) {
+
+	.builder-columns.columns-4:has(.list-01){
+		grid-template-columns: repeat(2, 1fr);
+	}
+}
+
+@media (max-width: 1024px) {
+
+	.builder-columns.columns-3:has(.list-01){
+		grid-template-columns: repeat(2, 1fr);
+	}
+}
+
+@media (max-width: 768px) {
+
+	.builder-columns.columns-4:has(.list-01),
+	.builder-columns.columns-3:has(.list-01),
+	.builder-columns.columns-2:has(.list-01){
+		grid-template-columns: repeat(1, 1fr);
+	}
+}
+

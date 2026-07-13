@@ -1,0 +1,612 @@
+﻿/* 인사말 */
+.greeting {position: relative;}
+/*.greeting:before {position: absolute; top: 4.75rem; left: 0; width: 1000%; height: 100%; background: #f7fbff; border-radius: 2rem 0 0 0; content: "";}*/
+.greeting .box {position: relative; padding: 2rem 3rem; border-radius: 3rem 0.5rem; background: #fff url(/00_common/images/sub_com_edu/pattern01.png); border: 2px solid #007cd6; box-shadow: 2px 2px 10px rgba(0,0,0,0.2); z-index: 1;}
+/*.greeting .box:after {position: absolute; right: 0; top: 0; content: url(/images/web/goeay/sub/greeting_bg.png);}*/
+.greeting .box p {font-size: 1rem; color: #111;}
+.greeting .box p strong {font-size: 1.4rem; font-weight: 700;}
+.greeting .box p.txt {position: relative; padding-top: 1.25rem; line-height: 1.65;}
+.greeting .box p.txt:before {position: absolute; top: 0; left: 0; line-height: 0.25; font-family: xeicon; font-size: 2rem; color: #007cd6; content: "\e94a";}
+.greeting .box.img_box {padding-right: 13rem;}
+.greeting .box.img_box .img {position: absolute; right: 3rem; top: 1.75rem; width: 7.5rem; max-height: 8.75rem; z-index: 1;}
+.greeting .box.img_box .img img {width: 100%; border-radius: 1rem;}
+.greeting .con {position: relative; padding: 2.5rem 0 3.5rem 3rem; font-size: 0.85rem; font-weight: 500; color: #202020; z-index: 1;}
+.greeting .con p {line-height: 1.85;}
+.greeting .con p + p {margin-top: 1.5rem;}
+.greeting .con p.sign {text-align: right; font-size: 0.9rem; font-weight: 700; color: #005fa5;}
+
+/* 조직도 */
+
+/* 조직도 */
+[class^="box_st"] + .organizationBox {margin-top: 3rem;}
+.chartBox {text-align: center;}
+.chartBox li {position: relative; padding-top: 0.5rem;}
+.chartBox li:before {position: absolute; top: 0; left: 50%; width: 1px; height: 0.5rem; background: #d9d9d9; content: "";}
+.chartBox a {position: relative; display: flex; margin: 0 auto; width: 100%; max-width: 100%; height: 2.5rem; flex-direction: column; align-items: center; justify-content: center; background: #fff; border: 1px solid; border-radius: 1.5rem; z-index: 1;}
+.chartBox a > span {font-size: 0.85rem; font-weight: 500;}
+
+.chartBox .step01 > li {position: relative; padding-top: 0;}
+.chartBox .step01 > li:before {position: absolute; top: 0; left: 50%; width: 1px; height: 6rem; background: #d9d9d9; content: "";}
+.chartBox .step01 > li > a {margin-bottom: 2.5rem; width: 12.5rem; height: 3.5rem; font-size: 1rem; font-weight: 600; color: #fff; background: #006ac0 url(/images/web/goegh/sub/step_bg.png) no-repeat right center; border: 4px solid #b8dfff; border-radius: 2rem;}
+
+.chartBox .step02 {position: relative;}
+.chartBox .step02:before {position: absolute; top: 0; left: 16.7%; width: 75%; height: 1px; background: #d9d9d9; content: "";}
+.chartBox .step02:after {clear: both; display: block; width: 100%; content: "";}
+.chartBox .step02 > li {position: relative; float: left; padding-top: 2rem; width: 16.65%;}
+.chartBox .step02 > li:before {position: absolute; top: 0; left: 50%; width: 1px; height: 2rem; background: #d9d9d9; content: "";}
+.chartBox .step02 > li:after {position: absolute; top: -0.8rem; left: calc(50% - 0.8rem); width: 1.6rem; height: 1.6rem; text-align: center; line-height: 2; font-size: 10px; color: #006ac0; background: #e4f3ff; border: 0.3rem solid #fff; border-radius: 50%; content: "●";}
+.chartBox .step02 > li.half {padding-top: 2rem !important; width: 50%;}
+.chartBox .step02 > li.half:before {height: 7rem !important;}
+
+.chartBox .step02 > li > a {margin-bottom: 1.5rem; width: 12.5rem; height: 3.5rem; font-size: 1rem; font-weight: 600; color: #fff; background: url(/images/web/goegh/sub/step_bg.png) no-repeat right center; border: 4px solid #b8dfff; border-radius: 2rem;}
+.chartBox .step02 > li:nth-of-type(1) > a {background-color: #0272b9; border-color: #bbe3fc;}
+.chartBox .step02 > li:nth-of-type(2) > a {background-color: #3f7eff; border-color: #c7d6ff;}
+.chartBox .step02 > li:nth-of-type(3) > a {background-color: #008000; border-color: #01a301;}
+.chartBox .step02 > li:nth-of-type(4) > a {background-color: #FF5E30; border-color: #f6c99c;}
+
+.chartBox .step03 {position: relative;}
+.chartBox .step03 > li {padding: 0 0.25rem;}
+.chartBox .step02 > li.half .step03 {padding-top: 1.5rem;}
+.chartBox .step02 > li.half .step03:before {position: absolute; top: 0; left: 25%; width: 50%; height: 1px; background: #d9d9d9; content: "";}
+.chartBox .step02 > li.half .step03:after {clear: both; display: block; content: "";}
+.chartBox .step02 > li.half .step03 > li {float: left; width: 50%;}
+.chartBox .step02 > li.half .step03 > li:before {top: -1.5rem; height: 1.5rem;}
+.chartBox .step02 > li.half .step03 > li > a ~ a {margin-top: 1rem;}
+
+/* 분류별 색상 */
+.chartBox .step02 > li:nth-of-type(1) .step03 > li > a {color: #fff; background: #0272b9; border-color: #0272b9;}
+.chartBox .step02 > li:nth-of-type(2) .step03 > li > a {color: #fff; background: #3f7eff; border-color: #3f7eff;}
+.chartBox .step02 > li:nth-of-type(3) .step03 > li > a {color: #fff; background: #008000; border-color: #008000;}
+.chartBox .step02 > li:nth-of-type(4) .step03 > li > a {color: #fff; background: #FF5E30; border-color: #FF5E30;}
+.chartBox .step02 > li:nth-of-type(1) .step04 > li > a {border-color: #0272b9;}
+.chartBox .step02 > li:nth-of-type(2) .step04 > li > a {border-color: #3f7eff;}
+.chartBox .step02 > li:nth-of-type(3) .step04 > li > a {border-color: #008000;}
+.chartBox .step02 > li:nth-of-type(4) .step04 > li > a {border-color: #FF5E30;}
+/* hover */
+.chartBox .step02 > li:nth-of-type(1) .step04 > li > a:focus,
+.chartBox .step02 > li:nth-of-type(1) .step04 > li > a:hover {background: #e2f4ff;}
+.chartBox .step02 > li:nth-of-type(2) .step04 > li > a:focus,
+.chartBox .step02 > li:nth-of-type(2) .step04 > li > a:hover {background: #e6eeff;}
+.chartBox .step02 > li:nth-of-type(3) .step04 > li > a:focus,
+.chartBox .step02 > li:nth-of-type(3) .step04 > li > a:hover {background: #e7fffb;}
+.chartBox .step02 > li:nth-of-type(4) .step04 > li > a:focus,
+.chartBox .step02 > li:nth-of-type(4) .step04 > li > a:hover {background: #fff2e6;}
+
+.chartBox.type01 .step02:before {left: 50%; width: 50%; transform:translate(-50%, 0);}
+.chartBox.type01 .step02 > li {padding-top: 8.5rem;}
+.chartBox.type01 .step02 > li:before {height: 9.25rem;}
+.chartBox.type02 .step02:before {left: 8.325%; width: 83.35%;}
+.chartBox.type03 .step02:before {left: 16.66%; width: 66.66%;}
+.chartBox.type03 .step02 > li {width: 33.33%;}
+.chartBox.type04 .step02:before {left: 12.5%; width: 75%;}
+.chartBox.type04 .step02 > li {width: 25%;}
+.chartBox.type04 .step02 > li > a {margin-bottom: 0;}
+.chartBox.type04 .step03 > li {padding-top: 0.5rem;}
+
+
+
+/* 교육행정서비스헌장 */
+.promiseBox {position: relative; padding: 1.5rem; background: #eef7ff; overflow:hidden;}
+.promiseBox:before,
+.promiseBox:after {position: absolute; background: #007cd6; opacity: 0.05; border-radius: 50%; content: "";}
+.promiseBox:before {top: -2.5rem; left: -2.5rem; width: 13.5rem; height: 13.5rem;}
+.promiseBox:after {bottom: -4rem; right: -5rem; width: 17.25rem; height: 17.25rem;}
+.promiseBox .inbox {position: relative; padding: 4rem 2rem 2rem; line-height: 1.5; font-size: 0.85rem; font-weight: 500; color: #111; background: #fff; border: 1px solid #daeeff; box-shadow: 2px 2px 10px rgba(0,124,214,0.1); z-index: 1;}
+.promiseBox .inbox:after {position: absolute; top: -2rem; left: 0; width: 100%; line-height: 1; text-align: center; font-family: xeicon; font-size: 5rem; color: #007cd6; content: "\ea1c";}
+.promiseBox h3 {text-align: center; font-size: 1.5rem; font-weight: 600; color: #006ebd;}
+.promiseBox .txt {margin-top: 1.5rem;}
+.promiseBox .lst {margin-top: 1.5rem; padding: 1.5rem 0; border-top: 1px dashed #b9dbf5; border-bottom: 1px dashed #b9dbf5;}
+.promiseBox .lst > li {position: relative; padding-left: 1.4rem;}
+.promiseBox .lst > li:before {position: absolute; top: -0.15rem; left: 0; font-family: xeicon; font-size: 1rem; color: #007cd6; content: "\e92b";}
+.promiseBox .lst > li + li {margin-top: 1rem;}
+
+/* 역대교육장 */
+.pastEduSup ul{ display:flex; flex-wrap: wrap;}
+.pastEduSup li{ display:flex; flex-wrap: wrap; align-content: space-between; width:23%; margin:0.5rem 1%; border:1px solid #ddd; border-radius:0 0 1rem 0; overflow:hidden;}
+.pastEduSup li .img{ width:100%; display:flex; align-items:center; justify-content: center; text-align: center; padding:0.5rem 0.5rem 0;}
+.pastEduSup li .img img{ max-width:100%; height:auto;}
+.pastEduSup li .txt{ width:100%; padding:0.5rem; margin-top:-0.5rem; text-align:center; color:#fff; word-break:keep-all; border-radius:1rem 0; background:#115eb0;}
+.pastEduSup li .txt span{ display:block; font-size:0.75rem;}
+
+/* 사이트맵 */
+.sitemapBox h3 {position: relative; padding: 1.5rem 0; font-size: 1.2rem; font-weight: 700; color: #111; border-top: 1px solid #ccc;}
+.sitemapBox h3:before {position: absolute; top: -1px; left: 0; width: 6.5rem; height: 2px; background: #007cd6; content: "";}
+.sitemapBox ul {overflow: hidden;}
+.sitemapBox .lst_dep01 {margin-left: -0.5rem; width: calc(100% + 1rem);}
+.sitemapBox .lst_dep01 > li {float: left; margin-bottom: 2.5rem; padding: 0 0.5rem; width: 25%;}
+.sitemapBox .lst_dep01 > li:nth-of-type(4n+1) {clear: both;}
+.sitemapBox .lst_dep01 > li > a {position: relative; display: flex; padding: 0 2rem 0 1rem; height: 3rem; align-items: center; font-size: 0.8rem; font-weight: 600; color: #222; background: #fff; border: 2px solid #b5d8f5; border-radius: 1rem; overflow: hidden; transition: all 0.2s; -webkit-transition: all 0.2s;}
+.sitemapBox .lst_dep01 > li > a:after {position: absolute; top: 50%; right: 1rem; font-family: xeicon; font-size: 1.2rem; font-weight: 500; color: #b5d8f5; transform: translateY(-50%); -webkit-transform: translateY(-50%); content: "\e94a";}
+.sitemapBox .lst_dep01 > li > a[target="_blank"]:after {content: "\e980";}
+.sitemapBox .lst_dep02 {padding: 0 1rem;}
+.sitemapBox .lst_dep02 > li > a {position: relative; display: block; padding: 0.5rem 0; font-size: 0.75rem; font-weight: 500; color: #333; border-bottom: 1px solid #d5dde5; overflow: hidden;}
+.sitemapBox .lst_dep02 > li > a:after {position: absolute; top: 50%; right: 0; font-family: xeicon; opacity: 0; transform: translateY(-50%); -webkit-transform: translateY(-50%); content: "\e907"; transition: all 0.2s; -webkit-transition: all 0.2s;}
+.sitemapBox .lst_dep02 > li > a[target="_blank"]:after {opacity: 1; content: "\e980";}
+.sitemapBox .lst_dep03 {padding: 0.5rem 0.75rem; background: #f9fcff; border-bottom: 1px solid #d5dde5;}
+.sitemapBox .lst_dep03 > li > a {position: relative; display: block; padding: 0.25rem 0 0.25rem 0.5rem; font-size: 0.65rem; font-weight: 500; color: #333;}
+.sitemapBox .lst_dep03 > li > a:before {position: absolute; top: 0.7rem; left: 0; width: 4px; height: 1px; background: #99acbb; content: "";}
+.sitemapBox .lst_dep03 > li > a[target="_blank"]:after {position: absolute; top: 0.4rem; right: 0; font-family: xeicon; content: "\e980";}
+/* active */
+.sitemapBox .lst_dep01 > li > a:hover,
+.sitemapBox .lst_dep01 > li > a:focus {color: #fff; background: #007cd6; border-color: #007cd6;}
+.sitemapBox .lst_dep01 > li > a:hover:after,
+.sitemapBox .lst_dep01 > li > a:focus:after {color: #fff;}
+.sitemapBox .lst_dep02 > li > a:hover,
+.sitemapBox .lst_dep02 > li > a:focus {padding: 0.5rem 1rem 0.5rem 0; font-weight: 600; color: #007cd6; border-bottom-color: #007cd6;}
+.sitemapBox .lst_dep02 > li > a:hover:after,
+.sitemapBox .lst_dep02 > li > a:focus:after {color: #007cd6; opacity: 1;}
+.sitemapBox .lst_dep03 > li > a:hover,
+.sitemapBox .lst_dep03 > li > a:focus {font-weight: 600; color: #007cd6;}
+
+/* 연혁 */
+[class^="box_st"] + .historyBox {margin-top: 2.5rem;}
+.historyBox {background: url(/00_common/images/sub_com_edu/history_bg.png) no-repeat center top;}
+.historyBox h3 {text-align: center;}
+.historyBox h3 span {display: flex; margin: 0 auto; width: 11rem; height: 11rem; justify-content: center; align-items: center; font-size: 1rem; font-weight: 600; color: #fff; background: #006ac0; border: 0.5rem solid #e4f3ff; border-radius: 50%; content: "";}
+.lstHistory {position: relative; overflow: hidden;}
+.lstHistory:before {position: absolute; top: 0; left: 50%; width: 1px; height: 100%; background: #d9d9d9; content: "";}
+.lstHistory:after {position: absolute; top: 1.75rem; left: 0.5rem; font-size: 4rem; font-weight: 700; color: #eef7ff; content: "HISTORY";}
+.lstHistory > li {position: relative; clear: both; margin-top: 2.5rem; width: 50%; z-index: 1;}
+.lstHistory > li:before {position: absolute; top: 0.25rem; width: 1.5rem; height: 1.5rem; background: #e4f3ff; border: 0.2rem solid #fff; border-radius: 50%; content: "";}
+.lstHistory > li:after {position: absolute; top: 0.85rem; width: 0.3rem; height: 0.3rem; background: #006ac0; border-radius: 50%; content: "";}
+.lstHistory > li:nth-of-type(odd) {float: right; padding-left: 2.25rem;}
+.lstHistory > li:nth-of-type(odd):before {left: -0.75rem;}
+.lstHistory > li:nth-of-type(odd):after {left: -0.15rem;}
+.lstHistory > li:nth-of-type(even) {float: left; padding-right: 2.25rem; text-align: right;}
+.lstHistory > li:nth-of-type(even):before {right: -0.75rem;}
+.lstHistory > li:nth-of-type(even):after {right: -0.15rem;}
+.lstHistory > li strong {display: block; margin-bottom: 1rem; font-size: 1.5rem; font-weight: 700; color: #016ebe;}
+.lstHistory > li li {position: relative; font-size:0.9rem;}
+.lstHistory > li li + li {margin-top: 0.5rem;}
+.lstHistory > li li:before {position: absolute; top: 0.45rem; width: 0.3rem; height: 0.3rem; background: #006ac0; border-radius: 50%; content: "";}
+.lstHistory > li:nth-of-type(odd) li {padding-left: 6.25rem;}
+.lstHistory > li:nth-of-type(even) li {padding-right: 6.25rem;}
+.lstHistory > li:nth-of-type(odd) li:before {left: 0;}
+.lstHistory > li:nth-of-type(even) li:before {right: 0;}
+.lstHistory > li li .date {position: absolute; width: 5rem; font-weight: 600; color: #006ac0;}
+.lstHistory > li:nth-of-type(odd) li .date {left: 0.75rem;}
+.lstHistory > li:nth-of-type(even) li .date {right: 0.75rem;}
+
+/* 심볼 */
+.symbolBox .tit1 {margin-bottom: 1.5rem;}
+.markBox {position: relative; margin: 3.5rem 0 0 2rem; padding: 1.5rem 1.5rem 1.5rem 13.5rem; line-height: 1.75; font-size: 0.75rem; font-weight: 500; color: #222; word-break: keep-all; background: #eef7ff; border-radius: 1.25rem;}
+.markBox .img {position: absolute; top: -1.5rem; left: -2rem; width: 13.5rem; height: 100%; background: #fff; border-radius: 1.25rem; box-shadow: 2px 2px 10px rgba(131,172,203,0.3);}
+.markBox .img img {position: absolute; top: 50%; left: 50%; width: auto; height: auto; max-width: 90%; max-height: 90%; transform: translate(-50%, -50%); -webkit-transform: translate(-50%, -50%);}
+.lstEmblem {overflow: hidden;}
+.lstEmblem > li {float: left; margin-left: 2%; width: 49%;}
+.lstEmblem > li:nth-of-type(2n+1) {margin-left: 0;}
+.lstEmblem .img {position: relative; height: 13rem; background: #fdfdfd; border: 2px solid #d9e6f2; border-radius: 1.25rem;}
+.lstEmblem .img img {position: absolute; top: 50%; left: 50%; width: auto; height: auto; max-width: 90%; max-height: 90%; transform: translate(-50%, -50%); -webkit-transform: translate(-50%, -50%);}
+
+/* 검색폼 */
+.searchFormBox {padding: 2rem 1.5rem; background: #ecf6ff; border: 2px solid #d9e6f2; border-radius: 1.5rem;}
+.searchFormBox .inner {display: flex; justify-content: space-between; align-items: center;}
+.searchFormBox .inbox {margin-right: 0.5rem; width: calc(100% - 8rem);}
+.searchFormBox .inner.w3 .inbox {width: calc(((100% - 7.5rem) / 3) - 0.5rem);}
+.searchFormBox .inner.w2 .inbox {width: calc(((100% - 7.5rem) / 2) - 0.5rem);}
+.searchFormBox .inbox label {display: inline-block; margin-right: 0; padding: 0 0.25rem; width: 3.7rem; text-align: center; font-size: 1rem; font-weight: 600; color: #035692;}
+.searchFormBox .inbox input,
+.searchFormBox .inbox select {padding: 0.5rem; width: 100%; height: 2.5rem; border-radius: 0.5rem; border: 1px solid #e0e0e0;}
+.searchFormBox .inbox label + input,
+.searchFormBox .inbox label + select {width: calc(100% - 4rem);}
+.searchFormBox .btn_bl {width: 7.5rem; background: #035692; border-radius: 0.5rem;}
+
+
+/* 자주묻는질문 */
+.bbs_FaqA {overflow:hidden; margin-top:0.5rem;}
+.bbs_FaqA > li {border:1px solid #e5e5e5; border-radius:1rem; margin-bottom:0.5rem;}
+.bbs_FaqA > li:hover,
+.bbs_FaqA > li:focus {color:#007cd6; border:1px solid #84c5f5; }
+.bbs_FaqA > li > a {position:relative; display:block; padding:0.75rem 3.5rem 0.75rem 3rem; font-size:0.8rem; font-weight:400; color:#222; }
+.bbs_FaqA > li > a:hover,
+.bbs_FaqA > li > a:focus {color:#007cd6;}
+.bbs_FaqA > li > a span.faq_arr {display:block;position:absolute; right:1rem; top:0.65rem; width:1.4rem; height:1.4rem; background:#f7f7f7; border-radius: 1rem;}
+.bbs_FaqA > li > a span.faq_arr:before {content:""; display:block; width:100%; height:100%; background:url('/images/web/goeay/sub/arr_faq.png') no-repeat right center; -webkit-transition:all 0.3s ease; -moz-transition:all 0.3s ease;-ms-transition:all 0.3s ease; transition:all 0.3s ease;}
+.bbs_FaqA > li.on a span.faq_arr:before {transform:rotate(180deg);}
+.bbs_FaqA > li > a:before {content:"Q"; display:block; position:absolute; left:1rem; top:0.75rem; width:1.25rem; height:1.25rem; color:#fff; font-size:0.8rem; text-align:center; line-height:1.25rem; background:#007cd6; border-radius:50%;}
+.bbs_FaqA > li div.faq_A {position:relative;display:none;padding: 0.75rem 0 0.75rem 3rem;font-size:0.75rem;color:#444;border-top:1px solid #d2d7dc;background:#f4f7fa;border-radius: 0 0 1rem 1rem;}
+.bbs_FaqA > li div.faq_A:before {content:"A"; display:block; position:absolute; left:1rem; top:0.75rem; width:1.25rem; height:1.25rem; color:#fff; font-size:0.8rem; text-align:center; line-height:1.25rem; background:#6a6a6a; border-radius:50%;}
+
+/* 행정정보공개 */
+.quickico_box {overflow:hidden; margin-top:1rem;}
+.quickico_box li {position:relative;width:23.5%;height:8.65rem;float:left;margin-left:2%;}
+.quickico_box li:first-child {margin-left:0;}
+.quickico_box li a {position:relative; display:block; width:100%; height:100%; border:1px solid #b6cddd; border-radius:2rem; padding:1.2rem 1rem; -webkit-transition:background-color 0.3s ease; transition:background-color 0.3s ease;}
+.quickico_box li a img{position:relative; width:3.85rem; height:2.6rem; left:50%; transform:translateX(-50%);}
+.quickico_box li a p.quick_txt {text-align:center;margin-top:1rem;font-weight: 600;}
+.quickico_box li a:hover,
+.quickico_box li a:focus {color:#007cd6; border:1px solid #84c5f5;}
+
+/* 제안마당 */
+.quickico_box.w50 li {width:48%; height:10rem;}
+.quickico_box.w50 li a {padding:2.5rem 2rem;}
+
+/* 관내학교/학원안내 : 폐교 */
+.school_list {overflow:hidden;}
+.school_list li {position:relative; float:left; width:24%; height:3rem; margin:0.5rem 0.5rem 0.5rem 0; }
+.school_list li a {position:relative;display:block;width:100%;height:100%;border:1px solid #b6cddd;border-radius:1rem;padding: 0.8rem 0.8rem 0.8rem 2.5rem;font-weight:500;}
+.school_list li a em {position: absolute;display: block;width: 1.25rem;height: 1.25rem;background:#007cd6;text-align: center;font-size: 0.7rem;line-height: 1.25rem;border-radius:50%;color: #fff;left: 0.8rem;}
+.school_list li a i {position:absolute;font-size:0.8rem;line-height:1.6; vertical-align:top; right: 0.8rem;}
+.school_list li a:hover,
+.school_list li a:focus {color:#007cd6; border:1px solid #84c5f5;}
+
+.api_wrap {width:100%; min-height:15rem; padding:0.5rem; border:1px solid #e0f0f4; background:#eef7ff; margin-top:1rem; border-radius:1rem;}
+.api_wrap .inner { position:relative; height:21rem; padding:.5rem; background:#fff; box-shadow:0 0 5px 0 rgba(0, 133, 216, 0.3); border-radius:1rem;}
+
+/* 이미지 */
+.rsp_img {position:relative;width:auto;line-height:0;max-width:100%;}
+.rsp_img img {max-width:100%;}
+.rsp_img .btn-zoom { position:absolute; bottom:0; right:0; width:45px; height:45px; display:block; z-index:100; background:url("../images/con_com_edu/ico_rsp_img.png") no-repeat; text-indent:-9999em; overflow:hidden; }
+
+/* wee센터 소개 */
+.weeBox .inner{ position:relative; min-height:6.25rem; line-height:1.5; padding-top:0.75rem; padding-left:7.5rem; word-break: keep-all;}
+.weeBox .ico {position:absolute; left:0; top:0; display:block; width:6.3rem; height:6.3rem; }
+.weeBox .ico img { max-width:100%; height:auto;}
+
+/* 테이블 범례 */
+.tbl_lgd{ font-size:0.75rem; text-align: right;}
+.tbl_lgd > strong{ font-weight:700; background:#f1f1f1; border-radius:0.25rem; line-height:1.5rem; padding:0 0.5rem;}
+.tbl_lgd > p{ display:inline-block; margin-left:0.5rem;}
+
+/* 절차 스타일1 */
+.step_st1{ max-width:37.5rem; margin:0 auto; word-break: keep-all;}
+.step_st1 li{ position:relative; margin:0.75rem 0; padding-bottom:2rem; }
+.step_st1 li:before{ content:""; position:absolute; left:calc(50% - 0.55rem); bottom:0; width:1.1rem; height:1.1rem; background:url('/00_common/images/sub_com_edu/img_step_st1.png') no-repeat center;}
+.step_st1 li:last-child{ padding-bottom:0;}
+.step_st1 li:last-child:before{ display:none;}
+.step_st1 li .inr{ text-align:center; font-size:0.9rem; font-weight:600; color:#000; padding:1rem; border-radius:1rem; background:#eef7ff;}
+* + .step_st1{ margin-top:1.5rem;}
+
+/* 절차 스타일2 */
+.step_st2{ width:calc(100% + 1.5rem); margin-left:-0.75rem; display:flex; flex-wrap: wrap; word-break: keep-all;}
+.step_st2 li{ flex:1; position:relative; max-width:20%; padding:0.5rem 0.75rem; }
+.step_st2 li:before{ content:""; position:absolute; right:-0.55rem; top:calc(50% - 0.55rem); width:1.1rem; height:1.1rem; background:url('/00_common/images/sub_com_edu/img_step_st1.png') no-repeat center; transform: rotate(-90deg); -webkit-transform: rotate(-90deg);}
+.step_st2 li:last-child:before{ display:none;}
+.step_st2 dl{ min-height:100%; text-align:center; border-radius:1rem; border:1px solid #ccc; background:#fff; overflow:hidden;}
+.step_st2 dt{ padding:1rem; font-weight:600; font-size:0.8rem; color:#fff; background:#007cd6;}
+.step_st2 dd{ padding:0.75rem; font-size:0.75rem;}
+* + .step_st2{ margin-top:1rem;}
+.step_st2.li_w50 li{ flex:auto 0; max-width:100%; padding-right:1rem; width:50%;}
+.step_st2.li_w30 li{ flex:auto 0; max-width:100%; padding-right:1rem; width:33.33%;}
+.step_st2.li_w25 li{ flex:auto 0; max-width:100%; padding-right:1rem; width:25%;}
+
+/* 절차 스타일3 */
+.step_st3{ word-break: keep-all;}
+.step_st3 dl{ position:relative; padding:1rem 0 0 5.5rem;}
+.step_st3 dl ~ dl{ margin-top:1.5rem;}
+.step_st3 dt{ position:absolute; left:0; top:0; display:flex; align-items:center; justify-content:center; width:7.5rem; height:5rem; color:#fff; font-size:0.9rem; border-radius:1rem 1rem 0 1rem; box-shadow:2px 2px 4px rgba(0,0,0,0.2); z-index: 1;}
+.step_st3 dl:nth-of-type(1) dt{ background:#007cd6;}
+.step_st3 dl:nth-of-type(2) dt{ background:#1259c2;}
+.step_st3 dl:nth-of-type(3) dt{ background:#6245cb;}
+.step_st3 dd{ display:flex; align-items:center; justify-content:center; min-height:5rem; border-radius:1rem 1rem 1rem 0; border:1px solid #ccc; padding:1rem 1rem 1rem 4.5rem; }
+.step_st3 dd .inr{ flex:1; text-align: left; }
+* + .step_st3{ margin-top:1rem;}
+
+/* 개인정보처리방침 */
+.policy_tit{ font-size:1.25rem; text-align:center; font-weight:700; margin-bottom:1rem; color:#005fa5;}
+.policy_wrap{ margin:0.5rem 0 2rem;}
+.policy_wrap dt{ border-radius:0.25rem; padding:0.5rem; text-align:center; font-weight:600; font-size:0.9rem; background:#005fa5; color:#fff;  }
+.policy_wrap dd > ul.row_list{ display: flex; flex-wrap: wrap;}
+.policy_wrap dd > ul.row_list li{ width:calc(33.33% - 0.5rem); padding:0.75rem; margin:0.25rem; text-align:center; border:1px solid #ddd; border-radius:0.25rem;}
+.policy_wrap dd > ul.row_list li .ico{ margin-bottom:1rem;}
+.policy_wrap dd > ul.row_list li .ico img{ width:5.5rem; height:auto;}
+.policy_wrap dd > ul.row_list li span{ font-weight: 600;}
+
+.policy_wrap dd > ul.col_list li{ display: flex; align-items:center; padding:0.25rem 0.5rem; margin:0.25rem; border:1px solid #ddd; border-radius:0.25rem;}
+.policy_wrap dd > ul.col_list li .ico{  margin-right:0.5rem;}
+.policy_wrap dd > ul.col_list li .ico img{ width:2rem; height:auto;}
+.policy_wrap dd > ul.col_list li span{ font-weight: 600;}
+
+.policy_cont h3.tit1 > p{ display: inline-block; vertical-align: middle; }
+.policy_cont h3.tit1 > p img{ width:1.75rem; height:auto; }
+
+/* 안양과천 배정학교안내 지도부분 240115 */
+.infoSch .mapBox .map { display:inline-block; position:relative; }
+.infoSch .mapBox img { max-width:100%; vertical-align:middle; }
+.infoSch .mapBox li { position:absolute; }
+.infoSch .mapBox .cty_1 {left: 46.7%;top: 22%;}
+.infoSch .mapBox .cty_2 { left:24%; top:31%; }
+.infoSch .mapBox .cty_3 {left: 23.4%;top: 42.9%;}
+.infoSch .mapBox .cty_4 {left: 31.8%;top: 47.4%;}
+.infoSch .mapBox .cty_5 {left: 15.6%;top: 54.4%;}
+.infoSch .mapBox .cty_6 {left: 47%;top: 53.2%;}
+.infoSch .mapBox .cty_7 {left: 40.8%;top: 43.5%;}
+.infoSch .mapBox .cty_8 {left: 33.1%;top: 55.6%;}
+.infoSch .mapBox .cty_9 {left: 40.9%;top: 55.7%;}
+.infoSch .mapBox .cty_10 {left: 42.7%;bottom: 35.2%;}
+.infoSch .mapBox .cty_11 {left: 44.9%;bottom: 27.7%;}
+.infoSch .mapBox .cty_12 {left: 55.7%;bottom:32%;}
+.infoSch .mapBox .cty_13 {left: 49.3%;bottom: 21.6%;}
+.infoSch .mapBox .cty_14 {left: 27.2%;bottom:20%;}
+.infoSch .mapBox .cty_15 {left: 53.5%;top: 44.3%;}
+.infoSch .mapBox .cty_16 {left: 55.9%;top: 55.2%;}
+.infoSch .mapBox .cty_17 {right: 27.2%;top: 34.1%;}
+.infoSch .mapBox .cty_18 {right: 14.9%;top: 40.5%;}
+.infoSch .mapBox .cty_19 { right: 7.5%; bottom: 44.5%; }
+.infoSch .mapBox .cty_20 {right: 30.9%;bottom: 38%;}
+.infoSch .mapBox .cty_21 {right: 27.9%;top: 53.5%;}
+.infoSch .mapBox .cty_22 {right: 19.6%;bottom: 41%;}
+.infoSch .mapBox .cty_23 { right: 23.4%; bottom: 13.5%;}
+.infoSch .mapBox .cty_24 { right: 30%; bottom: 25.3%; }
+.infoSch .mapBox .cty_25 { right: 18.2%;	bottom: 6.8%; }
+.infoSch .mapBox .cty_26 { right: 22.5%; bottom: 30%; }
+.infoSch .mapBox .cty_27 { right: 15%; bottom: 33.5%; }
+.infoSch .mapBox .cty_28 {right: 4.1%;bottom: 37.3%;}
+.infoSch .mapBox .cty_29 { right: 20.8%; bottom: 23.5%; }
+.infoSch .mapBox .cty_30 { right: 12%; bottom: 27%; }
+.infoSch .mapBox .cty_31 { right: 14%; bottom: 19%; }
+.infoSch .mapBox li a { display:block; position:relative; z-index:1; width:100%; height:100%; padding:0.2rem 0; font-weight:600; font-size:0.75rem; color:#000; }
+.infoSch .mapBox li a.no_link { pointer-events:none; }
+.infoSch .mapBox li a::selection { background:#000; color:#fff; text-shadow:none; }
+.infoSch .mapBox li a:hover,
+.infoSch .mapBox li a:focus{text-shadow:-2px -2px 0 #fff, 2px -2px 0 #fff, -2px 2px 0 #fff, 2px 2px 0 #fff;}
+.infoSch .mapBox li a:not(.no_link):before { content:""; display:block; position:absolute; bottom:0; left:0; right:0; z-index:-1; -webkit-transform:scaleX(0); -ms-transform:scaleX(0); transform:scaleX(0); width:100%; height:2px; margin:0 auto; background:#156cb6; transition:all 0.2s; }
+.infoSch .mapBox li a:not(.no_link):hover:before,
+.infoSch .mapBox li a:not(.no_link):focus:before { transform:scaleX(1); }
+
+/* 안양과천 배정학교 검색 240119 */
+.schInfo .inner{display: flex; justify-content: left; flex-wrap: wrap;}
+.schInfo .inner .addrsRoad{ width: 100%; text-align: left; margin-left: 5rem;}
+.schInfo .inner .ico{background: #fff; border-radius: 50%; width: 4rem; height: 4rem; line-height: 4rem; margin-right: 1rem;}
+.schInfo .inner .ico img{vertical-align: middle;}
+.addInfoBox{width: 80%;}
+.schInfo p{display: flex; align-items: baseline;}
+.schInfo p:first-child input{width: 20%; margin-bottom: 0.3rem;}
+.schInfo input{width: 60%; line-height: 1.4rem;}
+.schInfo button.addSrch,
+.schInfo button.addNxt { width: 4rem; height: 1.7rem; color: #fff; background: #0072ff; border: none; border-radius: 3px; cursor: pointer;}
+.schInfo button.addSrch{background: #5d5d5d;}
+
+/* 안양과천 배정학교 검색완료페이지 240119 */
+.schInfo .schList{margin:0.3rem 0; text-align: left;}
+.schInfo .schListBtn button { width: 15rem; height: 1.7rem; color: #fff; background: #0072ff; border: none; border-radius: 3px; cursor: pointer;}
+.schInfo button.reSrhBtn{width: 4rem; background: #5d5d5d;}
+.schInfo .msg{margin-top: 0.5rem;}
+/* 찾아오시는길 지도 */
+.map_addr{ height:25rem;}
+
+@media (max-width:1400px){
+	/* 인사말 */
+	.greeting .con {padding: 2.5rem;}
+
+	/* 절차 스타일2 */
+	.step_st2 { padding-right:1rem;}
+	.step_st2 li{ flex:0 auto; width:33.33%; max-width:100%;}
+	.step_st2.li_w25 li{ width:33.33%;}
+}
+
+@media (max-width:1024px){
+	/* 인사말 */
+	.greeting {padding-left: 0;}
+	.greeting .box p {z-index: 1;}
+	.greeting .con {font-size: 0.8rem;}
+
+	/* pdf 뷰어 : 시작 **************************************************************/
+	.pdfBox .pdf_inner .pdf_view {height:30rem;}
+	/* pdf 뷰어 : 끝 **************************************************************/
+}
+
+
+@media (max-width:960px){
+	/* 관내학교/학원안내 : 폐교 */
+	.school_list li {width:23%;}
+
+	/* 배정학교안내 주소검색 */
+	.schInfo button.addSrch, .schInfo button.addNxt{padding: 0;}
+	.schInfo .schListBtn button{padding: 0; margin: 1px;}
+	.schInfo .schList{text-align: left;}
+}
+
+@media (max-width:880px){
+    /* 중학교 신입생 무시험 배정 안내 */
+    .procss_list > li {padding-top:2rem; background-position:center 0.55rem;}
+	.procss_list > li:first-child {padding-top:0;}
+	.procss_list > li dl {padding-left:0;}
+	.procss_list > li dl dt {position:relative; left:auto; top:auto; width:100%; height:auto; padding:0.75rem; font-size:1rem; text-align:left;}
+	.procss_list > li dl dt span {display:inline; margin:0 0.5rem 0 0; font-size:1rem; }
+	.procss_list > li dl dd {min-height:auto; padding:0.5rem 1rem;}
+}
+
+@media (max-width:840px){
+}
+
+
+@media (max-width:840px){
+
+
+    /* 행정정보공개 */
+    .quickico_box li {width:48%; margin-bottom:1rem;}
+    .quickico_box li:nth-child(3) {margin-left:0;}
+
+    /* 관내학교/학원안내 : 폐교 */
+	.school_list li {width:48%;}
+
+}
+
+
+@media (max-width:768px){
+    /* 인사말 */
+    .greeting .box {padding: 2rem 1.5rem;}
+    .greeting .box p {font-size: 0.9rem;}
+	.greeting .box p strong {font-size: 1.1rem;}
+	.greeting .box p.txt {line-height: 1.5;}
+    .greeting .box.img_box {padding-right: 1.5rem;}
+    .greeting .box.img_box .img {position: relative; top: auto; right: auto; display: block; margin: 0 auto 1rem;}
+	.greeting .con {padding: 1.5rem;}
+    .greeting .con p + p {margin-top: 1rem;}
+
+	/* 연혁 */
+	.lstHistory {padding-top: 4rem;}
+	.lstHistory:before {left: 2rem;}
+	.lstHistory:after {top: 0; left: 1rem; font-size: 3.25rem; background: #fff;}
+	.lstHistory > li {margin-left: 2rem; width: calc(100% - 2rem)}
+	.lstHistory > li:nth-of-type(odd) {float: none; padding-left: 1.5rem;}
+	.lstHistory > li:nth-of-type(even) {float: none; padding-right: 0; padding-left: 1.5rem; text-align: left;}
+	.lstHistory > li:nth-of-type(even):before {right: auto; left: -0.75rem;}
+	.lstHistory > li:nth-of-type(even):after {right: auto; left: -0.15rem;}
+	.lstHistory > li:nth-of-type(even) li {padding-right: 0; padding-left: 6.25rem;}
+	.lstHistory > li:nth-of-type(even) li:before {right: auto; left: 0;}
+	.lstHistory > li:nth-of-type(even) li .date {right: auto; left: 0.75rem;}
+
+	/* 심볼 */
+	.markBox {margin: 0; padding-left: 1.5rem;}
+	.markBox .img {position: relative; top: auto; left: auto; display: block; margin: 0 0 1rem; width: 100%; height: 10rem;}
+
+	/* 사이트맵 */
+	.sitemapBox .lst_dep01 > li {width: 50%;}
+	.sitemapBox .lst_dep01 > li:nth-of-type(2n+1) {clear: both;}
+
+	/* 검색폼 */
+	.searchFormBox {padding: 1rem; border-radius: 1rem;}
+	.searchFormBox .inner {display: block;}
+	.searchFormBox .inbox {margin-right: 0; margin-bottom: 0.25rem; width: 100%;}
+	.searchFormBox .btn_bl {width: 100%;}
+
+	/* 안성 */
+	.chartBox.type02 .step02 > li,
+	.chartBox.type03 .step02 > li,
+	.chartBox.type04 .step02 > li {width: 100%;}
+
+	/* 테이블 범례 */
+	.tbl_lgd{ position:relative; padding-left:2.5rem; padding-top:0.15rem; text-align: left;}
+	.tbl_lgd > strong{ position:absolute; left:0; top:0;}
+
+	/* 역대교육장 */
+	.pastEduSup li{ width:31.33%; }
+
+	/* 절차 스타일3 */
+	.step_st3 dd{ padding-left:3rem;}
+
+	/* 안양과천 배정학교 지도부분 */
+	.infoSch .mapBox { padding:1.3rem 0; border:0; }
+	.infoSch .mapBox img { display:none; }
+	.infoSch .mapBox ul { font-size:0; text-align:left; }
+	.infoSch .mapBox .map ul li { display:inline-block; position:relative; top:auto; bottom:auto; left:auto; right:auto; width:16.66%; text-shadow:none; vertical-align:top; }
+	.infoSch .mapBox li a { width:auto; margin:2px; padding:0.5rem; border:1px solid #777; line-height:1; text-align:center; transition:all 0.2s; }
+	.infoSch .mapBox li a:hover,
+	.infoSch .mapBox li a:focus { border-color:#156cb6; background:#156cb6; box-shadow:0 0 10px rgba(0,0,0,0.2); color:#fff; text-shadow: none; }
+	
+	
+	/* 조직도 */
+	.chartBox .step02:before {display: none;}
+	.chartBox .step02 > li {padding-top: 2rem; width: 50%;}
+	.chartBox .step02 > li ~ li {margin-top: 2rem;}
+	.chartBox .step02 > li.half {width: 100%;}
+	.chartBox .step02 > li:before {height: 2rem;}
+	.chartBox .step02 > li.half:before {height: 7rem;}
+	/* 안성 */
+	.chartBox.type02 .step02 > li,
+	.chartBox.type03 .step02 > li,
+	.chartBox.type04 .step02 > li {width: 100%;}
+}
+
+@media (max-width:560px){
+
+	/* 절차 스타일2 */
+	.step_st2 li{ width:50% !important; }
+
+	/* 절차 스타일3 */
+	.step_st3 dl{ padding:0;}
+	.step_st3 dt{ position:relative; left:auto; top:auto; width:auto; height:auto; margin-right:1rem; display:block; padding:0.75rem 1rem; }
+	.step_st3 dd{ min-height:0px; margin-top:-1rem; margin-left:1rem; padding-left:1rem; padding-top:1.5rem;}
+
+	/* 찾아오시는길 지도 */
+	.map_addr{ height:20rem;}
+
+	/* 안양과천 배정학교 지도부분 */
+	.infoSch .mapBox .map ul li { width:25%; }
+}
+
+@media (max-width:515px){
+	.schInfo .inner .addrsRoad{margin-left: 0;}
+	.schInfo .inner .ico{margin-bottom: 1rem;}
+}
+
+@media (max-width:480px){
+
+	/* 연혁 */
+	.lstHistory > li:nth-of-type(odd) li,
+	.lstHistory > li:nth-of-type(even) li {padding-left: 0;}
+	.lstHistory > li li .date {position: relative; display: block; width: 100%;}
+
+	/* 교육행정서비스헌장 */
+	.promiseBox .inbox {padding: 2rem 1rem 1rem; font-size: 0.8rem;}
+	.promiseBox .inbox:after {font-size: 4rem;}
+	.promiseBox h3 {font-size: 1.3rem;}
+	.promiseBox .txt {margin-top: 1rem;}
+	.promiseBox .lst {margin-top: 1rem; padding: 1rem 0;}
+	.promiseBox .lst > li:before {top: -0.2rem;}
+
+	/* 심볼 */
+	.lstEmblem > li {margin-left: 0; width: 100%;}
+
+	 /* 배너전체보기 */
+    .banner_wrap ul li {width:31%;}
+
+
+	/* 자주묻는질문 */
+	.bbs_FaqA li a {padding:0.75rem 2rem 0.75rem 2.25rem;}
+	.bbs_FaqA li a span.faq_arr {right:0.5rem;}
+	.bbs_FaqA li a:before {left:0.5rem;}
+	.bbs_FaqA li div.faq_A {padding:0.75rem 0.5rem 0.75rem 2.25rem;}
+	.bbs_FaqA li div.faq_A:before {left:0.5rem;}
+
+    /* 행정정보공개 */
+    .quickico_box li {width:100%; height:auto; margin:0 0 1rem 0;}
+
+    /* 제안마당 */
+    .quickico_box.w50 li {width:100%;}
+
+    /* 관내학교/학원안내 : 폐교 */
+	.school_list li {width:100%;}
+
+	/* wee센터 소개 */
+	.weeBox .inner{ min-height:0px; padding-left:0;}
+	.weeBox .ico {position:relative; left:auto; top:auto; width:100%; height:auto; text-align:center; margin-bottom:0.5rem;}
+	.weeBox .ico img{ max-width:5.5rem;}
+
+	/* 절차 스타일1 */
+	.step_st1 li{ margin:0.5rem 0; padding-bottom:1.75rem;}
+	.step_st1 li .inr{ font-size:0.8rem;}
+
+	/* 역대교육장 */
+	.pastEduSup li{ width:48%; }
+	.pastEduSup li .txt span{ font-size:0.7rem;}
+
+	/* 안양과천 배정학교 지도부분 */
+	.infoSch .mapBox .map ul li { width:33.33%; }
+	.infoSch .mapBox li a { font-size:0.8rem; }
+
+	/* 안양과천 배정학교 주소검색 */
+	.schInfo .inner{flex-direction: column;}
+	.addInfoBox{width: 100%;}
+	.schInfo p:first-child input{width: 25%;}
+	.schInfo input{width: 80%;}
+}
+
+
+@media (max-width:380px){
+	/* 절차 스타일2 */
+	.step_st2 dt br{ display:none; }
+	.step_st2 li{ width:100% !important; }
+
+	/* 사이트맵 */
+	.sitemapBox .lst_dep01 > li {margin-bottom: 1.5rem; width: 100%;}
+	.sitemapBox .lst_dep01 > li {clear: both;}
+
+	 /* 배너전체보기 */
+    .banner_wrap ul li {width:48%;}
+
+	/* 찾아오시는길 지도 */
+	.map_addr{ height:18rem;}
+
+	/* 안양과천 배정학교 지도부분 */
+	.infoSch .mapBox .map ul li { width:50%; }
+
+	/* 안양과천 배정학교 주소검색 */
+	.schInfo p{flex-wrap: wrap;}
+	.schInfo p:first-child input{width: 40%;}
+	.schInfo input{width: calc(100% - 4.5rem);}
+	.schInfo p span{display: block; width: 100%; text-align: left;}
+	.schInfo .schListBtn button{width: 100%;}
+}

@@ -1,0 +1,71 @@
+/*
+Copyright (c) 2021 Kil Hyung-jin, with Reserved Font Name Pretendard GOV.
+https://github.com/orioncactus/pretendard
+
+This Font Software is licensed under the SIL Open Font License, Version 1.1.
+This license is copied below, and is also available with a FAQ at:
+http://scripts.sil.org/OFL
+*/
+
+@font-face {
+	font-family: 'Pretendard GOV';
+	font-weight: 900;
+	font-display: swap;
+	src: local('Pretendard GOV Black'), url(PretendardGOV-Black.subset.woff) format('woff');
+}
+
+@font-face {
+	font-family: 'Pretendard GOV';
+	font-weight: 800;
+	font-display: swap;
+	src: local('Pretendard GOV ExtraBold'), url(PretendardGOV-ExtraBold.subset.woff) format('woff');
+}
+
+@font-face {
+	font-family: 'Pretendard GOV';
+	font-weight: 700;
+	font-display: swap;
+	src: local('Pretendard GOV Bold'), url(PretendardGOV-Bold.subset.woff) format('woff');
+}
+
+@font-face {
+	font-family: 'Pretendard GOV';
+	font-weight: 600;
+	font-display: swap;
+	src: local('Pretendard GOV SemiBold'), url(PretendardGOV-SemiBold.subset.woff) format('woff');
+}
+
+@font-face {
+	font-family: 'Pretendard GOV';
+	font-weight: 500;
+	font-display: swap;
+	src: local('Pretendard GOV Medium'), url(PretendardGOV-Medium.subset.woff) format('woff');
+}
+
+@font-face {
+	font-family: 'Pretendard GOV';
+	font-weight: 400;
+	font-display: swap;
+	src: local('Pretendard GOV Regular'), url(PretendardGOV-Regular.subset.woff) format('woff');
+}
+
+@font-face {
+	font-family: 'Pretendard GOV';
+	font-weight: 300;
+	font-display: swap;
+	src: local('Pretendard GOV Light'), url(PretendardGOV-Light.subset.woff) format('woff');
+}
+
+@font-face {
+	font-family: 'Pretendard GOV';
+	font-weight: 200;
+	font-display: swap;
+	src: local('Pretendard GOV ExtraLight'), url(PretendardGOV-ExtraLight.subset.woff) format('woff');
+}
+
+@font-face {
+	font-family: 'Pretendard GOV';
+	font-weight: 100;
+	font-display: swap;
+	src: local('Pretendard GOV Thin'), url(PretendardGOV-Thin.subset.woff) format('woff');
+}

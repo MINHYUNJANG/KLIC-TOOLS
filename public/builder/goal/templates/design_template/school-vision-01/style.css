@@ -1,0 +1,190 @@
+.school-vision-01 {
+	--sv01-blue: #082f7f;
+	--sv01-orange: #ff6500;
+	--sv01-soft: #eaf4ff;
+	--sv01-line: #bfd1e8;
+	display: grid;
+	gap: 6px;
+	width: 100%;
+	background: #fff;
+	color: #111;
+	font-family: Pretendard, sans-serif;
+}
+
+.school-vision-01 .sv01-section {
+	overflow: hidden;
+}
+
+.school-vision-01 h3,
+.school-vision-01 h4,
+.school-vision-01 p {
+	margin: 0;
+}
+
+.school-vision-01 .sv01-vision h3,
+.school-vision-01 .sv01-goal h3,
+.school-vision-01 .sv01-core > h3,
+.school-vision-01 .sv01-project > h3 {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	min-height: 62px;
+	color: #fff;
+	font-size: 22px;
+	font-weight: 900;
+}
+
+.school-vision-01 .sv01-vision h3 {
+	background: var(--sv01-orange);
+}
+
+.school-vision-01 .sv01-vision p {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	min-height: 62px;
+	border: 1px solid var(--sv01-orange);
+	background: #fff0e4;
+	color: var(--sv01-orange);
+	font-size: 20px;
+	font-weight: 900;
+}
+
+.school-vision-01 .sv01-goal h3,
+.school-vision-01 .sv01-core > h3,
+.school-vision-01 .sv01-project > h3 {
+	background: var(--sv01-blue);
+}
+
+.school-vision-01 .sv01-goal-text {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	min-height: 58px;
+	background: var(--sv01-soft);
+	font-size: 17px;
+}
+
+.school-vision-01 .sv01-goal-list {
+	list-style: none;
+	margin: 6px 0 0;
+	padding: 26px 190px;
+	background: #fff;
+}
+
+.school-vision-01 .sv01-goal-list li {
+	display: grid;
+	grid-template-columns: 34px 1fr 80px;
+	align-items: center;
+	gap: 8px;
+	min-height: 48px;
+	border-bottom: 1px dashed var(--sv01-line);
+	font-size: 16px;
+}
+
+.school-vision-01 .sv01-goal-list li:last-child {
+	border-bottom: 0;
+}
+
+.school-vision-01 .sv01-goal-list strong,
+.school-vision-01 .sv01-goal-list em,
+.school-vision-01 .sv01-core h4,
+.school-vision-01 .sv01-project h4 {
+	color: var(--sv01-blue);
+	font-weight: 900;
+	font-style: normal;
+}
+
+.school-vision-01 .sv01-goal-list em {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	min-height: 28px;
+	border-radius: 999px;
+	background: #e8f2ff;
+}
+
+.school-vision-01 .sv01-core-grid {
+	display: grid;
+	grid-template-columns: repeat(4, minmax(0, 1fr));
+	gap: 14px;
+	padding: 16px 0 36px;
+	background: #fff;
+}
+
+.school-vision-01 .sv01-core article {
+	display: grid;
+	gap: 10px;
+	border-top: 2px solid var(--sv01-blue);
+	color: #fff;
+	text-align: center;
+}
+
+.school-vision-01 .sv01-core h4 {
+	padding-top: 14px;
+	font-size: 18px;
+}
+
+.school-vision-01 .sv01-core article > p {
+	color: #888;
+	font-size: 15px;
+	line-height: 1.5;
+}
+
+.school-vision-01 .sv01-core ol {
+	display: grid;
+	gap: 5px;
+	margin: 0;
+	padding: 0;
+	list-style: none;
+	counter-reset: sv01-task;
+	text-align: left;
+}
+
+.school-vision-01 .sv01-core li {
+	counter-increment: sv01-task;
+	min-height: 32px;
+	border-radius: 3px;
+	padding: 8px 10px;
+	background: #f3f5f8;
+	color: #111;
+	font-size: 14px;
+}
+
+.school-vision-01 .sv01-core li::before {
+	content: counter(sv01-task);
+	margin-right: 8px;
+	color: var(--sv01-blue);
+	font-weight: 900;
+}
+
+.school-vision-01 .sv01-project-grid {
+	display: grid;
+	grid-template-columns: repeat(2, minmax(0, 1fr));
+	gap: 16px;
+	padding: 16px 0 0;
+	background: #fff;
+}
+
+.school-vision-01 .sv01-project article {
+	display: grid;
+	gap: 12px;
+	border-radius: 8px;
+	padding: 20px;
+	background: var(--sv01-soft);
+}
+
+.school-vision-01 .sv01-project h4 {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	min-height: 42px;
+	border-radius: 8px;
+	background: #fff;
+	font-size: 18px;
+}
+
+.school-vision-01 .sv01-project p {
+	font-size: 15px;
+	line-height: 1.6;
+}

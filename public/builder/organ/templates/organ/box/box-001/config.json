@@ -1,0 +1,14 @@
+{
+	"category": "box",
+	"addDirection": "row",
+	"max": "1",
+	"styleOptions": {
+		"title": {
+			"fields": [
+				{ "key": "backgroundColor",  "label": "배경 시작", "default": "#2d7d52" },
+				{ "key": "backgroundColor2", "label": "배경 끝",   "default": "#1a5a8a" },
+				{ "key": "textColor",        "label": "텍스트",           "default": "#ffffff" }
+			]
+		}
+	}
+}

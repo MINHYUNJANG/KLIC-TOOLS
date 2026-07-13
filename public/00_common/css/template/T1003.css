@@ -1,0 +1,52 @@
+﻿/* 메인 컨테이너 */
+#container {position: relative; width:100%; z-index: 2; background: linear-gradient(-45deg,  #fffef2 0%, #e8f5fa 100%);}
+#container:before{ content:""; position:absolute; left:0; top:0; width:100%; height:39.2rem; background:url('/images/template/T1003/main/bg_wrap.png') no-repeat center top}
+/* #container * { scrollbar-arrow-color: #ddd; scrollbar-Track-Color: #ddd; scrollbar-base-color: #aaa; scrollbar-Face-Color: #aaa; scrollbar-3dLight-Color: #aaa; scrollbar-DarkShadow-Color: #aaa; scrollbar-Highlight-Color: #aaa; scrollbar-Shadow-Color: #aaa;} */
+#container ::-webkit-scrollbar { width: 5px; height: 3px; }
+#container ::-webkit-scrollbar-thumb { background-color: #aaa; border-radius:10px; }
+#container ::-webkit-scrollbar-track { background-color: #ddd; border-radius:10px; }
+
+.container {max-width: 70rem;}
+
+.MC_wrap1 {position: relative; overflow: hidden;}
+.MC_wrap3 {padding: 2.25rem 0 2.75rem; background: url('/images/template/T1003/main/bg_wrap03.png') no-repeat center bottom;}
+
+.MC_box1 {position: absolute; top: 0; left: 0; width: 52.5rem; height: 22.75rem; overflow: hidden;} /* 메인비주얼 */
+.MC_box2 {position: relative; width: 22rem; height: auto; float: right; margin: 2rem 0 2.5rem; } /* 팝업존 */
+.MC_box3 {position: relative; width: 54%; height: 21.25rem; float: left;} /* 공지사항 */
+.MC_box4 {width: 44%; height:21.25rem; float: right;} /* 학생,학부모,교직원 */
+.MC_box5 {width: 68.5%; height: 18.75rem; float: left;} /* 보도자료 */
+.MC_box6 {width: 28.2%; height: 18.75rem; float: right;} /* 교육지원청 홍보 */
+.MC_box7 {width: 100%; float:left; margin-top:3.5rem;} /* 바로가기 */
+
+@media (max-width: 1440px) {
+	.MC_box1 {left: 1rem;}
+}
+
+@media (max-width: 1240px) {
+    .MC_box3 {margin-top: 1.5rem; width: calc(50% - 0.5rem);} /* 공지사항 */
+    .MC_box4 {margin-top: 1.5rem; width: calc(50% - 0.5rem);} /* 학생,학부모,교직원 */
+    .MC_box5 {width: 100%; height:auto;} /* 보도자료 */
+    .MC_box6 {margin-top: 1.5rem; width: 100%; height:auto;} /* 교육지원청 홍보 */
+	.MC_box7 {margin-top: 1.5rem; } /* 바로가기 */
+}
+
+@media (max-width: 1024px) {
+
+	.MC_box1 {position: relative; top: auto; left: auto; margin: 0 -1rem; width: calc(100% + 2rem); height: auto; border-radius: 0;} /* 메인비주얼 */
+	.MC_box2 {margin: -2.5rem 0 2rem; width: 100%; height: auto;} /* 팝업존 */
+}
+
+@media (max-width: 1060px) {
+    .MC_box3 {width: 100%;} /* 공지사항 */
+    .MC_box4 {width: 100%; height:auto;} /* 학생,학부모,교직원 */
+}
+
+@media (max-width: 768px) {
+    .MC_box2 {margin-top: 0;}
+}
+
+
+@media (max-width: 480px) {
+    .MC_box3 {height: auto;} /* 공지사항 */
+}

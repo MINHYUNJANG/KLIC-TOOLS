@@ -1,0 +1,6 @@
+.illust-03 img {
+	display: block;
+	width: 100%;
+	height: auto;
+	object-fit: contain;
+}

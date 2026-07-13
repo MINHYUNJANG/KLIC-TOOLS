@@ -1,0 +1,24 @@
+﻿.title-03 {
+	--title-align: center;
+	--title-bg: #99A1AF;
+	--title-border: #CCD2DE;
+	--title-text: #ffffff;
+
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	padding: 24px;
+	border-radius: 50px;
+	border: 2px solid var(--title-border);
+	background: var(--title-bg);
+	min-height: 100%;
+}
+
+.title-03 .tit-wrap {
+	width: 100%;
+}
+
+.title-03 .tit {
+	line-height: 1.5;
+	word-break: keep-all;
+}

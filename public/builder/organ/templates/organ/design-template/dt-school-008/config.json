@@ -1,0 +1,19 @@
+{
+  "templateFilters": ["school"],
+  "sections": [
+    {"type": "box-014", "blockWidth": 130, "data": {"title": "위원장"}},
+    "divider-001",
+    {"type": "box-014", "blockWidth": 130, "style": {"titleBackgroundColor": "#FF8E47"}, "data": {"title": "부위원장"}},
+    "divider-001",
+    {
+      "type": "list-014",
+      "columns": 3,
+      "gap": 100,
+      "itemsData": [
+        {"title": "학부모 위원"},
+        {"title": "교원 위원"},
+        {"title": "지역 위원"}
+      ]
+    }
+  ]
+}

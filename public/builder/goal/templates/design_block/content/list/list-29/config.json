@@ -1,0 +1,38 @@
+{
+	"addDirection": "row",
+	"max": "3",
+	"_comment": "styleOptions hide 값: borderColor, backgroundColor, textColor, fontWeight, fontSize, textAlign",
+	"styleOptions": {
+		"title": { "hide": ["borderColor"] },
+		"body": { "hide": ["borderColor", "fontWeight", "fontSize", "textAlign"] }
+	},
+	"recommend": {
+		"category": "notice",
+		"colors": [
+			"blue",
+			"navy",
+			"white"
+		],
+		"tone": [
+			"clean",
+			"formal",
+			"public"
+		],
+		"style": [
+			"card",
+			"rounded",
+			"line"
+		],
+		"keywords": [
+			"학교",
+			"공지",
+			"교육청",
+			"안내"
+		],
+		"matchWith": [
+			"icon",
+			"illustration",
+			"banner"
+		]
+	}
+}

@@ -1,0 +1,52 @@
+﻿.list-007 {
+	display: flex;
+	flex-direction: column;
+	box-sizing: border-box;
+}
+
+.list-007 .organ-list {
+	list-style: none;
+	margin: 0;
+	padding: 0;
+	display: flex;
+	flex-direction: column;
+}
+
+.list-007 .organ-item {
+	position: relative;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	min-height: var(--title-height, clamp(40px, 4.5vw, 60px));
+	padding: 10px 20px;
+	border: 1px solid var(--title-border, #cccccc);
+	background: var(--title-bg, #ffffff);
+	border-radius: 0 0 30px 0;
+	box-sizing: border-box;
+	color: var(--title-text, #333333);
+	font-size: var(--title-size, 18px);
+	font-weight: var(--title-weight, 400);
+	text-align: center;
+	letter-spacing: -0.3px;
+	line-height: 1.4;
+	white-space: pre-line;
+}
+
+/* 두 번째 아이템부터 간격 + 세로 연결선 */
+.list-007 .organ-item + .organ-item {
+	margin-top: 42px;
+}
+
+.list-007 .organ-item + .organ-item::before {
+	content: '';
+	position: absolute;
+	top: -43px;
+	left: 50%;
+	transform: translateX(-50%);
+	width: 1px;
+	height: 42px;
+	background: var(--connector-color, #aaaaaa);
+}
+
+/* ── 리스트 행 인라인 액션 버튼 ── */
+.list-007 .list-row-inline-actions {right: 0;}

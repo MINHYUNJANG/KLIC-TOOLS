@@ -1,0 +1,21 @@
+{
+  "templateFilters": ["office"],
+  "sections": [
+    "box-001",
+    {"type": "divider-001", "style": {"connectorHeight": "20"}},
+    "wing-001",
+    {"type": "divider-001", "style": {"connectorHeight": "20"}},
+    "wing-002",
+    "divider-001",
+    {
+      "type": "list-002",
+      "columns": 3,
+      "gap": 80,
+      "itemStyles": [
+        null,
+        {"titleBackgroundColor": "#186E3D"},
+        {"titleBackgroundColor": "#3BA134"}
+      ]
+    }
+  ]
+}

@@ -1,0 +1,40 @@
+﻿.title-25 {
+	/* 타이틀 */
+	--title-align: center;
+	--title-text: #1A7CDA;
+	
+	/* 본문 */
+	--body-align: center;
+	--body-bg: #EEF7FE;
+	--body-text: #000;
+	
+	/* 서브 */
+	--sub-align: center;
+	--sub-text: #000;
+	--sub-size: 18px;
+	--sub-weight: 400;
+
+	padding: 24px;
+	gap: 12px;
+	background: var(--body-bg);
+}
+
+.title-25 .txt-wrap {
+	position:relative;
+	width: auto;
+	border-radius: 15px;
+	line-height: 1.5;
+	word-break: keep-all;
+}
+
+.title-25 .txt-wrap > p{
+	width: 100%;
+}
+
+.title-25 .txt-wrap .sub{
+	font-size: var(--sub-size);
+	font-weight: var(--sub-weight);
+	color: var(--sub-text);
+	text-align: var(--sub-align);
+	margin-bottom: 5px;
+}

@@ -1,0 +1,11 @@
+{
+  "templateFilters": ["school"],
+  "sections": [
+    {"type": "box-010", "blockWidth": 800, "marginBottom": 40},
+    "wing-009",
+    {"type": "divider-001", "style": {"connectorHeight": "30"}},
+    {"type": "list-008", "blockWidth": 160, "data": {"title": "사무국"}},
+    "divider-001",
+    {"type": "list-008", "columns": 5, "gap": 40}
+  ]
+}

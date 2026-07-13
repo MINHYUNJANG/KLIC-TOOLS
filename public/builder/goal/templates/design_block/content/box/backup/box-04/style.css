@@ -1,0 +1,24 @@
+﻿.box-04 {
+	/* 타이틀 */
+	--title-align: center;
+	--title-bg: #1a7bda;
+	--title-text: #ffffff;
+
+	/* 본문 */
+	--body-bg: #1a7bda;
+	--body-text: #ffffff;
+	--body-align: center;
+
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	gap: 16px;
+	padding: 16px;
+	border-radius: 5px;
+	background: var(--body-bg);
+	min-height: 100%;
+}
+
+.box-04 .txt-wrap {
+	width: 100%;
+}

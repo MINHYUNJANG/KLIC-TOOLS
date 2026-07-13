@@ -1,0 +1,788 @@
+@charset "utf-8";
+
+/* slick */
+.slick-slide { display:none; min-height:1px; vertical-align:middle; overflow:hidden;}
+.slick-list { overflow:hidden;}
+.slick-list.dragging { cursor:pointer;}
+.slick-list .slick-track{display:inline-block;}
+.slick-initialized .slick-slide { display:inline-block;}
+.slick-arrow{cursor: pointer;}
+.slick-arrow.slick-hidden { display:none; list-style-type: none;} 
+.slick-current { opacity:1; display:block;}
+
+/* 작성폼 input 기본스타일 */
+.inp_st {height:28px; line-height:28px; font-size:14px; border:1px solid #ddd;}
+.inp_st[readonly] {width:30%; background:#eee;}
+
+/* 게시판 리스트 상단 */
+.bbs_srch {padding:30px 35px; font-size:15px; color:#333; text-align:center; border:1px solid #ddd; background:#f5f5f5;}
+.bbs_srch select, .bbs_srch input, .bbs_srch button {margin:1px; -webkit-box-sizing:border-box; -moz-box-sizing:border-box; box-sizing:border-box;}
+.bbs_srch select {min-width:100px; height:40px; font-size:15px; line-height:40px; vertical-align:middle; border:1px solid #ccc;}
+.bbs_srch input.inpTxt {width:35%; height:40px; line-height:40px; padding:0 10px; font-size:15px; vertical-align:middle; border:1px solid #ccc;}
+.bbs_srch button.btnSearch {position:relative; padding:0 20px 0 45px; line-height:40px; color:#fff; vertical-align:middle; background:#333 url('/00_common/images/board/ico_bbs_srch.png') no-repeat 20px center; overflow:hidden; transition:all 0.2s ease-out 0.1s;}
+.bbs_srch button.btnSearch:hover {background-color:#044ca4;}
+
+/* 게시판 리스트 상단 버튼 스타일 */
+.bbs_Tbtn1 {padding:0 20px; line-height:40px; color:#fff; vertical-align:middle; background:#333;}
+.bbs_Tbtn2 {padding:0 20px; line-height:40px; color:#fff; vertical-align:middle; background:#044ca4;}
+.bbs_Tbtn3 {padding:0 18px; line-height:36px; color:#333; font-weight: 400; vertical-align:middle; border:2px solid #333; background:#fff;}
+.bbs_Tbtn4 {padding:0 18px; line-height:36px; color:#044ca4; font-weight: 400; vertical-align:middle; border:2px solid #044ca4; background:#fff;}
+
+
+/* 페이지 안내 */
+.pageinfo {position:relative; margin:30px 0 15px; color:#666; letter-spacing:0; font-size:18px; overflow:hidden;}
+.pageinfo .pge_totle {float:left;}
+.pageinfo .pge_num {float:right;}
+.pageinfo .pge_num span {display:inline-block; width:10px; height:10px; margin:0 2px; text-indent:-10000em; vertical-align:middle; background:url('/00_common/images/board/bbs_pgeNum_se.png') no-repeat ;}
+.pageinfo p strong {color:#044ca4; font-weight: 400;} /* color */
+.pageinfo p strong.pc_black {color:#222; font-weight: 400;}
+
+
+/* 게시판 리스트 : Start ********************************************************************************************************************************************************************************************************************************/
+/* 일반형게시판목록 - 스킨A */
+.bbs_ListA table {table-layout:fixed; line-height:20px; color:#666; font-size:15px; text-align:center; border-top:2px solid #334265; } /* color */
+.bbs_ListA table thead th {padding:15px 10px; color:#222; font-weight: 400; border-bottom:1px solid #d2d7dc; background:#f9fafb;}
+.bbs_ListA table tbody td {padding:15px 10px; border-bottom:1px solid #eaecf1;}
+.bbs_ListA table tbody tr:hover {background:#f9fafb;}
+.bbs_ListA table tbody td.bbs_tit {text-align:left;}
+.bbs_ListA table tbody td.bbs_tit a {display:block; white-space:nowrap; text-overflow:ellipsis; overflow:hidden;}
+.bbs_ListA table tbody td.bbs_tit a:hover, .bbs_ListA table tbody td.bbs_tit a:focus {text-decoration:underline;}
+.bbs_ListA table tbody td.bbs_tit a:hover span.ico_answer, .bbs_ListA table tbody td.bbs_tit a:focus span.comment {text-decoration:none;}
+
+.bbs_ListA table tbody td.bbs_tit span.new {display:inline-block; width:18px; height:18px; margin-right:5px; line-height:18px; font-weight: 400; font-size:15px; color:#f57f17; text-align:center; border:1px solid #f57f17;}
+.bbs_ListA table tbody td.bbs_tit span.comment {margin-right:5px; color:#f57f17; font-weight: 400; }
+.bbs_ListA table tbody td.bbs_tit span.ico_answer {padding:0 8px; margin-right:5px; font-size:13px; border:1px solid #c1c1c1; }
+
+.bbs_ListA table tbody td strong.ico_noti {display:block; width:26px; height:22px; margin:0 auto; text-indent:-10000em; background:url('/00_common/images/board/ico_noti.png') no-repeat ;}
+.bbs_ListA table tbody td strong.sttus_blue {display:inline-block; padding:0 8px; line-height:20px; font-weight: 400; font-size:15px; color:#044ca4; border:1px solid #044ca4;}
+.bbs_ListA table tbody td strong.sttus_green {display:inline-block; padding:0 8px; line-height:20px; font-weight: 400; font-size:15px; color:#50b848; border:1px solid #50b848;}
+.bbs_ListA table tbody td strong.sttus_orange {display:inline-block; padding:0 8px; line-height:20px; font-weight: 400; font-size:15px; color:#f58220; border:1px solid #f58220;}
+.bbs_ListA table tbody td strong.sttus_gray {display:inline-block; padding:0 8px; line-height:20px; font-weight: 400; font-size:15px; color:#555; border:1px solid #555;}
+
+/* 첨부파일 레이어 */
+.file_lyrBox {position:relative;}
+.file_lyrBox .file_lyr {position:absolute; right:0; top:30px; max-width:150px; padding:5px 15px; text-align:left; border:2px solid #334265; background:#fff; z-index:2;}
+.file_lyrBox .file_lyr ul li {position:relative; padding:3px 0 3px 15px; font-size:14px; background:url('/00_common/images/board/ico_Vfile.png') no-repeat left 8px;}
+.file_lyrBox .file_lyr a {display:block; white-space:nowrap; text-overflow:ellipsis; overflow:hidden;}
+.file_lyrBox .file_lyr a:hover, .file_lyrBox .file_lyr a:focus {text-decoration:underline;}
+
+
+/* 사진형게시판목록 상단 : 공통 */
+.bbs_Photo_top {position:relative; margin-bottom:60px; padding:30px; font-size:14px; color:#666; border:4px solid #efefef;}
+.bbs_Photo_top:before {content:""; display:block; position:absolute; left:0; bottom:-30px; width:100%; height:1px; background:#cecece;}
+.bbs_Photo_top:after {content:""; display:block; clear:both; overflow:hidden;}
+.bbs_Photo_top a .img {position:relative; width:40%; height:330px; float:left; text-align:center; background:#000; overflow:hidden;}
+.bbs_Photo_top a .img img {position:relative; width:auto; height:100%; left:50%; top:50%; transform:translate(-50%, -50%); -webkit-transition:all 0.3s ease; -moz-transition:all 0.3s ease; -ms-transition:all 0.3s ease; transition:all 0.3s ease;}
+.bbs_Photo_top a .img img.vertImg{width:100%; height:auto;}
+.bbs_Photo_top a:hover .img img {opacity:0.4; transform:translate(-50%, -50%) scale(1.1,1.1); -webkit-transform:translate(-50%, -50%) scale(1.1,1.1);}
+.bbs_Photo_top a .img:before {content:""; display:block; position:absolute; left:50%; top:50%; width:70px; height:70px; margin:-35px 0 0 -35px; background:url('/00_common/images/board/img_photo_plus.png') no-repeat; opacity:0; -webkit-transition:all 0.3s ease; -moz-transition:all 0.3s ease; -ms-transition:all 0.3s ease; transition:all 0.3s ease; z-index:2;}
+.bbs_Photo_top a:hover .img:before {opacity:1; transform:rotate(360deg);}
+.bbs_Photo_top .txt {position:relative; width:55%; height:330px; float:right;}
+.bbs_Photo_top .txt dl dt {padding:20px 0 10px; font-size:24px; font-weight: 400; color:#000; white-space:nowrap; text-overflow:ellipsis; overflow:hidden;}
+.bbs_Photo_top .txt dl dd.cont {font-size:16px;}
+.bbs_Photo_top .txt dl dd.util {position:relative; margin-top:15px; height:40px; text-align:right; border-top:1px dashed #cecece; }
+.bbs_Photo_top .txt dl dd.util span.date {padding-left:20px; line-height:39px; background:url('/00_common/images/board/ico_photo_date.png') no-repeat left center;}
+.bbs_Photo_top .txt dl dd.util span.rdcnt {margin-left:30px; padding-left:20px; line-height:39px; background:url('/00_common/images/board/ico_photo_rdcnt.png') no-repeat left center;}
+.bbs_Photo_top .txt ul li {position:relative; margin:7px 0; padding-left:10px; }
+.bbs_Photo_top .txt ul li:before {content:""; display:block; position:absolute; left:0; top:10px; width:2px; height:2px; background:#000;}
+.bbs_Photo_top .txt a.more_view {position:absolute; right:0; bottom:0; display:block; width:158px; height:48px; line-height:48px; text-align:center; font-size:13px;  font-weight: 400; color:#333; border:1px solid #d9d9d9; overflow:hidden; -webkit-transition:all 0.3s ease; -moz-transition:all 0.3s ease; -ms-transition:all 0.3s ease; transition:all 0.3s ease;}
+.bbs_Photo_top .txt a.more_view:hover {color:#fff; border-color:#044ca4; background:#044ca4;}
+
+/* 사진형게시판목록 - 스킨A */
+.bbs_PhotoA:after {content:""; display:block; clear:both;}
+.bbs_PhotoA li {position:relative; width:23.5%; margin-right:2%; float:left; font-size:14px; color:#666;}
+.bbs_PhotoA li.noDate {width:100%; margin:0; padding-bottom:30px; float:none; text-align:center; border-bottom:1px dashed #cecece; }/* 게시글 없을경우 */
+.bbs_PhotoA li.new:after {content:"N"; display:block; position:absolute; left:0; top:0; width:40px; height:40px; line-height:40px; text-align:center; color:#fff; font-size:16px; font-weight: 400; background:#f57f17;}
+.bbs_PhotoA li:nth-child(4n) {margin-right:0;}
+.bbs_PhotoA li:nth-child(n+5) {margin-top:40px;}
+.bbs_PhotoA li a {position:relative; display:block; height:290px; border:1px solid #cecece; -webkit-transition:all 0.3s ease; -moz-transition:all 0.3s ease; -ms-transition:all 0.3s ease; transition:all 0.3s ease;}
+.bbs_PhotoA li a:hover {border:1px solid #000; box-shadow:3px 3px 6px 0 rgba(0, 0, 0, 0.2);}
+.bbs_PhotoA li a span {display:block;}
+.bbs_PhotoA li a .img {position:relative; height:180px; background:#000; overflow:hidden;}
+.bbs_PhotoA li a .img img {position:relative; width:auto; height:100%; left:50%; top:50%; transform:translate(-50%, -50%); -webkit-transition:all 0.3s ease; -moz-transition:all 0.3s ease; -ms-transition:all 0.3s ease; transition:all 0.3s ease;}
+.bbs_PhotoA li a .img img.vertImg{width:100%; height:auto;}
+.bbs_PhotoA li a:hover .img img {opacity:0.4; transform:translate(-50%, -50%) scale(1.1,1.1); -webkit-transform:translate(-50%, -50%) scale(1.1,1.1);}
+.bbs_PhotoA li a .img:before {content:""; display:block; position:absolute; left:50%; top:50%; width:70px; height:70px; margin:-35px 0 0 -35px; background:url('/00_common/images/board/img_photo_plus.png') no-repeat; opacity:0; -webkit-transition:all 0.3s ease; -moz-transition:all 0.3s ease; -ms-transition:all 0.3s ease; transition:all 0.3s ease; z-index:2;}
+.bbs_PhotoA li a:hover .img:before {opacity:1; transform:rotate(360deg);}
+.bbs_PhotoA li a p {padding:0 10px; font-size:17px; line-height:70px; font-weight: 400; color:#333; white-space:nowrap; text-overflow:ellipsis; border-bottom:1px dashed #cecece; overflow:hidden; }
+.bbs_PhotoA li a span.date {position:absolute; left:10px; bottom:0; padding-left:20px; line-height:39px; background:url('/00_common/images/board/ico_photo_date.png') no-repeat left center;}
+.bbs_PhotoA li a span.rdcnt {position:absolute; right:10px; bottom:0; padding-left:20px; line-height:39px; background:url('/00_common/images/board/ico_photo_rdcnt.png') no-repeat left center;}
+
+/* 사진형게시판목록 - 스킨B */
+.bbs_PhotoB {border-top:2px solid #334265; }
+.bbs_PhotoB:after {content:""; display:block; clear:both;}
+.bbs_PhotoB li {position:relative; height:240px; padding:30px 0; border-bottom:1px solid #cecece;  font-size:14px; color:#666;}
+.bbs_PhotoB li.noDate {height:30px; text-align:center; border-bottom:1px dashed #cecece; }/* 게시글 없을경우 */
+.bbs_PhotoB li.new:after {content:"N"; display:block; position:absolute; left:0; top:30px; width:40px; height:40px; line-height:40px; text-align:center; color:#fff; font-size:16px; font-weight: 400; background:#f57f17;}
+.bbs_PhotoB li a {position:relative; display:block; height:100%; padding-left:350px;}
+.bbs_PhotoB li a span {display:block;}
+.bbs_PhotoB li a .img {position:absolute; left:0; top:0; width:320px; height:180px; background:#000; overflow:hidden;}
+.bbs_PhotoB li a .img img {position:relative; width:auto; height:100%; left:50%; top:50%; transform:translate(-50%, -50%); -webkit-transition:all 0.3s ease; -moz-transition:all 0.3s ease; -ms-transition:all 0.3s ease; transition:all 0.3s ease;}
+.bbs_PhotoB li a .img img.vertImg{width:100%; height:auto;}
+.bbs_PhotoB li a:hover .img img {opacity:0.4; transform:translate(-50%, -50%) scale(1.1,1.1); -webkit-transform:translate(-50%, -50%) scale(1.1,1.1);}
+.bbs_PhotoB li a .img:before {content:""; display:block; position:absolute; left:50%; top:50%; width:70px; height:70px; margin:-35px 0 0 -35px; background:url('/00_common/images/board/img_photo_plus.png') no-repeat; opacity:0; -webkit-transition:all 0.3s ease; -moz-transition:all 0.3s ease; -ms-transition:all 0.3s ease; transition:all 0.3s ease; z-index:2;}
+.bbs_PhotoB li a:hover .img:before {opacity:1; transform:rotate(360deg);}
+.bbs_PhotoB li a dl {position:relative; padding-top:40px; font-size:14px; color:#666;}
+.bbs_PhotoB li a dl dt {font-size:20px; line-height:40px; font-weight: 400; color:#333; white-space:nowrap; text-overflow:ellipsis; overflow:hidden; }
+.bbs_PhotoB li a dl dd.cont {height:40px; line-height:20px; overflow:hidden;}
+.bbs_PhotoB li a dl dd.util {position:absolute; left:0; top:10px; font-size:16px; color:#777;}
+.bbs_PhotoB li a dl dd.util span {position:relative; display:inline-block; margin:0 10px; padding-left:10px; color:#222;}
+.bbs_PhotoB li a dl dd.util span:before {content:""; display:block; position:absolute; left:0; top:7px; width:1px; height:10px; background:#cecece;}
+.bbs_PhotoB li a dl dd.util span:first-child {margin-left:0; padding-left:0;}
+.bbs_PhotoB li a dl dd.util span:first-child:before {display:none;}
+.bbs_PhotoB li a .more_view {position:absolute; left:350px; bottom:0; width:158px; height:48px; line-height:48px; text-align:center; font-size:13px;  font-weight: 400; color:#333; border:1px solid #d9d9d9; overflow:hidden; -webkit-transition:all 0.3s ease; -moz-transition:all 0.3s ease; -ms-transition:all 0.3s ease; transition:all 0.3s ease;}
+.bbs_PhotoB li a:hover .more_view {color:#fff; border-color:#044ca4; background:#044ca4;}
+
+/* 사진형게시판목록 - 스킨C */
+.bbs_PhotoC {border-top:2px solid #334265; }
+.bbs_PhotoC:after {content:""; display:block; clear:both;}
+.bbs_PhotoC li {position:relative; height:160px; padding:20px 0; border-bottom:1px solid #cecece;  font-size:14px; color:#666;}
+.bbs_PhotoC li.noDate {height:30px; text-align:center; border-bottom:1px dashed #cecece; }/* 게시글 없을경우 */
+.bbs_PhotoC li.new:after {content:"N"; display:block; position:absolute; left:0; top:20px; width:40px; height:40px; line-height:40px; text-align:center; color:#fff; font-size:16px; font-weight: 400; background:#f57f17;}
+.bbs_PhotoC li a {position:relative; display:block; height:100%;}
+.bbs_PhotoC li a span {display:block;}
+.bbs_PhotoC li a .img {position:relative; width:20%; height:120px; float:left; background:#000; overflow:hidden;}
+.bbs_PhotoC li a .img img {position:relative; width:auto; height:100%; left:50%; top:50%; transform:translate(-50%, -50%); -webkit-transition:all 0.3s ease; -moz-transition:all 0.3s ease; -ms-transition:all 0.3s ease; transition:all 0.3s ease;}
+.bbs_PhotoC li a .img img.vertImg{width:100%; height:auto;}
+.bbs_PhotoC li a:hover .img img {opacity:0.4; transform:translate(-50%, -50%) scale(1.1,1.1); -webkit-transform:translate(-50%, -50%) scale(1.1,1.1);}
+.bbs_PhotoC li a .img:before {content:""; display:block; position:absolute; left:50%; top:50%; width:70px; height:70px; margin:-35px 0 0 -35px; background:url('/00_common/images/board/img_photo_plus.png') no-repeat; opacity:0; -webkit-transition:all 0.3s ease; -moz-transition:all 0.3s ease; -ms-transition:all 0.3s ease; transition:all 0.3s ease; z-index:2;}
+.bbs_PhotoC li a:hover .img:before {opacity:1; transform:rotate(360deg);}
+.bbs_PhotoC li a .img ~ dl {width:77%; float:right;} /* 이미지가 없을 경우 */
+.bbs_PhotoC li a dl {position:relative; font-size:14px; color:#666;}
+.bbs_PhotoC li a dl dt {font-size:18px; line-height:40px; font-weight: 400; color:#333; white-space:nowrap; text-overflow:ellipsis; overflow:hidden; }
+.bbs_PhotoC li a dl dd.cont {height:40px; line-height:20px; overflow:hidden;}
+.bbs_PhotoC li a dl dd.date {margin-top:10px;}
+
+/* PDF게시판목록 - 스킨A */
+.bbs_PDF:after {content:""; display:block; clear:both;}
+.bbs_PDF li {position:relative; width:32%; height:248px; padding-top:30px; margin-right:2%; float:left; font-size:14px; color:#666;}
+.bbs_PDF li:nth-child(3n) {margin-right:0;}
+.bbs_PDF li:nth-child(n+4) {margin-top:40px;}
+.bbs_PDF li.noDate {width:100%; margin:0; padding-bottom:30px; float:none; text-align:center; border-bottom:1px dashed #cecece; }/* 게시글 없을경우 */
+.bbs_PDF li.new:after {content:"N"; display:block; position:absolute; left:20px; top:0; width:40px; height:40px; line-height:40px; text-align:center; color:#fff; font-size:16px; font-weight: 400; background:#f57f17; z-index:2;}
+.bbs_PDF li a .img {position:absolute; left:20px; top:0; width:135px; height:185px; border:1px solid #cecece; background:#000; overflow:hidden; z-index:2;}
+.bbs_PDF li a .img img {position:relative; width:auto; height:100%; left:50%; top:50%; transform:translate(-50%, -50%); -webkit-transition:all 0.3s ease; -moz-transition:all 0.3s ease; -ms-transition:all 0.3s ease; transition:all 0.3s ease;}
+.bbs_PDF li a .img img.vertImg{width:100%; height:auto;}
+.bbs_PDF li a:hover .img img {opacity:0.4; transform:translate(-50%, -50%) scale(1.1,1.1); -webkit-transform:translate(-50%, -50%) scale(1.1,1.1);}
+/* PDF No Image */
+.bbs_PDF li a .img .bbs_NoImgPDF {position:relative; height:100%; display:block; text-align:center; background:#fff; z-index:3;}
+.bbs_PDF li a .img .bbs_NoImgPDF:before {content:"NO IMAGE"; display:block; position:absolute; left:0; top:50%; width:100%; height:20px; margin:-40px 0 0 0; padding-top:60px; line-height:20px; font-size:0; color:#777; background:url('/00_common/images/board/ico_pdf.png') no-repeat center 5px; -webkit-transition:all 0.3s ease; -moz-transition:all 0.3s ease; -ms-transition:all 0.3s ease; transition:all 0.3s ease; z-index:4;}
+.bbs_PDF li a:hover .img .bbs_NoImgPDF {background:#f7f9fb;}
+.bbs_PDF li a:hover .img .bbs_NoImgPDF:before {background-position:center 0px;}
+.bbs_PDF li a  ~ .cont {position:relative; height:218px; padding:20px 20px 40px 180px; border:1px solid #cecece;}/* 이미지가 없을 경우 타입2 */
+.bbs_PDF li .cont {position:relative; height:158px; padding:20px 20px 40px 20px; border:1px solid #cecece;}
+.bbs_PDF li:hover .cont {border:1px solid #505c78; box-shadow:3px 3px 6px 0 rgba(0, 0, 0, 0.2);}
+.bbs_PDF li .cont p a {display:block; height:60px; line-height:20px; font-size:16px; color:#111; font-weight: 400; overflow:hidden;}
+.bbs_PDF li .cont a.down {position:absolute; right:20px; bottom:60px; display:block; width:90px; height:30px; padding-left:10px; line-height:30px; font-size:13px; color:#777; border:1px solid #e5e5e5; background:url('/00_common/images/board/ico_Vfile.png') no-repeat 90% center; -webkit-transition:all 0.3s ease; -moz-transition:all 0.3s ease; -ms-transition:all 0.3s ease; transition:all 0.3s ease;}
+.bbs_PDF li .cont a.down:hover {color:#111; border:1px solid #505c78; }
+.bbs_PDF li div.util {position:absolute; left:0; bottom:0; width:100%; height:45px; border-top:1px dashed #cecece; overflow:hidden; z-index:2;}
+.bbs_PDF li div.util span.date {display:block; float:left; margin-left:20px; padding-left:20px; line-height:44px; background:url('/00_common/images/board/ico_photo_date.png') no-repeat left center;}
+.bbs_PDF li div.util span.rdcnt {display:block; float:right; margin-right:20px; padding-left:20px; line-height:44px; background:url('/00_common/images/board/ico_photo_rdcnt.png') no-repeat left center;}
+
+/* No Image */
+.bbs_img a div.img .bbs_NoImg {position:relative; height:100%; display:block; text-align:center; background:#f7f9fb; z-index:3;}
+.bbs_img a div.img .bbs_NoImg:before {content:"NO IMAGE"; display:block; position:absolute; left:0; top:50%; width:100%; height:20px; margin:-40px 0 0 0; padding-top:60px; line-height:20px; font-size:13px; color:#777; background:url('/00_common/images/board/img_noimg.png') no-repeat center 5px; -webkit-transition:all 0.3s ease; -moz-transition:all 0.3s ease; -ms-transition:all 0.3s ease; transition:all 0.3s ease; z-index:4;}
+.bbs_img a:hover div.img .bbs_NoImg {background:#ebeff2;}
+.bbs_img a:hover div.img .bbs_NoImg:before {background-position:center 0px;}
+
+/* No Video */
+.bbs_img a div.img .bbs_NoVideo {position:relative; height:100%; display:block; text-align:center; background:#f7f9fb; z-index:3;}
+.bbs_img a div.img .bbs_NoVideo:before {content:"NO VIDEO"; display:block; position:absolute; left:0; top:50%; width:100%; height:20px; margin:-40px 0 0 0; padding-top:60px; line-height:20px; font-size:13px; color:#777; background:url('/00_common/images/board/img_novideo.png') no-repeat center 5px; -webkit-transition:all 0.3s ease; -moz-transition:all 0.3s ease; -ms-transition:all 0.3s ease; transition:all 0.3s ease; z-index:4;}
+.bbs_img a:hover div.img .bbs_NoVideo {background:#ebeff2;}
+.bbs_img a:hover div.img .bbs_NoVideo:before {background-position:center 0px;}
+
+/* FAQ - 스킨A */
+.bbs_FaqA {border-top:2px solid #334265;}
+.bbs_FaqA li {border-bottom:1px solid #d2d7dc;}
+.bbs_FaqA li a {position:relative; display:block; padding:15px 70px 15px 60px; font-size:16px; font-weight: 400; color:#111; }
+.bbs_FaqA li a span.faq_arr {display:block; position:absolute; right:20px; top:13px; width:28px; height:28px; border:1px solid #e7e7e7;  }
+.bbs_FaqA li a span.faq_arr:before {content:""; display:block; width:100%; height:100%; background:url('/00_common/images/board/arr_faq.png') no-repeat right center; -webkit-transition:all 0.3s ease; -moz-transition:all 0.3s ease; -ms-transition:all 0.3s ease; transition:all 0.3s ease;}
+.bbs_FaqA li.on a span.faq_arr:before {transform:rotate(180deg);}
+.bbs_FaqA li a:before {content:"Q"; display:block; position:absolute; left:20px; top:15px; width:25px; height:25px; color:#fff; font-size:15px; text-align:center; line-height:25px; background:#044ca4; border-radius:50%;}
+.bbs_FaqA li div.faq_A {position:relative; display:none;  padding:15px 0 15px 60px; font-size:14px; color:#444; border-top:1px solid #d2d7dc; background:#f4f7fa;}
+.bbs_FaqA li div.faq_A:before {content:"A"; display:block; position:absolute; left:20px; top:15px; width:25px; height:25px; color:#fff; font-size:15px; text-align:center; line-height:25px; background:#6a6a6a; border-radius:50%;}
+.bbs_FaqA li div.btn_bbs {width : 130px; margin : 0 0 0 auto;}
+.bbs_FaqA li div.btn_bbs button {border:1px solid #007367; background:#00897b}
+
+/* 게시판 리스트 : End ********************************************************************************************************************************************************************************************************************************/
+
+/* 게시판 View : Start ********************************************************************************************************************************************************************************************************************************/
+.bbs_ViewA h3 {padding:20px 0; text-align:center; font-size:18px; font-weight: 400; color:#111; border-top:2px solid #334265; border-bottom:1px solid #e5e5e5;}
+.bbs_ViewA h3 .comment {margin-right:5px; padding:3px 5px; vertical-align:middle; font-size:13px; font-weight: 200; color:#fff; background:#53709a;}
+.bbs_ViewA .bbsV_data {padding:15px 0; line-height:0; font-size:0; text-align:center; border-bottom:1px dotted #e5e5e5; background:#f8f9fc;}
+.bbs_ViewA .bbsV_data li {position:relative; display:inline-block; padding:0 15px; font-size:14px; line-height:1.4;}
+.bbs_ViewA .bbsV_data li:before {content:""; display:block; position:absolute; left:0; top:4px; width:1px; height:10px; background:#b7b7b7;}
+.bbs_ViewA .bbsV_data li:first-child:before {display:none;}
+.bbs_ViewA .bbsV_data li strong {margin-right:10px; color:#111; font-weight: 400;}
+
+.bbs_ViewA .bbsV_cont {position:relative; margin:50px 0;}
+.bbs_ViewA .bbsV_cont img {max-width:100%;} /* 뷰페이지 큰 이미지 출력시 가로 스크롤 방지 */
+
+/* 뷰페이지 에디터로 글 작성시 common.css 영향 받는 스타일 수정 */
+.bbs_ViewA .bbsV_cont ul {margin-left:20px; list-style-type:disc;}
+.bbs_ViewA .bbsV_cont ul li {list-style-type:disc;}
+.bbs_ViewA .bbsV_cont ol{margin-left:20px; list-style-type:decimal;}
+.bbs_ViewA .bbsV_cont ol li {list-style-type:decimal;}
+.bbs_ViewA .bbsV_cont b {font-weight:bold;}
+.bbs_ViewA .bbsV_cont i { font-style:italic;}
+
+/* 사진게시판일 경우 */
+.bbsV_cont .slider-view {width:100%; margin-bottom:20px; overflow:hidden;}
+.bbsV_cont .slider-view .slick-slide { float:left; width:100%; height:auto; min-height:1px; vertical-align:middle; text-align:center;}
+.bbsV_cont .slider-view .slick-slide.slick-current img {max-width:100%;}
+
+.bbsV_cont .slider-nav {position:relative; height:174px; margin:20px 0; line-height:0; font-size:0; border:2px solid #efefef; overflow:hidden;}
+.bbsV_cont .slider-nav .slick-list{margin:0 80px;}
+.bbsV_cont .slider-nav .slick-slide {display:inline-block;}
+.bbsV_cont .slider-nav .slick-slide a{position:relative; display:block; height:110px; margin:30px 20px; background:#eee; overflow:hidden;}
+/* .bbsV_cont .slider-nav .slick-slide img {position:absolute; width:auto; height:100%; left:50%; top:50%; transform:translate(-50%, -50%); -webkit-transform:translate(-50%, -50%); } */
+.bbsV_cont .slider-nav .slick-slide img {position:relative; width:auto; margin-top : 4.25rem; margin-right : 1.75rem; height:100%; left:50%; top:50%; transform:translate(-50%, -50%); -webkit-transform:translate(-50%, -50%); }
+.bbsV_cont .slider-nav .slick-slide img.vertImg{width:100%; height:auto;}
+.bbsV_cont .slider-nav .slick-slide a:hover:after, .bbsV_cont .slider-nav .slick-slide a:focus:after {content:""; display:block; position:absolute; left:0; top:0; width:100%; height:100%; border:4px solid #c8d1db; -webkit-box-sizing:border-box; -moz-box-sizing:border-box; box-sizing:border-box; }
+.bbsV_cont .slider-nav .slick-slide.slick-current a:after {content:""; display:block; position:absolute; left:0; top:0; width:100%; height:100%; border:4px solid #044ca4; -webkit-box-sizing:border-box; -moz-box-sizing:border-box; box-sizing:border-box; }
+
+.bbsV_cont .slider-nav .slick-arrow {display:block; position:absolute; top:50%; width:40px; height:40px; margin-top:-20px; border-radius:20px; z-index:2; -webkit-transition:all 0.3s ease; -moz-transition:all 0.3s ease; -ms-transition:all 0.3s ease; transition:all 0.3s ease;}
+.bbsV_cont .slider-nav .slick-prev {left:20px; background:#f2f2f2 url('/00_common/images/board/bbsV_Photo_prev.png') no-repeat center;}
+.bbsV_cont .slider-nav .slick-next {right:20px; background:#f2f2f2 url('/00_common/images/board/bbsV_Photo_next.png') no-repeat center;}
+.bbsV_cont .slider-nav .slick-prev:hover, .bbsV_cont .slider-nav .slick-prev:focus {background:#266ed4 url('/00_common/images/board/bbsV_Photo_prev_on.png') no-repeat center;}
+.bbsV_cont .slider-nav .slick-next:hover, .bbsV_cont .slider-nav .slick-next:focus { background:#266ed4 url('/00_common/images/board/bbsV_Photo_next_on.png') no-repeat center;}
+
+/* 첨부파일 */
+.bbsV_atchmnfl { font-size:14px; line-height:24px; border-top:1px solid #cfcfcf;}
+.bbsV_atchmnfl dl {position:relative; /* height:120px; */ padding-left:180px; border-bottom:1px solid #cfcfcf;}
+.bbsV_atchmnfl dt {position:absolute; left:0; top:0; width:180px; height:100%; display:table; font-weight: 400; color:#111; text-align:center; background:#f7f7f7;}
+.bbsV_atchmnfl dt span {height:100%; display:table-cell; vertical-align:middle;}
+.bbsV_atchmnfl dd {padding:10px 0 10px 20px;}
+.bbsV_atchmnfl dd ul {max-height:100px; overflow-y:auto;}
+.bbsV_atchmnfl dd ul.bbsV_file li a {display:block; padding-left:15px; color:#666; white-space:nowrap; text-overflow:ellipsis; overflow:hidden; background:url('/00_common/images/board/ico_Vfile.png') no-repeat left 8px;}
+.bbsV_atchmnfl dd ul.bbsV_file li a:hover, .bbsV_atchmnfl dd ul.bbsV_file li a:focus {color:#333; text-decoration:underline; }
+
+.bbsV_atchmnfl dd ul.bbsV_downCO li {position:relative; margin:3px 0 0; padding-right:80px; line-height:22px; white-space:nowrap; text-overflow:ellipsis; overflow:hidden;}
+.bbsV_atchmnfl dd ul.bbsV_downCO li span {margin-right:5px;}
+.bbsV_atchmnfl dd ul.bbsV_downCO li a {position:absolute; right:10px; top:0; display:block; padding:2px 10px; line-height:18px; font-size:13px; color:#fff; background:#99a3b0;}
+.bbsV_atchmnfl dd ul.bbsV_downCO li a:hover, .bbsV_atchmnfl dd ul.bbsV_downCO li a:focus {text-decoration:underline; background:#747f8c;}
+
+/* 200402 게시글 이동 추가 */
+.bbsV_PostMove dl {position:relative; margin-top:20px; padding:20px 20px 20px 180px; border:1px solid #cfcfcf; background:#f7f7f7;}
+.bbsV_PostMove dl dt {position:absolute; left:0; top:20px; width:180px; line-height:40px; font-weight: 400; color:#111; text-align:center;}
+.bbsV_PostMove dl dd {position:relative; padding-right:100px;}
+.bbsV_PostMove dl dd select {width:100%; height:40px; font-size:15px; line-height:40px; vertical-align:middle; border:1px solid #ccc;}
+.bbsV_PostMove dl dd .btn_PostMove {position:absolute; right:0; top:0; display:block; width:93px; height:38px; text-align:center; color:#fff; line-height:38px; border:1px solid #27374a; background:#394b61;}
+
+/* 댓글 */
+.bbsV_answer .bbsV_answInfo {position:relative; padding:20px 25px; border:1px solid #e5e5e5;}
+.bbsV_answer .bbsV_answInfo p { font-weight: 400; font-size:15px; color:#222;}
+.bbsV_answer .bbsV_answInfo p strong {color:#00897b;}
+.bbsV_answer .bbsV_answInfo span {display:block; padding:5px 0 0 20px; font-size:13px; background:url('/00_common/images/board/bu_atte2.png') no-repeat left 7px;}
+
+/* 댓글 입력 폼 */
+.bbsV_answer .bbsV_answWrite {font-size:14px; border:1px solid #e5e5e5; border-top:none;}
+.bbsV_answer .bbsV_answWrite .answer_nmpw {padding:10px 25px; overflow:hidden;}
+.bbsV_answer .bbsV_answWrite .answer_nmpw p label {margin-right:10px; font-weight: 400; color:#222;}
+.bbsV_answer .bbsV_answWrite .answer_nmpw p input {width:178px; height:28px; line-height:28px; font-size:14px; border:1px solid #e5e5e5;}
+.bbsV_answer .bbsV_answWrite .answer_nmpw p.answer_name {float:left;}
+.bbsV_answer .bbsV_answWrite .answer_nmpw p.answer_pw {float:right;}
+.bbsV_answer .bbsV_answWrite .answer_txt {padding:15px 25px; border-top:1px solid #e5e5e5; border-bottom:1px solid #e5e5e5; background:#fff;}
+.bbsV_answer .bbsV_answWrite .answer_txt textarea {width:100%; height:60px; color:#666; font-size:14px; border:none;}
+.bbsV_answer .bbsV_answWrite .btnRegist {display:inline-block; padding:15px 20px; float:right; line-height:20px; color:#fff; background:#044ca4;}
+.bbsV_answer .bbsV_answWrite .btnRegist:hover, .bbsV_answer .bbsV_answWrite .btnRegist:focus {background:#00377b;}
+
+/* 댓글 : 리스트 */
+.bbsV_answer .bbsV_answList {margin-top:20px; border-top:1px solid #e5e5e5;}
+.bbsV_answer .bbsV_answList > li {position:relative; padding:15px 0; font-size:14px; border-bottom:1px solid #e5e5e5;}
+.bbsV_answer .bbsV_answList > li dl dt {margin-bottom:10px; color:#333; font-weight: 400; }
+.bbsV_answer .bbsV_answList > li.no_answer {color:#333; text-align:center; font-size:15px; font-weight: 400; border:1px solid #e5e5e5; border-top:none; background:url('/00_common/images/board/pt_diagonalG50.png') repeat;}
+
+.bbsV_answer .bbsV_answList > li ul {position:relative; margin-top:15px; padding-left:30px; border-top:1px solid #e5e5e5;}
+.bbsV_answer .bbsV_answList > li ul:before{content:''; position:absolute; top:0; left:0; width:10px; height:100%; padding-bottom:15px; background:url('/00_common/images/board/pt_diagonalg.png') repeat; border-radius:0 0 5px 5px;}
+.bbsV_answer .bbsV_answList > li ul li {position:relative; padding:15px 0; border-top:1px solid #e5e5e5;}
+.bbsV_answer .bbsV_answList > li ul li:first-child {border-top:0;}
+.bbsV_answer .bbsV_answList > li ul li dl dt {color:#274b9f;}
+
+/* 댓글 : 날짜 및 댓글달기, 수정, 삭제 버튼 */
+.bbsV_answer .bbsV_answList li .answ_etc {position:absolute; right:0; top:15px; }
+.bbsV_answer .bbsV_answList li .answ_etc span.date {padding:0 5px;}
+.bbsV_answer .bbsV_answList li .answ_etc a {display:inline-block; width:24px; height:24px; margin-left:5px; text-indent:-10000em; border:1px solid #c3c3c3; }
+.bbsV_answer .bbsV_answList li .answ_etc a:hover, .bbsV_answer .bbsV_answList li .answ_etc a:focus {border:1px solid #111; }
+.bbsV_answer .bbsV_answList li .answ_etc a.btn_answer_mn { background:url('/00_common/images/board/btn_answer_mn.png') no-repeat;}
+.bbsV_answer .bbsV_answList li .answ_etc a.btn_updt_mn { background:url('/00_common/images/board/btn_updt_mn.png') no-repeat;}
+.bbsV_answer .bbsV_answList li .answ_etc a.btn_del_mn { background:url('/00_common/images/board/btn_del_mn.png') no-repeat;}
+
+/* 댓글 : 수정 및 댓댓글쓰기 */
+.bbsV_answer .bbsV_answList li .bbsV_answWrite {margin-top:20px; border-top:1px solid #e5e5e5; background:#f7f7f7;}
+.bbsV_answer .bbsV_answList li .bbsV_answWrite .btn_boxRight {float:right; overflow:hidden;}
+.bbsV_answer .bbsV_answList li .bbsV_answWrite .btn_boxRight button {display:block; float:left; padding:15px 20px; line-height:20px; color:#fff;}
+.bbsV_answer .bbsV_answList li .bbsV_answWrite .btn_boxRight .btnModifi {background:#666;}
+.bbsV_answer .bbsV_answList li .bbsV_answWrite .btn_boxRight .btnModifi:hover, .bbsV_answer .bbsV_answList li .bbsV_answWrite .btn_boxRight .btnModifi:focus {background:#555;}
+.bbsV_answer .bbsV_answList li .bbsV_answWrite .btn_boxRight .btnCancel {background:#444;}
+.bbsV_answer .bbsV_answList li .bbsV_answWrite .btn_boxRight .btnCancel:hover, .bbsV_answer .bbsV_answList li .bbsV_answWrite .btn_boxRight .btnCancel:focus {background:#333;}
+
+/* 댓글 : 수정 및 삭제 시 패스워드 입력 */
+.answer_updt {position:absolute; top:0; left:0; width:100%; height:100%; text-align:center; background:rgba(255,255,255,0.9);}
+.answer_updt p {margin:15px 0 5px; font-size:15px; color:#111; font-weight: 400;}
+.answer_updt input {width:200px; height:28px; line-height:28px; font-size:14px; vertical-align:middle; border:1px solid #ccc;}
+.answer_updt .btnCnfirm {display:inline-block; padding:5px 25px 4px; color:#fff; vertical-align:middle; border:1px solid #25282d; background:#41464e;}
+.answer_updt .btnCancl {display:inline-block; padding:5px 25px 4px; color:#fff; vertical-align:middle; border:1px solid #7d8489; background:#92999e;}
+
+/* 다음글 이전글 */
+.bbsV_prne {margin-top:20px; font-size:14px; line-height:50px; border-top:1px solid #cfcfcf;}
+.bbsV_prne li {position:relative; padding-left:180px; border-bottom:1px solid #cfcfcf;}
+.bbsV_prne li span {position:absolute; left:0; top:0; width:160px; height:100%; display:table; padding-left:20px; font-weight: 400; color:#111; text-align:center; background:#f7f7f7 url('/00_common/images/board/bbsV_next.png') no-repeat 40px center;}
+.bbsV_prne li + li span {background-image:url('/00_common/images/board/bbsV_prev.png');}
+.bbsV_prne li a {display:block; padding-left:20px; color:#666; white-space:nowrap; text-overflow:ellipsis; overflow:hidden;}
+.bbsV_prne li a:hover, .bbsV_bbsV_prne li a:focus {color:#333; text-decoration:underline; }
+/* 게시판 View : End ********************************************************************************************************************************************************************************************************************************/
+
+/* 게시판 Write ********************************************************************************************************************************************************************************************************************************/
+/* 게시판 Write A */
+.bbs_WriteA {font-size:14px; border-top:2px solid #505c78;}
+.bbs_WriteA table th {padding:13px 10px; color:#111; font-weight: 400; text-align:left; border-bottom:1px solid #eaecf1; background:#f9fafb;}
+.bbs_WriteA table td {padding:13px 10px; border-bottom:1px solid #eaecf1;}
+.bbs_WriteA table td textarea {width:100%; height:300px; border:1px solid #ddd;}
+.bbs_WriteA table td input, .bbs_WriteA table td label {vertical-align:middle;}
+
+/* 게시판 Write B */
+.bbs_WriteB {font-size:14px; border-top:2px solid #505c78;}
+.bbs_WriteB > li {position:relative; display:table; table-layout:fixed; width:100%; border-bottom:1px solid #eaecf1;}
+.bbs_WriteB > li dl.tblDL {display:table-row; width:100%; }
+.bbs_WriteB > li dl.tblDL dt, 
+.bbs_WriteB > li dl.tblDL dd {display:table-cell; vertical-align:middle;}
+.bbs_WriteB > li dl.tblDL dt {width:20%; padding:13px 10px; color:#111; font-weight: 400; text-align:left; background:#f9fafb; -webkit-box-sizing:border-box; -moz-box-sizing:border-box; box-sizing:border-box; }
+.bbs_WriteB > li dl.tblDL dd {width:80%; padding:13px 10px; -webkit-box-sizing:border-box; -moz-box-sizing:border-box; box-sizing:border-box;}
+.bbs_WriteB > li.col2 dl.tblDL dd {width:30%;}
+.bbs_WriteB > li dl.tblDL dd textarea {width:100%; height:300px; border:1px solid #ddd;}
+.bbs_WriteB > li dl.tblDL dd input, 
+.bbs_WriteB > li dl.tblDL dd label {vertical-align:middle;}
+.bbs_WriteB > li dl.bbsWFile2 {margin:13px 0;}
+
+/* 게시판 공통 : 필수입력, ※ 표시, 파일첨부 */
+.essntl {margin:0 5px; color:#c81917; } /* 필수입력 */
+.bbs_atte {position:relative; padding-left:16px; font-size:14px;}/* 부가설명 */
+.bbs_atte:before {content:"※"; display:block; position:absolute; left:0; top:0;}
+
+/* 파일첨부 : Start ********************************************************************************************************************************************************************************************************************************/
+/* 파일첨부1 : Write */
+.bbsWFile {position:relative;}
+.bbsWFile input[type="file"]{position:absolute; width:1px; height:1px; padding:0; margin:-1px; border:0; clip:rect(0,0,0,0); overflow:hidden;}
+.bbsWFile input[readonly] {width:30%; background:#eee;}
+.bbsWFile label.bbsWBtn {cursor:pointer; display:inline-block; height:28px; padding:0 15px; line-height:28px; color:#555; border:1px solid #cdcdcd; background:#fff; -webkit-transition:all 0.3s ease; -moz-transition:all 0.3s ease; -ms-transition:all 0.3s ease; transition:all 0.3s ease;}
+.bbsWFile label.bbsWBtn:hover, .bbsWFile label.bbsWBtn:focus{color:#fff; border:1px solid #394b61; background:#394b61; }
+
+/* 파일첨부2 : Write */
+.bbsWFile2 {position:relative;}
+.bbsWFile2 dt {padding:10px 20px; font-size:17px; font-weight: 400; color:#fff; background:#394b61;}
+.bbsWFile2 dd#fileListDiv {padding:10px 20px; border:1px solid #ddd; border-top:none; background:#f9fafb;}
+.bbsWFile2 dd#fileListDiv p.bbs_atte {padding-bottom:10px;}
+.bbsWFile2 dd#fileListDiv ul {max-height:170px; padding:5px 10px; border:1px solid #ddd; background:#fff; overflow-y:auto;}
+.bbsWFile2 dd#fileListDiv ul li {position:relative; padding:10px 120px 10px 0; border-top:1px dotted #ddd;}
+.bbsWFile2 dd#fileListDiv ul li:first-child {border-top:none;}
+.bbsWFile2 dd#fileListDiv ul li span.fileName {display:block; color:#333; white-space:nowrap; text-overflow:ellipsis; overflow:hidden;}
+.bbsWFile2 dd#fileListDiv ul li span.fileSize {position:absolute; right:25px; top:10px; font-size:14px; color:#666;}
+.bbsWFile2 dd#fileListDiv ul li a.delete {display:block; position:absolute; right:0; top:10px; width:17px; height:17px; text-indent:-10000em; background:#58687b url('/00_common/images/board/btn_bbsWFile_del.png') no-repeat center; border-radius:3px; -webkit-transition:all 0.3s ease; -moz-transition:all 0.3s ease; -ms-transition:all 0.3s ease; transition:all 0.3s ease;}
+.bbsWFile2 dd#fileListDiv ul li a.delete:hover, .bbsWFile2 dd#fileListDiv ul li a.delete:focus{background-color:#384350; }
+
+.bbsWFile2 dd#fileListDiv a.button_file {position:absolute; right:20px; top:7px; display:block; padding:4px 10px; color:#fff; font-size:14px; border:1px solid #fff; border-radius:3px; -webkit-transition:all 0.3s ease; -moz-transition:all 0.3s ease; -ms-transition:all 0.3s ease; transition:all 0.3s ease;}
+.bbsWFile2 dd#fileListDiv a.button_file:hover, .bbsWFile2 dd#fileListDiv a.button_file:focus {color:#222; background:#fff;}
+/* 파일첨부 : End ********************************************************************************************************************************************************************************************************************************/
+
+
+/* 게시판 버튼 공통 : Start ********************************************************************************************************************************************************************************************************************************/
+.btn_bbs {margin:20px 0; text-align:center;}
+.btn_bbs a {display:inline-block; margin:2px; padding:12px 30px; line-height:24px; font-size:15px; color:#fff; -webkit-transition:all 0.3s ease; -moz-transition:all 0.3s ease; -ms-transition:all 0.3s ease; transition:all 0.3s ease;}
+.btn_bbs a span {position:relative; display:block; }
+.btn_bbs a span:before{content:''; position:absolute; bottom:0; left:50%; width:0px; height:1px; background:#fff; -webkit-transition:all 0.3s ease; -moz-transition:all 0.3s ease; -ms-transition:all 0.3s ease; transition:all 0.3s ease;}
+.btn_bbs a:hover span:before {content:''; position:absolute; bottom:0; left:50%; width:100%; height:1px; margin-left:-50%;}
+
+.btn_bbs a.btn_bbs_Write {padding-left:55px; border:1px solid #007367; background:#00897b url('/00_common/images/board/btn_bbs_write.png') no-repeat 30px center;}
+.btn_bbs a.btn_bbs_Write:hover, .btn_bbs a.btn_bbs_Write:focus {background-color:#007367;}
+.btn_bbs a.btn_bbs_List {padding-left:55px; border:1px solid #00377b; background:#044ca4 url('/00_common/images/board/btn_bbs_list.png') no-repeat 30px center;}
+.btn_bbs a.btn_bbs_List:hover, .btn_bbs a.btn_bbs_List:focus {background-color:#00377b;}
+.btn_bbs a.btn_bbs_Del {padding-left:55px; border:1px solid #27374a; background:#394b61 url('/00_common/images/board/btn_bbs_del.png') no-repeat 30px center;}
+.btn_bbs a.btn_bbs_Del:hover, .btn_bbs a.btn_bbs_Del:focus {background-color:#27374a;}
+
+.btn_bbs a.btn_bbs_Bas {border:1px solid #5a6271; background:#727a88;}
+.btn_bbs a.btn_bbs_Bas:hover, .btn_bbs a.btn_bbs_Bas:focus {background:#5a6271;}
+.btn_bbs a.btn_bbs_BasL {padding:11px 29px; color:#444; border:2px solid #5a6271; background:#fff;}
+.btn_bbs a.btn_bbs_BasL:hover, .btn_bbs a.btn_bbs_BasL:focus {color:#044ca4; border-color:#044ca4; background:#f7f7f7;}
+.btn_bbs a.btn_bbs_BasL span:before {background:#044ca4;}
+/* 게시판 버튼 공통 : End ********************************************************************************************************************************************************************************************************************************/
+
+/* 페이징 : Start ********************************************************************************************************************************************************************************************************************************/
+/* 페이징 - 스킨A */
+.bbs_pagerA {margin:20px 0; text-align:center; line-height:0; font-size:0; }
+.bbs_pagerA a, .bbs_pagerA span, .bbs_pagerA strong {display:inline-block; margin:0 2px; border-radius:20px; vertical-align:middle;}
+.bbs_pagerA div {display:inline-block; margin:0 5px;}
+.bbs_pagerA .bbs_arr {width:38px; height:38px; line-height:38px; text-indent:-10000em; border:1px solid #bfbfbf; -webkit-transition:all 0.3s ease; -moz-transition:all 0.3s ease; -ms-transition:all 0.3s ease; transition:all 0.3s ease;}
+.bbs_pagerA .bbs_arr:hover, .bbs_pagerA .bbs_arr:focus {background-color:#f7f7f7; border-color:#b1b1b1; }
+.bbs_pagerA .bbs_arr.pgeL1:hover, .bbs_pagerA .bbs_arr.pgeL1:focus, .bbs_pagerA .bbs_arr.pgeL2:hover, .bbs_pagerA .bbs_arr.pgeL2:focus {background-position:-3px center;}
+.bbs_pagerA .bbs_arr.pgeR1:hover, .bbs_pagerA .bbs_arr.pgeR1:focus, .bbs_pagerA .bbs_arr.pgeR2:hover, .bbs_pagerA .bbs_arr.pgeR2:focus {background-position:3px center;}
+.bbs_pagerA .pgeL1 {background:url('/00_common/images/board/bbs_PAarrL1.png') no-repeat center;}
+.bbs_pagerA .pgeL2 {background:url('/00_common/images/board/bbs_PAarrL2.png') no-repeat center;}
+.bbs_pagerA .pgeR1 {background:url('/00_common/images/board/bbs_PAarrR1.png') no-repeat center;}
+.bbs_pagerA .pgeR2 {background:url('/00_common/images/board/bbs_PAarrR2.png') no-repeat center;}
+.bbs_pagerA .bbs_pge_num {min-width:40px; height:40px; line-height:40px; font-size:15px; }
+.bbs_pagerA .bbs_pge_num:hover, .bbs_pagerA .bbs_pge_num:focus {color:#555; background:#ededed;}
+.bbs_pagerA strong.bbs_pge_num, .bbs_pagerA strong.bbs_pge_num:hover, .bbs_pagerA strong.bbs_pge_num:focus {color:#fff; font-weight: 400; background:#044ca4;} /* color */
+
+/* 페이징 - 스킨B */
+.bbs_pagerB {margin:20px 0; text-align:center; line-height:0; font-size:0; }
+.bbs_pagerB a, .bbs_pagerB span, .bbs_pagerB strong {display:inline-block; padding:0; margin:0; vertical-align:middle;}
+.bbs_pagerB div {display:inline-block; margin:0 5px; border:1px solid #bfbfbf;}
+.bbs_pagerB .bbs_arr {width:33px; height:33px; margin:0 2px; line-height:33px; text-indent:-10000em; border:1px solid #bfbfbf; -webkit-transition:all 0.3s ease; -moz-transition:all 0.3s ease; -ms-transition:all 0.3s ease; transition:all 0.3s ease;}
+.bbs_pagerB .bbs_arr:hover, .bbs_pagerB .bbs_arr:focus {background-color:#f7f7f7; border-color:#b1b1b1; }
+.bbs_pagerB .bbs_arr.pgeL1:hover, .bbs_pagerB .bbs_arr.pgeL1:focus, .bbs_pagerB .bbs_arr.pgeL2:hover, .bbs_pagerB .bbs_arr.pgeL2:focus {background-position:-3px center;}
+.bbs_pagerB .bbs_arr.pgeR1:hover, .bbs_pagerB .bbs_arr.pgeR1:focus, .bbs_pagerB .bbs_arr.pgeR2:hover, .bbs_pagerB .bbs_arr.pgeR2:focus {background-position:3px center;}
+.bbs_pagerB .pgeL1 {background:url('/00_common/images/board/bbs_PBarrL1.png') no-repeat center;}
+.bbs_pagerB .pgeL2 {background:url('/00_common/images/board/bbs_PBarrL2.png') no-repeat center;}
+.bbs_pagerB .pgeR1 {background:url('/00_common/images/board/bbs_PBarrR1.png') no-repeat center;}
+.bbs_pagerB .pgeR2 {background:url('/00_common/images/board/bbs_PBarrR2.png') no-repeat center;}
+.bbs_pagerB .bbs_pge_num {min-width:33px; height:33px; line-height:33px; font-size:15px; border-left:1px solid #bfbfbf;}
+.bbs_pagerB .bbs_pge_num:first-child {border-left:none;}
+.bbs_pagerB .bbs_pge_num:hover, .bbs_pagerB .bbs_pge_num:focus {color:#555; background:#ededed;}
+.bbs_pagerB strong.bbs_pge_num, .bbs_pagerB strong.bbs_pge_num:hover, .bbs_pagerB strong.bbs_pge_num:focus {position:relative; color:#fff; font-weight: 400; background:#044ca4; } /* color */
+.bbs_pagerB strong.bbs_pge_num:before {content:""; display:block; position:absolute; left:-1px; top:-1px; width:100%; height:100%; border:1px solid #044ca4;}
+/* 페이징 : End ********************************************************************************************************************************************************************************************************************************/
+
+/* 비밀번호 찾기 : Start *******************************************************************************************************************************************************************************************************/
+.pwCnfirm_box {max-width:600px; margin:0 auto; padding:45px; text-align:center; border:1px solid #bfbfbf;}
+.pwCnfirm_box label {display:block; margin-bottom:10px; padding-top:120px; font-size:14px; background:url('/00_common/images/board/ico_pwCnfirm.png') no-repeat center top;}
+.pwCnfirm_box input {width:100%; height:43px; padding:0 15px; line-height:43px; font-size:14px; border:1px solid #ddd;  -webkit-box-sizing:border-box; -moz-box-sizing:border-box; box-sizing:border-box;}
+.pwCnfirm_box p {margin-top:10px; line-height:0; font-size:0;}
+.pwCnfirm_box p a {display:inline-block; width:49%; height:40px; margin:2px 0.5%; font-size:14px; line-height:38px; color:#fff; vertical-align:middle; -webkit-box-sizing:border-box; -moz-box-sizing:border-box; box-sizing:border-box; }
+.pwCnfirm_box p .btn_pwCnfirmB {border:1px solid #00397f; background:#044ca4;}
+.pwCnfirm_box p .btn_pwCnfirmB:hover {background-color:#00397f;}
+.pwCnfirm_box p .btn_pwCnfirmG {border:1px solid #8e939b; background:#a5aab1;}
+.pwCnfirm_box p .btn_pwCnfirmG:hover {background-color:#8e939b;}
+/* 비밀번호 찾기 : End *******************************************************************************************************************************************************************************************************/
+
+/* 게시판 상세페이지 팝업 */
+#photoViewDiv{height:auto !important; max-height:90vh; }
+
+@media screen and (max-width:1200px){ 
+
+	
+
+
+}
+
+
+@media screen and (max-width:1000px){ 
+	
+	
+	/* 게시판 리스트 : Start ********************************************************************************************************************************************************************************************************************************/
+	/* PDF게시판목록 - 스킨A */
+	.bbs_PDF li {width:49%; }
+	.bbs_PDF li:nth-child(3n) {margin-right:2%;}
+	.bbs_PDF li:nth-child(2n) {margin-right:0;}
+	.bbs_PDF li:nth-child(n+3) {margin-top:20px;}
+	/* 게시판 리스트 : End ********************************************************************************************************************************************************************************************************************************/
+
+	/* 게시판 View : Start ********************************************************************************************************************************************************************************************************************************/
+	/* 사진게시판일 경우 
+	.bbsV_cont .slider-nav {height:150px; padding:0 80px;}
+	.bbsV_cont .slider-nav .slick-slide {width:24%; height:110px; margin:20px 0.5%;}
+	*/
+	.bbsV_cont .slider-nav .slick-list {margin: 0 50px;}
+	/* 게시판 View : End ********************************************************************************************************************************************************************************************************************************/
+	
+
+	/* 게시판 Write : Start ********************************************************************************************************************************************************************************************************************************/
+	.bbs_WriteA table th {width:30%; }
+	.bbs_WriteA table td .bbs_atte {display:block;}
+	.bbs_WriteB dl.tblDL dd .bbs_atte {display:block;}
+	/* 게시판 Write : End ********************************************************************************************************************************************************************************************************************************/
+	
+
+	/* 파일첨부 : Start ********************************************************************************************************************************************************************************************************************************/
+	/* 파일첨부1 : Write */
+	.bbsWFile {padding-right:75px;}
+	.bbsWFile input[readonly] {width:100%;}
+	.bbsWFile label.bbsWBtn {position:absolute; right:0; top:0; padding:0 10px;}
+
+	/* 파일첨부2 : Write */
+	.bbsWFile2 dt {padding:10px;}
+	.bbsWFile2 dd#fileListDiv {padding:10px;}
+	.bbsWFile2 dd#fileListDiv a.button_file {right:10px;}
+	/* 파일첨부 : End ********************************************************************************************************************************************************************************************************************************/
+
+
+}
+
+@media screen and (max-width:900px){ 
+
+	/* 게시판 리스트 : Start ********************************************************************************************************************************************************************************************************************************/
+	/* 사진형게시판목록 - 스킨A */
+	.bbs_PhotoA li {width:49%;}
+	.bbs_PhotoA li:nth-child(4n) {margin-right:2%;}
+	.bbs_PhotoA li:nth-child(2n) {margin-right:0;}
+	.bbs_PhotoA li:nth-child(n+3) {margin-top:40px;}
+
+	/* 사진형게시판목록 - 스킨B */
+	.bbs_PhotoB li a {padding-left:250px;}
+	.bbs_PhotoB li a .img {width:220px;}
+	.bbs_PhotoB li a .more_view {left:250px;}
+
+	/* 게시판 리스트 : End ********************************************************************************************************************************************************************************************************************************/
+
+}
+
+
+@media screen and (max-width:800px){ 
+	
+	/* 게시판 리스트 상단 */
+	.bbs_srch {padding:15px 25px;}
+	.bbs_srch select {min-width:auto; width:100%; margin:1px 0;}
+	.bbs_srch input.inpTxt {width:100%; margin:1px 0;}
+	.bbs_srch button {width:100%; margin:1px 0; padding:0 25px; background-image:none; }
+
+	/* 게시판 리스트 : Start ********************************************************************************************************************************************************************************************************************************/
+	/* 일반형게시판목록 - 스킨A */
+	.bbs_ListA table {table-layout:auto; text-align:left; }
+	.bbs_ListA table colgroup {display:none;} /* 200325 추가 */
+	.bbs_ListA table thead {display:none;}
+	.bbs_ListA table tbody tr {position:relative; display:block; padding:40px 0 15px; border-bottom:1px solid #c6cace;}
+	.bbs_ListA table tbody tr:after {content:""; display:block; clear:both; overflow:hidden;}
+	.bbs_ListA table tbody td {display:block; float:left; padding:5px 10px 0 10px; font-size:14px; border:none; background:url('/00_common/images/board/bbs_line.png') no-repeat right center; }
+	.bbs_ListA table tbody td:first-child {display:none;}
+	.bbs_ListA table tbody td:first-child, .bbs_ListA table tbody td:last-child, .bbs_ListA table tbody td.bbs_tit {background:none;}
+	.bbs_ListA table tbody td.bbs_tit {position:absolute; left:0; top:5px; width:100%; padding:10px; float:none; text-align:left; font-size:16px; -webkit-box-sizing:border-box; -moz-box-sizing:border-box; box-sizing:border-box; }
+	.bbs_ListA table tbody td.bbs_tit a {color:#222;}
+	.bbs_ListA table tbody tr.noti td:first-child {display:block; position:absolute; left:10px; top:5px; padding:10px 0; width:50px;}
+	.bbs_ListA table tbody tr.noti td.bbs_tit {padding:10px 10px 10px 70px; }
+	.bbs_ListA table tbody tr.no_date {padding:10px 0;}
+	.bbs_ListA table tbody tr.no_date td {display:block; float:none; text-align:center;}
+
+	/* 첨부파일 레이어 */
+	.file_lyrBox {position:inherit;}
+	.file_lyrBox .file_lyr {top:70px; max-width:100%; width:100%; -webkit-box-sizing:border-box; -moz-box-sizing:border-box; box-sizing:border-box; }
+
+	/* 사진형게시판목록 상단 : 공통 */
+	.bbs_Photo_top {padding:20px;}
+	.bbs_Photo_top a .img {width:100%; float:none;}
+	.bbs_Photo_top .txt {width:100%; height:auto; float:none;}
+	.bbs_Photo_top .txt a.more_view {position:relative; right:auto; bottom:auto; margin:20px auto 0;}
+
+	/* 사진형게시판목록 - 스킨C */
+	.bbs_PhotoC li a .img {width:32%;}
+	.bbs_PhotoC li a .img ~ dl {width:65%;} /* 이미지가 없을 경우 */
+
+
+	/* 게시판 리스트 : End ********************************************************************************************************************************************************************************************************************************/
+	
+
+	/* 페이징 : Start ********************************************************************************************************************************************************************************************************************************/
+	/* 페이징 - 스킨A */
+	.bbs_pagerA .bbs_pge_num {display:none;}
+	.bbs_pagerA strong.bbs_pge_num, .bbs_pagerA strong.bbs_pge_num:hover, .bbs_pagerA strong.bbs_pge_num:focus {display:inline-block; min-width:auto; color:#044ca4; background:none;} /* color */
+	.bbs_pagerA div a.bbs_pge_num:last-child {display:inline-block; min-width:auto; padding-left:15px; background:url('/00_common/images/board/bbs_pgeNum_mb.png') no-repeat 4px center;}
+
+	/* 페이징 - 스킨B */
+	.bbs_pagerB div {border:none;}
+	.bbs_pagerB .bbs_pge_num {display:none;}
+	.bbs_pagerB strong.bbs_pge_num, .bbs_pagerB strong.bbs_pge_num:hover, .bbs_pagerB strong.bbs_pge_num:focus {display:inline-block; min-width:auto; color:#044ca4; background:none;} /* color */
+	.bbs_pagerB div a.bbs_pge_num:last-child {display:inline-block; min-width:auto; padding-left:15px; margin-left:5px; border-left:none; background:url('/00_common/images/board/bbs_pgeNum_mb.png') no-repeat 4px center;}
+	.bbs_pagerB strong.bbs_pge_num:before {display:none;}
+	/* 페이징 : End ********************************************************************************************************************************************************************************************************************************/
+
+	/* 게시판 View : Start ********************************************************************************************************************************************************************************************************************************/
+	.bbs_ViewA .bbsV_cont {margin:30px 0;}
+
+	/* 사진게시판일 경우 
+	.bbsV_cont .slider-nav {padding:0 70px;}
+	.bbsV_cont .slider-nav .slick-slide {width:32%;}
+	*/
+
+	/* 첨부파일 */
+	.bbsV_atchmnfl dl {height:auto; padding-left:0;}
+	.bbsV_atchmnfl dt {position:relative; left:auto; top:auto; width:auto; height:40px; padding:5px 10px; display:block; line-height:30px; text-align:left; border-bottom:1px dotted #cfcfcf;}
+	.bbsV_atchmnfl dt span {display:block;}
+	.bbsV_atchmnfl dd {padding:10px;}
+
+	/* 200402 게시글 이동 추가 */
+	.bbsV_PostMove dl {padding:15px 20px 20px;}
+	.bbsV_PostMove dl dt {position:relative; left:auto; top:auto; width:auto; line-height:20px; text-align:left;}
+	.bbsV_PostMove dl dd {margin-top:10px;}
+
+	/* 댓글 */
+	.bbsV_answer .bbsV_answInfo {padding:10px 15px;}
+
+	/* 댓글 입력 폼 */
+	.bbsV_answer .bbsV_answWrite .answer_nmpw {padding:10px 15px;}
+	.bbsV_answer .bbsV_answWrite .answer_nmpw p {width:50%;}
+	.bbsV_answer .bbsV_answWrite .answer_nmpw p input {width:50%; }
+	.bbsV_answer .bbsV_answWrite .answer_txt {padding:10px 15px;}
+
+	/* 댓글 : 리스트 */
+	.bbsV_answer .bbsV_answList > li {position:relative; padding:15px 0; font-size:14px; border-bottom:1px solid #e5e5e5;}
+	.bbsV_answer .bbsV_answList > li dl dt {margin-bottom:10px; color:#333; font-weight: 400; }
+	.bbsV_answer .bbsV_answList > li.no_answer {padding:10px 15px;}
+
+	.bbsV_answer .bbsV_answList > li ul {padding-left:15px;}
+	.bbsV_answer .bbsV_answList > li ul:before{width:4px;}
+
+	/* 댓글 : 날짜 및 댓글달기, 수정, 삭제 버튼 */
+	.bbsV_answer .bbsV_answList li .answ_etc {position:relative; right:auto; top:auto; margin-top:10px; padding-top:10px; border-top:1px dotted #e5e5e5;}
+	.bbsV_answer .bbsV_answList li .answ_etc span.date {padding:0 5px;}
+
+	/* 댓글 : 수정 및 댓댓글쓰기 */
+	.bbsV_answer .bbsV_answList li .bbsV_answWrite {margin-top:10px;}
+
+	/* 댓글 : 수정 및 삭제 시 패스워드 입력 */
+	.answer_updt input {width:50%; }
+	.answer_updt .btnCnfirm, 	.answer_updt .btnCancl {padding:5px 15px 4px;}
+
+	/* 다음글 이전글 */
+	.bbsV_prne li {padding-left:80px;}
+	.bbsV_prne li span {width:80px; padding-left:0; background-image:none;}
+	.bbsV_prne li + li span {background-image:none;}
+	.bbsV_prne li a {padding-left:10px; }
+	/* 게시판 View : End ********************************************************************************************************************************************************************************************************************************/
+
+	/* 게시판 버튼 공통 : Start ********************************************************************************************************************************************************************************************************************************/
+	.btn_bbs a {padding:12px 15px;}
+	.btn_bbs a.btn_bbs_Write, .btn_bbs a.btn_bbs_List, .btn_bbs a.btn_bbs_Del {padding-left:40px; background-position:15px center;}
+	.btn_bbs a.btn_bbs_BasL {padding:11px 14px;}
+	/* 게시판 버튼 공통 : End ********************************************************************************************************************************************************************************************************************************/
+
+
+
+
+}
+
+@media screen and (max-width:700px){ 
+	/* 게시판 리스트 : Start ********************************************************************************************************************************************************************************************************************************/
+	/* PDF게시판목록 - 스킨A */
+	.bbs_PDF li {width:100%; margin-right:0 }
+	.bbs_PDF li:nth-child(3n) {margin-right:0;}
+	.bbs_PDF li:nth-child(n+2) {margin-top:20px;}
+	/* 게시판 리스트 : End ********************************************************************************************************************************************************************************************************************************/
+}
+
+@media screen and (max-width:600px){ 
+
+	
+	/* 게시판 리스트 : Start ********************************************************************************************************************************************************************************************************************************/
+	/* 사진형게시판목록 - 스킨B */
+	.bbs_PhotoB li {height:auto; padding:20px 0;}
+	.bbs_PhotoB li.new:after {top:20px;}
+	.bbs_PhotoB li a {padding-left:0;}
+	.bbs_PhotoB li a .img {position:relative; left:auto; top:auto; width:100%;}
+	.bbs_PhotoB li a dl {padding-top:30px;}
+	.bbs_PhotoB li a dl dt {margin:10px 0 5px; font-size:18px; line-height:28px;}
+	.bbs_PhotoB li a dl dd.util {font-size:14px;}
+	.bbs_PhotoB li a .more_view {position:relative; left:auto; bottom:auto; width:100%; margin-top:15px; -webkit-box-sizing:border-box; -moz-box-sizing:border-box; box-sizing:border-box; }
+	/* 게시판 리스트 : End ********************************************************************************************************************************************************************************************************************************/
+
+
+	/* 게시판 View : Start ********************************************************************************************************************************************************************************************************************************/
+
+	/* 사진게시판일 경우 
+	.bbsV_cont .slider-nav {padding:0 60px;}
+	.bbsV_cont .slider-nav .slick-slide {width:49%;}
+	*/
+
+	.bbsVPho_Cntrl a {width:30px; height:30px; margin-top:-15px;}
+	.bbsVPho_Cntrl.prev a {left:15px;}
+	.bbsVPho_Cntrl.next a {right:15px;}
+	/* 게시판 View : End ********************************************************************************************************************************************************************************************************************************/
+
+
+	/* 게시판 Write : Start ********************************************************************************************************************************************************************************************************************************/
+	/* 게시판 Write B */
+	.bbs_WriteB > li {display:block; table-layout:auto; border-bottom:1px solid #eaecf1;}
+	.bbs_WriteB > li:before {content:''; display:block; position:absolute; top:0px; left:0px; width:110px; height:100%; background:#f9fafb;}
+	.bbs_WriteB > li dl.tblDL {position:relative; display:block; overflow:hidden; z-index:2;}
+	.bbs_WriteB > li dl.tblDL dt, 
+	.bbs_WriteB > li dl.tblDL dd {display:block;}
+	.bbs_WriteB > li dl.tblDL dt {position:relative; width:110px; float:left;}
+	.bbs_WriteB > li dl.tblDL dd,
+	.bbs_WriteB > li.col2 dl.tblDL dd {width:100%; padding:13px 10px 13px 120px;}
+	.bbs_WriteB > li.col2 dl dt, .bbs_WriteB > li.col2 dl dd {border-top:1px solid #eaecf1;}
+	.bbs_WriteB > li.col2 dl dt:first-child, 
+	.bbs_WriteB > li.col2 dl dd:nth-last-child(3) {border:none;}
+	/* 게시판 Write : End ********************************************************************************************************************************************************************************************************************************/
+	
+	/* 파일첨부 : Start ********************************************************************************************************************************************************************************************************************************/
+	/* 파일첨부2 : Write */
+	.bbsWFile2 dd#fileListDiv ul {height:105px;}
+	.bbsWFile2 dd#fileListDiv ul li {padding:4px 20px 4px 0;}
+	.bbsWFile2 dd#fileListDiv ul li span.fileName {display:block; color:#333; white-space:nowrap; text-overflow:ellipsis; overflow:hidden;}
+	.bbsWFile2 dd#fileListDiv ul li span.fileSize {position:relative; right:auto; top:auto;}
+	.bbsWFile2 dd#fileListDiv a.button_file {right:10px;}
+	/* 파일첨부 : End ********************************************************************************************************************************************************************************************************************************/
+
+
+}
+
+
+@media screen and (max-width:500px){ 
+
+	/* 게시판 리스트 : Start ********************************************************************************************************************************************************************************************************************************/
+	/* 사진형게시판목록 상단 : 공통 */
+	.bbs_Photo_top a .img {height:200px}
+	
+	/* 사진형게시판목록 - 스킨A */
+	.bbs_PhotoA li {width:100%; margin-right:0;}
+	.bbs_PhotoA li:nth-child(4n) {margin-right:0;}
+	.bbs_PhotoA li:nth-child(n+2) {margin-top:20px;}
+
+	/* 사진형게시판목록 - 스킨C */
+	.bbs_PhotoC li {height:auto;}
+	.bbs_PhotoC li a .img {width:100%; float:none;}
+	.bbs_PhotoC li a .img ~ dl {width:100%; float:none;} /* 이미지가 없을 경우 */
+
+	/* FAQ - 스킨A */
+	.bbs_FaqA li a {padding:15px 40px 15px 45px;}
+	.bbs_FaqA li a span.faq_arr {right:10px;}
+	.bbs_FaqA li a:before {left:10px;}
+	.bbs_FaqA li div.faq_A {padding:15px 10px 15px 45px;}
+	.bbs_FaqA li div.faq_A:before {left:10px;}
+
+	/* 게시판 리스트 : End ********************************************************************************************************************************************************************************************************************************/
+	
+	/* 게시판 View : Start ********************************************************************************************************************************************************************************************************************************/
+	.bbs_ViewA h3 {padding:10px 0;}
+	.bbs_ViewA .bbsV_data {padding:10px; text-align:left;}
+	.bbs_ViewA .bbsV_data li {display:block; padding:0 10px;}
+	.bbs_ViewA .bbsV_data li:before {top:8px; width:3px; height:3px; background:#b7b7b7;}
+	.bbs_ViewA .bbsV_data li:first-child:before {display:block;}
+	.bbs_ViewA .bbsV_data li strong {margin-right:10px; color:#111; font-weight: 400;}
+
+	/* 200402 게시글 이동 추가 */
+	.bbsV_PostMove dl dd {padding-right:0;}
+	.bbsV_PostMove dl dd .btn_PostMove {position:relative; right:auto; top:auto; width:100%; height:40px; margin-top:5px; box-sizing:border-box;}
+	
+	/* 댓글 */
+	/* 댓글 입력 폼 */
+	.bbsV_answer .bbsV_answWrite .answer_nmpw p {position:relative; width:100%; margin:1px 0; padding-left:60px; float:none; -webkit-box-sizing:border-box; -moz-box-sizing:border-box; box-sizing:border-box;}
+	.bbsV_answer .bbsV_answWrite .answer_nmpw p label {position:absolute; left:0; top:0; display:inline-block; width:60px;}
+	.bbsV_answer .bbsV_answWrite .answer_nmpw p input {width:100%;}
+	/* 게시판 View : End ********************************************************************************************************************************************************************************************************************************/
+	
+
+
+}
+
+@media screen and (max-width:380px){ 
+
+
+	/* 게시판 View : Start ********************************************************************************************************************************************************************************************************************************/
+
+	/* 사진게시판일 경우 
+	.bbsV_cont .slider-nav {height:110px; padding:0 45px;}
+	.bbsV_cont .slider-nav .slick-slide {width:49%; height:70px;}
+	*/
+
+	.bbsVPho_Cntrl.prev a {left:10px;}
+	.bbsVPho_Cntrl.next a {right:10px;}
+	/* 게시판 View : End ********************************************************************************************************************************************************************************************************************************/
+	
+
+}
+
+@media screen and (max-width:320px){ 
+
+
+
+
+}

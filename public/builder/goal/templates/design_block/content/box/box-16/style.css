@@ -1,0 +1,76 @@
+﻿.box-16 {
+	/* 타이틀 */
+	--title-align: center;
+	--title-bg1: #EBF4FF;
+	--title-bg2: #D4E5FF;
+	--title-text: #2b7fff;
+
+	/* 본문 */
+	--body-bg: #f5f7f9;
+	--body-text: #101010;
+	--body-align: left;
+
+	min-height: 100%;
+	border-radius: 15px;
+	border: 1px solid #ccc;
+	background: #fff;
+}
+
+.box-16 .tit-wrap {
+	border-radius: 15px 15px 0 0;
+	padding: 14px 16px;
+	background: linear-gradient(90deg, var(--title-bg1), var(--title-bg2));
+}
+
+.box-16 .txt-wrap {
+	flex: 1;
+	padding: 1.2rem;
+	border-radius: 0 0 15px 15px;
+}
+
+.box-16 .txt-wrap ul {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 0.8rem;
+}
+
+.box-16 .txt-wrap ul li{
+	width: calc(50% - 0.4rem);
+	padding: 0.8rem 0.8rem 0.8rem 1.75rem;
+	margin: 0;
+	border-radius: 2rem;
+	font-size: 0.8rem;
+	background: #F5F7F9;
+}
+
+@media (max-width: 1024px) {
+
+	.builder-columns.columns-3:has(.box-16){
+		grid-template-columns: repeat(2, 1fr);
+	}
+}
+
+
+@media (max-width: 840px) {
+
+	.builder-columns.columns-3:has(.box-16),
+	.builder-columns.columns-2:has(.box-16){
+		grid-template-columns: repeat(1, 1fr);
+	}
+
+	.box-16 .txt-wrap{ 
+		padding: 0.6rem;
+	}
+
+	.box-16 .txt-wrap ul li{
+		border-radius: 1rem;
+	}
+}
+
+
+@media (max-width: 560px) {
+
+	.box-16 .txt-wrap ul li{
+		width: 100%;
+	}
+}

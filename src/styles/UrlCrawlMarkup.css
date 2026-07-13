@@ -394,6 +394,31 @@
   font-size: 0.85rem;
 }
 
+.gwangju-work-layer-actions {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  flex: 0 0 auto;
+}
+
+.gwangju-work-layer-load {
+  min-height: 2.25rem;
+  padding: 0 0.9rem;
+  border: 1px solid #526a91;
+  border-radius: 0.375rem;
+  background: #fff;
+  color: #344b70;
+  font-family: inherit;
+  font-size: 0.8125rem;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.gwangju-work-layer-load:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+}
+
 .gwangju-work-layer-close {
   display: inline-flex;
   align-items: center;
@@ -577,10 +602,42 @@
   background: #fff;
   color: #d23d3d;
   font-family: inherit;
-  font-size: 1.1rem;
-  font-weight: 300;
+  font-size: 0.7rem;
+  font-weight: 800;
   line-height: 1;
   cursor: pointer;
+}
+
+.gwangju-menu-history-btn {
+  display: inline-flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  flex: 0 0 2.45rem;
+  width: 2.45rem;
+  min-height: 2.45rem;
+  padding: 0;
+  border: 1px solid #526a91;
+  border-radius: 0.375rem;
+  background: #fff;
+  color: #344b70;
+  font-family: inherit;
+  font-size: 0.58rem;
+  font-weight: 800;
+  line-height: 1.05;
+  cursor: pointer;
+}
+
+.gwangju-menu-history-btn:disabled {
+  border-color: #d8deea;
+  color: #a8b0be;
+  opacity: 0.55;
+  cursor: not-allowed;
+}
+
+.gwangju-menu-history-btn:hover:not(:disabled) {
+  border-color: #344b70;
+  background: #f3f6fb;
 }
 
 .gwangju-menu-delete-btn:hover {
@@ -934,7 +991,8 @@
   flex: 0 0 auto;
 }
 
-.gwangju-convert-preview-btn {
+.gwangju-convert-preview-btn,
+.gwangju-convert-load-btn {
   min-height: 2rem;
   padding: 0 0.75rem;
   border: 1px solid #333;
@@ -947,7 +1005,14 @@
   cursor: pointer;
 }
 
-.gwangju-convert-preview-btn:disabled {
+.gwangju-convert-load-btn {
+  border-color: #c8cfda;
+  background: #fff;
+  color: #27364d;
+}
+
+.gwangju-convert-preview-btn:disabled,
+.gwangju-convert-load-btn:disabled {
   opacity: 0.45;
   cursor: not-allowed;
 }
@@ -986,6 +1051,24 @@
   display: flex;
   justify-content: flex-end;
   gap: 0.5rem;
+}
+
+.gwangju-convert-klic-btn {
+  min-height: 2.25rem;
+  padding: 0 0.9rem;
+  border: 1px solid #526a91;
+  border-radius: 0.375rem;
+  background: #fff;
+  color: #344b70;
+  font-family: inherit;
+  font-size: 0.8125rem;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.gwangju-convert-klic-btn:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
 }
 
 .gwangju-convert-save-btn {

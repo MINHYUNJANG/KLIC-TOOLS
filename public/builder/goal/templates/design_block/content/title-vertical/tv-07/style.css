@@ -1,0 +1,39 @@
+﻿.tv-07 {
+	padding: clamp(16px, 2.5vw, 28px);
+}
+
+.tv-07-wrap {
+	background: var(--body-bg);
+	border-radius: 50px;
+	display: flex;
+	align-items: center;
+	width: 100%;
+	overflow: hidden;
+	min-height: clamp(56px, 7vw, 75px);
+}
+
+.tv-07-pill {
+	background: var(--title-bg, #295ab9);
+	border-radius: 50px;
+	padding: clamp(12px, 1.8vw, 18px) clamp(16px, 3vw, 32px);
+	flex-shrink: 0;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	align-self: stretch;
+	font-size: var(--title-size, clamp(13px, 1.6vw, 20px));
+	font-weight: 600;
+	color: var(--title-text, #fff);
+	white-space: nowrap;
+}
+
+.tv-07-text {
+	flex: 1;
+	padding: clamp(12px, 1.8vw, 18px) clamp(12px, 2vw, 24px);
+	text-align: var(--body-align, center);
+	font-size: var(--body-size, clamp(13px, 1.6vw, 20px));
+	font-weight: 600;
+	color: var(--body-text, #295ab9);
+	word-break: keep-all;
+}
+

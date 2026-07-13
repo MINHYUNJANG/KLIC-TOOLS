@@ -1,0 +1,152 @@
+﻿.wing-004 {
+	width: 100%;
+	box-sizing: border-box;
+}
+
+.wing-004 .organ-inner {
+	display: flex;
+	align-items: stretch;
+	width: 100%;
+}
+
+/* 좌·우 사이드 영역 (flex:1 로 대칭 공간 확보) */
+.wing-004 .organ-left {
+	flex: 1;
+	display: flex;
+	justify-content: flex-start;
+	align-items: center;
+	min-width: 0;
+}
+
+.wing-004 .organ-right {
+	flex: 1;
+	display: flex;
+	justify-content: flex-end;
+	align-items: center;
+	min-width: 0;
+}
+
+/* 중앙 영역 */
+.wing-004 .organ-center {
+	flex-shrink: 0;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+}
+
+/* 수평 연결선 (좌·우 사이드 내부에서 남은 공간 채움) */
+.wing-004 .organ-line {
+	display: block;
+	flex: 1;
+	height: 0;
+	border-top: var(--connector-size, 1px) var(--connector-dash, solid) var(--connector-color, #aaaaaa);
+}
+
+/* 알약형 박스 (좌·중앙·우 공통) */
+.wing-004 .organ-box {
+	flex-shrink: 0;
+	align-self: stretch;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	border-radius: 999px;
+	padding: clamp(12px, 1.8vw, 16px) clamp(20px, 3vw, 30px);
+	background: var(--title-bg, #3b9adf);
+	text-align: center;
+	min-width: 195px;
+}
+
+.wing-004 .organ-box p {
+	color: var(--title-text, #ffffff);
+	font-size: var(--title-size, 15px);
+	font-weight: var(--title-weight, 600);
+	letter-spacing: -0.3px;
+	line-height: 1.5;
+	white-space: pre-line;
+}
+
+/* 오른쪽 박스 독립 스타일 */
+.wing-004 .organ-right .organ-box {
+	background: var(--right-title-bg, #3b9adf);
+}
+.wing-004 .organ-right .organ-box p {
+	color: var(--right-title-text, #ffffff);
+	font-size: var(--right-title-size, 15px);
+	font-weight: var(--right-title-weight, 600);
+}
+
+/* 가운데 박스 독립 스타일 */
+.wing-004 .organ-center .organ-box {
+	background: var(--center-title-bg, #3b9adf);
+}
+.wing-004 .organ-center .organ-box p {
+	color: var(--center-title-text, #ffffff);
+	font-size: var(--center-title-size, 15px);
+	font-weight: var(--center-title-weight, 600);
+}
+
+/* 배치 방향 클래스 (visibility:hidden 으로 공간 유지 → 중앙 박스 위치 고정) */
+.wing-004.left .organ-right {
+	visibility: hidden;
+}
+
+.wing-004.right .organ-left {
+	visibility: hidden;
+}
+
+/* 빌더 모바일 캔버스 미리보기 */
+body:not(.preview-mode)[data-preview-device="mobile"] .wing-004 .organ-inner {
+	flex-direction: column;
+	gap: 20px;
+}
+body:not(.preview-mode)[data-preview-device="mobile"] .wing-004 .organ-inner::before {
+	content: '';
+	position: absolute;
+	left: 50%;
+	width: 1px;
+	height: 100%;
+	border-left: 1px dashed var(--body-border, #cccccc);
+}
+body:not(.preview-mode)[data-preview-device="mobile"] .wing-004 .organ-line {display: none;}
+body:not(.preview-mode)[data-preview-device="mobile"] .wing-004 .organ-left,
+body:not(.preview-mode)[data-preview-device="mobile"] .wing-004 .organ-right {justify-content: center;}
+body:not(.preview-mode)[data-preview-device="mobile"] .wing-004 .organ-box {
+	width: 60%;
+	min-width: unset;
+	z-index: 1;
+}
+body:not(.preview-mode)[data-preview-device="mobile"] .wing-004.right .organ-left,
+body:not(.preview-mode)[data-preview-device="mobile"] .wing-004.left .organ-right {display: none;}
+
+/* 반응형 */
+@media (max-width:680px) {
+	.wing-004 .organ-inner {
+		flex-direction: column;
+		gap: 20px;
+	}
+
+	.wing-004 .organ-inner::before {
+		content: '';
+		position: absolute;
+		left: 50%;
+		width: 1px;
+		height: 100%;
+		border-left: 1px dashed var(--body-border, #cccccc);
+	}
+
+	.wing-004 .organ-line {display: none;}
+
+	.wing-004 .organ-left,
+	.wing-004 .organ-right {
+		justify-content: center;
+	}
+
+	.wing-004 .organ-box {
+		width: 60%;
+		min-width: unset;
+		z-index: 1;
+	}
+
+	.wing-004.right .organ-left,
+	.wing-004.left .organ-right {display: none;}
+}

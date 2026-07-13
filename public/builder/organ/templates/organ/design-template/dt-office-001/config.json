@@ -1,0 +1,10 @@
+{
+  "templateFilters": ["office"],
+  "sections": [
+    "box-004",
+    "divider-002",
+    {"type": "wing-004", "style": {"connectorDash": "dashed"}},
+    "divider-002",
+    {"type": "list-005", "columns": 4}
+  ]
+}

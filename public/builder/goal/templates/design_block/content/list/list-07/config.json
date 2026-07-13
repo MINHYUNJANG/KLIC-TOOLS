@@ -1,0 +1,36 @@
+{
+	"addDirection": "row",
+	"max": "4",
+	"_comment": "styleOptions hide 값: borderColor, backgroundColor, textColor, fontWeight, fontSize, textAlign",
+	"styleOptions": {
+	},
+	"recommend": {
+		"category": "notice",
+		"colors": [
+			"blue",
+			"navy",
+			"white"
+		],
+		"tone": [
+			"clean",
+			"formal",
+			"public"
+		],
+		"style": [
+			"card",
+			"rounded",
+			"line"
+		],
+		"keywords": [
+			"학교",
+			"공지",
+			"교육청",
+			"안내"
+		],
+		"matchWith": [
+			"icon",
+			"illustration",
+			"banner"
+		]
+	}
+}

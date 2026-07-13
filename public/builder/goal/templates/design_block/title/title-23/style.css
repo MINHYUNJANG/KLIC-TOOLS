@@ -1,0 +1,31 @@
+﻿.title-23 {
+	/* 타이틀 */
+	--title-align: center;
+	--title-text: #000;
+	
+	/* 본문 */
+	--body-align: center;
+	--body-bg: #99A1AF;
+	--body-border: #CCD2DE;
+	--body-text: #fff;
+
+	display: block;
+	text-align: center;
+}
+
+.title-23 .txt-wrap {
+	display: inline-block;
+	min-width: 50%;
+	width: auto;
+	border-radius: 15px;
+	line-height: 1.5;
+	word-break: keep-all;
+	padding: 16px 24px;
+	border: 2px solid var(--body-border);
+	background:var(--body-bg);
+	margin-top: 12px;
+}
+
+.title-23 .txt-wrap > p{
+	width: 100%;
+}

@@ -1,0 +1,25 @@
+﻿.box-06 {
+	/* 본문 */
+	--body-bg: #edf3ff;
+	--body-text: #000;
+	--body-weight: 500;
+
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	gap: 10px;
+	border-radius: 10px;
+	padding: 16px;
+	background: var(--body-bg);
+	text-align: center;
+	min-height: 100%;
+}
+
+.box-06 .icon img {
+	width: 35px;
+	height: auto;
+}
+
+.box-06 .txt-wrap {
+	width: 100%;
+}

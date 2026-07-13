@@ -1,0 +1,15 @@
+{
+	"category": "box",
+	"addDirection": "row",
+	"max": "6",
+	"styleOptions": {
+		"title": {
+			"fields": [
+				{ "key": "backgroundColor", "label": "배경",       "default": "#ffffff" },
+				{ "key": "borderColor",     "label": "테두리 시작", "default": "#36B0F7" },
+				{ "key": "borderColor2",    "label": "테두리 끝",   "default": "#3259E5" },
+				{ "key": "minHeight",       "label": "높이",   "type": "number", "min": 20, "max": 300 }
+			]
+		}
+	}
+}

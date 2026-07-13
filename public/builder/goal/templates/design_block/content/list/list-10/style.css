@@ -1,0 +1,26 @@
+﻿.list-10 {
+	/* 타이틀 */
+	--title-align: center;
+	--title-bg: #373DAC;
+	--title-text: #fff;
+
+	/* 본문 */
+	--body-bg: #F3F3FF;
+
+	min-height: 100%;
+	border-radius: 0.5rem;
+	background: var(--body-bg);
+}
+
+.list-10 .tit-wrap {
+	position: relative;
+	border-radius: 0.5rem;
+	padding: 0.8rem;
+	background: var(--title-bg);
+	z-index: 1;
+}
+
+.list-10 .txt-wrap {
+	flex: 1;
+	padding: 0.8rem;
+}

@@ -1,0 +1,33 @@
+{
+	"addDirection": "row",
+	"max": "4",
+	"recommend": {
+		"category": "title-list",
+		"colors": [
+			"blue",
+			"green",
+			"white"
+		],
+		"tone": [
+			"organized",
+			"clean",
+			"educational"
+		],
+		"style": [
+			"title",
+			"list",
+			"card"
+		],
+		"keywords": [
+			"추진",
+			"방침",
+			"교육",
+			"실천"
+		],
+		"matchWith": [
+			"icon",
+			"box",
+			"divider"
+		]
+	}
+}

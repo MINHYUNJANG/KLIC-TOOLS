@@ -1,0 +1,140 @@
+﻿.wing-006 {
+	width: 100%;
+	box-sizing: border-box;
+}
+
+.wing-006 .organ-inner {
+	display: flex;
+	align-items: center;
+	width: 100%;
+	padding: 0 10%;
+}
+
+.wing-006 .organ-left {
+	flex: 1;
+	display: flex;
+	justify-content: flex-start;
+	align-items: center;
+	min-width: 0;
+}
+
+.wing-006 .organ-axis {
+	width: 0;
+	align-self: stretch;
+	position: relative;
+	flex-shrink: 0;
+}
+
+.wing-006 .organ-axis::before {
+	content: '';
+	position: absolute;
+	top: 0;
+	bottom: 0;
+	left: 0;
+	width: 0;
+	border-right: var(--connector-size, 1px) var(--connector-dash, solid) var(--connector-color, #aaaaaa);
+	transform: translateX(calc(var(--connector-size, 1px) * -0.5));
+}
+
+.wing-006 .organ-right {
+	flex: 1;
+	display: flex;
+	justify-content: flex-end;
+	align-items: center;
+	min-width: 0;
+}
+
+.wing-006 .organ-line {
+	display: block;
+	flex: 1;
+	height: 0;
+	border-top: var(--connector-size, 1px) var(--connector-dash, solid) var(--connector-color, #aaaaaa);
+}
+
+.wing-006 .organ-box {
+	flex-shrink: 0;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	min-height: var(--title-height, clamp(36px, 4vw, 44px));
+	min-width: clamp(120px, 14vw, 250px);
+	padding: 20px 50px;
+	border-radius: 8px;
+	background: var(--title-bg, #E6EFFC);
+	box-sizing: border-box;
+}
+
+.wing-006 .organ-box p {
+	color: var(--title-text, #4E5E8E);
+	font-size: var(--title-size, 20px);
+	font-weight: var(--title-weight, 600);
+	text-align: center;
+	letter-spacing: -0.3px;
+	line-height: 1.4;
+	white-space: pre-line;
+}
+
+/* 오른쪽 박스 독립 스타일 */
+.wing-006 .organ-right .organ-box {
+	background: var(--right-title-bg, #E6EFFC);
+	min-height: var(--right-title-height, clamp(36px, 4vw, 44px));
+}
+.wing-006 .organ-right .organ-box p {
+	color: var(--right-title-text, #4E5E8E);
+	font-size: var(--right-title-size, 20px);
+	font-weight: var(--right-title-weight, 600);
+}
+
+.wing-006.right .organ-left {
+	visibility: hidden;
+}
+
+.wing-006.left .organ-right {
+	visibility: hidden;
+}
+
+/* 빌더 모바일 캔버스 미리보기 */
+body:not(.preview-mode)[data-preview-device="mobile"] .wing-006 .organ-inner {
+	position: relative;
+	flex-direction: column;
+	gap: 20px;
+	padding: 0;
+}
+body:not(.preview-mode)[data-preview-device="mobile"] .wing-006 .organ-line {display: none;}
+body:not(.preview-mode)[data-preview-device="mobile"] .wing-006 .organ-box {
+	width: 100%;
+	z-index: 1;
+}
+body:not(.preview-mode)[data-preview-device="mobile"] .wing-006 .organ-axis {
+	position: absolute;
+	left: 50%;
+	height: 100%;
+}
+body:not(.preview-mode)[data-preview-device="mobile"] .wing-006.right .organ-left,
+body:not(.preview-mode)[data-preview-device="mobile"] .wing-006.left .organ-right {display: none;}
+
+/* 반응형 */
+@media (max-width:580px) {
+	.wing-006 .organ-inner {
+		position: relative;
+		flex-direction: column;
+		gap: 20px;
+		padding: 0;
+	}
+
+	.wing-006 .organ-line {display: none;}
+
+	.wing-006 .organ-box {
+		width: 100%;
+		z-index: 1;
+	}
+
+	.wing-006 .organ-axis {
+		position: absolute;
+		left: 50%;
+		height: 100%;
+	}
+
+	.wing-006.right .organ-left,
+	.wing-006.left .organ-right {display: none;}
+}

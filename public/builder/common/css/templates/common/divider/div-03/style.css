@@ -1,0 +1,22 @@
+﻿.div-03 {
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	box-sizing: border-box;
+}
+
+.div-03-inner {
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	gap: calc(4px * var(--connector-size, 1));
+	padding: 10px 0;
+}
+
+.div-03-chevron {
+	width: calc(22px * var(--connector-size, 1));
+	height: calc(22px * var(--connector-size, 1));
+	border-right: calc(4px * var(--connector-size, 1)) solid var(--connector-color, #555);
+	border-bottom: calc(4px * var(--connector-size, 1)) solid var(--connector-color, #555);
+	transform: rotate(45deg);
+}

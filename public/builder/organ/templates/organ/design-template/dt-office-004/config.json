@@ -1,0 +1,13 @@
+{
+  "templateFilters": ["office"],
+  "sections": [
+    {"type": "box-012", "blockWidth": 160, "data": {"title": "학회장"}},
+    {"type": "divider-001", "style": {"connectorHeight": "50"}},
+    {"type": "box-012", "blockWidth": 160, "data": {"title": "부학회장"}},
+    {"type": "divider-001", "style": {"connectorHeight": "30"}},
+    {"type": "wing-001", "style": {"titleBackgroundColor": "#EDEEF0", "titleTextColor": "#000000"}, "data": {"title": "자문위원"}},
+    {"type": "divider-001", "style": {"connectorHeight": "30"}},
+    "divider-001",
+    {"type": "list-012", "columns": 4, "data": {"title": "교수부"}}
+  ]
+}

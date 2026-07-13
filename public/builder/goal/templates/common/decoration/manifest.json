@@ -1,0 +1,166 @@
+[
+    {
+        "type":  "image-set",
+        "path":  "templates/common/decoration/kinder/kinder-01/"
+    },
+    {
+        "type":  "image-set",
+        "path":  "templates/common/decoration/kinder/kinder-02/"
+    },
+    {
+        "type":  "image-set",
+        "path":  "templates/common/decoration/kinder/kinder-03/"
+    },
+    {
+        "type":  "image-set",
+        "path":  "templates/common/decoration/kinder/kinder-04/"
+    },
+    {
+        "type":  "image-set",
+        "path":  "templates/common/decoration/kinder/kinder-05/"
+    },
+    {
+        "type":  "image-set",
+        "path":  "templates/common/decoration/kinder/kinder-06/"
+    },
+    {
+        "type":  "image-set",
+        "path":  "templates/common/decoration/kinder/kinder-07/"
+    },
+    {
+        "type":  "image-set",
+        "path":  "templates/common/decoration/kinder/kinder-08/"
+    },
+    {
+        "type":  "image-set",
+        "path":  "templates/common/decoration/kinder/kinder-09/"
+    },
+    {
+        "type":  "image-set",
+        "path":  "templates/common/decoration/kinder/kinder-10/"
+    },
+    {
+        "type":  "image-set",
+        "path":  "templates/common/decoration/illust/illust-03/"
+    },
+    {
+        "type":  "image-set",
+        "path":  "templates/common/decoration/elem/elem-01/"
+    },
+    {
+        "type":  "image-set",
+        "path":  "templates/common/decoration/elem/elem-02/"
+    },
+    {
+        "type":  "image-set",
+        "path":  "templates/common/decoration/elem/elem-03/"
+    },
+    {
+        "type":  "image-set",
+        "path":  "templates/common/decoration/elem/elem-04/"
+    },
+    {
+        "type":  "image-set",
+        "path":  "templates/common/decoration/elem/elem-05/"
+    },
+    {
+        "type":  "image-set",
+        "path":  "templates/common/decoration/elem/elem-06/"
+    },
+    {
+        "type":  "image-set",
+        "path":  "templates/common/decoration/elem/elem-07/"
+    },
+    {
+        "type":  "image-set",
+        "path":  "templates/common/decoration/elem/elem-08/"
+    },
+    {
+        "type":  "image-set",
+        "path":  "templates/common/decoration/elem/elem-09/"
+    },
+    {
+        "type":  "image-set",
+        "path":  "templates/common/decoration/elem/elem-10/"
+    },
+    {
+        "type":  "image-set",
+        "path":  "templates/common/decoration/middle/middle-01/"
+    },
+    {
+        "type":  "image-set",
+        "path":  "templates/common/decoration/middle/middle-02/"
+    },
+    {
+        "type":  "image-set",
+        "path":  "templates/common/decoration/middle/middle-03/"
+    },
+    {
+        "type":  "image-set",
+        "path":  "templates/common/decoration/middle/middle-04/"
+    },
+    {
+        "type":  "image-set",
+        "path":  "templates/common/decoration/middle/middle-05/"
+    },
+    {
+        "type":  "image-set",
+        "path":  "templates/common/decoration/middle/middle-06/"
+    },
+    {
+        "type":  "image-set",
+        "path":  "templates/common/decoration/middle/middle-07/"
+    },
+    {
+        "type":  "image-set",
+        "path":  "templates/common/decoration/middle/middle-08/"
+    },
+    {
+        "type":  "image-set",
+        "path":  "templates/common/decoration/middle/middle-09/"
+    },
+    {
+        "type":  "image-set",
+        "path":  "templates/common/decoration/middle/middle-10/"
+    },
+    {
+        "type":  "image-set",
+        "path":  "templates/common/decoration/high/high-01/"
+    },
+    {
+        "type":  "image-set",
+        "path":  "templates/common/decoration/high/high-02/"
+    },
+    {
+        "type":  "image-set",
+        "path":  "templates/common/decoration/high/high-03/"
+    },
+    {
+        "type":  "image-set",
+        "path":  "templates/common/decoration/high/high-04/"
+    },
+    {
+        "type":  "image-set",
+        "path":  "templates/common/decoration/high/high-05/"
+    },
+    {
+        "type":  "image-set",
+        "path":  "templates/common/decoration/high/high-06/"
+    },
+    {
+        "type":  "image-set",
+        "path":  "templates/common/decoration/high/high-07/"
+    },
+    {
+        "type":  "image-set",
+        "path":  "templates/common/decoration/high/high-08/"
+    },
+    {
+        "type":  "image-set",
+        "path":  "templates/common/decoration/high/high-09/"
+    },
+    {
+        "type":  "image-set",
+        "path":  "templates/common/decoration/high/high-10/"
+    }
+]

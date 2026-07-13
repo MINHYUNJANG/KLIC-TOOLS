@@ -1,0 +1,43 @@
+﻿.box-30 {
+	/* 본문 */
+	--body-align: center;
+	--body-bg: #F8F8F8;
+
+	/* 서브 */
+	--sub-bg: #001364;
+	--sub-text: #fff;
+	--sub-weight: 700;
+	--sub-align: center;
+
+	position: relative;
+	padding-top: 0.85rem;
+}
+
+.box-30 .sub {
+	position: absolute;
+	top: 0;
+	left: 0;
+	width: 100%;
+	padding: 0 1.5rem;
+	z-index: 2;
+	text-align: var(--sub-align);
+}
+
+.box-30 .sub > p{
+	display: inline-block;
+	width: 1.75rem;
+	height: 1.75rem;
+	line-height: 1.75rem;
+	text-align: center;
+	border-radius: 2rem;
+	background: var(--sub-bg);
+	color: var(--sub-text);
+	font-size: 0.8rem;
+	font-weight: var(--sub-weight);
+}
+
+.box-30 .txt-wrap {
+	min-height: 2.5rem;
+	padding: 1.7rem 0.8rem 1.2rem;
+	background: var(--body-bg);
+}

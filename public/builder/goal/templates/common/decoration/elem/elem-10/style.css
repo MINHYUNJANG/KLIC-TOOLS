@@ -1,0 +1,11 @@
+.elem-10 {
+	display: inline-flex;
+	line-height: 1;
+}
+
+.elem-10-char {
+	width: 80px;
+	height: auto;
+	object-fit: contain;
+	filter: drop-shadow(0 4px 8px rgba(0, 0, 0, 0.2));
+}

@@ -1,0 +1,99 @@
+﻿.box-14 {
+	/* 타이틀 */
+	--title-align: left;
+	--title-bg: #F3E9FB;
+	--title-text: #000;
+
+	/* 서브 */
+	--sub-bg: #fff;
+	--sub-text: #000;
+	--sub-weight: 600;
+	--sub-size: 1rem;
+	--sub-align: center;
+
+	/* 본문 */
+	--body-align: center;
+
+	position: relative;
+	padding-top: 0.7rem;
+}
+
+.box-14 .tit-wrap {
+	display: flex;
+	gap: 0.4rem 0.8rem;
+	min-height: 2.5rem;
+	border-radius: 2rem;
+	padding: 0.8rem;
+	background: var(--title-bg);
+}
+
+.box-14 .tit-wrap .sub {
+	width: clamp(5rem, 20%, 8rem);
+	min-width: 7rem;
+	min-height: 100%;
+	border-radius: 2rem;
+	padding: 0.4rem 0.8rem;
+	box-shadow: 1px 1px 8px rgba(0,0,0,0.1);
+	text-align: var(--sub-align);
+	background: var(--sub-bg);
+}
+
+.box-14 .txt-wrap{
+	position: relative;
+	padding: 0.8rem;
+	text-align: var(--body-align);
+}
+
+.box-14 .txt-wrap:before{
+	content:"";
+	position: absolute;
+	left: 0;
+	top: 50%;
+	width: 100%;
+	border-top: 1px dashed #ccc;
+}
+
+.box-14 .txt-wrap .txt{
+	position: relative;
+	display: inline-block;
+	padding: 0 0.8rem;
+	background:#fff;
+}
+
+@media (max-width: 1024px) {
+	.box-14 {
+
+		/* 서브 */
+		--sub-size: 0.9rem;
+	}
+
+	.builder-columns.columns-3:has(.box-14){
+		grid-template-columns: repeat(2, 1fr);
+	}
+}
+
+@media (max-width: 920px) {
+
+	.box-14{
+		--title-size: 0.9rem;
+	}
+	
+	.box-14 .tit-wrap{
+		flex-direction: column;
+	}
+
+	.box-14 .tit-wrap .tit{
+		text-align: center;
+	}
+}
+
+@media (max-width: 540px) {
+	
+	.builder-columns.columns-3:has(.box-14){
+		grid-template-columns: repeat(1, 1fr);
+	}
+	
+	.box-14 .tit-wrap{
+		border-radius: 1.5rem;
+	}
+}

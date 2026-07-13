@@ -1,0 +1,14 @@
+{
+	"category": "box",
+	"addDirection": "row",
+	"max": "1",
+	"styleOptions": {
+		"title": {
+			"fields": [
+				{ "key": "backgroundColor", "label": "배경", "default": "#1a3578" },
+				{ "key": "textColor",       "label": "글자", "default": "#ffffff" }
+			]
+		},
+		"body": { "fields": [] }
+	}
+}

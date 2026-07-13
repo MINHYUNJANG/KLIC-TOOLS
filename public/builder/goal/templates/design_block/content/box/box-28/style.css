@@ -1,0 +1,27 @@
+﻿.box-28 {	
+	/* 타이틀 */
+	--title-align: center;
+	--title-text: #2B74ED;
+	--title-bg: #fff;
+
+	/* 본문 */
+	--body-align: center;
+	--body-bg: #E9EFF9;
+	--body-text: #000;
+
+	min-height: 100%;
+	padding: 1rem;
+	gap: 0.8rem;
+	border-radius: 1rem;
+	background: var(--body-bg);
+}
+
+.box-28 .tit-wrap{ 
+	border-radius: 2rem;
+	padding: 0.4rem 0.8rem;
+	background: var(--title-bg);
+}
+
+.box-28 .txt-wrap{ 
+	flex: 1;
+}

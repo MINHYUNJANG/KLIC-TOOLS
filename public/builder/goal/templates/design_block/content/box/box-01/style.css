@@ -1,0 +1,21 @@
+﻿.box-01 {
+	/* 본문 */
+	--body-align: center;
+	--body-bg: #1A7BDA;
+	--body-text: #ffffff;
+
+	/* 서브 */
+	--sub-align: center;
+	--sub-text: #ffffff;
+	--sub-weight: 700;
+	--sub-size: 0.75rem;
+
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	gap: 8px;
+	padding: 16px 24px;
+	border-radius: 5px;
+	background: var(--body-bg);
+	min-height: 100%;
+}

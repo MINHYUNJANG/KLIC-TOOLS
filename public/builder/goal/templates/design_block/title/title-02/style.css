@@ -1,0 +1,24 @@
+﻿.title-02 {
+	--title-align: center;
+	--title-bg1: #222BA3;
+	--title-bg2: #602FA3;
+	--title-text: #ffffff;
+
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	padding: 24px;
+	border-radius: 10px;
+	background: linear-gradient(90deg, var(--title-bg1), var(--title-bg2));
+	min-height: 100%;
+}
+
+.title-02 .tit-wrap {
+	width: 100%;
+	text-align: var(--title-align, center);
+}
+
+.title-02 .tit {
+	line-height: 1.5;
+	word-break: keep-all;
+}

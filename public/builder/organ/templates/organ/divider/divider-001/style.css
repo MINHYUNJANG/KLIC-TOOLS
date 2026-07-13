@@ -1,0 +1,11 @@
+.divider-001 {
+	display: block;
+	width: 100%;
+	line-height: 0;
+}
+
+.divider-001 svg {
+	display: block;
+	width: 100%;
+	overflow: visible;
+}

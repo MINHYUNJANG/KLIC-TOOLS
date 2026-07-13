@@ -1,0 +1,75 @@
+﻿.list-18 {
+	/* 타이틀 */
+	--title-align: center;
+	--title-text: #1AA4A4;
+
+	/* 본문 */
+	--body-align: center;
+	--body-bg: #EEF8F8;
+	--body-border: #1AA4A4;
+	--body-text: #000;
+
+	min-height: 100%;
+	gap: 3rem;
+	border-radius: 0.75rem;
+}
+
+.builder-columns:has(.list-18){
+	gap: 1rem 10px;
+}
+
+.list-18 .inner{
+	position: relative;
+	display: flex;
+	flex-direction: column;
+	justify-content: center;
+	border-radius: 15rem;
+	padding: 1.2rem;
+	background: var(--body-bg);
+}
+
+.list-18 .inner:before{
+	content: "";
+	position: absolute;
+	left: 50%;
+	bottom: -3rem;
+	height: 3rem;
+	border-right: 1px dashed var(--body-border);
+}
+
+.list-18 .icon{
+	margin-bottom: 0.5rem;
+}
+
+.list-18 .icon img{
+	width: auto;
+	height: 2rem;
+}
+
+.list-18 .list-wrap {
+	flex: 1;
+	padding: 0.8rem;
+	border-radius: 0.75rem;
+	background: #fff;
+	border: 1px solid var(--body-border);
+}
+
+.list-18 .list-wrap ul[data-depth="1"] {
+	flex: 1;
+	display: flex;
+	flex-wrap: wrap;
+	gap: 0.3rem;
+}
+
+.list-18 .list-wrap ul[data-depth="1"] > li{
+	width: 100%;
+	padding: 0.5rem 0.5rem 0.5rem 1.5rem;
+	border-radius: 0.25rem;
+	background: #F4F4F4;
+} 
+
+.list-18 .edit-list {
+    --ls-color-1: #1AA4A4;
+    --ls-color-2: #555;
+    --ls-color-3: #555;
+}

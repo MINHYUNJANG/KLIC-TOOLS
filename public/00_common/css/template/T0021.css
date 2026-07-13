@@ -1,0 +1,79 @@
+﻿/*-----------------------------------------------------------
+Author :yejin, Son
+Creative date :2022. 05. 23
+-----------------------------------------------------------*/
+
+/* 메인 컨테이너 */
+#container {position: relative; width:100%; z-index: 2;}
+#container:after {content: ""; display: block; width: 85.5rem; height: 10.85rem; border-radius: 4rem; background: rgba(232,108,118,0.13); position: absolute; left: 50%; margin-left: -42.75rem; bottom: 2rem; z-index: -2;}
+/* #container *{ scrollbar-arrow-color: #ddd; scrollbar-Track-Color: #ddd; scrollbar-base-color: #aaa; scrollbar-Face-Color: #aaa; scrollbar-3dLight-Color: #aaa; scrollbar-DarkShadow-Color: #aaa; scrollbar-Highlight-Color: #aaa; scrollbar-Shadow-Color: #aaa;} */
+#container ::-webkit-scrollbar { width: 5px; height: 5px; }
+#container ::-webkit-scrollbar-thumb { background-color: #aaa; border-radius:10px; }
+#container ::-webkit-scrollbar-track { background-color: #ddd; border-radius:10px; }
+
+.container:after {display: none;}
+
+.MC_wrap1 {position: relative; z-index: 1;}
+.MC_wrap1:before {content: ""; display: block; width: 5.8rem; height: 7.35rem; background: url('/images/template/T0021/main/0021_bg01.png') center/contain no-repeat; position: absolute; left: 3rem; top: 10.35rem; z-index: -1;}
+.MC_wrap1:after {content: ""; display: block; width: 9.3rem; height: 10.6rem; background: url('/images/template/T0021/main/0021_bg02.png') center/contain no-repeat; position: absolute; right: 4.5rem; top: 10.5rem; z-index: -1;}
+.MC_wrap2 {margin-top: 2rem; padding-bottom: 3rem; position: relative;}
+.MC_wrap2:before {content: ""; display: block; width: 99.5rem; height: 41.5rem; border-radius: 41.5rem; background: linear-gradient(135deg, rgba(218,230,247,0.8) 0%, rgba(255,240,242,0.8) 100%); position: absolute; left: 50%; margin-left: -49.75rem; bottom: 0; z-index: -1;}
+.MC_wrap2 .container {display: flex; flex-wrap: wrap; justify-content: space-between;}
+.MC_wrap3 {margin-top: 2.5rem; margin-bottom: 3rem;}
+.MC_wrap3 .container {display: flex; flex-wrap: wrap; justify-content: space-between;}
+
+.MC_box1 {width: 100%; height: 24rem;} /* 메인비주얼 */
+.MC_box3 {width: calc(100% - 20rem);} /* 게시판 */
+.MC_box4 {width: 17.5rem;} /* 팝업존 */
+.MC_box5 {margin-top: 2.25rem; width: 100%;} /* 캘린더 */
+.MC_box2 {} /* 바로가기1 */
+.MC_box6 {margin-top: 3rem; width: calc(100% - 20rem);} /* 갤러리 */
+.MC_box7 {margin-top: 3rem; width: 17.5rem;} /* 식단 */
+
+@media (max-width: 1240px) {
+
+    .MC_wrap1:before {display: none;}
+    .MC_wrap1:after {right: -6.25rem; top: 6.5rem;}
+    .MC_wrap2 {padding-bottom: 2.5rem;}
+    .MC_wrap2:before {width: 77.8rem; height: 38rem; border-radius: 38rem; margin-left: -38.9rem;}
+    .MC_wrap3 {margin-top: 1.75rem; margin-bottom: 2rem;}
+
+	.MC_box1 {height: auto;} /* 메인비주얼 */
+    .MC_box3 {width: calc(100% - 19.25rem);} /* 게시판 */
+    .MC_box5 {margin-top: 2rem;} /* 캘린더 */
+    .MC_box6 {margin-top: 2rem; width: calc(100% - 19.25rem);} /* 갤러리 */
+    .MC_box7 {margin-top: 2rem;} /* 식단 */
+}
+
+@media (max-width: 1024px) {
+
+    #container {padding-top: 3.3rem;}
+}
+
+@media (max-width: 860px){
+
+    #container:after {height: 24.85rem;}
+
+    .MC_wrap1:after {height: 44%; background: url('/images/template/T0021/main/0021_bg02.png') right center/contain no-repeat; right: -10%; top: 28%;}
+    .MC_wrap2 {margin-top: 1.5rem; padding-bottom: 1.5rem;}
+    .MC_wrap2:before {width: 100%; height: 115%; border-radius: 0; left: 0; margin-left: 0;}
+    .MC_wrap3 {margin-top: 1.5rem; margin-bottom: 1.5rem;}
+
+    .MC_box3 {width: 100%;} /* 게시판 */
+    .MC_box4, /* 팝업존 */
+    .MC_box6, /* 갤러리 */
+    .MC_box7 {margin-top: 1.5rem; width: 100%;} /* 식단 */
+}
+
+@media (max-width: 480px){
+
+    .MC_wrap2 {margin-top: 2rem; padding-bottom: 2rem;}
+    .MC_wrap2:before {height: 110%;}
+    .MC_wrap3 {margin-top: 2rem;}
+
+    .MC_box4, /* 팝업존 */
+    .MC_box6, /* 갤러리 */
+    .MC_box7 {margin-top: 2rem;} /* 식단 */
+}
+
+
