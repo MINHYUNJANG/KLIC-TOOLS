@@ -4,5 +4,8 @@
 	"templates/greeting/greeting-tyB/index.html",
 	"templates/greeting/greeting-tyB-img/index.html",
 	"templates/greeting/greeting-tyC/index.html",
-	"templates/greeting/greeting-tyC-img/index.html"
+	"templates/greeting/greeting-tyC-img/index.html",
+	"templates/greeting/chungnam-greeting-tyA/index.html",
+	"templates/greeting/chungnam-greeting-tyB/index.html",
+	"templates/greeting/chungnam-greeting-tyC/index.html"
 ]

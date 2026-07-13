@@ -1,5 +1,8 @@
 [
 	"templates/history/history-tyA/index.html",
 	"templates/history/history-tyB/index.html",
-	"templates/history/history-tyC/index.html"
+	"templates/history/history-tyC/index.html",
+	"templates/history/chungnam-history-tyA/index.html",
+	"templates/history/chungnam-history-tyB/index.html",
+	"templates/history/chungnam-history-tyC/index.html"
 ]

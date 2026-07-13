@@ -6,6 +6,7 @@ const DESIGN_BLOCK_MANIFEST = TEMPLATE2_BUILDER_CONFIG.manifest || (CONTENT_TEMP
 const TEMPLATE_FILE_PATTERN = /\.(html|js)$/i;
 const TEMPLATE_IMAGE_PATTERN = /\.(png|jpe?g|webp|gif|svg)$/i;
 const loadedTemplateStyles = new Map();
+const activeTemplateStylePaths = new Set();
 const TEMPLATE_BUILDER_DESIGN_BLOCK_CATEGORIES = new Set(['title', 'text', 'list']);
 
 const ICON_MANIFEST = COMMON_TEMPLATE_BASE + 'common/icon/manifest.json';
@@ -689,6 +690,7 @@ function loadTemplateCss(htmlPath) {
 		})
 		.then(css => {
 			if (!css || !css.trim()) return;
+			if (!activeTemplateStylePaths.has(cssPath)) return;
 			const style = document.createElement('style');
 			style.setAttribute('data-template-style', cssPath);
 			style.textContent = css;
@@ -698,6 +700,41 @@ function loadTemplateCss(htmlPath) {
 
 	loadedTemplateStyles.set(cssPath, promise);
 	return promise;
+}
+
+function collectTemplateStylePathsFromBlock(block, paths = new Set()) {
+	const template = componentTemplates[block?.type];
+	if (template?.hasStyle && template.path) {
+		paths.add(getTemplateCssPath(template.path));
+	}
+	(block?.innerBlocks || []).forEach(innerBlock => collectTemplateStylePathsFromBlock(innerBlock, paths));
+	(block?.items || []).forEach(item => {
+		if (item?.listBlock) collectTemplateStylePathsFromBlock(item.listBlock, paths);
+		(item?.innerBlocks || []).forEach(innerBlock => collectTemplateStylePathsFromBlock(innerBlock, paths));
+	});
+	Object.values(block?.tableCellInnerBlocks || {}).forEach(innerBlock => collectTemplateStylePathsFromBlock(innerBlock, paths));
+	return paths;
+}
+
+function syncActiveTemplateStyles() {
+	const nextPaths = new Set();
+	state.blocks.forEach(block => collectTemplateStylePathsFromBlock(block, nextPaths));
+
+	document.querySelectorAll('style[data-template-style]').forEach(style => {
+		const cssPath = style.getAttribute('data-template-style');
+		if (cssPath && !nextPaths.has(cssPath)) {
+			style.remove();
+		}
+	});
+	loadedTemplateStyles.forEach((_, cssPath) => {
+		if (!nextPaths.has(cssPath)) loadedTemplateStyles.delete(cssPath);
+	});
+
+	activeTemplateStylePaths.clear();
+	nextPaths.forEach(cssPath => {
+		activeTemplateStylePaths.add(cssPath);
+		loadTemplateCss(cssPath.replace(/style\.css$/i, 'index.html'));
+	});
 }
 
 async function loadHtmlTemplate(path) {
@@ -714,8 +751,8 @@ async function loadHtmlTemplate(path) {
 	const name = element.dataset.templateName || id;
 	element.dataset.templateId = id;
 	normalizeTemplateAssetPaths(element);
-	const cssLoad = element.dataset.hasStyle === 'true' ? loadTemplateCss(path) : Promise.resolve();
-	const [, config] = await Promise.all([cssLoad, loadTemplateConfig(path)]);
+	const hasStyle = element.dataset.hasStyle === 'true';
+	const config = await loadTemplateConfig(path);
 
 	const addRowWrap = element.querySelector('.add-row-wrap') || element;
 	const autoDirection = addRowWrap === element ? 'row' : 'column';
@@ -757,6 +794,7 @@ async function loadHtmlTemplate(path) {
 		discloserDefaults,
 		initialBodyBlocks,
 		templateVars,
+		hasStyle,
 		element,
 		addRowWrap,
 		isRootWrap,
@@ -5683,6 +5721,7 @@ function render() {
 	// 있어서, 렌더가 끝나면 최신 내용의 새 팝업 노드로 자동 재오픈된다.)
 	discardStalePrincipalTyAPopupNode();
 	syncTocFromTitles();
+	syncActiveTemplateStyles();
 	state.blocks.forEach(block => {
 		if (templateCategories[block.type] === 'list') ensureListRows(block);
 		if (Array.isArray(block.innerBlocks)) {

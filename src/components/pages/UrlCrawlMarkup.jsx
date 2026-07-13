@@ -9,6 +9,7 @@ import symbol from '../../templates/symbol';
 import principal from '../../templates/principal';
 import location from '../../templates/location';
 import classList from '../../templates/classList';
+import chungnam from '../../templates/chungnam';
 import { createGreetingKlicDocument } from '../../utils/greetingKlicMapping';
 import useToast from '../TableEditor/hooks/useToast';
 import JSZip from 'jszip';
@@ -504,8 +505,22 @@ function normalizeGeneratedMarkup(html) {
   return formatHtml(body.innerHTML);
 }
 
-const ALL_TEMPLATES = [...greeting, ...history, ...symbol, ...principal, ...location, ...classList];
-const CATEGORY_TEMPLATES = { greeting, history, symbol, principal, location, classList };
+const CHUNGNAM_TEMPLATES_BY_GROUP = {
+  greeting: chungnam.filter(template => template.group === 'greeting'),
+  history: chungnam.filter(template => template.group === 'history'),
+  symbol: chungnam.filter(template => template.group === 'symbol'),
+  principal: chungnam.filter(template => template.group === 'principal'),
+};
+
+const ALL_TEMPLATES = [...greeting, ...history, ...symbol, ...principal, ...location, ...classList, ...chungnam];
+const CATEGORY_TEMPLATES = {
+  greeting: [...greeting, ...CHUNGNAM_TEMPLATES_BY_GROUP.greeting],
+  history: [...history, ...CHUNGNAM_TEMPLATES_BY_GROUP.history],
+  symbol: [...symbol, ...CHUNGNAM_TEMPLATES_BY_GROUP.symbol],
+  principal: [...principal, ...CHUNGNAM_TEMPLATES_BY_GROUP.principal],
+  location,
+  classList,
+};
 
 function isValidUrl(str) {
   try { new URL(str); return true; } catch { return false; }
@@ -2857,7 +2872,7 @@ ${bodyHtml || ''}
       const extracted = extractContent(sourceHtml.trim(), sourceSelector.trim(), '');
       let html = '';
 
-      if (['greeting', 'history', 'symbol'].includes(sourceCategory) && sourceTemplateId) {
+      if (['greeting', 'history', 'symbol', 'principal'].includes(sourceCategory) && sourceTemplateId) {
         const tpl = ALL_TEMPLATES.find(t => t.id === sourceTemplateId);
         if (tpl) {
           if (tpl.category === '상징') {
@@ -3054,7 +3069,7 @@ ${bodyHtml || ''}
           disabled={batchLoading}
         >
           <span className="url-item-type-main">
-            {{ greeting: '인사말', symbol: '상징', history: '연혁', footer: '푸터메뉴', other: '기타' }[item.category] || '마크업 유형 선택'}
+            {{ greeting: '인사말', symbol: '상징', history: '연혁', principal: '역대교장', footer: '푸터메뉴', other: '기타' }[item.category] || '마크업 유형 선택'}
           </span>
           {item.templateId && (
             <span className="url-item-type-sub">
@@ -3085,6 +3100,7 @@ ${bodyHtml || ''}
               { value: 'greeting', label: '인사말' },
               { value: 'symbol', label: '상징' },
               { value: 'history', label: '연혁' },
+              { value: 'principal', label: '역대교장' },
               { value: 'footer', label: '푸터메뉴' },
               { value: 'other', label: '기타' },
             ].map(opt => (
@@ -4022,6 +4038,7 @@ ${bodyHtml || ''}
                   <option value="greeting">인사말</option>
                   <option value="symbol">상징</option>
                   <option value="history">연혁</option>
+                  <option value="principal">역대교장</option>
                   <option value="footer">푸터메뉴</option>
                   <option value="other">기타</option>
                 </select>
@@ -4057,7 +4074,7 @@ ${bodyHtml || ''}
                   <button
                     className="crawl-btn crawl-btn--download"
                     onClick={() => {
-                      const categoryLabel = { greeting: '인사말', symbol: '상징', history: '연혁', footer: '푸터메뉴', other: '마크업' }[sourceCategory] || '마크업';
+                      const categoryLabel = { greeting: '인사말', symbol: '상징', history: '연혁', principal: '역대교장', footer: '푸터메뉴', other: '마크업' }[sourceCategory] || '마크업';
                       const fullHtml = `<!DOCTYPE html>\n<html lang="ko">\n<head>\n<meta charset="UTF-8">\n<meta name="viewport" content="width=device-width, initial-scale=1.0">\n<title>${categoryLabel}</title>\n</head>\n<body>\n${sourceResult}\n</body>\n</html>`;
                       const blob = new Blob([fullHtml], { type: 'text/html;charset=utf-8' });
                       const a = document.createElement('a');

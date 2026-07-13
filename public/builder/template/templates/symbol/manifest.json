@@ -3,5 +3,10 @@
 	"templates/symbol/symbol-tyB/index.html",
 	"templates/symbol/symbol-tyC/index.html",
 	"templates/symbol/symbol-tyD/index.html",
-	"templates/symbol/symbol-tyE/index.html"
+	"templates/symbol/symbol-tyE/index.html",
+	"templates/symbol/chungnam-symbol-tyA-list/index.html",
+	"templates/symbol/chungnam-symbol-tyA-slide/index.html",
+	"templates/symbol/chungnam-symbol-tyB-1/index.html",
+	"templates/symbol/chungnam-symbol-tyB-2/index.html",
+	"templates/symbol/chungnam-symbol-tyC/index.html"
 ]
