@@ -46,6 +46,7 @@ input.mx-w40 {width: 100%; max-width: 40rem;}
 * + .tit-st.contents{ margin-top: calc(var(--margin-default) * 1.5);}
 * + .tit-st.unit{ margin-top: calc(var(--margin-default) * 1.25);}
 * + .tit-st.item{ margin-top: calc(var(--margin-default) * 1);}
+h5.unit + p{ margin: 0.5rem 0; line-height: 1.6; font-size: calc(var(--txt-size) * 0.9); }
 
 /* Text */
 .txt-st > i{ font-weight: 400 !important;} 

@@ -30,6 +30,29 @@ function truncateMessages(messages) {
   });
 }
 
+function getMaxTableColumnCount($, table) {
+  return Math.max(0, ...$(table).find('tr').toArray().map(row =>
+    $(row).children('th, td').toArray().reduce((sum, cell) => {
+      const span = parseInt($(cell).attr('colspan') || '1', 10);
+      return sum + (Number.isFinite(span) && span > 0 ? span : 1);
+    }, 0)
+  ));
+}
+
+function shouldUseWideTableScroll($, table) {
+  const maxCols = getMaxTableColumnCount($, table);
+  if (maxCols >= 8) return true;
+  const headerTextLength = $(table)
+    .find('thead th, tr:first-child th, tr:first-child td')
+    .toArray()
+    .reduce((sum, cell) => sum + $(cell).text().replace(/\s+/g, '').length, 0);
+  return maxCols >= 6 && headerTextLength >= 36;
+}
+
+function tableWrapperClass($, table) {
+  return shouldUseWideTableScroll($, table) ? 'tbl-st scroll-w' : 'tbl-st';
+}
+
 async function cerebrasChat(messages, maxTokens = 8192) {
   const apiKey = process.env.CEREBRAS_API_KEY;
   if (!apiKey) throw new Error('CEREBRAS_API_KEY가 설정되지 않았습니다.');
@@ -314,6 +337,51 @@ function postProcessMarkup(html) {
     $ol.replaceWith($ul);
   });
 
+  // 3.5) 상위 li 안에서 첫 번째 하위 번호만 텍스트로 남은 경우 바로 뒤 ol의 첫 li로 이동
+  function pullLooseTextBeforeNestedOl() {
+    $('li').each((_, li) => {
+      const $li = $(li);
+      $li.children('ol').each((_, ol) => {
+        const children = $li.contents().toArray();
+        const olIndex = children.indexOf(ol);
+        if (olIndex <= 0) return;
+
+        let start = olIndex - 1;
+        let hasBreak = false;
+        while (start >= 0) {
+          const node = children[start];
+          if (node.type === 'tag' && (node.tagName || '').toLowerCase() === 'br') {
+            hasBreak = true;
+            break;
+          }
+          start--;
+        }
+        if (!hasBreak) {
+          start = olIndex - 1;
+          while (start >= 0 && children[start].type === 'text') start--;
+        }
+
+        const segmentNodes = children.slice(start + 1, olIndex);
+        const segmentHtml = segmentNodes.map(node => node.type === 'text' ? node.data : $.html(node)).join('');
+        const m = segmentHtml.match(/^\s*(\d+|[가-힣])[.)]\s*/);
+        if (!m) return;
+
+        const marker = m[1];
+        const body = segmentHtml.slice(m[0].length).trim();
+        if (!body) return;
+
+        const $ol = $(ol);
+        const firstMarker = $ol.children('li').first().children('span.mrk').first().text().trim();
+        if (firstMarker === marker) return;
+
+        $ol.prepend(`<li><span class="mrk">${marker}</span>${body}</li>`);
+        segmentNodes.forEach(node => $(node).remove());
+        $(children[start]).remove();
+      });
+    });
+  }
+  pullLooseTextBeforeNestedOl();
+
   // 4) ul/ol 계층별 클래스 자동 할당 (tab-st 내부 ul은 탭 내비게이션이므로 건드리지 않음)
   const UL_CLASSES = ['bu-st1', 'bu-st2', 'bu-st3', 'bu-st4'];
   const OL_CLASSES = ['order-st1', 'order-st2', 'order-st3'];
@@ -328,7 +396,19 @@ function postProcessMarkup(html) {
     }
   });
   $('ol').each((_, ol) => {
-    $(ol).attr('class', OL_CLASSES[Math.min($(ol).parents('ol').length, 2)]);
+    const $ol = $(ol);
+    const firstMarker = $ol.children('li').first().children('span.mrk').first().text().trim();
+    if (/^[가-힣]$/.test(firstMarker)) {
+      $ol.attr('class', 'order-st3');
+    } else if ($ol.parents('ol').length > 0) {
+      $ol.attr('class', 'order-st2');
+    } else {
+      $ol.attr('class', OL_CLASSES[Math.min($ol.parents('ol').length, 2)]);
+    }
+  });
+  $('ol[class*="order-st"] > li > strong').each((_, strong) => {
+    const $strong = $(strong);
+    $strong.replaceWith($strong.contents());
   });
 
   // 5) .indent 내 단독 strong p, 조항(제N조) p → h4.tit-st contents
@@ -542,8 +622,14 @@ function postProcessMarkup(html) {
     if ($table.parents('table').length > 0) return;
     $table.removeAttr('class');
     const $parent = $table.parent();
-    if (!$parent.is('div') || !/\btbl-st\b/.test($parent.attr('class') || '')) {
-      $table.wrap('<div class="tbl-st scroll-w"></div>');
+    const wrapperClass = tableWrapperClass($, table);
+    if ($parent.is('div') && /\btbl-st\b/.test($parent.attr('class') || '')) {
+      $parent.attr('class', wrapperClass);
+      if (wrapperClass === 'tbl-st' && $parent.parent().is('div.scroll-wrap')) {
+        $parent.parent().replaceWith($parent);
+      }
+    } else {
+      $table.wrap(`<div class="${wrapperClass}"></div>`);
     }
   });
 
@@ -656,6 +742,19 @@ function removeHallucinatedElements(html, originalText) {
       $el.remove();
     }
   });
+  pullLooseTextBeforeNestedOl();
+  $('ol').each((_, ol) => {
+    const $ol = $(ol);
+    const firstMarker = $ol.children('li').first().children('span.mrk').first().text().trim();
+    if (/^[가-힣]$/.test(firstMarker)) {
+      $ol.attr('class', 'order-st3');
+    } else if ($ol.parents('ol').length > 0) {
+      $ol.attr('class', 'order-st2');
+    } else {
+      $ol.attr('class', OL_CLASSES[Math.min($ol.parents('ol').length, 2)]);
+    }
+  });
+
   return $('body').html() || html;
 }
 
@@ -861,7 +960,7 @@ function directMarkupHtml(html) {
     if (tag === 'h4' || tag === 'h5') return `<h5 class="tit-st unit">${$el.html()}</h5>`;
     if (tag === 'h6')                  return `<h6 class="tit-st item">${$el.html()}</h6>`;
 
-    if (tag === 'table') return `<div class="tbl-st scroll-w">${$.html(el)}</div>`;
+    if (tag === 'table') return `<div class="${tableWrapperClass($, el)}">${$.html(el)}</div>`;
 
     if (tag === 'p') return $el.text().trim() ? `<p>${$el.html()}</p>` : '';
 

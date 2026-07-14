@@ -163,6 +163,10 @@ button.home-card-action {
   flex: 1;
 }
 
+.home-card--cms-builder {
+  grid-column: auto;
+}
+
 .home-card-tools {
   display: grid;
   gap: 0.5rem;
@@ -173,7 +177,7 @@ button.home-card-action {
 }
 
 .home-card--cms-builder .home-card-tools {
-  grid-template-columns: repeat(2, minmax(0, 1fr));
+  grid-template-columns: 1fr;
 }
 
 @media (max-width: 36rem) {

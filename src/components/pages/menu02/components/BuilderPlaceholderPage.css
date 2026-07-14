@@ -26,6 +26,36 @@
   transform-origin: center top;
 }
 
+.builder-tabbar {
+  display: flex;
+  flex: 0 0 auto;
+  gap: 0.375rem;
+  padding: 0.75rem 1rem;
+  border-bottom: 1px solid #e2e8f0;
+  background: #f8fafc;
+}
+
+.builder-tab {
+  min-height: 2.25rem;
+  padding: 0 0.9rem;
+  border: 1px solid #d7dee8;
+  border-radius: 0.375rem;
+  background: #fff;
+  color: #334155;
+  font-family: inherit;
+  font-size: 0.875rem;
+  font-weight: 700;
+  cursor: pointer;
+  white-space: nowrap;
+}
+
+.builder-tab:hover,
+.builder-tab.is-active {
+  border-color: #0070c8;
+  background: #eef6fc;
+  color: #0070c8;
+}
+
 .builder-placeholder-iframe {
   display: block;
   flex: 1;

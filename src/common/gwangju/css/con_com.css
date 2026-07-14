@@ -99,7 +99,7 @@ input.mx-w40 {width: 100%; max-width: 40rem;}
 .order-st2 > li{ padding-top: calc(var(--txt-margin) * 0.3); padding-left: calc(var(--txt-margin) * 1.75); font-size: calc(var(--txt-size) * 0.85); color: #444; }
 .order-st2 > li > span.mrk{ width: calc(var(--txt-size) * 1.35); height: calc(var(--txt-size) * 1.35); background: #F0F0F0; border-radius: 50%; display: inline-flex; align-items: center; justify-content: center; font-size: calc(var(--txt-size) * 0.7); color: #444444; font-weight: bold; }
 .order-st3 li{ padding-left:1rem; }
-h5.unit + p{ font-size:calc(var(--txt-size) * 0.9); }
+h5.unit + p{ margin: 0.5rem 0; line-height: 1.6; font-size: calc(var(--txt-size) * 0.9); }
 
 /* Box */
 /* Box Size */

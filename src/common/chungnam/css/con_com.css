@@ -256,3 +256,5 @@
 
   [class^="nl-template"] div[class*='tbl-st']:not(.scroll-w):not(.scroll-m):not(.row-th):not(.pryTbl) > table td[data-label]::before { width: 4.5rem !important; }
 }
+/* Title */
+h5.unit + p{ margin: 0.5rem 0; line-height: 1.6; font-size: calc(var(--txt-size) * 0.9); }

@@ -13,13 +13,10 @@ const menuCards = [
   {
     label: 'CMS빌더',
     iconSrc: '/icons/dazzle/gallery-thumbnails.svg',
-    desc: '인사말, 연혁, 상징, 교육목표, 조직도, 오시는 길 등 다양한 콘텐츠 구조를 시각적으로 편집하고 마크업으로 변환할 수 있는 빌더 도구 모음입니다.',
+    desc: '템플릿, 콘텐츠, 교육목표, 조직도, 오시는 길 등 다양한 콘텐츠 구조를 시각적으로 편집하고 마크업으로 변환할 수 있는 빌더 도구 모음입니다.',
     page: 'cms-builder',
     tools: [
-      { label: '인사말빌더', page: 'greeting-builder' },
-      { label: '연혁빌더', page: 'history-builder' },
-      { label: '역대교장빌더', page: 'principal-builder' },
-      { label: '학교상징빌더', page: 'symbol-builder' },
+      { label: '템플릿빌더', page: 'template-builder' },
       { label: '콘텐츠빌더', page: 'content-builder' },
       { label: '교육목표빌더', page: 'goal-builder' },
       { label: '조직도빌더', page: 'organization-builder' },

@@ -98,10 +98,17 @@ const shouldUseWideScroll = (table) => {
 };
 
 const applyWideScrollClass = (table) => {
-    if (!shouldUseWideScroll(table)) return;
     const parent = table.parentElement;
     if (!parent || parent.tagName.toLowerCase() !== 'div') return;
     if (!/\btbl-st\b/.test(parent.className || '')) return;
+    parent.classList.remove('scroll-w');
+    if (!shouldUseWideScroll(table)) {
+        const scrollWrap = parent.parentElement;
+        if (scrollWrap && scrollWrap.tagName.toLowerCase() === 'div' && /\bscroll-wrap\b/.test(scrollWrap.className || '')) {
+            scrollWrap.replaceWith(parent);
+        }
+        return;
+    }
     parent.classList.add('scroll-w');
 
     const scrollWrap = parent.parentElement;

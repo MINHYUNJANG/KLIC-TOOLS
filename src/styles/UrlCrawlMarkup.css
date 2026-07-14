@@ -698,7 +698,7 @@
   padding: 0;
   border: 0;
   border-radius: 50%;
-  background: #0070c8;
+  background: #168a4a;
   color: #fff;
   font-family: inherit;
   font-size: 0.82rem;
@@ -708,12 +708,12 @@
   text-align: center;
   white-space: normal;
   word-break: keep-all;
-  box-shadow: 0 0 0 0 rgba(0, 112, 200, 0.45), 0 0.4rem 1rem rgba(0, 112, 200, 0.22);
+  box-shadow: 0 0 0 0 rgba(22, 138, 74, 0.45), 0 0.4rem 1rem rgba(22, 138, 74, 0.22);
   animation: gwangjuMarkupPulse 1.6s infinite;
 }
 
 .gwangju-markup-btn:hover:not(:disabled) {
-  background: #005aa3;
+  background: #0f713c;
 }
 
 .gwangju-markup-btn:disabled {
@@ -724,13 +724,13 @@
 
 @keyframes gwangjuMarkupPulse {
   0% {
-    box-shadow: 0 0 0 0 rgba(0, 112, 200, 0.5), 0 0.4rem 1rem rgba(0, 112, 200, 0.22);
+    box-shadow: 0 0 0 0 rgba(22, 138, 74, 0.5), 0 0.4rem 1rem rgba(22, 138, 74, 0.22);
   }
   70% {
-    box-shadow: 0 0 0 1rem rgba(0, 112, 200, 0), 0 0.4rem 1rem rgba(0, 112, 200, 0.22);
+    box-shadow: 0 0 0 1rem rgba(22, 138, 74, 0), 0 0.4rem 1rem rgba(22, 138, 74, 0.22);
   }
   100% {
-    box-shadow: 0 0 0 0 rgba(0, 112, 200, 0), 0 0.4rem 1rem rgba(0, 112, 200, 0.22);
+    box-shadow: 0 0 0 0 rgba(22, 138, 74, 0), 0 0.4rem 1rem rgba(22, 138, 74, 0.22);
   }
 }
 
@@ -1072,15 +1072,14 @@
 }
 
 .gwangju-convert-save-btn {
-  min-width: 6.5rem;
-  min-height: 2.25rem;
+  min-height: 2rem;
   padding: 0 1rem;
   border: 1px solid #0070c8;
   border-radius: 0.375rem;
   background: #0070c8;
   color: #fff;
   font-family: inherit;
-  font-size: 0.875rem;
+  font-size: 0.8125rem;
   font-weight: 800;
   cursor: pointer;
 }

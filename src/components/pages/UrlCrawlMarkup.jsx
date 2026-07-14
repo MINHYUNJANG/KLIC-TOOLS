@@ -247,12 +247,23 @@ function convertTabMenus(container) {
 }
 
 function renderTabBlock({ items }) {
+  let activeUsed = false;
   const li = items.map(t => {
-    const cls = t.active ? ' class="on"' : '';
+    const active = Boolean(t.active && !activeUsed);
+    if (active) activeUsed = true;
+    const cls = active ? ' class="on"' : '';
     const href = t.href ? ` href="${t.href}"` : '';
     return `<li${cls}><a${href}>${t.label}</a></li>`;
   }).join('');
   return `<div class="tab-st depth01"><ul>${li}</ul></div>`;
+}
+
+function unwrapOrderListStrong(container) {
+  Array.from(container.querySelectorAll('ol[class*="order-st"] > li > strong')).forEach(strong => {
+    const frag = document.createDocumentFragment();
+    while (strong.firstChild) frag.appendChild(strong.firstChild);
+    strong.replaceWith(frag);
+  });
 }
 
 // cleanTableHtml은 h3/h4/h5만 tit-st(section/contents/unit)로 정규화해준다. "가) 인성교육
@@ -285,7 +296,10 @@ function promoteInlineFirstNestedListItems(container) {
       }
       if (node.nodeType === 1 && /^(OL|UL|P|DIV|TABLE)$/.test(node.tagName)) break;
     }
-    if (breakIndex < 0) return;
+    if (breakIndex < 0) {
+      breakIndex = nestedListIndex - 1;
+      while (breakIndex >= 0 && directChildren[breakIndex].nodeType === 3) breakIndex -= 1;
+    }
 
     const inlineNodes = directChildren.slice(breakIndex + 1, nestedListIndex);
     const inlineText = inlineNodes.map(node => node.textContent || '').join('').trim();
@@ -313,7 +327,9 @@ function promoteInlineFirstNestedListItems(container) {
     firstItem.appendChild(document.createTextNode(' '));
     while (holder.firstChild) firstItem.appendChild(holder.firstChild);
 
-    directChildren[breakIndex].remove();
+    if (directChildren[breakIndex]?.nodeType === 1 && directChildren[breakIndex].tagName === 'BR') {
+      directChildren[breakIndex].remove();
+    }
     inlineNodes.forEach(node => node.remove());
     nestedList.insertBefore(firstItem, nestedList.firstChild);
   });
@@ -335,6 +351,7 @@ function applyGwangjuBasicMarkup(html) {
   });
   target.innerHTML = cleaned;
   promoteInlineFirstNestedListItems(target);
+  unwrapOrderListStrong(target);
   return doc.body.innerHTML;
 }
 
@@ -361,9 +378,15 @@ function applyTableProcessing(html) {
   };
 
   const applyWideScrollClass = table => {
-    if (!shouldUseWideScroll(table)) return;
     const parent = table.parentElement;
     if (parent && parent.tagName === 'DIV' && /\btbl-st\b/.test(parent.className || '')) {
+      parent.classList.remove('scroll-w');
+      if (!shouldUseWideScroll(table)) {
+        if (parent.parentElement?.classList.contains('scroll-wrap')) {
+          parent.parentElement.replaceWith(parent);
+        }
+        return;
+      }
       parent.classList.add('scroll-w');
       if (!parent.parentElement?.classList.contains('scroll-wrap')) {
         const scrollWrap = doc.createElement('div');
@@ -501,6 +524,9 @@ function normalizeGeneratedMarkup(html) {
     }
     next.remove();
   });
+
+  promoteInlineFirstNestedListItems(body);
+  unwrapOrderListStrong(body);
 
   return formatHtml(body.innerHTML);
 }
@@ -3396,7 +3422,7 @@ ${bodyHtml || ''}
                             onClick={fetchGwangjuMarkupSource}
                             disabled={!activeGwangjuMenuUrl || gwangjuMarkupLoading}
                           >
-                            {gwangjuMarkupLoading ? '소스 가져오는 중' : '마크업하기'}
+                            {gwangjuMarkupLoading ? '소스 가져오는 중' : '크롤링하기'}
                           </button>
                         </div>
                         <div className={`gwangju-markup-source-panel ${gwangjuMarkupPanelOpen ? 'is-open' : ''} ${gwangjuConvertPanelOpen ? 'has-convert-panel' : ''}`}>
@@ -3537,6 +3563,14 @@ ${bodyHtml || ''}
                               </button>
                               <button
                                 type="button"
+                                className={`gwangju-convert-save-btn ${isGwangjuConvertedSaved ? 'is-saved' : ''}`}
+                                onClick={saveGwangjuConvertedSource}
+                                disabled={!activeGwangjuMenuUrl}
+                              >
+                                {isGwangjuConvertedSaved ? '✓ 저장됨' : '저장'}
+                              </button>
+                              <button
+                                type="button"
                                 className="gwangju-markup-source-close"
                                 onClick={() => {
                                   setGwangjuConvertPanelOpen(false);
@@ -3565,14 +3599,6 @@ ${bodyHtml || ''}
                               }
                             >
                               빌더 파일(.klic)
-                            </button>
-                            <button
-                              type="button"
-                              className={`gwangju-convert-save-btn ${isGwangjuConvertedSaved ? 'is-saved' : ''}`}
-                              onClick={saveGwangjuConvertedSource}
-                              disabled={!activeGwangjuMenuUrl}
-                            >
-                              {isGwangjuConvertedSaved ? '✓ 저장됨' : '저장'}
                             </button>
                           </div>
                         </div>

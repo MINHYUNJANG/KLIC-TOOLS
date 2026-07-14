@@ -16,17 +16,7 @@ const navItems = [
     id: 'cms-builder',
     href: '#',
     children: [
-      {
-        label: '템플릿빌더',
-        id: 'template-builder',
-        href: '#',
-        children: [
-          { label: '인사말빌더', id: 'greeting-builder', href: '#' },
-          { label: '연혁빌더', id: 'history-builder', href: '#' },
-          { label: '역대교장빌더', id: 'principal-builder', href: '#' },
-          { label: '학교상징빌더', id: 'symbol-builder', href: '#' },
-        ],
-      },
+      { label: '템플릿빌더', id: 'template-builder', href: '#' },
       { label: '콘텐츠빌더', id: 'content-builder', href: '#' },
       { label: '교육목표빌더', id: 'goal-builder', href: '#' },
       { label: '조직도빌더', id: 'organization-builder', href: '#' },
