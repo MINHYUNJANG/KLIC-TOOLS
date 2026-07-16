@@ -375,21 +375,25 @@ function applyTableProcessing(html) {
 
   const applyWideScrollClass = table => {
     const parent = table.parentElement;
-    if (parent && parent.tagName === 'DIV' && /\btbl-st\b/.test(parent.className || '')) {
-      parent.classList.remove('scroll-w');
-      if (!shouldUseWideScroll(table)) {
-        if (parent.parentElement?.classList.contains('scroll-wrap')) {
-          parent.parentElement.replaceWith(parent);
-        }
-        return;
+    // 이미 tbl-scroll-inner로 감싸져 있으면 그 바깥의 실제 tbl-st 래퍼(outer)를 찾는다.
+    const isInner = parent && parent.tagName === 'DIV' && /\btbl-scroll-inner\b/.test(parent.className || '');
+    const outer = isInner ? parent.parentElement : parent;
+    if (!(outer && outer.tagName === 'DIV' && /\btbl-st\b/.test(outer.className || ''))) return;
+
+    if (!shouldUseWideScroll(table)) {
+      outer.classList.remove('scroll-w');
+      if (isInner) {
+        outer.insertBefore(table, parent);
+        parent.remove();
       }
-      parent.classList.add('scroll-w');
-      if (!parent.parentElement?.classList.contains('scroll-wrap')) {
-        const scrollWrap = doc.createElement('div');
-        scrollWrap.className = 'scroll-wrap';
-        parent.parentNode.insertBefore(scrollWrap, parent);
-        scrollWrap.appendChild(parent);
-      }
+      return;
+    }
+    outer.classList.add('scroll-w');
+    if (!isInner) {
+      const inner = doc.createElement('div');
+      inner.className = 'tbl-scroll-inner';
+      outer.insertBefore(inner, table);
+      inner.appendChild(table);
     }
   };
 
@@ -398,9 +402,12 @@ function applyTableProcessing(html) {
 
     table.removeAttribute('class');
 
-    // div.tbl-st 래핑 보정
+    // div.tbl-st 래핑 보정. tbl-scroll-inner는 tbl-st를 갖지 않으므로, 표가 이미
+    // scroll-w 구조로 감싸져 있으면 부모가 아니라 조부모에서 tbl-st를 찾아야 한다.
     const parent = table.parentElement;
-    const parentIsTblSt = parent && parent.tagName === 'DIV' && /\btbl-st\b/.test(parent.className || '');
+    const isInnerScroll = parent && parent.tagName === 'DIV' && /\btbl-scroll-inner\b/.test(parent.className || '');
+    const parentIsTblSt = isInnerScroll ||
+      (parent && parent.tagName === 'DIV' && /\btbl-st\b/.test(parent.className || ''));
     if (parentIsTblSt) {
       // 이미 올바른 wrapper div가 있음 — 긴 표면 con_com.css의 가로 스크롤 클래스를 추가
       applyWideScrollClass(table);
@@ -511,8 +518,7 @@ function normalizeGeneratedMarkup(html) {
 
     const indentChildren = Array.from(next.children);
     const firstMeaningful = indentChildren.find(el => el.textContent.trim() || el.children.length > 0);
-    const hasTableBlock = firstMeaningful?.classList.contains('tbl-st') ||
-      (firstMeaningful?.classList.contains('scroll-wrap') && firstMeaningful.querySelector(':scope > .tbl-st'));
+    const hasTableBlock = firstMeaningful?.classList.contains('tbl-st');
     if (!hasTableBlock) return;
 
     while (next.firstChild) {
@@ -1550,9 +1556,17 @@ export default function UrlCrawlMarkup() {
   const [gwangjuMarkupSourceUrl, setGwangjuMarkupSourceUrl] = useState('');
   const [gwangjuMarkupLoading, setGwangjuMarkupLoading] = useState(false);
   const [gwangjuMarkupError, setGwangjuMarkupError] = useState('');
+  const [manualMenuTitle, setManualMenuTitle] = useState('');
+  const [manualMenuUrl, setManualMenuUrl] = useState('');
   const [gwangjuConvertPanelOpen, setGwangjuConvertPanelOpen] = useState(false);
   const [gwangjuConvertMenuOpen, setGwangjuConvertMenuOpen] = useState(false);
   const [gwangjuConvertSubmenuCategory, setGwangjuConvertSubmenuCategory] = useState(null);
+  // 소스 패널 헤드의 "마크업 다시하기" 드롭다운 — 변환 패널이 열려 있어도(has-convert-panel로
+  // gwangju-convert-trigger가 숨겨진 상태에서도) 다시 마크업을 실행할 수 있어야 해서 트리거와
+  // 별개의 열림 상태를 둔다.
+  const [gwangjuRedoMenuOpen, setGwangjuRedoMenuOpen] = useState(false);
+  const [gwangjuRedoDesignMenuOpen, setGwangjuRedoDesignMenuOpen] = useState(false);
+  const [gwangjuRedoSubmenuCategory, setGwangjuRedoSubmenuCategory] = useState(null);
   const [gwangjuConvertedSource, setGwangjuConvertedSource] = useState('');
   const [gwangjuConvertPreviewOpen, setGwangjuConvertPreviewOpen] = useState(false);
   const [gwangjuSavedMarkupByUrl, setGwangjuSavedMarkupByUrl] = useState(() => readGwangjuSavedMarkupByUrl());
@@ -1664,10 +1678,19 @@ export default function UrlCrawlMarkup() {
   }
 
   function openStyleGuide() {
-    const guideUrl = projectType === 'gwangju'
-      ? '/api/gwangju-assets/pub/guide.html'
-      : '/api/chungnam-assets/pub/guide.jsp';
-    window.open(guideUrl, '_blank', 'noopener,noreferrer');
+    if (projectType !== 'gwangju') {
+      alert('충남학교통합 스타일가이드는 아직 준비 중입니다.');
+      return;
+    }
+    window.open('/api/gwangju-assets/pub/guide.html', '_blank', 'noopener,noreferrer');
+  }
+
+  function openImageGuide() {
+    if (projectType !== 'gwangju') {
+      alert('충남학교통합 공통이미지 가이드는 아직 준비 중입니다.');
+      return;
+    }
+    window.open('/api/gwangju-assets/pub/image.html', '_blank', 'noopener,noreferrer');
   }
 
   function addGwangjuUrlInput() {
@@ -1759,7 +1782,23 @@ export default function UrlCrawlMarkup() {
     setGwangjuConvertPreviewOpen(false);
     setGwangjuConvertMenuOpen(false);
     setGwangjuConvertSubmenuCategory(null);
+    setGwangjuRedoMenuOpen(false);
+    setGwangjuRedoDesignMenuOpen(false);
+    setGwangjuRedoSubmenuCategory(null);
     return true;
+  }
+
+  function addGwangjuManualMenu(siteId) {
+    const label = manualMenuTitle.trim();
+    let url = manualMenuUrl.trim();
+    if (!label || !url) return;
+    if (!/^https?:\/\//i.test(url)) url = `https://${url}`;
+    setGwangjuUrlItems(prev => prev.map(site => {
+      if (site.id !== siteId) return site;
+      return { ...site, menus: [...(site.menus || []), { label, url, depth: 2 }] };
+    }));
+    setManualMenuTitle('');
+    setManualMenuUrl('');
   }
 
   function removeGwangjuMenu(siteId, menuToRemove) {
@@ -1895,6 +1934,7 @@ export default function UrlCrawlMarkup() {
     { key: '역대교장', label: '역대교장', ready: true },
     { key: '오시는길', label: '오시는길', ready: false },
     { key: '학급목록', label: '학급목록', ready: true },
+    { key: '푸터메뉴', label: '개인정보처리방침', ready: true },
   ];
 
   function applyGwangjuConvertTemplate(template) {
@@ -1909,13 +1949,65 @@ export default function UrlCrawlMarkup() {
     setGwangjuConvertPanelOpen(true);
   }
 
+  // 푸터메뉴(개인정보처리방침 등)는 디자인 템플릿이 아니라 서버의 footerAutoMarkup 규칙을 따름
+  async function applyGwangjuFooterMarkup() {
+    const raw = gwangjuMarkupSource || '';
+    if (!raw || gwangjuMarkupLoading) return;
+    setGwangjuMarkupLoading(true);
+    setGwangjuMarkupError('');
+    setGwangjuConvertMenuOpen(false);
+    setGwangjuConvertSubmenuCategory(null);
+    try {
+      const res = await fetch('/api/auto-markup', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ html: raw, context: 'footer' }),
+      });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.detail || '마크업 생성에 실패했습니다.');
+      const formatted = formatHtml(stripScriptTags(data.html || ''));
+      setGwangjuConvertedSource(formatted);
+      setGwangjuConvertPanelOpen(true);
+    } catch (error) {
+      setGwangjuMarkupError(error.message || '마크업 생성에 실패했습니다.');
+    } finally {
+      setGwangjuMarkupLoading(false);
+    }
+  }
+
   function handleGwangjuConvertCategoryClick(cat) {
     if (!cat.ready) return;
     if (cat.key === 'default') {
       applyGwangjuConvertTemplate(null);
       return;
     }
+    if (cat.key === '푸터메뉴') {
+      applyGwangjuFooterMarkup();
+      return;
+    }
     setGwangjuConvertSubmenuCategory(prev => (prev === cat.key ? null : cat.key));
+  }
+
+  function closeGwangjuRedoMenu() {
+    setGwangjuRedoMenuOpen(false);
+    setGwangjuRedoDesignMenuOpen(false);
+    setGwangjuRedoSubmenuCategory(null);
+  }
+
+  // "마크업 다시하기" 드롭다운에서 실행 — 변환 패널이 열려 있는 채로도(닫지 않고) 소스 변환을 재실행한다.
+  function applyGwangjuRedoTemplate(template) {
+    applyGwangjuConvertTemplate(template);
+    closeGwangjuRedoMenu();
+  }
+
+  function handleGwangjuRedoCategoryClick(cat) {
+    if (!cat.ready) return;
+    if (cat.key === '푸터메뉴') {
+      applyGwangjuFooterMarkup();
+      closeGwangjuRedoMenu();
+      return;
+    }
+    setGwangjuRedoSubmenuCategory(prev => (prev === cat.key ? null : cat.key));
   }
 
   const GWANGJU_PREVIEW_CSS = ['basic.css', 'theme.css', 'layout.css', 'swiper.min.css', 'con_com.css', 'sub_com.css'];
@@ -1981,6 +2073,9 @@ ${bodyHtml || ''}
     setGwangjuConvertPreviewOpen(false);
     setGwangjuConvertMenuOpen(false);
     setGwangjuConvertSubmenuCategory(null);
+    setGwangjuRedoMenuOpen(false);
+    setGwangjuRedoDesignMenuOpen(false);
+    setGwangjuRedoSubmenuCategory(null);
   }
 
   function updateGwangjuConvertedSource(value) {
@@ -2019,6 +2114,9 @@ ${bodyHtml || ''}
     setGwangjuConvertPreviewOpen(false);
     setGwangjuConvertMenuOpen(false);
     setGwangjuConvertSubmenuCategory(null);
+    setGwangjuRedoMenuOpen(false);
+    setGwangjuRedoDesignMenuOpen(false);
+    setGwangjuRedoSubmenuCategory(null);
   }
 
   async function crawlGwangjuHeaderMenus(id) {
@@ -3356,13 +3454,6 @@ ${bodyHtml || ''}
           <div className="crawl-title-actions">
             <button
               type="button"
-              className="crawl-styleguide-btn"
-              onClick={openStyleGuide}
-            >
-              스타일가이드
-            </button>
-            <button
-              type="button"
               className="crawl-help-btn"
               onClick={() => setShowHelp(true)}
               title="도움말"
@@ -3389,22 +3480,42 @@ ${bodyHtml || ''}
 
         {/* ─── 모드 탭 ─── */}
         <div className="crawl-project-switch" aria-label="프로젝트 선택">
-          <label className={`crawl-project-option ${projectType === 'gwangju' ? 'is-active' : ''}`}>
-            <input
-              type="checkbox"
-              checked={projectType === 'gwangju'}
-              onChange={() => setProjectType('gwangju')}
-            />
-            <span>광주학교통합</span>
-          </label>
-          <label className={`crawl-project-option ${projectType === 'chungnam' ? 'is-active' : ''}`}>
-            <input
-              type="checkbox"
-              checked={projectType === 'chungnam'}
-              onChange={() => setProjectType('chungnam')}
-            />
-            <span>충남학교통합</span>
-          </label>
+          <div className="crawl-project-switch-tabs">
+            <label className={`crawl-project-option ${projectType === 'gwangju' ? 'is-active' : ''}`}>
+              <input
+                type="checkbox"
+                checked={projectType === 'gwangju'}
+                onChange={() => setProjectType('gwangju')}
+              />
+              <span>광주학교통합</span>
+            </label>
+            <label className={`crawl-project-option ${projectType === 'chungnam' ? 'is-active' : ''}`}>
+              <input
+                type="checkbox"
+                checked={projectType === 'chungnam'}
+                onChange={() => setProjectType('chungnam')}
+              />
+              <span>충남학교통합</span>
+            </label>
+          </div>
+          <div className="crawl-project-switch-actions">
+            {projectType === 'gwangju' && (
+              <button
+                type="button"
+                className="crawl-styleguide-btn"
+                onClick={openImageGuide}
+              >
+                공통이미지 가이드
+              </button>
+            )}
+            <button
+              type="button"
+              className="crawl-styleguide-btn"
+              onClick={openStyleGuide}
+            >
+              스타일가이드
+            </button>
+          </div>
         </div>
 
         {projectType === 'gwangju' && (
@@ -3470,16 +3581,32 @@ ${bodyHtml || ''}
                     <h2>광주학교통합 크롤링 작업창</h2>
                     <p>{isGwangjuCrawling ? '크롤링 중입니다.' : '사이트 탭과 메뉴를 선택해 화면을 확인하세요.'}</p>
                   </div>
-                  <button
-                    type="button"
-                    className="gwangju-work-layer-close"
-                    onClick={() => {
-                      if (closeGwangjuMarkupPanels()) setShowGwangjuInlineResults(false);
-                    }}
-                    aria-label="작업창 닫기"
-                  >
-                    ×
-                  </button>
+                  <div className="gwangju-work-layer-head-actions">
+                    <button
+                      type="button"
+                      className="gwangju-work-layer-imageguide"
+                      onClick={openImageGuide}
+                    >
+                      공통이미지 가이드
+                    </button>
+                    <button
+                      type="button"
+                      className="crawl-styleguide-btn gwangju-work-layer-styleguide"
+                      onClick={openStyleGuide}
+                    >
+                      스타일가이드
+                    </button>
+                    <button
+                      type="button"
+                      className="gwangju-work-layer-close"
+                      onClick={() => {
+                        if (closeGwangjuMarkupPanels()) setShowGwangjuInlineResults(false);
+                      }}
+                      aria-label="작업창 닫기"
+                    >
+                      ×
+                    </button>
+                  </div>
                 </div>
                 <div className="gwangju-site-tabs" aria-label="사이트별 크롤링 결과">
                   {gwangjuUrlItems.map((item, index) => (
@@ -3515,8 +3642,9 @@ ${bodyHtml || ''}
                   )}
                   {activeGwangjuUrlItem?.menus?.length > 0 ? (
                     <div className="gwangju-menu-workspace">
+                      <div className="gwangju-menu-list-panel">
                       <div className="gwangju-menu-list" aria-label="크롤링된 메뉴 목록">
-                        {activeGwangjuUrlItem.menus.map((menu, menuIndex) => (
+                        {activeGwangjuUrlItem.menus.map((menu, menuIndex, menuArr) => (
                           menu.depth === 1 ? (
                             <h2
                               key={`${menu.label}-${menu.url || menuIndex}`}
@@ -3524,6 +3652,13 @@ ${bodyHtml || ''}
                             >
                               {menu.label}
                             </h2>
+                          ) : menu.depth >= 2 && menuArr[menuIndex + 1]?.depth === menu.depth + 1 ? (
+                            <h3
+                              key={`${menu.label}-${menu.url || menuIndex}`}
+                              className="gwangju-menu-depth-subtitle"
+                            >
+                              {menu.label}
+                            </h3>
                           ) : (
                             <div
                               key={`${menu.label}-${menu.url || menuIndex}`}
@@ -3581,6 +3716,37 @@ ${bodyHtml || ''}
                           )
                         ))}
                       </div>
+                        <div className="gwangju-menu-add-row">
+                          <input
+                            type="text"
+                            className="gwangju-menu-add-input"
+                            placeholder="메뉴 이름"
+                            value={manualMenuTitle}
+                            onChange={e => setManualMenuTitle(e.target.value)}
+                            onKeyDown={e => {
+                              if (e.key === 'Enter') addGwangjuManualMenu(activeGwangjuUrlItem.id);
+                            }}
+                          />
+                          <input
+                            type="text"
+                            className="gwangju-menu-add-input"
+                            placeholder="URL"
+                            value={manualMenuUrl}
+                            onChange={e => setManualMenuUrl(e.target.value)}
+                            onKeyDown={e => {
+                              if (e.key === 'Enter') addGwangjuManualMenu(activeGwangjuUrlItem.id);
+                            }}
+                          />
+                          <button
+                            type="button"
+                            className="gwangju-menu-add-btn"
+                            onClick={() => addGwangjuManualMenu(activeGwangjuUrlItem.id)}
+                            disabled={!manualMenuTitle.trim() || !manualMenuUrl.trim()}
+                          >
+                            추가
+                          </button>
+                        </div>
+                      </div>
                       <div className="gwangju-menu-preview">
                         <div className="gwangju-preview-toolbar">
                           <button
@@ -3625,11 +3791,11 @@ ${bodyHtml || ''}
                                         type="button"
                                         role="menuitem"
                                         className={`gwangju-convert-menu-item ${submenuOpen ? 'is-active' : ''}`}
-                                        disabled={!cat.ready}
+                                        disabled={!cat.ready || (cat.key === '푸터메뉴' && gwangjuMarkupLoading)}
                                         aria-expanded={hasVariants ? submenuOpen : undefined}
                                         onClick={() => handleGwangjuConvertCategoryClick(cat)}
                                       >
-                                        <span>{cat.label}</span>
+                                        <span>{cat.label}{cat.key === '푸터메뉴' && gwangjuMarkupLoading ? ' (생성 중...)' : ''}</span>
                                         {!cat.ready && <span className="gwangju-convert-menu-badge">준비중</span>}
                                         {cat.ready && hasVariants && <span className="gwangju-convert-menu-arrow">›</span>}
                                       </button>
@@ -3660,6 +3826,85 @@ ${bodyHtml || ''}
                               <h3>페이지 소스</h3>
                               <p>{gwangjuMarkupSelector || '#content / #subPage'}</p>
                             </div>
+                            <div className="gwangju-markup-source-head-actions">
+                            <div className="gwangju-redo-markup">
+                              <button
+                                type="button"
+                                className="gwangju-redo-markup-btn"
+                                onClick={() => setGwangjuRedoMenuOpen(open => !open)}
+                                disabled={!gwangjuMarkupSource || gwangjuMarkupLoading}
+                                aria-haspopup="true"
+                                aria-expanded={gwangjuRedoMenuOpen}
+                              >
+                                마크업 다시하기
+                              </button>
+                              {gwangjuRedoMenuOpen && (
+                                <div className="gwangju-redo-markup-menu" role="menu" aria-label="마크업 다시하기">
+                                  <button
+                                    type="button"
+                                    role="menuitem"
+                                    className="gwangju-convert-menu-item"
+                                    onClick={() => applyGwangjuRedoTemplate(null)}
+                                  >
+                                    기본마크업
+                                  </button>
+                                  <div className="gwangju-convert-menu-row">
+                                    <button
+                                      type="button"
+                                      role="menuitem"
+                                      className={`gwangju-convert-menu-item ${gwangjuRedoDesignMenuOpen ? 'is-active' : ''}`}
+                                      aria-haspopup="true"
+                                      aria-expanded={gwangjuRedoDesignMenuOpen}
+                                      onClick={() => setGwangjuRedoDesignMenuOpen(open => !open)}
+                                    >
+                                      <span>디자인마크업</span>
+                                      <span className="gwangju-convert-menu-arrow">›</span>
+                                    </button>
+                                    {gwangjuRedoDesignMenuOpen && (
+                                      <div className="gwangju-convert-submenu" role="menu" aria-label="디자인 마크업 카테고리 선택">
+                                        {GWANGJU_CONVERT_CATEGORIES.map(cat => {
+                                          const variants = ALL_TEMPLATES.filter(t => t.category === cat.key);
+                                          const hasVariants = variants.length > 0;
+                                          const submenuOpen = gwangjuRedoSubmenuCategory === cat.key;
+                                          return (
+                                            <div key={cat.key} className="gwangju-convert-menu-row">
+                                              <button
+                                                type="button"
+                                                role="menuitem"
+                                                className={`gwangju-convert-menu-item ${submenuOpen ? 'is-active' : ''}`}
+                                                disabled={!cat.ready || (cat.key === '푸터메뉴' && gwangjuMarkupLoading)}
+                                                aria-expanded={hasVariants ? submenuOpen : undefined}
+                                                onClick={() => handleGwangjuRedoCategoryClick(cat)}
+                                              >
+                                                <span>{cat.label}{cat.key === '푸터메뉴' && gwangjuMarkupLoading ? ' (생성 중...)' : ''}</span>
+                                                {!cat.ready && <span className="gwangju-convert-menu-badge">준비중</span>}
+                                                {cat.ready && hasVariants && <span className="gwangju-convert-menu-arrow">›</span>}
+                                              </button>
+                                              {hasVariants && submenuOpen && (
+                                                <div className="gwangju-convert-submenu gwangju-redo-submenu-nested" role="menu" aria-label={`${cat.label} 타입 선택`}>
+                                                  {variants.map(tpl => (
+                                                    <button
+                                                      key={tpl.id}
+                                                      type="button"
+                                                      role="menuitem"
+                                                      className="gwangju-convert-menu-item"
+                                                      title={tpl.desc}
+                                                      onClick={() => applyGwangjuRedoTemplate(tpl)}
+                                                    >
+                                                      {tpl.label}
+                                                    </button>
+                                                  ))}
+                                                </div>
+                                              )}
+                                            </div>
+                                          );
+                                        })}
+                                      </div>
+                                    )}
+                                  </div>
+                                </div>
+                              )}
+                            </div>
                             <button
                               type="button"
                               className="gwangju-markup-source-close"
@@ -3668,6 +3913,7 @@ ${bodyHtml || ''}
                             >
                               ×
                             </button>
+                            </div>
                           </div>
                           {gwangjuMarkupSourceUrl && (
                             <div className="gwangju-markup-source-url" title={gwangjuMarkupSourceUrl}>

@@ -81,6 +81,10 @@
     .Guide_con section .color-list li{ text-align: center; font-size: 0.8rem; font-weight: 500; }
     .Guide_con section .color-list li p{ width: 5.7rem; height: 4.4rem; display: flex; align-items: center; justify-content: center; margin-top: 0.25rem;}
 
+    /* 텍스트 배경 색상(bg_*) 데모: 한 줄에 5칸씩 고정 배치 */
+    .Guide_con section .color-badge-grid{ display: grid; grid-template-columns: repeat(5, 1fr); gap: 0.5rem; }
+    .Guide_con section .color-badge-grid span{ text-align: center; }
+
     /* gray color */
     .Guide_con section .color-list li.c_000 p{ background:#000; color: #fff;}
     .Guide_con section .color-list li.c_555 p{ background:#555555; color: #fff;}
@@ -164,7 +168,7 @@
 <header id="header">
 	<div class="header_wrap container">
 		<div class="header-branding">
-			<h1><a href="#"><img src="/images/web/goeic/common/logo.png" alt="경기도 이천교육지원청"></a></h1>
+			<h1><a href="#"><img src="/images/common/common/logo.png" alt="로고"></a></h1>
 			<button class="searchOpen" id="searchOpen"><i class="ri-search-line"></i><span class="hid">검색 활성화</span></button>
 			<div class="box_search_0 sch_wrap">
 				<form name="searchForm" id="searchForm" method="POST" target="_blank">
@@ -558,74 +562,74 @@ $(function () {
     <div class="naivgator-list"></div>
 		<div id="subVisual">
 			<div class="visual-img">
-				<img src="/images/web/goeic/sub/sub_visual01.png" alt="">
-				<p class="tit">메뉴명</p>
+				<img src="/images/common/common/sub_visual01.png" alt="">
+				<p class="tit">공통 스타일가이드</p>
 			</div>
 							
 			<div id="contNavi">
 				<div class="cont-navi">				           
 					<aside id="snb">
-	<div class="snb_wrap">
-		<a href="#" class="home"><em class="hid">HOME</em></a>
-		<!--START-->
-		<h2><span>알림마당</span></h2>
-		<nav class="snb_wrap">
-			<ul class="lnb">
-				<li class="active"><a href="#"><span>공지사항</span></a></li>
-				<li><a href="#"><span>가정통신문(교육청)</span></a></li>
-				<li><a href="#"><span>공지사항(교육청)</span></a></li>
-				<li><a href="#"><span>보도자료현황</span></a></li>
-				<li><a href="#"><span>인사정보</span></a>
-					<ul class="subLnb">
-						<li><a href="#"><span>교원 인사정보</span></a></li>
-						<li><a href="#"><span>지방공무원 인사정보</span></a></li>
-						<li><a href="#"><span>교육공무직 인사정보</span></a></li>
-					</ul>
-				</li>
-				<li><a href="#"><span>교육공무직원도움방</span></a></li>
-				<li><a href="#"><span>전·편입학바로가기</span></a>
-					<ul class="subLnb">
-						<li><a href="#"><span>전·편입학바로가기</span></a></li>
-						<li><a href="#"><span>중학군재적학생수현황</span></a></li>
-					</ul>
-				</li>
-				<li><a href="#"><span>학원업무</span></a>
-					<ul class="subLnb">
-						<li><a href="#"><span>학원공지사항</span></a></li>
-						<li><a href="#"><span>학원설립안내서</span></a></li>
-						<li><a href="#"><span>교습소신고안내서</span></a></li>
-						<li><a href="#"><span>개인과외신고안내서</span></a></li>
-						<li><a href="#"><span>평생교육시설건립안내서</span></a></li>
-					</ul>
-				</li>
-				<li><a href="#"><span>유치원업무</span></a>
-					<ul class="subLnb">
-						<li><a href="#"><span>유치원 공지사항</span></a></li>
-						<li><a href="#"><span>사립유치원</span></a></li>
-					</ul>
-				</li>
-				<li><a href="#"><span>통학구역</span></a></li>
-				<li><a href="#" target="_blank" title="새창열림"><span>교육환경보호구역</span></a></li>
-				<li><a href="#"><span>재정공개</span></a>
-					<ul class="subLnb">
-						<li><a href="#"><span>예결산현황</span></a></li>
-						<li><a href="#"><span>업무추진비 집행내역</span></a></li>
-						<li><a href="#"><span>상품권 구매 및 사용내역 공개</span></a></li>
-						<li><a href="#" target="_blank" title="새창열림"><span>발주계획</span></a></li>
-						<li><a href="#" target="_blank" title="새창열림"><span>입찰공고</span></a></li>
-						<li><a href="#" target="_blank" title="새창열림"><span>개찰결과</span></a></li>
-						<li><a href="#" target="_blank" title="새창열림"><span>계약현황</span></a></li>
-						<li><a href="#" target="_blank" title="새창열림"><span>수의계약</span></a></li>
-						<li><a href="#"><span>신용카드 사용내역</span></a></li>
-						<li><a href="#"><span>물품선정결과공개</span></a></li>
-						<li><a href="#"><span>하도급 계약현황</span></a></li>
-					</ul>
-				</li>
-			</ul>
-		</nav>
-		<!--END-->
-	</div>
-</aside>
+                        <div class="snb_wrap">
+                            <a href="#" class="home"><em class="hid">HOME</em></a>
+                            <!--START-->
+                            <h2><span>알림마당</span></h2>
+                            <nav class="snb_wrap">
+                                <ul class="lnb">
+                                    <li class="active"><a href="#"><span>공통 스타일가이드</span></a></li>
+                                    <li><a href="#"><span>가정통신문(교육청)</span></a></li>
+                                    <li><a href="#"><span>공지사항(교육청)</span></a></li>
+                                    <li><a href="#"><span>보도자료현황</span></a></li>
+                                    <li><a href="#"><span>인사정보</span></a>
+                                        <ul class="subLnb">
+                                            <li><a href="#"><span>교원 인사정보</span></a></li>
+                                            <li><a href="#"><span>지방공무원 인사정보</span></a></li>
+                                            <li><a href="#"><span>교육공무직 인사정보</span></a></li>
+                                        </ul>
+                                    </li>
+                                    <li><a href="#"><span>교육공무직원도움방</span></a></li>
+                                    <li><a href="#"><span>전·편입학바로가기</span></a>
+                                        <ul class="subLnb">
+                                            <li><a href="#"><span>전·편입학바로가기</span></a></li>
+                                            <li><a href="#"><span>중학군재적학생수현황</span></a></li>
+                                        </ul>
+                                    </li>
+                                    <li><a href="#"><span>학원업무</span></a>
+                                        <ul class="subLnb">
+                                            <li><a href="#"><span>학원공지사항</span></a></li>
+                                            <li><a href="#"><span>학원설립안내서</span></a></li>
+                                            <li><a href="#"><span>교습소신고안내서</span></a></li>
+                                            <li><a href="#"><span>개인과외신고안내서</span></a></li>
+                                            <li><a href="#"><span>평생교육시설건립안내서</span></a></li>
+                                        </ul>
+                                    </li>
+                                    <li><a href="#"><span>유치원업무</span></a>
+                                        <ul class="subLnb">
+                                            <li><a href="#"><span>유치원 공지사항</span></a></li>
+                                            <li><a href="#"><span>사립유치원</span></a></li>
+                                        </ul>
+                                    </li>
+                                    <li><a href="#"><span>통학구역</span></a></li>
+                                    <li><a href="#" target="_blank" title="새창열림"><span>교육환경보호구역</span></a></li>
+                                    <li><a href="#"><span>재정공개</span></a>
+                                        <ul class="subLnb">
+                                            <li><a href="#"><span>예결산현황</span></a></li>
+                                            <li><a href="#"><span>업무추진비 집행내역</span></a></li>
+                                            <li><a href="#"><span>상품권 구매 및 사용내역 공개</span></a></li>
+                                            <li><a href="#" target="_blank" title="새창열림"><span>발주계획</span></a></li>
+                                            <li><a href="#" target="_blank" title="새창열림"><span>입찰공고</span></a></li>
+                                            <li><a href="#" target="_blank" title="새창열림"><span>개찰결과</span></a></li>
+                                            <li><a href="#" target="_blank" title="새창열림"><span>계약현황</span></a></li>
+                                            <li><a href="#" target="_blank" title="새창열림"><span>수의계약</span></a></li>
+                                            <li><a href="#"><span>신용카드 사용내역</span></a></li>
+                                            <li><a href="#"><span>물품선정결과공개</span></a></li>
+                                            <li><a href="#"><span>하도급 계약현황</span></a></li>
+                                        </ul>
+                                    </li>
+                                </ul>
+                            </nav>
+                            <!--END-->
+                        </div>
+                    </aside>
 				</div>
 			</div>
 		</div>
@@ -635,7 +639,7 @@ $(function () {
 			<section id="subContent" class="container">
 				<div class="subContent_body">
 					<div class="title_area">
-						<h2 id="pageTitle">메뉴명</h2>
+						<h2 id="pageTitle">공통 스타일가이드</h2>
 						<div class="snsBox">
 							<button type="button" class="btnShare"><i class="ri-share-line"></i><span class="hid">공유</span></button>
 							<div class="sns_more">
@@ -953,29 +957,29 @@ $(function () {
                     <p class="sub">텍스트 순서있는 목록 1~2차</p>
                     <p class="sub">목록은 ol 안에 ol을 포함하여 계층적 구조를 표현하며, 들여쓰기로 구분합니다. 각 단계는 상위 항목의 세부 항목으로 이해합니다.</p>
                     <div class="box-st basic">
-                        <ul class="order-st1">
-                            <li><span class="mrk">01</span>텍스트 순서있는 목록 1차 입니다. 
-                                <ul class="order-st2">
+                        <ol class="order-st1">
+                            <li><span class="mrk">01</span>텍스트 순서있는 목록 1차 입니다.
+                                <ol class="order-st2">
                                     <li><span class="mrk">가</span>텍스트 순서있는 목록 2차 입니다.</li>
                                     <li><span class="mrk">나</span>텍스트 순서있는 목록 2차 입니다. font-size:17px; font-weight: regular; color:#444; line-height:150%; 텍스트 순서있는 목록 2차 입니다. font-size:17px; font-weight: regular; color:#444; line-height:150%;</li>
-                                </ul>
+                                </ol>
                             </li>
                             <li><span class="mrk">02</span>텍스트 순서있는 목록 1차 입니다. font-size:18px; font-weight:regular; color:#333; line-height:auto; 텍스트 순서있는 목록 1차 입니다. font-size:18px; font-weight:regular; color:#333; line-height:150%; </li>
-                        </ul>
+                        </ol>
                     </div>
 
                     <!-- code -->
                     <p class="badge"><span>Code</span> <button class="btn-st sec" onclick="codeCopy(this)"><i class="ri-file-copy-line" aria-hidden="true"></i></button></p>
                     <textarea>
-<ul class="order-st1">
-    <li><span class="mrk">01</span>텍스트 순서있는 목록 1차 입니다. font-size:18px; font-weight:regular; color:#333; line-height:auto; 텍스트 순서있는 목록 1차 입니다. font-size:18px; font-weight:regular; color:#333; line-height:150%; 
-        <ul class="order-st2">
+<ol class="order-st1">
+    <li><span class="mrk">01</span>텍스트 순서있는 목록 1차 입니다. font-size:18px; font-weight:regular; color:#333; line-height:auto; 텍스트 순서있는 목록 1차 입니다. font-size:18px; font-weight:regular; color:#333; line-height:150%;
+        <ol class="order-st2">
             <li><span class="mrk">가</span>텍스트 순서있는 목록 2차 입니다.</li>
             <li><span class="mrk">나</span>텍스트 순서있는 목록 2차 입니다. font-size:17px; font-weight: regular; color:#444; line-height:150%; 텍스트 순서있는 목록 2차 입니다. font-size:17px; font-weight: regular; color:#444; line-height:150%;</li>
-        </ul>
+        </ol>
     </li>
     <li><span class="mrk">02</span>텍스트 순서있는 목록 1차 입니다.</li>
-</ul>
+</ol>
                     </textarea>
                     <!-- code -->
                 </article>
@@ -994,6 +998,158 @@ $(function () {
 <p>텍스트에 다운로드 링크의 경우에는 이렇게 사용합니다. <a href="" title="다운로드" class="txt-st link">다운로드 <i class="ri-download-2-line" aria-hidden="true"></i></a></p>
                     </textarea>
                     <!-- code -->
+                </article>
+                <article>
+                    <h4>Text Style</h4>
+                    <p class="sub">텍스트에 사용되는 스타일입니다</p>
+
+                    <p class="badge"><span>State</span> 안내, 주의 문구 작성 시.</p>
+                    <div class="box-st basic">
+                        <p class="bu_atte">안내, 주의 문구 작성 시</p>
+                        <p class="bu_wnrn">안내, 주의 문구 작성 시</p>
+                        <p class="bu_ment">안내, 주의 문구 작성 시</p>
+
+                        <!-- code -->
+                        <p class="badge"><span>Code</span> <button class="btn-st sec" onclick="codeCopy(this)"><i class="ri-file-copy-line" aria-hidden="true"></i></button></p>
+                        <textarea>
+<p class="bu_atte">안내, 주의 문구 작성 시</p>
+<p class="bu_ment">안내, 주의 문구 작성 시</p>
+<p class="bu_wnrn">안내, 주의 문구 작성 시</p>
+                        </textarea>
+                        <!-- //code -->
+                    </div>
+
+                    <p class="badge"><span>State</span> 텍스트 색상</p>
+                    <div class="box-st basic">
+                        <p class="pc_gray">텍스트 회색 pc_gray</p>
+                        <p class="pc_black">텍스트 검정 pc_black</p>
+                        <p class="pc_blue">텍스트 파랑 pc_blue</p>
+                        <p class="pc_sky">텍스트 하늘 pc_sky</p>
+                        <p class="pc_red">텍스트 빨강 pc_red</p>
+                        <p class="pc_navy">텍스트 네이비 pc_navy</p>
+                        <p class="pc_org">텍스트 주황 pc_org</p>
+                        <p class="pc_green">텍스트 초록 pc_green</p>
+                        <p class="pc_yellow">텍스트 노랑 pc_yellow</p>
+
+                        <!-- code -->
+                        <p class="badge"><span>Code</span> <button class="btn-st sec" onclick="codeCopy(this)"><i class="ri-file-copy-line" aria-hidden="true"></i></button></p>
+                        <textarea rows="9">
+<p class="pc_gray">텍스트 회색 pc_gray</p>
+<p class="pc_black">텍스트 검정 pc_black</p>
+<p class="pc_blue">텍스트 파랑 pc_blue</p>
+<p class="pc_sky">텍스트 하늘 pc_sky</p>
+<p class="pc_red">텍스트 빨강 pc_red</p>
+<p class="pc_navy">텍스트 네이비 pc_navy</p>
+<p class="pc_org">텍스트 주황 pc_org</p>
+<p class="pc_green">텍스트 초록 pc_green</p>
+<p class="pc_yellow">텍스트 노랑 pc_yellow</p>
+                        </textarea>
+                        <!-- //code -->
+                    </div>
+
+                    <p class="badge"><span>State</span> 텍스트 배경 색상</p>
+                    <div class="box-st basic">
+                        <div class="color-badge-grid">
+                        <span class="bg_gray">텍스트 배경 회색 bg_gray</span>
+                        <span class="bg_black">텍스트 배경 검정 bg_black</span>
+                        <span class="bg_blue">텍스트 배경 파랑 bg_blue</span>
+                        <span class="bg_sky">텍스트 배경 하늘 bg_sky</span>
+                        <span class="bg_red">텍스트 배경 빨강 bg_red</span>
+                        <span class="bg_navy">텍스트 배경 네이비 bg_navy</span>
+                        <span class="bg_org">텍스트 배경 주황 bg_org</span>
+                        <span class="bg_green">텍스트 배경 초록 bg_green</span>
+                        <span class="bg_yellow">텍스트 배경 노랑 bg_yellow</span>
+                        </div>
+
+                        <!-- code -->
+                        <p class="badge"><span>Code</span> <button class="btn-st sec" onclick="codeCopy(this)"><i class="ri-file-copy-line" aria-hidden="true"></i></button></p>
+                        <textarea rows="8">
+<span class="bg_gray">텍스트 배경 회색 bg_gray</span>
+<span class="bg_black">텍스트 배경 검정 bg_black</span>
+<span class="bg_blue">텍스트 배경 파랑 bg_blue</span>
+<span class="bg_sky">텍스트 배경 하늘 bg_sky</span>
+<span class="bg_red">텍스트 배경 빨강 bg_red</span>
+<span class="bg_navy">텍스트 배경 네이비 bg_navy</span>
+<span class="bg_org">텍스트 배경 주황 bg_org</span>
+<span class="bg_green">텍스트 배경 초록 bg_green</span>
+<span class="bg_yellow">텍스트 배경 노랑 bg_yellow</span>
+                        </textarea>
+                        <!-- //code -->
+                    </div>
+
+                    <p class="badge"><span>State</span> 강조 타입 및 폰트 변경</p>
+                    <div class="box-st basic">
+                        <p class="Tline_b">텍스트 밑줄 Tline_b</p>
+                        <p class="f_weightB">텍스트 강조 f_weightB</p>
+                        <p class="font_Fr">텍스트 Regular font_FR</p>
+                        <p class="font_Fm">텍스트 Medium font_FM</p>
+                        <p class="font_Fb">텍스트 Bold font_FB</p>
+
+                        <!-- code -->
+                        <p class="badge"><span>Code</span> <button class="btn-st sec" onclick="codeCopy(this)"><i class="ri-file-copy-line" aria-hidden="true"></i></button></p>
+                        <textarea rows="5">
+<p class="Tline_b">텍스트 밑줄 Tline_b</p>
+<p class="f_weightB">텍스트 강조 f_weightB</p>
+<p class="font_Fr">텍스트 Regular font_FR</p>
+<p class="font_Fm">텍스트 Medium font_FM</p>
+<p class="font_Fb">텍스트 Bold font_FB</p>
+                        </textarea>
+                        <!-- //code -->
+                    </div>
+
+                    <p class="badge"><span>State</span> 폰트 크기</p>
+                    <div class="box-st basic">
+                        <p class="fs12">폰트 크기12 fs12</p>
+                        <p class="fs13">폰트 크기13 fs13</p>
+                        <p class="fs14">폰트 크기14 fs14</p>
+                        <p class="fs16">폰트 크기16 fs16</p>
+                        <p class="fs18">폰트 크기18 fs18</p>
+                        <p class="fs20">폰트 크기20 fs20</p>
+                        <p class="fs22">폰트 크기22 fs22</p>
+                        <p class="fs24">폰트 크기24 fs24</p>
+                        <p class="fs26">폰트 크기26 fs26</p>
+
+                        <!-- code -->
+                        <p class="badge"><span>Code</span> <button class="btn-st sec" onclick="codeCopy(this)"><i class="ri-file-copy-line" aria-hidden="true"></i></button></p>
+                        <textarea rows="8">
+<p class="fs12">폰트 크기12 fs12</p>
+<p class="fs13">폰트 크기13 fs13</p>
+<p class="fs14">폰트 크기14 fs14</p>
+<p class="fs16">폰트 크기16 fs16</p>
+<p class="fs18">폰트 크기18 fs18</p>
+<p class="fs20">폰트 크기20 fs20</p>
+<p class="fs22">폰트 크기22 fs22</p>
+<p class="fs24">폰트 크기24 fs24</p>
+<p class="fs26">폰트 크기26 fs26</p>
+                        </textarea>
+                        <!-- //code -->
+                    </div>
+
+                    <p class="badge"><span>State</span> 구분선 : 상하 여백</p>
+                    <div class="box-st basic">
+                        <p class="line-dot"></p>
+
+                        <!-- code -->
+                        <p class="badge"><span>Code</span> <button class="btn-st sec" onclick="codeCopy(this)"><i class="ri-file-copy-line" aria-hidden="true"></i></button></p>
+                        <textarea >
+<p class="line-dot"></p>
+                        </textarea>
+                        <!-- //code -->
+                    </div>
+
+                    <p class="badge"><span>State</span> 구분선 : 여백 X</p>
+                    <div class="box-st basic">
+                        <p class="line-dot_b"></p>
+
+                        <!-- code -->
+                        <p class="badge"><span>Code</span> <button class="btn-st sec" onclick="codeCopy(this)"><i class="ri-file-copy-line" aria-hidden="true"></i></button></p>
+                        <textarea >
+<p class="line-dot_b"></p>
+                        </textarea>
+                        <!-- //code -->
+                    </div>
+
+
                 </article>
             </div>
             <!-- //TEXT -->
@@ -1071,7 +1227,7 @@ $(function () {
                     <p class="sub">border:1px solid #ccc; padding:40px; Text-align:center;</p>
                     <div class="box-st basic">
                         <div class="box-st img rsp_img ac">
-                            <img src="../images/con_com/img_temp.png" alt="임시 이미지">
+                            <img src="/images/common/con_com/img_temp.png" alt="임시 이미지">
                         </div>
                     </div>
 
@@ -1079,7 +1235,7 @@ $(function () {
                     <p class="badge"><span>Code</span> <button class="btn-st sec" onclick="codeCopy(this)"><i class="ri-file-copy-line" aria-hidden="true"></i></button></p>
                     <textarea>
 <div class="box-st img rsp_img ac">
-    <img src="../images/con_com/img_temp.png" alt="임시 이미지">
+    <img src="/images/common/con_com/img_temp.png" alt="임시 이미지">
 </div>
                     </textarea>
                     <!-- code -->
@@ -2039,300 +2195,61 @@ $(function () {
                             </div>
                         </div>
                     </div>
-                    
-                    <p class="badge"><span>File Download</span> 각 파일타입과 다운로드 or 새창여부를 표시하는 버튼 유형입니다.</p>
+
+                    <p class="badge"><span>Only Button</span> 버튼만 있는 페이지 스타일입니다.</p>
 
                     <div class="box-st basic">
-                        <a href="" target="download" title="PDF 파일 다운로드" class="btn-st file">
-                            <span><i class="ri-file-pdf-2-line" aria-hidden="true"></i></span>
-                            PDF 다운로드 버튼
-                            <i class="ri-download-2-line" aria-hidden="true"></i>
-                        </a>
-                        <a href="" target="download" title="File 파일 다운로드" class="btn-st file">
-                            <span><i class="ri-file-list-2-line" aria-hidden="true"></i></span>
-                            File 다운로드 버튼
-                            <i class="ri-download-2-line" aria-hidden="true"></i>
-                        </a>
-                        <a href="" target="download" title="Excel 파일 다운로드" class="btn-st file">
-                            <span><i class="ri-file-excel-2-line" aria-hidden="true"></i></span>
-                            Excel 다운로드 버튼
-                            <i class="ri-download-2-line" aria-hidden="true"></i>
-                        </a>
-                        <a href="" target="download" title="Hwp 파일 다운로드" class="btn-st file">
-                            <span><i class="ri-file-hwp-line" aria-hidden="true"></i></span>
-                            Hwp 다운로드 버튼
-                            <i class="ri-download-2-line" aria-hidden="true"></i>
-                        </a>
-                                    
-                        <!-- code -->
-                        <p class="badge"><span>Code</span> <button class="btn-st sec" onclick="codeCopy(this)"><i class="ri-file-copy-line" aria-hidden="true"></i></button></p>
-                        <textarea>
-<a href="" target="download" title="PDF 파일 다운로드" class="btn-st file">
-    <span><i class="ri-file-pdf-2-line" aria-hidden="true"></i></span>
-    PDF 다운로드 버튼
-    <i class="ri-download-2-line" aria-hidden="true"></i>
-</a>
-<a href="" target="download" title="File 파일 다운로드" class="btn-st file">
-    <span><i class="ri-file-list-2-line" aria-hidden="true"></i></span>
-    File 다운로드 버튼
-    <i class="ri-download-2-line" aria-hidden="true"></i>
-</a>
-<a href="" target="download" title="Excel 파일 다운로드" class="btn-st file">
-    <span><i class="ri-file-excel-2-line" aria-hidden="true"></i></span>
-    Excel 다운로드 버튼
-    <i class="ri-download-2-line" aria-hidden="true"></i>
-</a>
-<a href="" target="download" title="Hwp 파일 다운로드" class="btn-st file">
-    <span><i class="ri-file-hwp-line" aria-hidden="true"></i></span>
-    Hwp 다운로드 버튼
-    <i class="ri-download-2-line" aria-hidden="true"></i>
-</a>
-                        </textarea>
-                        <!-- //code -->
-
-                        <p class="line-dot"></p>
-                        
-                        <a href="" target="_blank" title="새창" class="btn-st file">
-                            <span><i class="ri-file-pdf-2-line" aria-hidden="true"></i></span>
-                            PDF 새창 보기 버튼
-                            <i class="ri-share-box-line" aria-hidden="true"></i>
-                        </a>
-                        <a href="" target="_blank" title="새창" class="btn-st file">
-                            <span><i class="ri-file-list-2-line" aria-hidden="true"></i></span>
-                            File 새창 보기 버튼
-                            <i class="ri-share-box-line" aria-hidden="true"></i>
-                        </a>
-                        <a href="" target="_blank" title="새창" class="btn-st file">
-                            <span><i class="ri-file-excel-2-line" aria-hidden="true"></i></span>
-                            Excel 새창 보기 버튼
-                            <i class="ri-share-box-line" aria-hidden="true"></i>
-                        </a>
-                        <a href="" target="_blank" title="새창" class="btn-st file">
-                            <span><i class="ri-file-hwp-line" aria-hidden="true"></i></span>
-                            Hwp 새창 보기 버튼
-                            <i class="ri-share-box-line" aria-hidden="true"></i>
-                        </a>
-                                    
-                        <!-- code -->
-                        <p class="badge"><span>Code</span> <button class="btn-st sec" onclick="codeCopy(this)"><i class="ri-file-copy-line" aria-hidden="true"></i></button></p>
-                        <textarea>
- <a href="" target="_blank" title="새창" class="btn-st file">
-    <span><i class="ri-file-pdf-2-line" aria-hidden="true"></i></span>
-    PDF 새창 보기 버튼
-    <i class="ri-share-box-line" aria-hidden="true"></i>
-</a>
-<a href="" target="_blank" title="새창" class="btn-st file">
-    <span><i class="ri-file-list-2-line" aria-hidden="true"></i></span>
-    File 새창 보기 버튼
-    <i class="ri-share-box-line" aria-hidden="true"></i>
-</a>
-<a href="" target="_blank" title="새창" class="btn-st file">
-    <span><i class="ri-file-excel-2-line" aria-hidden="true"></i></span>
-    Excel 새창 보기 버튼
-    <i class="ri-share-box-line" aria-hidden="true"></i>
-</a>
-<a href="" target="_blank" title="새창" class="btn-st file">
-    <span><i class="ri-file-hwp-line" aria-hidden="true"></i></span>
-    Hwp 새창 보기 버튼
-    <i class="ri-share-box-line" aria-hidden="true"></i>
-</a>
-                        </textarea>
-                        <!-- //code -->
+                        <div class="btns only">
+                            <a href="" target="download" download="" title="pdf파일 다운로드" class="btn-st file btn-w100 pdf"><span>파일 다운로드 파일 다운로드 파일 다운로드 100%</span><i class="ri-download-2-line" aria-hidden="true"></i></a>
+                            <a href="" target="download" download="" title="xls파일 다운로드" class="btn-st file btn-w50 xls"><span>파일 다운로드 파일 다운로드 파일 다운로드 50%</span><i class="ri-download-2-line" aria-hidden="true"></i></a>
+                            <a href="" target="download" download="" title="xlsx파일 다운로드" class="btn-st file btn-w50 xlsx"><span>파일 다운로드 파일 다운로드 파일 다운로드 50%</span><i class="ri-download-2-line" aria-hidden="true"></i></a>
+                            <a href="" target="download" download="" title="파일 다운로드" class="btn-st file btn-w33"><span>파일 다운로드 파일 다운로드 파일 다운로드 33%</span><i class="ri-download-2-line" aria-hidden="true"></i></a>
+                            <a href="" target="download" download="" title="hwp파일 다운로드" class="btn-st file btn-w33 hwp"><span>파일 다운로드 파일 다운로드 파일 다운로드 33%</span><i class="ri-download-2-line" aria-hidden="true"></i></a>
+                            <a href="" target="download" download="" title="docx파일 다운로드" class="btn-st file btn-w33 docx"><span>파일 다운로드 파일 다운로드 파일 다운로드 33%</span><i class="ri-download-2-line" aria-hidden="true"></i></a>
+                            <a href="" target="download" download="" title="ppt파일 다운로드" class="btn-st file btn-w25 ppt"><span>파일 다운로드 파일 다운로드 파일 다운로드 25%</span><i class="ri-download-2-line" aria-hidden="true"></i></a>
+                            <a href="" target="download" download="" title="파일 다운로드" class="btn-st file btn-w25"><span>파일 다운로드 파일 다운로드 파일 다운로드 25%</span><i class="ri-download-2-line" aria-hidden="true"></i></a>
+                            <a href="" target="download" download="" title="파일 다운로드" class="btn-st file btn-w25"><span>파일 다운로드 파일 다운로드 파일 다운로드 25%</span><i class="ri-download-2-line" aria-hidden="true"></i></a>
+                            <a href="" target="download" download="" title="파일 다운로드" class="btn-st file btn-w25"><span>파일 다운로드 파일 다운로드 파일 다운로드 25%</span><i class="ri-download-2-line" aria-hidden="true"></i></a>
+                            <a href="" target="_blank" title="파일새창으로확인" class="btn-st file btn-w100"><span>파일 새창으로 확인 파일 새창으로 확인 파일 새창으로 확인 100%</span><i class="ri-share-box-line" aria-hidden="true"></i></a>
+                            <a href="" target="_blank" title="파일새창으로확인" class="btn-st file btn-w50"><span>파일 새창으로 확인 파일 새창으로 확인 파일 새창으로 확인 50%</span><i class="ri-share-box-line" aria-hidden="true"></i></a>
+                            <a href="" target="_blank" title="파일새창으로확인" class="btn-st file btn-w50"><span>파일 새창으로 확인 파일 새창으로 확인 파일 새창으로 확인 50%</span><i class="ri-share-box-line" aria-hidden="true"></i></a>
+                            <a href="" target="_blank" title="파일새창으로확인" class="btn-st file btn-w33"><span>파일 새창으로 확인 파일 새창으로 확인 파일 새창으로 확인 33%</span><i class="ri-share-box-line" aria-hidden="true"></i></a>
+                            <a href="" target="_blank" title="파일새창으로확인" class="btn-st file btn-w33"><span>파일 새창으로 확인 파일 새창으로 확인 파일 새창으로 확인 33%</span><i class="ri-share-box-line" aria-hidden="true"></i></a>
+                            <a href="" target="_blank" title="파일새창으로확인" class="btn-st file btn-w33"><span>파일 새창으로 확인 파일 새창으로 확인 파일 새창으로 확인 33%</span><i class="ri-share-box-line" aria-hidden="true"></i></a>
+                            <a href="" target="_blank" title="파일새창으로확인" class="btn-st file btn-w25"><span>파일 새창으로 확인 파일 새창으로 확인 파일 새창으로 확인 25%</span><i class="ri-share-box-line" aria-hidden="true"></i></a>
+                            <a href="" target="_blank" title="파일새창으로확인" class="btn-st file btn-w25"><span>파일 새창으로 확인 파일 새창으로 확인 파일 새창으로 확인 25%</span><i class="ri-share-box-line" aria-hidden="true"></i></a>
+                            <a href="" target="_blank" title="파일새창으로확인" class="btn-st file btn-w25"><span>파일 새창으로 확인 파일 새창으로 확인 파일 새창으로 확인 25%</span><i class="ri-share-box-line" aria-hidden="true"></i></a>
+                            <a href="" target="_blank" title="파일새창으로확인" class="btn-st file btn-w25"><span>파일 새창으로 확인 파일 새창으로 확인 파일 새창으로 확인 25%</span><i class="ri-share-box-line" aria-hidden="true"></i></a>
+                        </div>
                     </div>
-                    
-                    <p class="badge"><span>File Download Align</span> 각 파일타입과 다운로드 or 새창여부를 표시하는 버튼의 정렬 스타일입니다.</p>
 
-                    <div class="box-st basic">
-                        <div class="align-wrap col-2 btn-file">
-                            <a href="" target="download" title="PDF 파일 다운로드" class="btn-st file">
-                                <span><i class="ri-file-pdf-2-line" aria-hidden="true"></i></span>
-                                PDF 다운로드 버튼
-                                <i class="ri-download-2-line" aria-hidden="true"></i>
-                            </a>
-                            <a href="" target="_blank" title="새창" class="btn-st file">
-                                <span><i class="ri-file-excel-2-line" aria-hidden="true"></i></span>
-                                Excel 새창 보기 버튼
-                                <i class="ri-share-box-line" aria-hidden="true"></i>
-                            </a>
-                        </div>
-                                    
-                        <!-- code -->
-                        <p class="badge"><span>Code</span> <button class="btn-st sec" onclick="codeCopy(this)"><i class="ri-file-copy-line" aria-hidden="true"></i></button></p>
-                        <textarea>
-<div class="align-wrap col-2 btn-file">
-    <a href="" target="download" title="PDF 파일 다운로드" class="btn-st file">
-        <span><i class="ri-file-pdf-2-line" aria-hidden="true"></i></span>
-        PDF 다운로드 버튼
-        <i class="ri-download-2-line" aria-hidden="true"></i>
-    </a>
-    <a href="" target="_blank" title="새창" class="btn-st file">
-        <span><i class="ri-file-excel-2-line" aria-hidden="true"></i></span>
-        Excel 새창 보기 버튼
-        <i class="ri-share-box-line" aria-hidden="true"></i>
-    </a>
+                    <!-- code -->
+                    <p class="badge"><span>Code</span> <button class="btn-st sec" onclick="codeCopy(this)"><i class="ri-file-copy-line" aria-hidden="true"></i></button></p>
+                    <textarea>
+<div class="btns only">
+    <a href="" target="download" download="" title="pdf파일 다운로드" class="btn-st file btn-w100 pdf"><span>파일 다운로드 파일 다운로드 파일 다운로드 100%</span><i class="ri-download-2-line" aria-hidden="true"></i></a>
+    <a href="" target="download" download="" title="xls파일 다운로드" class="btn-st file btn-w50 xls"><span>파일 다운로드 파일 다운로드 파일 다운로드 50%</span><i class="ri-download-2-line" aria-hidden="true"></i></a>
+    <a href="" target="download" download="" title="xlsx파일 다운로드" class="btn-st file btn-w50 xlsx"><span>파일 다운로드 파일 다운로드 파일 다운로드 50%</span><i class="ri-download-2-line" aria-hidden="true"></i></a>
+    <a href="" target="download" download="" title="파일 다운로드" class="btn-st file btn-w33"><span>파일 다운로드 파일 다운로드 파일 다운로드 33%</span><i class="ri-download-2-line" aria-hidden="true"></i></a>
+    <a href="" target="download" download="" title="hwp파일 다운로드" class="btn-st file btn-w33 hwp"><span>파일 다운로드 파일 다운로드 파일 다운로드 33%</span><i class="ri-download-2-line" aria-hidden="true"></i></a>
+    <a href="" target="download" download="" title="docx파일 다운로드" class="btn-st file btn-w33 docx"><span>파일 다운로드 파일 다운로드 파일 다운로드 33%</span><i class="ri-download-2-line" aria-hidden="true"></i></a>
+    <a href="" target="download" download="" title="ppt파일 다운로드" class="btn-st file btn-w25 ppt"><span>파일 다운로드 파일 다운로드 파일 다운로드 25%</span><i class="ri-download-2-line" aria-hidden="true"></i></a>
+    <a href="" target="download" download="" title="파일 다운로드" class="btn-st file btn-w25"><span>파일 다운로드 파일 다운로드 파일 다운로드 25%</span><i class="ri-download-2-line" aria-hidden="true"></i></a>
+    <a href="" target="download" download="" title="파일 다운로드" class="btn-st file btn-w25"><span>파일 다운로드 파일 다운로드 파일 다운로드 25%</span><i class="ri-download-2-line" aria-hidden="true"></i></a>
+    <a href="" target="download" download="" title="파일 다운로드" class="btn-st file btn-w25"><span>파일 다운로드 파일 다운로드 파일 다운로드 25%</span><i class="ri-download-2-line" aria-hidden="true"></i></a>
+    <a href="" target="_blank" title="파일새창으로확인" class="btn-st file btn-w100"><span>파일 새창으로 확인 파일 새창으로 확인 파일 새창으로 확인 100%</span><i class="ri-share-box-line" aria-hidden="true"></i></a>
+    <a href="" target="_blank" title="파일새창으로확인" class="btn-st file btn-w50"><span>파일 새창으로 확인 파일 새창으로 확인 파일 새창으로 확인 50%</span><i class="ri-share-box-line" aria-hidden="true"></i></a>
+    <a href="" target="_blank" title="파일새창으로확인" class="btn-st file btn-w50"><span>파일 새창으로 확인 파일 새창으로 확인 파일 새창으로 확인 50%</span><i class="ri-share-box-line" aria-hidden="true"></i></a>
+    <a href="" target="_blank" title="파일새창으로확인" class="btn-st file btn-w33"><span>파일 새창으로 확인 파일 새창으로 확인 파일 새창으로 확인 33%</span><i class="ri-share-box-line" aria-hidden="true"></i></a>
+    <a href="" target="_blank" title="파일새창으로확인" class="btn-st file btn-w33"><span>파일 새창으로 확인 파일 새창으로 확인 파일 새창으로 확인 33%</span><i class="ri-share-box-line" aria-hidden="true"></i></a>
+    <a href="" target="_blank" title="파일새창으로확인" class="btn-st file btn-w33"><span>파일 새창으로 확인 파일 새창으로 확인 파일 새창으로 확인 33%</span><i class="ri-share-box-line" aria-hidden="true"></i></a>
+    <a href="" target="_blank" title="파일새창으로확인" class="btn-st file btn-w25"><span>파일 새창으로 확인 파일 새창으로 확인 파일 새창으로 확인 25%</span><i class="ri-share-box-line" aria-hidden="true"></i></a>
+    <a href="" target="_blank" title="파일새창으로확인" class="btn-st file btn-w25"><span>파일 새창으로 확인 파일 새창으로 확인 파일 새창으로 확인 25%</span><i class="ri-share-box-line" aria-hidden="true"></i></a>
+    <a href="" target="_blank" title="파일새창으로확인" class="btn-st file btn-w25"><span>파일 새창으로 확인 파일 새창으로 확인 파일 새창으로 확인 25%</span><i class="ri-share-box-line" aria-hidden="true"></i></a>
+    <a href="" target="_blank" title="파일새창으로확인" class="btn-st file btn-w25"><span>파일 새창으로 확인 파일 새창으로 확인 파일 새창으로 확인 25%</span><i class="ri-share-box-line" aria-hidden="true"></i></a>
 </div>
-                        </textarea>
-                        <!-- //code -->
-
-                        <p class="line-dot"></p>
-                        
-                        <div class="align-wrap col-3 btn-file">
-                            <a href="" target="download" title="PDF 파일 다운로드" class="btn-st file">
-                                <span><i class="ri-file-pdf-2-line" aria-hidden="true"></i></span>
-                                PDF 다운로드 버튼
-                                <i class="ri-download-2-line" aria-hidden="true"></i>
-                            </a>
-                            <a href="" target="_blank" title="새창" class="btn-st file">
-                                <span><i class="ri-file-excel-2-line" aria-hidden="true"></i></span>
-                                Excel 새창 보기 버튼
-                                <i class="ri-share-box-line" aria-hidden="true"></i>
-                            </a>
-                            <a href="" target="download" title="File 파일 다운로드" class="btn-st file">
-                                <span><i class="ri-file-list-2-line" aria-hidden="true"></i></span>
-                                File 다운로드 버튼
-                                <i class="ri-download-2-line" aria-hidden="true"></i>
-                            </a>
-                        </div>
-                                    
-                        <!-- code -->
-                        <p class="badge"><span>Code</span> <button class="btn-st sec" onclick="codeCopy(this)"><i class="ri-file-copy-line" aria-hidden="true"></i></button></p>
-                        <textarea>
-<div class="align-wrap col-3 btn-file">
-    <a href="" target="download" title="PDF 파일 다운로드" class="btn-st file">
-        <span><i class="ri-file-pdf-2-line" aria-hidden="true"></i></span>
-        PDF 다운로드 버튼
-        <i class="ri-download-2-line" aria-hidden="true"></i>
-    </a>
-    <a href="" target="_blank" title="새창" class="btn-st file">
-        <span><i class="ri-file-excel-2-line" aria-hidden="true"></i></span>
-        Excel 새창 보기 버튼
-        <i class="ri-share-box-line" aria-hidden="true"></i>
-    </a>
-    <a href="" target="download" title="File 파일 다운로드" class="btn-st file">
-        <span><i class="ri-file-list-2-line" aria-hidden="true"></i></span>
-        File 다운로드 버튼
-        <i class="ri-download-2-line" aria-hidden="true"></i>
-    </a>
-</div>
-                        </textarea>
-                        <!-- //code -->
-
-                        <p class="line-dot"></p>
-                        
-                        <div class="align-wrap btn-file">
-                            <a href="" target="_blank" title="새창" class="btn-st file">
-                                <span><i class="ri-file-pdf-2-line" aria-hidden="true"></i></span>
-                                PDF 새창 보기 버튼
-                                <i class="ri-share-box-line" aria-hidden="true"></i>
-                            </a>
-                            <a href="" target="_blank" title="새창" class="btn-st file">
-                                <span><i class="ri-file-list-2-line" aria-hidden="true"></i></span>
-                                File 새창 보기 버튼
-                                <i class="ri-share-box-line" aria-hidden="true"></i>
-                            </a>
-                            <a href="" target="_blank" title="새창" class="btn-st file">
-                                <span><i class="ri-file-excel-2-line" aria-hidden="true"></i></span>
-                                Excel 새창 보기 버튼
-                                <i class="ri-share-box-line" aria-hidden="true"></i>
-                            </a>
-                            <a href="" target="_blank" title="새창" class="btn-st file">
-                                <span><i class="ri-file-hwp-line" aria-hidden="true"></i></span>
-                                Hwp 새창 보기 버튼
-                                <i class="ri-share-box-line" aria-hidden="true"></i>
-                            </a>
-                        </div>
-                                    
-                        <!-- code -->
-                        <p class="badge"><span>Code</span> <button class="btn-st sec" onclick="codeCopy(this)"><i class="ri-file-copy-line" aria-hidden="true"></i></button></p>
-                        <textarea>
-<div class="align-wrap btn-file">
-    <a href="" target="_blank" title="새창" class="btn-st file">
-        <span><i class="ri-file-pdf-2-line" aria-hidden="true"></i></span>
-        PDF 새창 보기 버튼
-        <i class="ri-share-box-line" aria-hidden="true"></i>
-    </a>
-    <a href="" target="_blank" title="새창" class="btn-st file">
-        <span><i class="ri-file-list-2-line" aria-hidden="true"></i></span>
-        File 새창 보기 버튼
-        <i class="ri-share-box-line" aria-hidden="true"></i>
-    </a>
-    <a href="" target="_blank" title="새창" class="btn-st file">
-        <span><i class="ri-file-excel-2-line" aria-hidden="true"></i></span>
-        Excel 새창 보기 버튼
-        <i class="ri-share-box-line" aria-hidden="true"></i>
-    </a>
-    <a href="" target="_blank" title="새창" class="btn-st file">
-        <span><i class="ri-file-hwp-line" aria-hidden="true"></i></span>
-        Hwp 새창 보기 버튼
-        <i class="ri-share-box-line" aria-hidden="true"></i>
-    </a>
-</div>
-                        </textarea>
-                        <!-- //code -->
-
-                        <p class="line-dot"></p>
-
-                        <div class="align-wrap col-5 btn-file">
-                            <a href="" target="_blank" title="새창" class="btn-st file">
-                                <span><i class="ri-file-pdf-2-line" aria-hidden="true"></i></span>
-                                PDF 새창 보기 버튼
-                                <i class="ri-share-box-line" aria-hidden="true"></i>
-                            </a>
-                            <a href="" target="_blank" title="새창" class="btn-st file">
-                                <span><i class="ri-file-list-2-line" aria-hidden="true"></i></span>
-                                File 새창 보기 버튼
-                                <i class="ri-share-box-line" aria-hidden="true"></i>
-                            </a>
-                            <a href="" target="_blank" title="새창" class="btn-st file">
-                                <span><i class="ri-file-excel-2-line" aria-hidden="true"></i></span>
-                                Excel 새창 보기 버튼
-                                <i class="ri-share-box-line" aria-hidden="true"></i>
-                            </a>
-                            <a href="" target="_blank" title="새창" class="btn-st file">
-                                <span><i class="ri-file-hwp-line" aria-hidden="true"></i></span>
-                                Hwp 새창 보기 버튼
-                                <i class="ri-share-box-line" aria-hidden="true"></i>
-                            </a>
-                            <a href="" target="_blank" title="새창" class="btn-st file">
-                                <span><i class="ri-file-ppt-2-line" aria-hidden="true"></i></span>
-                                PPT 새창 보기 버튼
-                                <i class="ri-share-box-line" aria-hidden="true"></i>
-                            </a>
-                        </div>
-                                    
-                        <!-- code -->
-                        <p class="badge"><span>Code</span> <button class="btn-st sec" onclick="codeCopy(this)"><i class="ri-file-copy-line" aria-hidden="true"></i></button></p>
-                        <textarea>
-<div class="align-wrap col-5 btn-file">
-    <a href="" target="_blank" title="새창" class="btn-st file">
-        <span><i class="ri-file-pdf-2-line" aria-hidden="true"></i></span>
-        PDF 새창 보기 버튼
-        <i class="ri-share-box-line" aria-hidden="true"></i>
-    </a>
-    <a href="" target="_blank" title="새창" class="btn-st file">
-        <span><i class="ri-file-list-2-line" aria-hidden="true"></i></span>
-        File 새창 보기 버튼
-        <i class="ri-share-box-line" aria-hidden="true"></i>
-    </a>
-    <a href="" target="_blank" title="새창" class="btn-st file">
-        <span><i class="ri-file-excel-2-line" aria-hidden="true"></i></span>
-        Excel 새창 보기 버튼
-        <i class="ri-share-box-line" aria-hidden="true"></i>
-    </a>
-    <a href="" target="_blank" title="새창" class="btn-st file">
-        <span><i class="ri-file-hwp-line" aria-hidden="true"></i></span>
-        Hwp 새창 보기 버튼
-        <i class="ri-share-box-line" aria-hidden="true"></i>
-    </a>
-    <a href="" target="_blank" title="새창" class="btn-st file">
-        <span><i class="ri-file-ppt-2-line" aria-hidden="true"></i></span>
-        PPT 새창 보기 버튼
-        <i class="ri-share-box-line" aria-hidden="true"></i>
-    </a>
-</div>
-                        </textarea>
-                        <!-- //code -->
-                    </div>
+                    </textarea>
+                    <!-- //code -->
                 </article>
             </div>
         </section>
@@ -2535,7 +2452,7 @@ $(function () {
                     
                     <h5>Scrollable Table(Web)</h5>
                     <div class="tbl-st scroll-w">
-                        <table>
+                        <div class="tbl-scroll-inner"><table>
                             <caption>Grouped Table (Colgroup)</caption>
                             <colgroup>
                                 <col style="width: auto;">
@@ -2613,14 +2530,14 @@ $(function () {
                                     <td>td</td>
                                 </tr>
                             </tbody>
-                        </table>
+                        </table></div>
                     </div>
-                                
+
                     <!-- code -->
                     <p class="badge"><span>Code</span> <button class="btn-st sec" onclick="codeCopy(this)"><i class="ri-file-copy-line" aria-hidden="true"></i></button></p>
                     <textarea>
 <div class="tbl-st scroll-w">
-    <table>
+    <div class="tbl-scroll-inner"><table>
         <caption>Grouped Table (Colgroup)</caption>
         <colgroup>
             <col style="width: auto;">
@@ -2698,14 +2615,14 @@ $(function () {
                 <td>td</td>
             </tr>
         </tbody>
-    </table>
+    </table></div>
 </div>
                     </textarea>
                     <!-- //code -->
-                    
+
                     <h5>Scrollable Table(Mobile)</h5>
                     <div class="tbl-st scroll-m">
-                        <table>
+                        <div class="tbl-scroll-inner"><table>
                             <caption>Grouped Table (Colgroup)</caption>
                             <colgroup>
                                 <col span="4" style="width:25%;">
@@ -2735,15 +2652,15 @@ $(function () {
                                     <td>td</td>
                                 </tr>
                             </tbody>
-                        </table>
+                        </table></div>
                     </div>
-                    
-                                
+
+
                     <!-- code -->
                     <p class="badge"><span>Code</span> <button class="btn-st sec" onclick="codeCopy(this)"><i class="ri-file-copy-line" aria-hidden="true"></i></button></p>
                     <textarea>
 <div class="tbl-st scroll-m">
-    <table>
+    <div class="tbl-scroll-inner"><table>
         <caption>Grouped Table (Colgroup)</caption>
         <colgroup>
             <col span="4" style="width:25%;">
@@ -2773,6 +2690,241 @@ $(function () {
                 <td>td</td>
             </tr>
         </tbody>
+    </table></div>
+</div>
+                    </textarea>
+                    <!-- //code -->
+                </article>
+                <article>
+                    <h4>Style</h4>
+                    <p class="sub">테이틀 일부 셀에 배경/라인 스타일을 부여합니다.</p>
+                    <h5>배경 색상</h5>
+                    <div class="tbl-st">
+                        <table>
+                            <caption>Grouped Table (Colgroup)</caption>
+                            <colgroup>
+                                <col style="width: auto;">
+                            </colgroup>
+                            <thead>
+                                <tr>
+                                    <th scope="col">th</th>
+                                    <th scope="col">th</th>
+                                    <th scope="col">th</th>
+                                    <th scope="col">th</th>
+                                    <th scope="col">th</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr class="tbl_bg_bl">
+                                    <td>backgroud blue</td>
+                                    <td>backgroud blue</td>
+                                    <td>backgroud blue</td>
+                                    <td>backgroud blue</td>
+                                    <td>backgroud blue</td>
+                                </tr>
+                                <tr class="tbl_bg_ye">
+                                    <td>backgroud yellow</td>
+                                    <td>backgroud yellow</td>
+                                    <td>backgroud yellow</td>
+                                    <td>backgroud yellow</td>
+                                    <td>backgroud yellow</td>
+                                </tr>
+                                <tr class="tbl_bg_re">
+                                    <td>backgroud red</td>
+                                    <td>backgroud red</td>
+                                    <td>backgroud red</td>
+                                    <td>backgroud red</td>
+                                    <td>backgroud red</td>
+                                </tr>
+                                <tr class="tbl_bg_gr">
+                                    <td>backgroud green</td>
+                                    <td>backgroud green</td>
+                                    <td>backgroud green</td>
+                                    <td>backgroud green</td>
+                                    <td>backgroud green</td>
+                                </tr>
+                                <tr class="tbl_bg_org">
+                                    <td>backgroud orange</td>
+                                    <td>backgroud orange</td>
+                                    <td>backgroud orange</td>
+                                    <td>backgroud orange</td>
+                                    <td>backgroud orange</td>
+                                </tr>
+                                <tr>
+                                    <td class="tbl_bg_bl">backgroud blue</td>
+                                    <td class="tbl_bg_ye">backgroud yellow</td>
+                                    <td class="tbl_bg_re">backgroud red</td>
+                                    <td class="tbl_bg_gr">backgroud green</td>
+                                    <td class="tbl_bg_org">backgroud orange</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <!-- code -->
+                    <p class="badge"><span>Code</span> <button class="btn-st sec" onclick="codeCopy(this)"><i class="ri-file-copy-line" aria-hidden="true"></i></button></p>
+                    <textarea rows="20">
+<div class="tbl-st">
+    <table>
+        <caption>Grouped Table (Colgroup)</caption>
+        <colgroup>
+            <col style="width: auto;">
+        </colgroup>
+        <thead>
+            <tr>
+                <th scope="col">th</th>
+                <th scope="col">th</th>
+                <th scope="col">th</th>
+                <th scope="col">th</th>
+                <th scope="col">th</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr class="tbl_bg_bl">
+                <td>backgroud blue</td>
+                <td>backgroud blue</td>
+                <td>backgroud blue</td>
+                <td>backgroud blue</td>
+                <td>backgroud blue</td>
+            </tr>
+            <tr class="tbl_bg_ye">
+                <td>backgroud yellow</td>
+                <td>backgroud yellow</td>
+                <td>backgroud yellow</td>
+                <td>backgroud yellow</td>
+                <td>backgroud yellow</td>
+            </tr>
+            <tr class="tbl_bg_re">
+                <td>backgroud red</td>
+                <td>backgroud red</td>
+                <td>backgroud red</td>
+                <td>backgroud red</td>
+                <td>backgroud red</td>
+            </tr>
+            <tr class="tbl_bg_gr">
+                <td>backgroud green</td>
+                <td>backgroud green</td>
+                <td>backgroud green</td>
+                <td>backgroud green</td>
+                <td>backgroud green</td>
+            </tr>
+            <tr class="tbl_bg_org">
+                <td>backgroud orange</td>
+                <td>backgroud orange</td>
+                <td>backgroud orange</td>
+                <td>backgroud orange</td>
+                <td>backgroud orange</td>
+            </tr>
+            <tr>
+                <td class="tbl_bg_bl">backgroud blue</td>
+                <td class="tbl_bg_ye">backgroud yellow</td>
+                <td class="tbl_bg_re">backgroud red</td>
+                <td class="tbl_bg_gr">backgroud green</td>
+                <td class="tbl_bg_org">backgroud orange</td>
+            </tr>
+        </tbody>
+    </table>
+</div>
+                    </textarea>
+                    <!-- //code -->
+
+                    <h5>라인 색상</h5>
+                    <div class="tbl-st">
+                        <table>
+                            <caption>Grouped Table (Colgroup)</caption>
+                            <colgroup>
+                                <col style="width: auto;">
+                            </colgroup>
+                            <thead>
+                                <tr>
+                                    <th scope="col">th</th>
+                                    <th scope="col">th</th>
+                                    <th scope="col">th</th>
+                                    <th scope="col">th</th>
+                                    <th scope="col">th</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td class="tbl_l">4면 tbl_L</td>
+                                    <td class="tbl_Lbl">4면 tbl_Lbl</td>
+                                    <td class="tbl_Lre">4면 tbl_Lre</td>
+                                    <td class="tbl_Lgr">4면 tbl_Lgr</td>
+                                    <td class="tbl_Lye">4면 tbl_Lye</td>
+                                </tr>
+                                <tr>
+                                    <td class="tbl_L_l">좌측선 tbl_L_l</td>
+                                    <td class="tbl_Lbl_l">좌측선 tbl_Lbl_l</td>
+                                    <td class="tbl_Lre_l">좌측선 tbl_Lre_l</td>
+                                    <td class="tbl_Lgr_l">좌측선 tbl_Lgr_l</td>
+                                    <td class="tbl_Lye_l">좌측선 tbl_Lye_l</td>
+                                </tr>
+                                <tr>
+                                    <td class="tbl_L_t">상단선 tbl_L_t</td>
+                                    <td class="tbl_Lbl_t">상단선 tbl_Lbl_t</td>
+                                    <td class="tbl_Lre_t">상단선 tbl_Lre_t</td>
+                                    <td class="tbl_Lgr_t">상단선 tbl_Lgr_t</td>
+                                    <td class="tbl_Lye_t">상단선 tbl_Lye_t</td>
+                                </tr>
+                                <tr>
+                                    <td class="tbl_L_b">하단선 tbl_L_b</td>
+                                    <td class="tbl_Lbl_b">하단선 tbl_Lbl_b</td>
+                                    <td class="tbl_Lre_b">하단선 tbl_Lre_b</td>
+                                    <td class="tbl_Lgr_b">하단선 tbl_Lgr_b</td>
+                                    <td class="tbl_Lye_b">하단선 tbl_Lye_b</td>
+                                </tr>
+							</tbody>
+                        </table>
+                    </div>
+
+                    <!-- code -->
+                    <p class="badge"><span>Code</span> <button class="btn-st sec" onclick="codeCopy(this)"><i class="ri-file-copy-line" aria-hidden="true"></i></button></p>
+                    <textarea rows="20">
+<div class="tbl-st">
+    <table>
+        <caption>Grouped Table (Colgroup)</caption>
+        <colgroup>
+            <col style="width: auto;">
+        </colgroup>
+        <thead>
+            <tr>
+                <th scope="col">th</th>
+                <th scope="col">th</th>
+                <th scope="col">th</th>
+                <th scope="col">th</th>
+                <th scope="col">th</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td class="tbl_l">4면 tbl_L</td>
+                <td class="tbl_Lbl">4면 tbl_Lbl</td>
+                <td class="tbl_Lre">4면 tbl_Lre</td>
+                <td class="tbl_Lgr">4면 tbl_Lgr</td>
+                <td class="tbl_Lye">4면 tbl_Lye</td>
+            </tr>
+            <tr>
+                <td class="tbl_L_l">좌측선 tbl_L_l</td>
+                <td class="tbl_Lbl_l">좌측선 tbl_Lbl_l</td>
+                <td class="tbl_Lre_l">좌측선 tbl_Lre_l</td>
+                <td class="tbl_Lgr_l">좌측선 tbl_Lgr_l</td>
+                <td class="tbl_Lye_l">좌측선 tbl_Lye_l</td>
+            </tr>
+            <tr>
+                <td class="tbl_L_t">상단선 tbl_L_t</td>
+                <td class="tbl_Lbl_t">상단선 tbl_Lbl_t</td>
+                <td class="tbl_Lre_t">상단선 tbl_Lre_t</td>
+                <td class="tbl_Lgr_t">상단선 tbl_Lgr_t</td>
+                <td class="tbl_Lye_t">상단선 tbl_Lye_t</td>
+            </tr>
+            <tr>
+                <td class="tbl_L_b">하단선 tbl_L_b</td>
+                <td class="tbl_Lbl_b">하단선 tbl_Lbl_b</td>
+                <td class="tbl_Lre_b">하단선 tbl_Lre_b</td>
+                <td class="tbl_Lgr_b">하단선 tbl_Lgr_b</td>
+                <td class="tbl_Lye_b">하단선 tbl_Lye_b</td>
+            </tr>
+        </tbody>
     </table>
 </div>
                     </textarea>
@@ -2793,7 +2945,7 @@ $(function () {
                     <h4>Guide</h4>
                     <div class="box-st basic">
                         <div class="Coming-soon">
-                            <p><img src="../images/common/ready.png" alt="준비중 이미지"></p>
+                            <p><img src="/images/common/common/ready02.png" alt="준비중 이미지"></p>
                             <h3>콘텐츠를 <strong>준비중</strong>입니다</h3>
                             <p>보다 나은 서비스를 제공하기 위해 페이지를 준비하고 있습니다.<br>잠시만 기다려 주시기 바랍니다.</p>
                         </div>
@@ -2802,7 +2954,7 @@ $(function () {
                         <p class="badge"><span>Code</span> <button class="btn-st sec" onclick="codeCopy(this)"><i class="ri-file-copy-line" aria-hidden="true"></i></button></p>
                         <textarea>
 <div class="Coming-soon">
-    <p><img src="../images/common/ready.png" alt="준비중 이미지"></p>
+    <p><img src="/images/common/common/ready02.png" alt="준비중 이미지"></p>
     <h3>콘텐츠를 <strong>준비중</strong>입니다</h3>
     <p>보다 나은 서비스를 제공하기 위해 페이지를 준비하고 있습니다.<br>잠시만 기다려 주시기 바랍니다.</p>
 </div>
@@ -2822,7 +2974,81 @@ $(function () {
 				</div>
 			</section>
 			<!-- //서브 영역 -->
-		</div> 
+		</div>
 </div>
+
+
+<script>
+$(function () {
+	var $navList = $('.naivgator-list');
+	if (!$navList.length) return;
+
+	var $titles = $('.titWrap > h3');
+	if (!$titles.length) return;
+
+	var $nlUl = $('<ul>');
+	var $sections = [];
+	$titles.each(function (i) {
+		var $section = $(this).closest('section');
+		var id = $section.attr('id');
+		if (!id) {
+			id = 'navSection' + i;
+			$section.attr('id', id);
+		}
+		var $link = $('<a>').attr('href', '#' + id).text($(this).text().trim());
+		$nlUl.append($('<li>').append($link));
+		$sections.push($section);
+	});
+
+	$navList.empty().append($nlUl).addClass('nl-show');
+
+	var $items = $nlUl.children('li');
+	$items.first().addClass('active'); 
+	var SCROLL_OFFSET = 100;
+
+	$navList.on('click', 'a', function (e) {
+		e.preventDefault();
+		var $target = $($(this).attr('href'));
+		if (!$target.length) return;
+		$items.removeClass('active');
+		$(this).closest('li').addClass('active');
+		$('html, body').animate({ scrollTop: $target.offset().top - SCROLL_OFFSET }, 300);
+	});
+
+	var headerH = 0, nlTop = 0, nlNatTop = 0, nlNatLeft = 0;
+	function updateNavListGeom() {
+		headerH = $('#header #nav').outerHeight() || 0;
+		var $sc = $('.sub_content');
+		nlTop = ($sc.length ? ($sc.offset().top - $('#container').offset().top) : 0) + 40;
+		$navList.removeClass('nl-fixed').css({ top: nlTop, left: '' });
+		nlNatTop = $navList.offset().top;
+		nlNatLeft = $navList.offset().left;
+		$(window).trigger('scroll.navList');
+	}
+
+	function updateActiveByScroll() {
+		var scrollPos = $(window).scrollTop() + SCROLL_OFFSET;
+		var activeIdx = 0;
+		for (var i = 0; i < $sections.length; i++) {
+			if ($sections[i].offset().top <= scrollPos) activeIdx = i;
+			else break;
+		}
+		if (!$items.eq(activeIdx).hasClass('active')) {
+			$items.removeClass('active').eq(activeIdx).addClass('active');
+		}
+	}
+
+	$(window).off('scroll.navList').on('scroll.navList', function () {
+		if ($(window).scrollTop() + headerH >= nlNatTop) {
+			$navList.addClass('nl-fixed').css({ top: headerH, left: nlNatLeft });
+		} else {
+			$navList.removeClass('nl-fixed').css({ top: nlTop, left: '' });
+		}
+		updateActiveByScroll();
+	});
+	updateNavListGeom();
+	$(window).off('resize.navList').on('resize.navList', updateNavListGeom);
+});
+</script>
 </body>
 </html>
