@@ -53,6 +53,7 @@ function isBoardLike(text, href, url) {
   // 콘텐츠 배포 방식과 달리, "id="가 게시글 번호를 뜻하는 가장 흔한 게시판 스크립트
   // 관례라서 게시판으로 판단해 제외한다.
   if (isBoardEngineUrl(url) && /[?&]id=/i.test(url)) return true;
+  if (isSinglePostViewUrl(url)) return true;
   return false;
 }
 
@@ -70,7 +71,7 @@ function isExcludedMenuLink($, el, text, href, url, preserveBoardHeading = false
   // 무조건 제외한다. 일부 학교 사이트는 실제 콘텐츠 페이지도 게시판 엔진으로
   // 서비스하지만(예: hdps.gen.kg.kr), 게시판 엔진 URL을 메뉴로 그대로 가져오면
   // 게시글까지 함께 열람하게 되는 결과라 사용 목적(정적 마크업 변환)에 맞지 않는다.
-  if (isBoardEngineUrl(url)) return true;
+  if (isBoardEngineUrl(url) || isSinglePostViewUrl(url)) return true;
 
   if (!preserveBoardHeading && isBoardLike(text, href, url)) return true;
 
@@ -270,6 +271,27 @@ function isBoardEngineUrl(url) {
   }
 }
 
+// c2zHome류 일부 학교 CMS는 게시판을 별도 스크립트(board.php 등)가 아니라 공용
+// index.php에 "조회 모드" 파라미터로 얹어 서비스한다(예: index.php?id=30&hno=966&
+// mode=fv&page=1). 이런 사이트에서 메뉴(예: "학부모마당")가 게시판 목록이 아니라
+// 특정 글 하나(hno=966)를 그대로 가리키면, 그 글이 지워지거나 바뀌는 순간 메뉴가
+// 깨지고 애초에 메뉴로 의도한 게시판 전체가 아니라 글 하나만 캡처되어 사용 목적
+// (정적 마크업 변환)에 맞지 않는다. 경로만으로는 판별할 수 없으므로, "이 글 하나를
+// 보는 중" 임을 뜻하는 조회모드(mode=fv/view/read 등)와 글 식별자(hno=/wr_id=/idx=
+// /seq=/article_no=) 파라미터가 함께 있을 때만 좁게 판별한다(단독으로는 오탐 위험이
+// 커서 두 조건을 AND로 묶는다 — isBoardLike 주석의 hdps.gen.kg.kr 사례 참고).
+function isSinglePostViewUrl(url) {
+  if (!url) return false;
+  try {
+    const { search } = new URL(url);
+    const hasViewMode = /[?&](?:mode|bmode)=(?:fv|view|read|viewform)\b/i.test(search);
+    const hasPostId = /[?&](?:hno|wr_id|idx|article_no|seq)=\d+/i.test(search);
+    return hasViewMode && hasPostId;
+  } catch {
+    return false;
+  }
+}
+
 // 메뉴 하나의 실제 페이지 안에 "규정/명단/게시판"처럼 sid=로 서로 연결된 탭이 있는 경우가
 // 있다. 사이트마다 URL 파라미터 방식이 달라서(id=35&sid=35 처럼 sid를 쓰는 곳도 있고,
 // page_code=education_12_05 / education_12_04 처럼 접두사만 공유하는 곳도 있다) URL
@@ -309,7 +331,7 @@ function extractSiblingTabs(html, pageUrl, siteHostname) {
     if (!text || text.length < 2) return;
     if (/^더\s*보기$/i.test(text)) return; // 게시판 위젯의 "더보기"는 탭이 아니라 목록 링크일 뿐이다.
     if (isBoardLike(text, href, url.href)) return; // 탭 중 게시판은 제외
-    if (isBoardEngineUrl(url.href)) return; // xboard/board.php 등 게시판 엔진 주소 자체도 제외
+    if (isBoardEngineUrl(url.href) || isSinglePostViewUrl(url.href)) return; // xboard/board.php 등 게시판 엔진 주소, 특정 글 상세보기 링크 자체도 제외
     // 게시판이 아닌 페이지(예: 메인 홈페이지의 "최근 게시글" 위젯)에도 게시글로
     // 바로 연결되는 링크가 tab류 컨테이너 안에 섞여 있는 경우가 있다. number=(글
     // 번호)나 searchword=/keyset=(글쓴이 검색) 파라미터가 있으면 게시글 자체를
@@ -343,7 +365,7 @@ async function mapWithConcurrency(items, limit, mapper) {
 async function expandMenusWithTabs(menus, siteHostname) {
   const infoByIndex = await mapWithConcurrency(menus, 5, async menu => {
     if (!menu.url) return { tabs: [], isLogin: false };
-    if (isBoardEngineUrl(menu.url)) return { tabs: [], isLogin: false }; // 게시판 페이지는 열어보지 않는다
+    if (isBoardEngineUrl(menu.url) || isSinglePostViewUrl(menu.url)) return { tabs: [], isLogin: false }; // 게시판 페이지·특정 글 상세보기는 열어보지 않는다
     try {
       const { html, finalUrl } = await fetchHtml(menu.url);
       const $ = cheerio.load(html);
@@ -366,12 +388,16 @@ async function expandMenusWithTabs(menus, siteHostname) {
         // 건너뛰고, 다르면(예: "운영위원회" → "규정") 같은 URL이라도 그 탭 라벨을 그대로
         // 살려 첫 번째 하위 메뉴로 추가한다.
         if (tab.label === menu.label) return;
-        expanded.push({ label: tab.label, url: tab.url, depth: menu.depth + 1 });
+        // viaTab: 이 항목은 GNB 구조상 진짜 하위메뉴가 아니라, 부모 메뉴 페이지 안의
+        // 탭(형제 페이지)일 뿐이다. 프런트에서 "depth+1 자식이 바로 뒤따르면 부모를
+        // 부제목으로만 표시"하는 휴리스틱을 적용하면, 학교규칙처럼 부모 자신도 실제
+        // 콘텐츠 페이지인 경우까지 클릭 불가능한 제목으로 오인식되므로 구분 표시한다.
+        expanded.push({ label: tab.label, url: tab.url, depth: menu.depth + 1, viaTab: true });
         return;
       }
       if (seenUrls.has(tab.url)) return;
       seenUrls.add(tab.url);
-      expanded.push({ label: tab.label, url: tab.url, depth: menu.depth + 1 });
+      expanded.push({ label: tab.label, url: tab.url, depth: menu.depth + 1, viaTab: true });
     });
   });
   return expanded;

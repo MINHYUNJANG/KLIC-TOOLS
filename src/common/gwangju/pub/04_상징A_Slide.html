@@ -1,0 +1,659 @@
+<!DOCTYPE html>
+<html lang="ko" data-theme="default"><!-- color theme -->
+<head>
+	<meta charset="utf-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge"/>
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>All in One School</title>
+	<link rel="icon" href="../images/favicon.ico">
+
+	<link rel="stylesheet" href="../css/layout.css" media="all">
+	<link rel="stylesheet" href="../css/swiper.min.css" media="all">
+
+	<link rel="stylesheet" href="../css/con_com.css" media="all">
+	<link rel="stylesheet" href="../css/basic.css" media="all">
+	<link rel="stylesheet" href="../css/sub_com.css" media="all">
+	<link rel="stylesheet" href="../css/theme.css" media="all">
+	<link rel="stylesheet" href="../css/ntt.css" media="all">
+
+	<!--[if lt IE 9]>
+	<script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+	<script src="https://oss.maxcdn.com/libs/respond.js/1.3.0/respond.min.js"></script>
+	<![endif]-->
+
+	<script src="../js/jquery.min.js"></script>
+	<script src="../js/swiper.min.js"></script>
+	<script src="../js/common.js"></script>
+	<script src="../js/con_com.js"></script>
+	<script src="../js/sub_com.js"></script>
+<!-- contents motion -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
+</head>
+
+<body> 
+<!-- 바로가기 -->
+<div id="skipArea"> 
+	<a href="#container">본문으로 바로가기</a>
+	<a href="#gnb">메인메뉴 바로가기</a>
+</div>
+<!-- //바로가기 -->
+<div id="wrap" data-theme="blue">
+	
+	<!-- header -->
+<header id="header">
+	<div class="header_wrap container">
+		<div class="header-branding">
+			<h1><a href="#"><img src="/images/web/goeic/common/logo.png" alt="경기도 이천교육지원청"></a></h1>
+			<button class="searchOpen" id="searchOpen"><i class="ri-search-line"></i><span class="hid">검색 활성화</span></button>
+			<div class="box_search_0 sch_wrap">
+				<form name="searchForm" id="searchForm" method="POST" target="_blank">
+					<input type="text" placeholder="검색어를 입력해주세요" name="qt" id="total_search" title="검색어를 입력해주세요">
+					<input type="hidden" name="sysId" value="goeic">
+					<button class="srch_btn" onclick="javascript:goSearchForm();"><i class="ri-search-line"></i><span class="hid">검색</span></button>
+				</form>
+				<button class="btnSearchClose" id="btnSearchClose">
+					<i class="xi-close" aria-hidden="true"></i><span class="hid">검색 비활성화</span>
+				</button>
+			</div>
+			<div class="topUtil">
+				<div class="util_wrap">
+					<a href="#">홈</a>
+
+<!-- 로그인 전 -->
+<ul class="user">
+	<li class="name mob">로그인 후 학교서비스를 이용해주세요</li>
+	<li><a href="#" title="로그인">로그인</a></li>
+	<li><a href="#" id="insertSbscrb" title="회원가입">회원가입</a></li>
+</ul>
+
+<!-- 로그인 후
+<ul class="user">
+	<li class="name">홍길동 (gildong)</li>
+	<li><a href="#" title="로그아웃">로그아웃</a></li>
+	<li><a href="#" title="마이페이지">마이페이지</a></li>
+	<li><a href="#" title="가입신청">가입신청</a></li>
+</ul>
+-->
+
+<ul class="util">
+	<li><a href="#">사이트맵</a></li>
+	<li><a href="#" target="_blank" title="관리자시스템">관리자시스템</a></li>
+</ul>
+
+<ul class="sitemap">
+	<li><a href="#" class="fullmenu" id="fullmenuOpen"><i class="ri-menu-3-line"></i><span>전체메뉴</span></a></li>
+</ul>
+				</div>
+			</div>
+		</div>
+	</div>
+
+	<!-- NAV : oneDown -->
+	<div id="nav" class="oneDown">
+		<div id="blind"></div>
+		<div id="gnb">
+			<div class="depth01 depWidth">
+				<ul>
+					<li><a href="#"><span>일정관리</span></a></li>
+					<li><a href="#"><span>알림마당</span></a>
+						<div class="depth02">
+							<div class="titBox">
+								<strong>알림마당</strong>
+								<p>메뉴를 클릭하시면 <br>해당 페이지로 이동합니다</p>
+							</div>
+							<ul class="group">
+								<li><a href="#"><span>공지사항</span></a></li>
+								<li><a href="#"><span>가정통신문(교육청)</span></a></li>
+								<li><a href="#"><span>공지사항(교육청)</span></a></li>
+								<li><a href="#"><span>보도자료현황</span></a></li>
+								<li><a href="#"><span>인사정보</span></a>
+									<div class="depth03">
+										<ul class="group">
+											<li><a href="#"><span>교원 인사정보</span></a></li>
+											<li><a href="#"><span>지방공무원 인사정보</span></a></li>
+											<li><a href="#"><span>교육공무직 인사정보</span></a></li>
+										</ul>
+									</div>
+								</li>
+								<li><a href="#"><span>교육공무직원도움방</span></a></li>
+								<li><a href="#"><span>전·편입학바로가기</span></a>
+									<div class="depth03">
+										<ul class="group">
+											<li><a href="#"><span>전·편입학바로가기</span></a></li>
+											<li><a href="#"><span>중학군재적학생수현황</span></a></li>
+										</ul>
+									</div>
+								</li>
+								<li><a href="#"><span>학원업무</span></a>
+									<div class="depth03">
+										<ul class="group">
+											<li><a href="#"><span>학원공지사항</span></a></li>
+											<li><a href="#"><span>학원설립안내서</span></a></li>
+											<li><a href="#"><span>교습소신고안내서</span></a></li>
+											<li><a href="#"><span>개인과외신고안내서</span></a></li>
+											<li><a href="#"><span>평생교육시설건립안내서</span></a></li>
+										</ul>
+									</div>
+								</li>
+								<li><a href="#"><span>유치원업무</span></a>
+									<div class="depth03">
+										<ul class="group">
+											<li><a href="#"><span>유치원 공지사항</span></a></li>
+											<li><a href="#"><span>사립유치원</span></a></li>
+										</ul>
+									</div>
+								</li>
+								<li><a href="#"><span>통학구역</span></a></li>
+								<li><a href="#" target="_blank" title="새창열림"><span>교육환경보호구역</span></a></li>
+								<li><a href="#"><span>재정공개</span></a>
+									<div class="depth03">
+										<ul class="group">
+											<li><a href="#"><span>예결산현황</span></a></li>
+											<li><a href="#"><span>업무추진비 집행내역</span></a></li>
+											<li><a href="#"><span>상품권 구매 및 사용내역 공개</span></a></li>
+											<li><a href="#" target="_blank" title="새창열림"><span>발주계획</span></a></li>
+											<li><a href="#" target="_blank" title="새창열림"><span>입찰공고</span></a></li>
+											<li><a href="#" target="_blank" title="새창열림"><span>개찰결과</span></a></li>
+											<li><a href="#" target="_blank" title="새창열림"><span>계약현황</span></a></li>
+											<li><a href="#" target="_blank" title="새창열림"><span>수의계약</span></a></li>
+											<li><a href="#"><span>신용카드 사용내역</span></a></li>
+											<li><a href="#"><span>물품선정결과공개</span></a></li>
+											<li><a href="#"><span>하도급 계약현황</span></a></li>
+										</ul>
+									</div>
+								</li>
+							</ul>
+						</div>
+					</li>
+					<li><a href="#"><span>교육행정</span></a>
+						<div class="depth02">
+							<div class="titBox">
+								<strong>교육행정</strong>
+								<p>메뉴를 클릭하시면 <br>해당 페이지로 이동합니다</p>
+							</div>
+							<ul class="group">
+								<li><a href="#"><span>교육정책</span></a></li>
+								<li><a href="#"><span>교육과</span></a>
+									<div class="depth03">
+										<ul class="group">
+											<li><a href="#"><span>학교보건팀</span></a></li>
+										</ul>
+									</div>
+								</li>
+								<li><a href="#"><span>행정과</span></a>
+									<div class="depth03">
+										<ul class="group">
+											<li><a href="#"><span>자료실</span></a></li>
+										</ul>
+									</div>
+								</li>
+								<li><a href="#"><span>감사팀</span></a>
+									<div class="depth03">
+										<ul class="group">
+											<li><a href="#"><span>자료실</span></a></li>
+											<li><a href="#"><span>반부패·청렴홍보방</span></a></li>
+											<li><a href="#"><span>감사결과공개</span></a></li>
+										</ul>
+									</div>
+								</li>
+								<li><a href="#"><span>평생교육팀</span></a>
+									<div class="depth03">
+										<ul class="group">
+											<li><a href="#"><span>학원평생교육</span></a></li>
+											<li><a href="#"><span>학교도서관</span></a></li>
+										</ul>
+									</div>
+								</li>
+								<li><a href="#"><span>재정지원팀</span></a>
+									<div class="depth03">
+										<ul class="group">
+											<li><a href="#"><span>학교물품 공유장터</span></a></li>
+										</ul>
+									</div>
+								</li>
+								<li><a href="#"><span>늘봄지원센터</span></a>
+									<div class="depth03">
+										<ul class="group">
+											<li><a href="#"><span>소개</span></a></li>
+											<li><a href="#"><span>자료실</span></a></li>
+										</ul>
+									</div>
+								</li>
+								<li><a href="#"><span>특수교육지원센터</span></a>
+									<div class="depth03">
+										<ul class="group">
+											<li><a href="#"><span>특수교육지원센터 안내</span></a></li>
+											<li><a href="#"><span>자료실</span></a></li>
+										</ul>
+									</div>
+								</li>
+								<li><a href="#"><span>영재교육원</span></a>
+									<div class="depth03">
+										<ul class="group">
+											<li><a href="#"><span>소개</span></a></li>
+											<li><a href="#"><span>자료실</span></a></li>
+										</ul>
+									</div>
+								</li>
+								<li><a href="#"><span>Wee센터</span></a>
+									<div class="depth03">
+										<ul class="group">
+											<li><a href="#"><span>Wee센터 소개</span></a></li>
+											<li><a href="#"><span>자료실</span></a></li>
+											<li><a href="#"><span>사이버상담실</span></a></li>
+										</ul>
+									</div>
+								</li>
+								<li><a href="#"><span>이천 꿈빚공유학교</span></a>
+									<div class="depth03">
+										<ul class="group">
+											<li><a href="#"><span>이천 꿈빚공유학교 소개</span></a></li>
+											<li><a href="#"><span>프로그램 신청 및 안내</span></a></li>
+										</ul>
+									</div>
+								</li>
+							</ul>
+						</div>
+					</li>
+					<li><a href="#"><span>참여마당</span></a>
+						<div class="depth02">
+							<div class="titBox">
+								<strong>참여마당</strong>
+								<p>메뉴를 클릭하시면 <br>해당 페이지로 이동합니다</p>
+							</div>
+							<ul class="group">
+								<li><a href="#"><span>자유게시판</span></a></li>
+								<li><a href="#"><span>칭찬과 감사</span></a></li>
+								<li><a href="#"><span>지방공무원인사상담</span></a></li>
+								<li><a href="#"><span>주민참여예산</span></a></li>
+								<li><a href="#"><span>채용정보</span></a>
+									<div class="depth03">
+										<ul class="group">
+											<li><a href="#" target="_blank" title="새창열림"><span>기간제교원 인력풀</span></a></li>
+											<li><a href="#"><span>교육공무직원 인력풀</span></a></li>
+											<li><a href="#"><span>지방공무원 대체 인력풀</span></a></li>
+											<li><a href="#"><span>급식대체 인력풀</span></a></li>
+											<li><a href="#" target="_blank" title="새창열림"><span>채용공고</span></a></li>
+										</ul>
+									</div>
+								</li>
+								<li><a href="#"><span>고교학점제</span></a>
+									<div class="depth03">
+										<ul class="group">
+											<li><a href="#"><span>이천 고교학점제 소개</span></a></li>
+											<li><a href="#"><span>이천고교학점제지원센터</span></a></li>
+										</ul>
+									</div>
+								</li>
+							</ul>
+						</div>
+					</li>
+					<li><a href="#"><span>민원/신고</span></a>
+						<div class="depth02">
+							<div class="titBox">
+								<strong>민원/신고</strong>
+								<p>메뉴를 클릭하시면 <br>해당 페이지로 이동합니다</p>
+							</div>
+							<ul class="group">
+								<li><a href="#"><span>전자민원신청</span></a>
+									<div class="depth03">
+										<ul class="group">
+											<li><a href="#"><span>민원사무안내</span></a></li>
+											<li><a href="#"><span>민원사전예약안내</span></a></li>
+											<li><a href="#" target="_blank" title="새창열림"><span>민원신청하기</span></a></li>
+											<li><a href="#"><span>나의민원보기</span></a></li>
+											<li><a href="#"><span>인허가민원처리공개</span></a></li>
+										</ul>
+									</div>
+								</li>
+								<li><a href="#"><span>교육행정서비스헌장</span></a></li>
+								<li><a href="#"><span>시설개방민원창구</span></a></li>
+								<li><a href="#" target="_blank" title="새창열림"><span>정보공개청구</span></a></li>
+								<li><a href="#"><span>신고센터</span></a>
+									<div class="depth03">
+										<ul class="group">
+											<li><a href="#" target="_blank" title="새창열림"><span>공익제보센터</span></a></li>
+											<li><a href="#"><span>갑질신고</span></a></li>
+											<li><a href="#"><span>불법찬조금신고</span></a></li>
+											<li><a href="#"><span>직장내 괴롭힘 신고센터</span></a></li>
+											<li><a href="#"><span>소극행정신고</span></a></li>
+											<li><a href="#"><span>불법 학원, 교습소, 과외 신고</span></a></li>
+											<li><a href="#" target="_blank" title="새창열림"><span>수능 부정행위 신고</span></a></li>
+											<li><a href="#"><span>유치원비리신고</span></a></li>
+											<li><a href="#"><span>안전 신고</span></a></li>
+											<li><a href="#" target="_blank" title="새창열림"><span>학생고충 신고상담</span></a></li>
+											<li><a href="#"><span>산업재해예방 및 안전보건 의견청취함</span></a></li>
+											<li><a href="#"><span>성희롱 성폭력 신고센터</span></a></li>
+										</ul>
+									</div>
+								</li>
+							</ul>
+						</div>
+					</li>
+					<li><a href="#"><span>정보공개</span></a>
+						<div class="depth02">
+							<div class="titBox">
+								<strong>정보공개</strong>
+								<p>메뉴를 클릭하시면 <br>해당 페이지로 이동합니다</p>
+							</div>
+							<ul class="group">
+								<li><a href="#"><span>행정정보공개제도안내</span></a></li>
+								<li><a href="#"><span>사전정보 공표목록</span></a></li>
+								<li><a href="#"><span>비공개대상정보</span></a></li>
+								<li><a href="#" target="_blank" title="새창열림"><span>정보목록</span></a></li>
+								<li><a href="#"><span>공공데이터제공</span></a></li>
+								<li><a href="#"><span>정보공시</span></a>
+									<div class="depth03">
+										<ul class="group">
+											<li><a href="#"><span>학교정보공시 개요</span></a></li>
+											<li><a href="#" target="_blank" title="새창열림"><span>학교정보공시 항목</span></a></li>
+											<li><a href="#"><span>정보공시 자료실</span></a></li>
+										</ul>
+									</div>
+								</li>
+							</ul>
+						</div>
+					</li>
+					<li><a href="#"><span>교육지원청안내</span></a>
+						<div class="depth02">
+							<div class="titBox">
+								<strong>교육지원청안내</strong>
+								<p>메뉴를 클릭하시면 <br>해당 페이지로 이동합니다</p>
+							</div>
+							<ul class="group">
+								<li><a href="#"><span>교육가족 인사말</span></a></li>
+								<li><a href="#"><span>연혁</span></a></li>
+								<li><a href="#"><span>약도/청사도</span></a></li>
+								<li><a href="#"><span>조직/담당업무</span></a></li>
+								<li><a href="#"><span>관내학교안내</span></a>
+									<div class="depth03">
+										<ul class="group">
+											<li><a href="#"><span>학교현황</span></a></li>
+											<li><a href="#"><span>학교 위치 찾기</span></a></li>
+											<li><a href="#"><span>폐교재산</span></a></li>
+										</ul>
+									</div>
+								</li>
+							</ul>
+						</div>
+					</li>
+					<li><a href="#"><span>테스트</span></a>
+						<div class="depth02">
+							<div class="titBox">
+								<strong>테스트</strong>
+								<p>메뉴를 클릭하시면 <br>해당 페이지로 이동합니다</p>
+							</div>
+							<ul class="group">
+								<li><a href="#"><span>일반게시판 테스트</span></a></li>
+								<li><a href="#"><span>설문테스트</span></a></li>
+								<li><a href="#"><span>오시는길</span></a></li>
+								<li><a href="#"><span>콘텐츠 테스트</span></a></li>
+							</ul>
+						</div>
+					</li>
+					<li><a href="#"><span>설문조사</span></a></li>
+				</ul>
+			</div>
+		</div>
+	</div>
+	<!-- //NAV : oneDown -->
+
+	<div class="popFullmenu">
+		<div class="fullmenu_wrap">
+			<h2>전체메뉴</h2>
+			<div class="popUntil">
+				<ul class="user"></ul>
+				<ul class="util"></ul>
+			</div>
+			<div class="fullmenu_group"></div>
+			<a href="#" id="fullmenuClose" class="fullmenuClose"><span class="hid">사이트맵 비활성화</span><i class="xi-close" aria-hidden="true"></i></a>
+		</div>
+	</div>
+</header>
+<!-- //header -->
+<script>
+$(function () {
+	$(document).on('mouseenter focusin', '#nav.oneDown .depth02 > ul > li.dep', function () {
+		var $dep     = $(this);
+		var $depth02 = $dep.closest('.depth02');
+		var $depth03 = $dep.find('> .depth03');
+		if (!$depth03.length) return;
+		$depth02.css('min-height', '');
+		setTimeout(function () {
+			var d3h = $depth03[0].offsetHeight;
+			var d2h = $depth02[0].offsetHeight;
+			if (d3h > d2h) $depth02.css('min-height', d3h + 'px');
+		}, 20);
+	});
+
+	$(document).on('mouseleave focusout', '#nav.oneDown .depth01 > ul > li', function () {
+		var $depth02 = $(this).find('.depth02');
+		setTimeout(function () { $depth02.css('min-height', ''); }, 260);
+	});
+});
+</script>
+
+	<!-- 컨테이너 -->
+	<div id="container">
+		<!-- <div class="naivgator-list"></div> -->
+		<div id="subVisual">
+			<div class="visual-img">
+				<img src="/images/web/goeic/sub/sub_visual01.png" alt="">
+				<p class="tit">메뉴명</p>
+			</div>
+							
+			<div id="contNavi">
+				<div class="cont-navi">				           
+					<aside id="snb">
+	<div class="snb_wrap">
+		<a href="#" class="home"><em class="hid">HOME</em></a>
+		<!--START-->
+		<h2><span>알림마당</span></h2>
+		<nav class="snb_wrap">
+			<ul class="lnb">
+				<li class="active"><a href="#"><span>공지사항</span></a></li>
+				<li><a href="#"><span>가정통신문(교육청)</span></a></li>
+				<li><a href="#"><span>공지사항(교육청)</span></a></li>
+				<li><a href="#"><span>보도자료현황</span></a></li>
+				<li><a href="#"><span>인사정보</span></a>
+					<ul class="subLnb">
+						<li><a href="#"><span>교원 인사정보</span></a></li>
+						<li><a href="#"><span>지방공무원 인사정보</span></a></li>
+						<li><a href="#"><span>교육공무직 인사정보</span></a></li>
+					</ul>
+				</li>
+				<li><a href="#"><span>교육공무직원도움방</span></a></li>
+				<li><a href="#"><span>전·편입학바로가기</span></a>
+					<ul class="subLnb">
+						<li><a href="#"><span>전·편입학바로가기</span></a></li>
+						<li><a href="#"><span>중학군재적학생수현황</span></a></li>
+					</ul>
+				</li>
+				<li><a href="#"><span>학원업무</span></a>
+					<ul class="subLnb">
+						<li><a href="#"><span>학원공지사항</span></a></li>
+						<li><a href="#"><span>학원설립안내서</span></a></li>
+						<li><a href="#"><span>교습소신고안내서</span></a></li>
+						<li><a href="#"><span>개인과외신고안내서</span></a></li>
+						<li><a href="#"><span>평생교육시설건립안내서</span></a></li>
+					</ul>
+				</li>
+				<li><a href="#"><span>유치원업무</span></a>
+					<ul class="subLnb">
+						<li><a href="#"><span>유치원 공지사항</span></a></li>
+						<li><a href="#"><span>사립유치원</span></a></li>
+					</ul>
+				</li>
+				<li><a href="#"><span>통학구역</span></a></li>
+				<li><a href="#" target="_blank" title="새창열림"><span>교육환경보호구역</span></a></li>
+				<li><a href="#"><span>재정공개</span></a>
+					<ul class="subLnb">
+						<li><a href="#"><span>예결산현황</span></a></li>
+						<li><a href="#"><span>업무추진비 집행내역</span></a></li>
+						<li><a href="#"><span>상품권 구매 및 사용내역 공개</span></a></li>
+						<li><a href="#" target="_blank" title="새창열림"><span>발주계획</span></a></li>
+						<li><a href="#" target="_blank" title="새창열림"><span>입찰공고</span></a></li>
+						<li><a href="#" target="_blank" title="새창열림"><span>개찰결과</span></a></li>
+						<li><a href="#" target="_blank" title="새창열림"><span>계약현황</span></a></li>
+						<li><a href="#" target="_blank" title="새창열림"><span>수의계약</span></a></li>
+						<li><a href="#"><span>신용카드 사용내역</span></a></li>
+						<li><a href="#"><span>물품선정결과공개</span></a></li>
+						<li><a href="#"><span>하도급 계약현황</span></a></li>
+					</ul>
+				</li>
+			</ul>
+		</nav>
+		<!--END-->
+	</div>
+</aside>
+				</div>
+			</div>
+		</div>
+
+		<div class="sub_content">
+			<!-- 서브 영역 -->
+			<section id="subContent" class="container">
+				<div class="subContent_body">
+					<div class="title_area">
+						<h2 id="pageTitle">메뉴명</h2>
+						<div class="snsBox">
+							<button type="button" class="btnShare"><i class="ri-share-line"></i><span class="hid">공유</span></button>
+							<div class="sns_more">
+								<button type="button" class="btnFbook" title="페이스북 새창 열림"><i class="ri-meta-line"></i></button>
+								<button type="button" class="btnTwt" title="트위터 새창 열림"><i class="ri-twitter-x-line"></i></button>
+								<button type="button" class="btnkks" title="카카오톡 새창 열림"><i class="ri-kakao-talk-line"></i></button>
+							</div>
+							<button type="button" class="btnPrint"><i class="ri-printer-line"></i><span class="hid">인쇄</span></button>
+							<button type="button" class="btnUrlCopy"><i class="ri-file-copy-line"></i><span class="hid">복사</span></button>
+						</div>
+					</div>
+					<!-- contents -->
+					<div class="symbol tyA slide">
+
+						<div class="sybmbol-wrap">
+							
+							<div class="symbol-sticky">
+								<div class="slogan">
+									<h4>교훈</h4>
+									<p><strong>정직 &middot; 사랑 &middot; 꿈</strong>을 가꾸는 <strong>어린이</strong></p>
+								</div>
+							</div>
+						
+							<div class="list-wrap">
+								<div class="list-sticky">
+									<div class="scroll-wrap">
+										<div class="h-scroll">
+											<div class="box">
+												<p class="img"><img src="../images/sub_com/symbol_temp1.png" alt="00학교 교표 이미지"></p>
+												<div class="inner">
+													<h4>교표</h4>
+													<p>OO학교의 교표입니다.</p>
+												</div>
+											</div>
+											<div class="box">
+												<p class="img"><img src="../images/sub_com/symbol_temp2.png" alt="00학교 교표 이미지"></p>
+												<div class="inner">
+													<h4>교기</h4>
+													<p>OO학교의 교기입니다.</p>
+												</div>
+											</div>
+											<div class="box">
+												<p class="img"><img src="../images/sub_com/symbol_temp3.png" alt="00학교 교표 이미지"></p>
+												<div class="inner">
+													<h4>교화 <span>연꽃</span></h4>
+													<p>진흙속에 뿌리를 박고 맑지 못한 물에서도 끈기있게 자라서 향기롭고 아름다운 꽃을 피우며, 강인한 줄기는 깊이 감추고 있는 자태는 전통적인 한국 여성의 순결성과도 같아 교화로 지정하여 보호하고 있습니다. </p>
+												</div>
+											</div>
+											<div class="box">
+												<p class="img"><img src="../images/sub_com/symbol_temp4.png" alt="00학교 교표 이미지"></p>
+												<div class="inner">
+													<h4>교목 <span>소나무</span></h4>
+													<p>소나무는 사계절 푸르름을 잃지 않아 장수와 영원한 생명을 뜻하며, 거센 추위와 바람에도 굳건히 서 있어 절개와 충절의 상징이 됩니다. </p>
+												</div>
+											</div>
+										</div>
+									</div>
+								</div>
+							</div>
+						</div>
+
+						<div class="box song-wrap">
+							<div class="tit-wrap">
+								<h4>교가</h4>
+								<div class="btn-wrap">
+									<button class="btn-st pri">교가듣기</button>
+									<button class="btn-st sec">악보다운로드</button>
+								</div>
+							</div>
+							<div class="inner">
+								<div class="img"><p class="rsp_img"><img src="../images/sub_com/symbol_song.png" alt="00학교 교표 이미지"></p></div>
+								<div class="lyr">
+								 	<dl>
+								 		<dt>교가 1절</dt>
+								 		<dd>유구한 역사의 터전 속에서<br>
+									우뚝솟은 광교산의 정기를 받아<br>
+									새시들의 새싹들이 자라고 있는<br>
+									배움의 보금자리 우리의 서원</dd>
+								 	</dl>
+								 	<dl>
+								 		<dt>교가 2절</dt>
+								 		<dd>충효의 얼이 깃든 서원 동산에<br>
+									심곡혼의 빛난 얼을 가슴에 품고<br>
+									우리들의 참된 지혜 초석이 되어<br>
+									푸른 꿈 가꿔나갈 서원 어린이</dd>
+								 	</dl>
+								</div>
+							</div>
+						</div>
+					</div>
+
+					<!-- contents -->
+					</div>
+			</section>
+			<!-- //서브 영역 -->
+		</div> 
+	</div>
+
+	<footer id="footer">
+	<div class="inner">
+		<div class="f-btm">
+			<div class="f-btm-text">
+				<div class="f-menu">
+					<!--LPM_START-->
+					<ul>
+						<li><a href="#"><strong>개인정보처리방침</strong></a></li>
+						<li><a href="#">저작권보호정책</a></li>
+						<li><a href="#">이용약관</a></li>
+						<li><a href="#">이메일주소무단수집거부</a></li>
+						<li><a href="#">영상정보처리기기운영방침</a></li>
+					</ul>
+					<!--LPM_END-->
+					<div class="visitor">
+						<div class="visitant">
+							<a href="#visitantList" class="list hash" title="방문통계 리스트">
+								<span>방문통계 보기</span>
+								<i class="xi-chart-bar" aria-hidden="true"></i>
+							</a>
+						</div>
+					</div>
+				</div>				
+			</div>
+		</div>
+		<div class="f-cnt">
+			<div class="f-info">
+				<p class="info-addr">경기도교육청 남부청사 (16508) 경기도 수원시 영통구 도청로 28</p>
+				<ul class="info-cs">
+					<li><strong class="strong">TEL</strong> 031-1396, 031-249-0114 평일(09:00~18:00) / 당직실(야간) 031-249-0341, 031-249-0342</li>
+				</ul>
+			</div>
+			
+			<p class="f-copy">Copyright &copy; Gyeonggido Office of Education, All Right Reserved.</p>
+		</div>
+		<a href="#" class="btn_top"><i class="ri-skip-up-line" aria-hidden="true"></i><em class="hid">상단이동</em></a>
+	</div>
+</footer>
+	
+</div>
+</body>
+</html>

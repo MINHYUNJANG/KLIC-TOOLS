@@ -3,6 +3,11 @@ export const ALLOWED_TAGS = new Set(['div', 'table', 'thead', 'tbody', 'tr', 'th
 export const RE_NUMERIC = /^[\d.]+$/;
 export const RE_WHITESPACE = /[\s ​-‍﻿]/g;
 
+// order-st2(2차 순서목록) 마커로 쓰이는 원문자/괄호 한글(㉮~㉻, ㈎~㈛ 등)은 숫자가 아니라
+// "가나다라마바사아자차카타파하" 음절이므로, 숫자 변환과 별도로 평문 한글로 풀어준다.
+const HANGUL_SYLLABLES = '가나다라마바사아자차카타파하';
+const HANGUL_CONSONANTS = 'ㄱㄴㄷㄹㅁㅂㅅㅇㅈㅊㅋㅌㅍㅎ';
+
 export const convertCircleToArabic = (str) => {
     if (!str) return str;
     return str
@@ -12,7 +17,10 @@ export const convertCircleToArabic = (str) => {
         .replace(/[➀-➉]/g, c => String(c.codePointAt(0) - 0x2780 + 1))
         .replace(/[❶-❿]/g, c => String(c.codePointAt(0) - 0x2776 + 1))
         .replace(/[➊-➓]/g, c => String(c.codePointAt(0) - 0x278A + 1))
-        .replace(/[⓫-⓴]/g, c => String(c.codePointAt(0) - 0x24EB + 11));
+        .replace(/[⓫-⓴]/g, c => String(c.codePointAt(0) - 0x24EB + 11))
+        .replace(/[㉮-㉻]/g, c => HANGUL_SYLLABLES[c.codePointAt(0) - 0x326E])
+        .replace(/[㈎-㈛]/g, c => HANGUL_SYLLABLES[c.codePointAt(0) - 0x320E])
+        .replace(/[㉠-㉭]/g, c => HANGUL_CONSONANTS[c.codePointAt(0) - 0x3260]);
 };
 
 export const ALLOWED_ATTRIBUTES = new Set(['rowspan', 'colspan', 'href', 'scope', 'class', 'src', 'style']);
@@ -54,7 +62,9 @@ export const EXCLUDE_MARKER_REGEXES = [
     /^\s*\d{1,2}\.\s*\d{1,2}\.?\s*\([월화수목금토일]\)/,
     /^\s*[○●]{2,}/,
     /^\s*㈜/,
-    /^\s*\d{2,3}\)\s*\d{3,4}[-\s]\d{4}/
+    // 전화/팩스번호: 지역번호(0으로 시작)가 "02)", "(02)", "02-" 등 마커처럼 보이는 형태로
+    // 시작해도 뒤에 "국번-번호"가 이어지는 전화번호 전체 패턴이면 목록 마커가 아니다.
+    /^\s*\(?0\d{1,2}\)?[-.\s]?\d{3,4}[-.\s]\d{4}(?!\d)/
 ];
 
 export const HWP_CHAR_MAP = {

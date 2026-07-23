@@ -266,30 +266,31 @@ h5.unit + p{ margin: 0.5rem 0; line-height: 1.6; font-size: calc(var(--txt-size)
 
 /* Table */
 div[class*='tbl-st'] {position: relative; margin-top: 0.25rem; width: 100%; background: #fff; overflow: hidden;}
-div[class*='tbl-st'] > table {position: relative; margin-left: -1px; width: 100%; text-align: center; border-top: 2px solid var(--color-primary); -webkit-overflow-scrolling: touch; word-break: keep-all; }
-div[class*='tbl-st'] > table th,
-div[class*='tbl-st'] > table td{ padding: 0.6rem 0.3rem; line-height: 1.3; vertical-align: middle;}
-div[class*='tbl-st'] > table th {  font-weight: 600; background: var(--color-tertiary); border-bottom: 1px solid var(--color-gray-line-light); border-left: 1px solid var(--color-gray-line-light);}
-div[class*='tbl-st'] > table td { border-bottom: 1px solid var(--color-gray-line-light); border-left: 1px solid var(--color-gray-line-light);}
-div[class*='tbl-st'] > table tbody tr:last-child th,
-div[class*='tbl-st'] > table tbody tr:last-child td {border-bottom: 1px solid var(--color-gray-line-light);}
-div[class*='tbl-st'] > table thead th {background: var(--color-tertiary); border-color: var(--color-secondary);}
-div[class*='tbl-st'] > table tbody th {color: #222; background: var(--color-gray-bg);}
-div[class*='tbl-st'] > table tfoot th {color: #222; background: var(--color-tertiary);}
+div[class*='tbl-st'] table {position: relative; margin-left: -1px; width: 100%; text-align: center; border-top: 2px solid var(--color-primary); -webkit-overflow-scrolling: touch; word-break: keep-all; }
+div[class*='tbl-st'] table th,
+div[class*='tbl-st'] table td{ padding: 0.6rem 0.3rem; line-height: 1.3; vertical-align: middle;}
+div[class*='tbl-st'] table th {  font-weight: 600; background: var(--color-tertiary); border-bottom: 1px solid var(--color-gray-line-light); border-left: 1px solid var(--color-gray-line-light);}
+div[class*='tbl-st'] table td { border-bottom: 1px solid var(--color-gray-line-light); border-left: 1px solid var(--color-gray-line-light);}
+div[class*='tbl-st'] table tbody tr:last-child th,
+div[class*='tbl-st'] table tbody tr:last-child td {border-bottom: 1px solid var(--color-gray-line-light);}
+div[class*='tbl-st'] table thead th {background: var(--color-tertiary); border-color: var(--color-secondary);}
+div[class*='tbl-st'] table tbody th {color: #222; background: var(--color-gray-bg);}
+div[class*='tbl-st'] table tfoot th {color: #222; background: var(--color-tertiary);}
 
-/* Table : 스크롤 */
-.scroll-wrap{ position:relative;}
-div[class*='tbl-st scroll-']{ position:static; overflow-x: auto;}
-div[class*='tbl-st scroll-']:before{ content:"\F537"; position:absolute; right:0; top:-0.5rem; line-height: 1rem; padding:0 0.5rem; border-radius: 1rem; background:var(--color-primary); color:#fff; font-family: 'remixicon'; z-index: 1;}
-div[class*='tbl-st'].scroll-w > table{ min-width: 1200px;}
+/* Table : 스크롤 (바깥 div는 relative/visible 유지 -> :before 뱃지가 overflow에 안 잘림. 안쪽 .tbl-scroll-inner에도 tbl-st를 같이 주므로 위 셀렉터들이 그대로 적용됨) */
+.tbl-st.scroll-w,
+.tbl-st.scroll-m { position:relative; overflow:visible; }
+.tbl-st.scroll-w:before,
+.tbl-st.scroll-m:before { content:"\F537"; position:absolute; right:0; top:-0.5rem; line-height: 1rem; padding:0 0.5rem; border-radius: 1rem; background:var(--color-primary); color:#fff; font-family: 'remixicon'; z-index: 1;}
+div.tbl-scroll-inner{ overflow-x:auto; -webkit-overflow-scrolling:touch; }
+.scroll-w > .tbl-scroll-inner > table{ min-width: 1200px;}
 
-/* Table : 스크롤 */
 /* Table : Mobile 스크롤 */
-div[class*='tbl-st'].scroll-m:before{ display: none;}
+.tbl-st.scroll-m:before{ display: none;}
 @media screen and (max-width: 768px){
 
-	div[class*='tbl-st'].scroll-m:before{ display: block;}
-	div[class*='tbl-st'].scroll-m > table{ min-width: 768px;}
+	.tbl-st.scroll-m:before{ display: block;}
+	.scroll-m > .tbl-scroll-inner > table{ min-width: 768px;}
 }
 
 /* Table - form */

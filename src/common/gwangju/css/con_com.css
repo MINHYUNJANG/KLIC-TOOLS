@@ -43,21 +43,32 @@ input.mx-w40 {width: 100%; max-width: 40rem;}
 
 /* 행간여백 */
 [class*='tit-st'] + p {font-size: calc(var(--txt-size) * 0.9); margin:0.5rem 0; line-height:1.5;}
+[class*='tit-st'] + p,
+.indent > p {margin-top:0.5rem; font-size: calc(var(--txt-size) * 0.9); line-height:1.5rem;}
+[class*="order-st"] + p {font-size: calc(var(--txt-size) * 0.9); line-height:1.5rem;}
 ul[class*='order-st'] + p,
-ol[class*='order-st'] + p {margin:0.5rem;}
+ol[class*='order-st'] + p,
+ol[class*='order-st'] + .box-st {margin:0.5rem;}
+p + .tbl-st,
+.tit-st.contents + .prosess-st {margin-top:0.5rem;}
+.tit-st + .col-wrap {margin-top:0.5rem;}
 .bu-st1 .bu-st2 {margin-top:0.75rem;}
 .bu-st1 .bu-st2 li a {font-size: calc(var(--txt-size) * 0.85);}
 .tbl-st table td [class*='bu-st'] li {font-size:inherit;}
-[class*='tit-st'] + p {margin-top:0.5rem; font-size: calc(var(--txt-size) * 0.9); line-height:1.5rem;}
-p + .tbl-st {margin-top:0.5rem;}
 .indent .box-st {margin-top:0.5rem;}
 .box-st + [class*="order-st"] {margin-top:1rem;}
-[class*="order-st"] + p {font-size: calc(var(--txt-size) * 0.9); line-height:1.5rem;}
 
+/* 분할적용 */
+.col-wrap {display:flex; flex-wrap:wrap; gap:1rem;}
+.col-wrap .box-st {margin-top:0;}
+.col-wrap.col-2 > * {flex:0 1 calc((100% - 1rem) / 2);}
+.col-wrap.col-3 > * {flex:0 1 calc((100% - 2rem) / 3);}
+.col-wrap.col-4 > * {flex:0 1 calc((100% - 3rem) / 4);}
+.col-wrap.col-5 > * {flex:0 1 calc((100% - 4rem) / 5);}
 
 /* Title */
 .tit-st{ font-weight: 700; line-height: 1.5;}
-.tit-st.section{ font-size: calc(var(--title-size) * 0.8); position: relative; padding-left:2rem;}
+.tit-st.section{ font-size: calc(var(--title-size) * 0.8); position: relative; padding-left: calc(var(--title-size) * 0.9); }
 .tit-st.section::before { position: absolute; content: ""; left: 0; top: calc(var(--title-size) * 0.25); background: url('../images/con_com/tit-sec.png')no-repeat center center; width: calc(var(--title-size) * 0.7); height: calc(var(--title-size) * 0.7); background-size: contain; }
 .tit-st.contents{ font-size: calc(var(--title-size) * 0.6); color: var(--color-primary); }
 .tit-st.unit{ font-size: calc(var(--title-size) * 0.5); }
@@ -199,7 +210,8 @@ p + .tbl-st {margin-top:0.5rem;}
 .tab-st.depth02 li.on a{ color:var(--color-primary); font-weight: bold; }
 
 /* Tab Menu - 3차 */
-.tab-st.depth03 ul { gap: var(--tab-depth03-gap); border: 2px solid #6168F3; border-radius: 45rem; width: auto; display: inline-flex; padding: 0.5rem 0.7rem; }
+/*.tab-st.depth03 ul { gap: var(--tab-depth03-gap); border: 2px solid #6168F3; border-radius: 45rem; width: auto; display: inline-flex; padding: 0.5rem 0.7rem; }*/
+.tab-st.depth03 ul {gap: 0.6rem var(--tab-depth03-gap); border: 2px solid #6168F3; border-radius: 1.6rem; width: auto; max-width: 100%; display: inline-flex; flex-wrap: wrap; padding: 0.5rem 0.7rem;}
 .tab-st.depth03 li{ width: auto;}
 .tab-st.depth03 a{ min-height:2.2rem; border: none; color: #000; font-size: calc(var(--txt-size) * 0.8); font-weight: 400; border-radius: 45rem; justify-content: center; padding: 0 calc(var(--txt-margin) * 0.8); }
 .tab-st.depth03 li:not(.on) a:hover { color: #6168F3; font-weight: bold; }
@@ -376,7 +388,7 @@ div[class*='tbl-st'] table thead th {background: var(--color-tertiary); border-c
 div[class*='tbl-st'] table tbody th {color: #000; background: var(--color-tertiary);}
 div[class*='tbl-st'] table tfoot th {color: #000; background: var(--color-tertiary);}
 
-/* Table : 스크롤 (바깥 div는 relative/visible 유지 -> :before 뱃지가 overflow에 안 잘림. 안쪽 .tbl-scroll-inner는 tbl-st 없이 단독 클래스만 쓰고, thead/tbody/tfoot th 배경 등은 위 div[class*='tbl-st'] 후손 선택자가 바깥 tbl-st 래퍼를 통해 그대로 적용됨) */
+/* Table : 스크롤 (바깥 div는 relative/visible 유지 -> :before 뱃지가 overflow에 안 잘림. 안쪽 .tbl-scroll-inner에도 tbl-st를 같이 주므로 위 셀렉터들이 그대로 적용됨) */
 .tbl-st.scroll-w,
 .tbl-st.scroll-m { position:relative; overflow:visible; }
 .tbl-st.scroll-w:before,
@@ -622,6 +634,14 @@ div[class^="tab_st"].Tab_w20 li {width: calc(20% - 0.5rem);}
 .Coming-soon > h3 {margin-top: 1.5rem; margin-bottom:1rem; font-weight:700; color:#000; font-size:1.8rem;}
 .Coming-soon > h3 strong {color:var(--color-primary);}
 .Coming-soon > p {font-size:1rem; color:#41484E; font-weight:400; text-align:center; line-height:1.4;}
+
+/* 키즈노트 */
+.kids-note {background:#F4F5F6; border-radius:2rem; display:flex; align-items:center; justify-content:center; min-height:25rem; flex-direction:column; padding:5rem 0;}
+.kids-note > h3 {margin-top: 1.5rem; margin-bottom:1rem; font-weight:700; color:#000; font-size:1.8rem;}
+.kids-note > h3 strong {color:var(--color-primary);}
+.kids-note > p {font-size:1rem; color:#41484E; font-weight:400; text-align:center; line-height:1.4;}
+ 
+
 
 /* 라인 */
 .line-dot {margin-bottom: 1rem; padding-top: 1rem; border-bottom: 2px dotted #d2d2d2;}
@@ -870,8 +890,14 @@ div[class^="tab_st"].Tab_w20 li {width: calc(20% - 0.5rem);}
 	
 	.Coming-soon {min-height:20rem; padding:3.5rem 1.25rem; border-radius:1.5rem;}
 	.Coming-soon img {max-width:100%;}
-	.Coming-soon > h3 {margin-top:1.25rem; margin-bottom:.75rem; font-size:1.25rem;}
+	.Coming-soon > h3 {margin-top:1.25rem; margin-bottom:.75rem; font-size:1.25rem; word-break: keep-all; text-align: center;}
 	.Coming-soon > p {font-size:0.85rem;}
+	
+	/* 키즈노트 */
+	.kids-note {min-height:20rem; padding:3.5rem 1.25rem; border-radius:1.5rem;}
+	.kids-note img {max-width:100%;}
+	.kids-note > h3 {margin-top:1.25rem; margin-bottom:.75rem; font-size:1.25rem; word-break: keep-all; text-align: center;}
+	.kids-note > p {font-size:0.85rem;}
 
 	/* Button : only Button */
 	.btns.only { 
@@ -1308,4 +1334,31 @@ body[data-preview-device="mobile"] #canvasGrid {
 	--txt-size: 0.8rem;
 	--txt-margin: 0.8rem;
 	--process-size: 0.85rem;
+}
+
+/* =============================================================
+   공통 모달 (.modal-st)
+   여는 트리거: <a href="#모달id" class="hash">, 닫는 트리거: <a href="#모달id" class="hashClose">
+   열기/닫기 동작은 js/common/common.js 의 hash() 함수가 fadeIn/fadeOut으로 처리합니다.
+   ============================================================= */
+html:has(body.scroll-lock) { overflow: hidden; }
+
+.modal-st { display: none; position: fixed; left: 0; top: 0; width: 100%; height: 100%; z-index: 1000; background: rgba(0, 0, 0, 0.6); }
+/* position:absolute + transform 중앙정렬 : jQuery fadeIn이 display를 태그 기본값인 block으로 되돌려도(기존 .lyrPop과 동일한 방식) 항상 중앙에 위치 */
+.modal-st .modal-wrap { position: absolute; left: 50%; top: 50%; transform: translate(-50%, -50%); width: calc(100% - 2rem); max-width: 40rem; max-height: 90vh; overflow-y: auto; padding: 2rem; border-radius: var(--box-radius); background: #fff; }
+.modal-st .modal-close { position: absolute; right: 1rem; top: 1rem; width: 2.5rem; height: 2.5rem; display: flex; align-items: center; justify-content: center; border: 0; border-radius: 50%; background: #000; color: #fff; font-size: 1.25rem; transition: transform 0.2s; }
+.modal-st .modal-close:hover,
+.modal-st .modal-close:focus-visible { transform: rotate(90deg); }
+
+/* 이미지 전용 모달(꽉 찬 레이아웃) 변형 : class="modal-st modal-img" */
+.modal-st.modal-img .modal-wrap { max-width: 56rem; max-height: none; overflow: visible; padding: 0; background: transparent; }
+/* modal-close는 기본값(right:1rem; top:1rem) 그대로 사용해 이미지 위에 겹쳐서 표시 */
+.modal-st.modal-img .modal-close { z-index: 1; }
+.modal-st.modal-img .modal-body { max-height: min(80vh, 40rem); border-radius: var(--box-radius); overflow: hidden; background: #000; }
+.modal-st.modal-img .modal-body img { display: block; width: 100%; max-height: min(80vh, 40rem); object-fit: contain; margin: 0 auto; }
+
+@media (max-width: 640px) {
+	.modal-st .modal-wrap { padding: 1.5rem; }
+	.modal-st.modal-img .modal-wrap { padding: 0; }
+	.modal-st.modal-img .modal-close { width: 2.25rem; height: 2.25rem; font-size: 1.1rem; }
 }

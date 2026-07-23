@@ -21,6 +21,15 @@ export const updateStylesOnly = (htmlString, config, colWidths) => {
 
         const allTables = Array.from(tempDiv.querySelectorAll('table'));
         allTables.forEach(table => {
+            // tbl-scroll-inner로 감싸져 있으면(가로 스크롤 표) data-local-config는 그 바깥의
+            // 실제 wrapper div에 있으므로, 먼저 단일 래퍼 상태로 되돌린 뒤 탐색해야 한다.
+            const scrollInnerParent = table.parentElement;
+            if (scrollInnerParent && scrollInnerParent !== tempDiv && scrollInnerParent.tagName.toLowerCase() === 'div' && /\btbl-scroll-inner\b/.test(scrollInnerParent.className || '')) {
+                const outerWrapper = scrollInnerParent.parentElement;
+                outerWrapper.insertBefore(table, scrollInnerParent);
+                scrollInnerParent.remove();
+            }
+
             let searchNode = table;
             if (table.parentElement && table.parentElement.hasAttribute('data-local-config')) {
                 searchNode = table.parentElement;

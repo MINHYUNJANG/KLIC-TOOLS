@@ -11,6 +11,8 @@
   setTimeout(function() {
     $('html').addClass('shOn');
   }, 100);
+  
+
 });
 
 
@@ -34,16 +36,19 @@ function gnb() {
 
     function openBlind() {
         clearTimeout(gnbTimer);
+        $blind.stop(true, true);
 
         if (!$blind.parent().is('body')) {
             $blind.appendTo('body');
         }
 
-        $blind.stop(true, true).fadeIn(100);
+        $blind.fadeIn(100);
     }
 
     function closeBlind() {
-        $blind.stop(true, true).fadeOut(100, function() {
+        $blind.stop(true, true);
+
+        $blind.fadeOut(100, function() {
             if (!$blind.parent().is($header)) {
                 $blind.appendTo($header);
             }
@@ -54,7 +59,6 @@ function gnb() {
         clearTimeout(gnbTimer);
 
         if ($nav.hasClass('fullDown')) {
-            // fullDown은 패널이 닫혀도 depth02의 아코디언(펼침) 상태는 유지해야 하므로 active는 건드리지 않는다
             $gnb.removeClass('active').find('li').removeClass('on');
         } else {
             $gnb.removeClass('active').find('li').removeClass('active on');
@@ -66,7 +70,7 @@ function gnb() {
             $depth02.li.removeClass('active');
         }
 
-        $('.depth02 li.dep > a').attr('title', '메뉴닫힘');
+        $('.depth02 li.dep > a').attr('aria-expanded', 'false');
     }
 
     function gnbHideDelay() {
@@ -79,7 +83,7 @@ function gnb() {
 
     $gnb.find('.depth02 li').each(function() {
         if ($(this).find('> div').length > 0) {
-            $(this).addClass('dep').find('> a').attr('title', '메뉴닫힘');
+            $(this).addClass('dep').find('> a').attr('aria-expanded', 'false');
         }
     });
 
@@ -132,7 +136,13 @@ function gnb() {
         syncFullDownBg();
         openBlind();
     });
-
+	
+	
+    $(document).on('mouseleave focusout', '#nav.oneDown .depth01 > ul > li', function () {
+        var $depth02 = $(this).find('.depth02');
+        setTimeout(function () { $depth02.css('min-height', ''); }, 260);
+    });
+	
 	$(document).on('focus mouseenter', '#nav.fullDown .depth01 > ul > li', function() {
 	    clearTimeout(gnbTimer);
 
@@ -140,8 +150,6 @@ function gnb() {
 
 	    $(this).addClass('on').siblings().removeClass('on');
 	    $gnb.find('.topGnb > ul > li').eq(idx).addClass('on').siblings().removeClass('on');
-
-	    // fullDown은 전체 컬럼이 한 패널에 같이 내려오는 구조라 하위메뉴 없는 1depth를 hover해도 패널을 닫지 않는다
 	    $gnb.addClass('active');
 	    syncFullDownBg();
 	    openBlind();
@@ -152,10 +160,10 @@ function gnb() {
 
 	    if ($(this).parent().hasClass('active')) {
 	        $(this).parent().removeClass('active');
-	        $(this).attr('title', '메뉴닫힘');
+	        $(this).attr('aria-expanded', 'false');
 	    } else {
 	        $(this).parent().addClass('active');
-	        $(this).attr('title', '메뉴열림');
+	        $(this).attr('aria-expanded', 'true');
 	    }
 
 	    if ($nav.hasClass('fullDown')) {
@@ -224,7 +232,18 @@ function gnb() {
 	
 	$(document).on('mouseenter focusin', '#nav.oneDown .depth02 > ul > li.dep', function() {
 	    $(this).addClass('active').siblings().removeClass('active');
-	    $(this).find('> a').attr('title', '메뉴열림');
+	    $(this).find('> a').attr('aria-expanded', 'true');
+		
+		var $dep     = $(this);
+        var $depth02 = $dep.closest('.depth02');
+        var $depth03 = $dep.find('> .depth03');
+        if (!$depth03.length) return;
+        $depth02.css('min-height', '');  
+        setTimeout(function () {
+            var d3h = $depth03[0].offsetHeight;
+            var d2h = $depth02[0].offsetHeight;
+            if (d3h > d2h) $depth02.css('min-height', d3h + 'px');
+        }, 20);
 	});
 
 	$(document).on('mouseleave focusout', '#nav.oneDown .depth02 > ul > li.dep', function() {
@@ -234,7 +253,7 @@ function gnb() {
 	    setTimeout(function() {
 	        if (!$this.find(':focus').length && !$this.is(':hover')) {
 	            $this.removeClass('active');
-	            $this.find('> a').attr('title', '메뉴닫힘');
+	            $this.find('> a').attr('aria-expanded', 'false');
 
 	            if (!$depth02.find('> ul > li.dep.active').length) {
 	                $depth02.removeClass('depth03-open');
@@ -242,8 +261,8 @@ function gnb() {
 	            }
 	        }
 	    }, 200);
-	});
-	
+	});	
+		
 	function setDepth03Scroll($targetLi) {
 	    var $depth03 = $targetLi.children('.depth03');
 	    var $depth02 = $targetLi.closest('.depth02');
@@ -337,24 +356,28 @@ function popFullmenu() {
     });
 
     if ($('.popFullmenu').length > 0) {
-        $("#header h1 img").clone(false).prependTo(".popFullmenu h2").wrap('<span></span>');
+        $(".popFullmenu h2").remove();
         $("#nav .depth01").clone(false).prependTo(".popFullmenu .fullmenu_group");
-        $(".popFullmenu h2").prependTo(".popFullmenu .fullmenu_group");
         $(".topUtil .alarm").clone(false).prependTo(".popFullmenu .popUntil");
         $(".topUtil .util_wrap .util li").clone(false).prependTo(".popFullmenu .popUntil .util");
         $(".topUtil .util_wrap .user li").clone(false).prependTo(".popFullmenu .popUntil .user");
         $(".popFullmenu .topGnb").remove();
-        // #nav 메가메뉴 JS가 남긴 인라인 style(display/height 등)이 클론에 그대로 남아
-        // 팝업 전용 CSS(2단 탭 레이아웃)를 덮어써버리는 문제를 막기 위해 전체 서브트리에서 제거
         $(".popFullmenu .depth01").add(".popFullmenu .depth01 *").removeAttr("style");
 		$(".popFullmenu .depth02 > ul > li.dep > a").remove('title');
-		$(".popFullmenu .depth01 > ul > li").each(function() {
-			if ($(this).find('> .depth02').length > 0) {
-				$(this).addClass('dep');
+		var $depth02Wrap = $('<div class="depth02Wrap"></div>').appendTo(".popFullmenu .fullmenu_group");
+		$(".popFullmenu .depth01 > ul > li").each(function(idx) {
+			var $li = $(this).attr('data-menu-idx', idx);
+			var $depth02 = $li.find('> .depth02');
+			if ($depth02.length > 0) {
+				$li.addClass('dep');
+				$depth02.attr('data-menu-idx', idx).appendTo($depth02Wrap);
 			}
 		});
         $(".popFullmenu .depth01 > ul > li.dep:first-of-type").addClass("active");
-        $(".popFullmenu .depth01 > ul > li.dep:first-of-type > .depth02 > ul > li.dep:first-of-type").addClass("active");
+        var $firstDepth02 = $(".popFullmenu .depth02Wrap > .depth02[data-menu-idx='" +
+            $(".popFullmenu .depth01 > ul > li.dep:first-of-type").attr('data-menu-idx') + "']")
+            .addClass("active");
+        $firstDepth02.find("> ul > li.dep:first-of-type").addClass("active");
 
         var $searchForm = $("#searchForm");
         if ($searchForm.length > 0) {
@@ -374,17 +397,65 @@ function popFullmenu() {
             $(window).on("resize.searchFormPlacement", moveSearchForm);
         }
     }
+    function syncActiveDepth02($li) {
+        var idx = $li.attr('data-menu-idx');
+        if (idx === undefined) return;
+        $('.popFullmenu .depth02Wrap > .depth02').removeClass('active');
+        $('.popFullmenu .depth02Wrap > .depth02[data-menu-idx="' + idx + '"]').addClass('active');
+    }
+
     $(document).on('click', '.popFullmenu li.dep > a', function(e) {
         if ($(window).width() <= 1240) {
-           	$(this).parent('li').addClass('active').siblings().removeClass('active');
+           	var $li = $(this).parent('li');
+            $li.addClass('active').siblings().removeClass('active');
+            syncActiveDepth02($li);
             e.preventDefault();
         }
     });
 
-    // 데스크탑 : 1차메뉴 탭 전환 (클릭한 1차메뉴의 2차/3차만 표시)
     $(document).on('click', '.popFullmenu .depth01 > ul > li.dep > a', function(e) {
         e.preventDefault();
-        $(this).parent('li').addClass('active').siblings().removeClass('active');
+        var $li = $(this).parent('li');
+        $li.addClass('active').siblings().removeClass('active');
+        syncActiveDepth02($li);
+    });
+
+    function getFocusableIn($el) {
+        return $el.find('a, button, input, select, textarea, [tabindex]:not([tabindex="-1"])').filter(':visible:not(:disabled)');
+    }
+
+    $(document).on('keydown', '.popFullmenu .depth01 > ul > li > a', function(e) {
+        if (e.key !== 'Enter') return;
+        setTimeout(function() {
+            var $activeDepth02 = $('.popFullmenu .depth02Wrap > .depth02.active');
+            var $first = getFocusableIn($activeDepth02).first();
+            if ($first.length) $first.focus();
+        }, 0);
+    });
+
+    $(document).on('keydown', '.popFullmenu .depth02Wrap .depth02 a', function(e) {
+        if (e.key !== 'Tab') return;
+        var $activeDepth02 = $(this).closest('.depth02');
+        var idx = parseInt($activeDepth02.attr('data-menu-idx'), 10);
+        var $focusables = getFocusableIn($activeDepth02);
+
+        if (e.shiftKey) {
+            if ($focusables.first().is(this)) {
+                e.preventDefault();
+                $('.popFullmenu .depth01 > ul > li').eq(idx).find('> a').focus();
+            }
+            return;
+        }
+
+        if ($focusables.last().is(this)) {
+            e.preventDefault();
+            var $nextLi = $('.popFullmenu .depth01 > ul > li').eq(idx + 1);
+            if ($nextLi.length) {
+                $nextLi.find('> a').focus();
+            } else {
+                $('#fullmenuClose').focus();
+            }
+        }
     });
 
 		var $openBtn = $('#fullmenuOpen');
@@ -745,8 +816,14 @@ function snbFloating() {
         }
 
         var nr = $nav[0].getBoundingClientRect();
-        var lr = $li[0].getBoundingClientRect();
-        $drop.css({ left: lr.left, top: nr.bottom }).addClass('open');
+        var noVisual = !$('#subVisual .visual-img').length;
+        var dropTop  = nr.bottom + (noVisual ? 20 : 0);
+        if (window.innerWidth <= 1024) {
+            $drop.css({ left: 0, top: dropTop }).addClass('open');
+        } else {
+            var lr = $li[0].getBoundingClientRect();
+            $drop.css({ left: lr.left, top: dropTop }).addClass('open');
+        }
 
         if ($activeLi && $activeLi[0] !== $li[0]) {
             $activeLi.removeClass('open');
@@ -758,7 +835,6 @@ function snbFloating() {
         return true;
     }
 
-    // 트리거로 포커스가 돌아올 때 사용 (Escape로 닫거나, 드롭다운 마지막 항목에서 뒤로 나올 때)
     function focusTrigger($li) {
         if ($li && $li.length) $li.children('a').trigger('focus');
     }
@@ -777,24 +853,30 @@ function snbFloating() {
 
     $lnb.on({
         mouseover: function (e) {
+            if (window.innerWidth <= 1024) return; 
             var $li = $(e.target).closest('.lnb > li.dep');
             if (!$li.length) return;
             cancelClose();
             if (!$activeLi || $activeLi[0] !== $li[0]) openDrop($li);
         },
-        mouseout:  onLeave,
+        mouseout: function (e) {
+            if (window.innerWidth <= 1024) return;
+            onLeave(e);
+        },
         focusin: function (e) {
+            if (window.innerWidth <= 1024) return;
             var $li = $(e.target).closest('.lnb > li.dep');
             if (!$li.length) { closeDrop(); return; }
             cancelClose();
             if (!$activeLi || $activeLi[0] !== $li[0]) openDrop($li);
         },
-        focusout: onFocusOut,
+        focusout: function (e) {
+            if (window.innerWidth <= 1024) return;
+            onFocusOut(e);
+        },
         keydown: function (e) {
             var $li = $(e.target).closest('.lnb > li.dep');
             if (!$li.length || !$activeLi || $activeLi[0] !== $li[0]) return;
-
-            // Tab: 트리거에 포커스가 있는 상태에서 열려있는 드롭다운의 첫 항목으로 포커스 이동
             if (e.key === 'Tab' && !e.shiftKey) {
                 var $firstLink = $drop.find('a').first();
                 if ($firstLink.length) {
@@ -807,6 +889,23 @@ function snbFloating() {
                 focusTrigger($li);
             }
         }
+    });
+
+    $lnb.on('click', function (e) {
+        if (window.innerWidth > 1024) return;
+
+        var $a = $(e.target).closest('.lnb > li.dep > a');
+        if (!$a.length) return;
+
+        var $li = $a.parent();
+
+        if ($activeLi && $activeLi[0] === $li[0]) {
+            e.preventDefault();
+            closeDrop();
+            return;
+        }
+
+        if (openDrop($li)) e.preventDefault();
     });
 
     $drop.on({
@@ -822,11 +921,6 @@ function snbFloating() {
                 focusTrigger($trigger);
                 return;
             }
-
-            // Tab: 드롭다운의 마지막 링크에서 다음으로 나가면, 처음으로 돌아가지 않고
-            // snb_wrap의 다음 li(트리거)로 이동 — 그 li에 하위메뉴가 있으면 focusin에서 자동으로 열림.
-            // 다음 li가 없으면(현재 snb의 마지막 항목) #snbFloatingDrop이 <body> 끝에 붙어있어
-            // 브라우저 기본 탭 순서가 끊기므로, 페이지 흐름상 다음 요소인 Family Site 버튼으로 이동시킨다.
             if (e.key === 'Tab' && !e.shiftKey && $activeLi) {
                 var $links = $drop.find('a');
                 var isLast = $links.length && $links.last()[0] === e.target;
@@ -848,7 +942,9 @@ function snbFloating() {
     });
 
     $(document).on('click.snbFloating', function (e) {
-        if (!$(e.target).closest('#contNavi, #contNaviTop, #contNaviLeft, #snbFloatingDrop').length) closeDrop();
+        if (!$(e.target).closest('#contNavi, #contNaviTop, #contNaviLeft, #snbFloatingDrop').length) {
+            closeDrop();
+        }
     });
 
     $(window).on('scroll.snbFloating', closeDrop).on('resize.snbFloating', closeDrop);
@@ -865,28 +961,31 @@ function sns() {
 
     $(document).on('click', '.snsBox button.btnShare', function() {
         var $btn    = $(this);
-        var $more   = $btn.next('.sns_more');
+        var $box    = $btn.closest('.snsBox');
+        var $more   = $box.find('.sns_more');
         var opening = !$btn.hasClass('active');
 
         $btn.toggleClass('active');
         setShareIcon($btn, opening);
 
         if (opening) {
-            var btnL  = $btn.position().left;
-            var btnW  = $btn.outerWidth();
-            var moreW = $more.outerWidth();
-            $more.css('left', btnL + (btnW / 2) - (moreW / 2)).addClass('open');
+            var rect = $btn[0].getBoundingClientRect();
+            $more.css({ top: rect.top - 5, right: (window.innerWidth - rect.right) - 5, left: 'auto' });
+            $more.prepend($btn).addClass('open');
         } else {
             $more.removeClass('open');
+            $box.prepend($btn);
         }
     });
 
     $(document).on('click.snsClose', function(e) {
         if (!$(e.target).closest('.snsBox').length) {
-            $('.snsBox button.btnShare').each(function() {
-                setShareIcon($(this), false);
+            $('.snsBox button.btnShare.active').each(function() {
+                var $btn = $(this);
+                setShareIcon($btn, false);
+                $btn.removeClass('active');
+                $btn.closest('.snsBox').prepend($btn);
             });
-            $('.snsBox button.btnShare').removeClass('active');
             $('.sns_more').removeClass('open');
         }
     });
@@ -894,33 +993,43 @@ function sns() {
 
 
 // hash 레이어 팝업
+// 공통 모달 : <a href="#모달id" class="hash">로 열고 class="hashClose"로 닫음 (fadeIn/fadeOut).
+// 대상은 .modal-st(신규 공통 컴포넌트)뿐 아니라 기존 .lyrPop / .lyrPopup 도 그대로 지원합니다.
 function hash() {
     var $hashOpener = null;
 
-    $(document).on('click', 'a.hash', function(e) {
-        e.preventDefault();
-        var $target = $(this.hash);
+    function openHash($target, $opener) {
         if (!$target.length) return;
         if (!$target.parent().is('body')) {
             $target.appendTo('body');
         }
-        $target.fadeIn(200);
+        $target.fadeIn(200).attr('aria-hidden', 'false');
+        $('body').addClass('scroll-lock');
         $target.find('a, button').first().focus();
-        $hashOpener = $(this);
+        $hashOpener = $opener || null;
+    }
+
+    function closeHash($target) {
+        $target.fadeOut(200).attr('aria-hidden', 'true');
+        $('body').removeClass('scroll-lock');
+        if ($hashOpener) { $hashOpener.focus(); $hashOpener = null; }
+    }
+
+    $(document).on('click', 'a.hash', function(e) {
+        e.preventDefault();
+        openHash($(this.hash), $(this));
     });
 
     $(document).on('click', 'a.hashClose', function(e) {
         e.preventDefault();
-        $(this.hash).fadeOut(200);
-        if ($hashOpener) { $hashOpener.focus(); $hashOpener = null; }
+        closeHash($(this.hash));
     });
 
     $(document).on('keydown.hashEsc', function(e) {
         if (e.keyCode !== 27) return;
-        var $open = $('.lyrPop:visible, .lyrPopup:visible');
+        var $open = $('.modal-st:visible, .lyrPop:visible, .lyrPopup:visible');
         if (!$open.length) return;
-        $open.fadeOut(200);
-        if ($hashOpener) { $hashOpener.focus(); $hashOpener = null; }
+        closeHash($open);
     });
 }
 

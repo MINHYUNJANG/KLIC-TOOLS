@@ -100,27 +100,38 @@ const shouldUseWideScroll = (table) => {
 const applyWideScrollClass = (table) => {
     const parent = table.parentElement;
     if (!parent || parent.tagName.toLowerCase() !== 'div') return;
-    if (!/\btbl-st\b/.test(parent.className || '')) return;
-    parent.classList.remove('scroll-w');
+    const isInner = /\btbl-scroll-inner\b/.test(parent.className || '');
+    const outer = isInner ? parent.parentElement : parent;
+    if (!outer || outer.tagName.toLowerCase() !== 'div' || !/\btbl-st\b/.test(outer.className || '')) return;
+
     if (!shouldUseWideScroll(table)) {
-        const scrollWrap = parent.parentElement;
-        if (scrollWrap && scrollWrap.tagName.toLowerCase() === 'div' && /\bscroll-wrap\b/.test(scrollWrap.className || '')) {
-            scrollWrap.replaceWith(parent);
+        outer.classList.remove('scroll-w');
+        if (isInner) {
+            outer.insertBefore(table, parent);
+            parent.remove();
         }
         return;
     }
-    parent.classList.add('scroll-w');
-
-    const scrollWrap = parent.parentElement;
-    if (scrollWrap && scrollWrap.tagName.toLowerCase() === 'div' && /\bscroll-wrap\b/.test(scrollWrap.className || '')) return;
-
-    const wrapper = document.createElement('div');
-    wrapper.className = 'scroll-wrap';
-    parent.parentNode.insertBefore(wrapper, parent);
-    wrapper.appendChild(parent);
+    outer.classList.add('scroll-w');
+    if (!isInner) {
+        const inner = document.createElement('div');
+        inner.className = 'tbl-scroll-inner';
+        outer.insertBefore(inner, table);
+        inner.appendChild(table);
+    }
 };
 
 export const applyTableSemantics = (table, wClass, type, isNested, isWrapDiv, headerRows, headerCols, colWidths) => {
+    // 이전 변환에서 생긴 tbl-scroll-inner 래핑이 있으면, 재변환 시 클래스가 잘못된
+    // div(안쪽 tbl-scroll-inner)에 적용되지 않도록 먼저 원래의 단일 래퍼 상태로 되돌린다.
+    // (가로 스크롤 필요 여부는 이 함수 끝의 applyWideScrollClass가 다시 계산해 붙인다.)
+    const scrollInnerParent = table.parentElement;
+    if (scrollInnerParent && scrollInnerParent.tagName.toLowerCase() === 'div' && /\btbl-scroll-inner\b/.test(scrollInnerParent.className || '')) {
+        const outerWrapper = scrollInnerParent.parentElement;
+        outerWrapper.insertBefore(table, scrollInnerParent);
+        scrollInnerParent.remove();
+    }
+
     if (isWrapDiv) {
         table.removeAttribute('class');
         const parent = table.parentElement;

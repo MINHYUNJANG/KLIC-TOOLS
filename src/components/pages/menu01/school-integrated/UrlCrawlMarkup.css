@@ -60,6 +60,26 @@
   color: #0070c8;
 }
 
+.gwangju-subpublish-btn {
+  min-height: 2rem;
+  padding: 0 0.85rem;
+  border: 1px solid #333;
+  border-radius: 0.375rem;
+  background: #fff;
+  color: #333;
+  font-family: inherit;
+  font-size: 0.875rem;
+  font-weight: 700;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: all 0.15s;
+}
+
+.gwangju-subpublish-btn:hover {
+  background: #333;
+  color: #fff;
+}
+
 .crawl-help-btn {
   width: 2rem;
   height: 2rem;

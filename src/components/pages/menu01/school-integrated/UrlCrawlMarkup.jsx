@@ -2,7 +2,7 @@ import { useState, useRef, useEffect, useCallback } from 'react';
 import { formatHtml } from '../../../../utils/formatHtml';
 import { isImageOnlyContent, hasContentImage, getContentImageUrls } from '../../../../utils/ocrSymbol';
 import { cleanTableHtml } from '../../../../utils/tableTransform/cleanTableHtml';
-import { MARKER_TYPES } from '../../../../utils/tableTransform/constants';
+import { MARKER_TYPES, convertCircleToArabic } from '../../../../utils/tableTransform/constants';
 import greeting from '../../../../templates/greeting';
 import history from '../../../../templates/history';
 import symbol from '../../../../templates/symbol';
@@ -318,7 +318,7 @@ function promoteInlineFirstNestedListItems(container) {
     const firstItem = document.createElement('li');
     const markerSpan = document.createElement('span');
     markerSpan.className = 'mrk';
-    markerSpan.textContent = marker.match.replace(/[.\s()]/g, '');
+    markerSpan.textContent = convertCircleToArabic(marker.match.replace(/[.\s()]/g, ''));
     firstItem.appendChild(markerSpan);
     firstItem.appendChild(document.createTextNode(' '));
     while (holder.firstChild) firstItem.appendChild(holder.firstChild);
@@ -1691,6 +1691,14 @@ export default function UrlCrawlMarkup() {
       return;
     }
     window.open('/api/gwangju-assets/pub/image.html', '_blank', 'noopener,noreferrer');
+  }
+
+  function openSubContentPublishing() {
+    if (projectType !== 'gwangju') {
+      alert('충남학교통합 서브콘텐츠 퍼블리싱은 아직 준비 중입니다.');
+      return;
+    }
+    window.open('/api/gwangju-assets/pub/sub-publish.html', '_blank', 'noopener,noreferrer');
   }
 
   function addGwangjuUrlInput() {
@@ -3502,6 +3510,15 @@ ${bodyHtml || ''}
             {projectType === 'gwangju' && (
               <button
                 type="button"
+                className="gwangju-subpublish-btn"
+                onClick={openSubContentPublishing}
+              >
+                서브콘텐츠 퍼블리싱
+              </button>
+            )}
+            {projectType === 'gwangju' && (
+              <button
+                type="button"
                 className="crawl-styleguide-btn"
                 onClick={openImageGuide}
               >
@@ -3584,6 +3601,13 @@ ${bodyHtml || ''}
                   <div className="gwangju-work-layer-head-actions">
                     <button
                       type="button"
+                      className="gwangju-subpublish-btn"
+                      onClick={openSubContentPublishing}
+                    >
+                      서브콘텐츠 퍼블리싱
+                    </button>
+                    <button
+                      type="button"
                       className="gwangju-work-layer-imageguide"
                       onClick={openImageGuide}
                     >
@@ -3652,7 +3676,7 @@ ${bodyHtml || ''}
                             >
                               {menu.label}
                             </h2>
-                          ) : menu.depth >= 2 && menuArr[menuIndex + 1]?.depth === menu.depth + 1 ? (
+                          ) : menu.depth >= 2 && menuArr[menuIndex + 1]?.depth === menu.depth + 1 && !menuArr[menuIndex + 1]?.viaTab ? (
                             <h3
                               key={`${menu.label}-${menu.url || menuIndex}`}
                               className="gwangju-menu-depth-subtitle"

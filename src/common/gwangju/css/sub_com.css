@@ -2,6 +2,9 @@
 .popBtn,
 .btn_popup {display: none;}
 
+/* 빌더캔버스 */
+.canvas-grid { display: flex; flex-wrap: wrap; width: 100%; }
+
 /* cotnainer */
 .container { position: relative; margin: 0 auto; width: 100%; max-width: 70rem; }
 .container:after { clear: both; display: block; content: ""; }
@@ -142,7 +145,7 @@
 /* ----------------------------------
 	연혁
 ---------------------------------- */
-.history_wrap {overflow:hidden;}
+/* .history_wrap {overflow:hidden;} */
 .history{ position: relative; word-break: keep-all;}
 .history .swiper-slide,
 .history .timeline .swiper-slide::after{ transition: all 0.2s;}
@@ -491,8 +494,8 @@ html:has(body.scroll-lock) { overflow: hidden; }
 
 
 /* 심볼 : A : slide */
-.symbol.tyA.slide { --symbol-scroll-height: 65vh; position: relative; width: 100%; overflow: visible; }
-.symbol.tyA.slide .sybmbol-wrap { display: flex; align-items: flex-start; gap: calc(var(--symbol-gap) * 3.2); width: 100%; flex-wrap: nowrap; margin-bottom: calc(var(--symbol-gap-lg) * 3); flex-direction: column; }
+.symbol.tyA.slide { --symbol-scroll-height: 20rem; position: relative; width: 100%; overflow: visible; }
+.symbol.tyA.slide .sybmbol-wrap { display: flex; align-items: flex-start; gap: calc(var(--symbol-gap) * 3.2); width: 100%; flex-wrap: nowrap; margin-bottom: calc(var(--symbol-gap-lg) * 1.5); flex-direction: column; }
 .symbol.tyA.slide .symbol-sticky{ position: relative; width: 100%;}
 .symbol.tyA.slide .slogan{ position: relative; display: flex; align-items: center; justify-content: center; flex-direction: column; color:#fff; padding: calc(var(--symbol-gap) * 3) calc(var(--symbol-gap) * 1) calc(var(--symbol-gap) * 1.35); border-radius: 5rem 0 0 0; background: rgba(var(--color-primary-rgb), 0.05); z-index: 1; overflow: hidden; }
 .symbol.tyA.slide .slogan::before { position: absolute; content: "SchoolMotto"; bottom: calc(var(--symbol-font-size) * -3); left: 50%; transform: translateX(-50%); z-index: -1; font-size: calc(var(--symbol-font-size) * 6); font-weight: bold; line-height: 1.5; color: #fff; }
@@ -539,8 +542,9 @@ html:has(body.scroll-lock) { overflow: hidden; }
 	.symbol.tyA.slide .h-scroll{ flex-direction: column; }
 	.symbol.tyA.slide .list-wrap .box{ width: 100%; }
 	.symbol.tyA.slide .list-wrap .box:nth-child(even){ margin-top: 0; }
-	.symbol.tyA.slide .list-wrap:not(.dis-scroll){ height: var(--symbol-scroll-height); }
-	.symbol.tyA.slide .list-wrap:not(.dis-scroll)::after { content: ""; position: absolute; bottom: 0; left: 0; width: 100%; height: 4rem; background: linear-gradient(to bottom, rgba(255, 255, 255, 0) 0%, rgba(255, 255, 255, 0.5) 30%, rgba(255, 255, 255, 1) 100% ); z-index: 5; pointer-events: none; }
+	.symbol.tyA.slide .list-wrap:not(.dis-scroll){ height: var(--symbol-scroll-height); overflow-y: auto; overflow-x: hidden; scroll-behavior: smooth; }
+	.symbol.tyA.slide .list-wrap:not(.dis-scroll)::-webkit-scrollbar { display: none; }
+	/* .symbol.tyA.slide .list-wrap:not(.dis-scroll)::after { content: ""; position: absolute; bottom: 0; left: 0; width: 100%; height: 4rem; background: linear-gradient(to bottom, rgba(255, 255, 255, 0) 0%, rgba(255, 255, 255, 0.5) 30%, rgba(255, 255, 255, 1) 100% ); z-index: 5; pointer-events: none; } */
 	/* 심볼 : A : slide : 3개 이하 */
 	.symbol.tyA.slide .list-wrap.dis-scroll .h-scroll .box{ width: 100%; }
 
@@ -553,7 +557,7 @@ html:has(body.scroll-lock) { overflow: hidden; }
 	.symbol.tyA.slide .symbol-nav button::before { position: absolute; content: ""; left: 0; top: 50%; transform: translateY(-50%); width: 0; height: 2px; background: #000; transition: 0.2s all; }
 
 	.symbol.tyA.slide .symbol-nav button.on::before { width: 4rem; }
-	.symbol.tyA.slide .symbol-nav button.on{ color: #000000; padding-left: 6rem; }
+	.symbol.tyA.slide .symbol-nav button.on{ color: var(--color-primary); padding-left: 6rem; }
 }
 
 /******* 심볼 : B_1 *******/
@@ -662,6 +666,8 @@ html:has(body.scroll-lock) { overflow: hidden; }
 .symbol.tyC .box h5 {display: flex; align-items: center; gap: 0.8rem; font-size: 1rem; color: #000; font-weight: 700; margin: 1rem 0;}
 .symbol.tyC .box h5 span {width: 3.2rem; text-align: center; line-height: 1.85rem; border-radius: 1.5rem; background: #F4F6FF; font-size: 0.9rem; color: var(--color-primary); font-weight: 600;}
 .symbol.tyC .box p:not(.slogan) {font-size: var(--symbol-font-size); line-height: 1.5; }
+
+
 @media (min-width: 1241px){
 	.symbol.tyC .symbol-sticky{ flex: 0 0 29.25%; }
 }
@@ -803,6 +809,8 @@ html:has(body.scroll-lock) { overflow: hidden; }
 
 	word-break: keep-all;
 }
+.map-01 .root_daum_roughmap .wrap_controllers,
+.map-01 .root_daum_roughmap .cont { display: none !important; }
 
 .roadmap ul.bus-list > li > em { display: inline-flex; align-items: center; justify-content: center; color: #fff; border-radius: 5rem; padding: 0 0.425rem; font-size: calc(var(--roadmap-font-size) * 0.8); margin-right: calc(var(--roadmap-gap) * 0.4); height: 1.25rem; }
 .roadmap .box.subway > ul > li em { display: inline-flex; align-items: center; justify-content: center; border-radius: 50%; width: 1.25rem; height: 1.25rem; } 
@@ -824,6 +832,7 @@ html:has(body.scroll-lock) { overflow: hidden; }
 .roadmap.tyA .info .info-list li > span { font-weight: bold; }
 .roadmap.tyA .info .info-list li > span { font-weight: bold; }
 .roadmap.tyA .map-wrap { position: relative; width: 100%; height: 25rem; margin: calc(var(--roadmap-gap) * 2) 0 calc(var(--roadmap-gap) * 2); } 
+.roadmap.tyA .root_daum_roughmap .wrap_map { height: 25rem !important; }
 .roadmap.tyA .map-wrap .map-box { height: 100%; width: 100%; display: flex; align-items: center; justify-content: center; border-radius: 5rem 0 0 0; overflow: hidden; }
 .roadmap.tyA .map-list { display: flex; flex-direction: column; }
 .roadmap.tyA .map-list .address .adrsBox { flex: 1; display: flex; flex-direction: column; }
@@ -850,8 +859,9 @@ html:has(body.scroll-lock) { overflow: hidden; }
 /******* 오시는길 : B *******/
 .roadmap.tyB { width: 100%; }
 .roadmap.tyB .map-wrap { display: flex; flex-wrap: wrap; padding: calc(var(--roadmap-gap) * 3.2) 0; position: relative; z-index: 1; }
-.roadmap.tyB .map-wrap::before { position: absolute; content: ""; width: 100vw; height: 100%; background: #F5F6F9; left: 50%; top: 50%; transform: translate(-50%, -50%); z-index: -1; }
+.roadmap.tyB .map-wrap::before { position: absolute; content: ""; width: 150vw; height: 100%; background: #F5F6F9; left: 50%; top: 50%; transform: translate(-50%, -50%); z-index: -1; }
 .roadmap.tyB .map-wrap .map-box { display: flex; align-items: center; justify-content: center; width: 42rem; min-height: 20rem; height: 100%; border-radius: 2rem; overflow: hidden; order: 2; }
+.roadmap.tyB .root_daum_roughmap .wrap_map { min-height: 20rem !important; }
 .roadmap.tyB .map-wrap .info { flex: 1; padding-right: calc(var(--roadmap-gap) * 2); }
 .roadmap.tyB .map-wrap .info .title { font-size: calc(var(--roadmap-font-size) * 1.4); font-weight: 700; margin: calc(var(--roadmap-gap) * 1.6) 0; }
 .roadmap.tyB .map-wrap .info .info-list { display: flex; flex-direction: column; gap: calc(var(--roadmap-gap) * 0.8); }
@@ -881,11 +891,13 @@ html:has(body.scroll-lock) { overflow: hidden; }
 
 /******* 오시는길 : C *******/
 .roadmap.tyC { padding-bottom: calc(var(--roadmap-gap) * 5.8); }
+.roadmap.tyC .map-wrap { position: relative; }
 .roadmap.tyC .map-wrap .map-box { display: flex; align-items: center; justify-content: center; width: 100%; overflow: hidden; height: 20rem; border-radius: 2rem; margin: 0 0 calc(var(--roadmap-gap) * 1.5) 0; position: relative; }  
-.roadmap.tyC .map-wrap .map-box .btns { position: absolute; right: calc(var(--roadmap-gap) * 1.5); bottom: calc(var(--roadmap-gap) * 1.5); display: flex; align-items: center; gap: calc(var(--roadmap-gap) * 0.5); margin: 0; }
-.roadmap.tyC .map-wrap .map-box .btns a { border-radius: 2.5rem; display: inline-flex; align-items: center; justify-content: space-between; gap: 0.15rem; padding: 0.5rem 1.2rem 0.5rem 0.8rem; border-color: transparent; font-weight: bold; box-shadow: 0px 4px 10px rgba(0,0,0,0.25); }
-.roadmap.tyC .map-wrap .map-box .btns a.kakao { color: #0079F6; background: #FAE100; }
-.roadmap.tyC .map-wrap .map-box .btns a.naver { color: #fff; background: #03C75A; }
+.roadmap.tyC .map-wrap .map-box .root_daum_roughmap .wrap_map { height: 20rem !important; }
+.roadmap.tyC .btns { position: absolute; right: calc(var(--roadmap-gap) * 1.5); bottom: calc(var(--roadmap-gap) * 1.5); display: flex; align-items: center; gap: calc(var(--roadmap-gap) * 0.5); margin: 0; z-index: 1; }
+.roadmap.tyC .btns a { border-radius: 2.5rem; display: inline-flex; align-items: center; justify-content: space-between; gap: 0.15rem; padding: 0.5rem 1.2rem 0.5rem 0.8rem; border-color: transparent; font-weight: bold; box-shadow: 0px 4px 10px rgba(0,0,0,0.25); overflow: hidden; }
+.roadmap.tyC .btns a.kakao { color: #0079F6; background: #FAE100; }
+.roadmap.tyC .btns a.naver { color: #fff; background: #03C75A; }
 .roadmap.tyC .map-wrap .map-box .map-button > a { display: inline-flex; align-items: center; justify-content: space-between; padding: 0 var(--roadmap-font-size); color: #1D1D1D; height: 2.5rem; gap: calc(var(--roadmap-gap) * 0.5); border-radius: 0.25rem; font-weight: bold; font-size: calc(var(--roadmap-font-size) * 0.85); border: 2px solid transparent; transition: 0.2s ease-in-out; }
 .roadmap.tyC .map-wrap .map-box .map-button > a > i { font-weight: 400 !important; }
 .roadmap.tyC .map-wrap .map-box .map-button > a.kakao { background: #FFCF30; border-color: #ffcf30; }
@@ -925,6 +937,75 @@ html:has(body.scroll-lock) { overflow: hidden; }
 .privacy-02 .tit-contents-wrap {display:flex; align-items:center; gap:0.5rem; flex-wrap:wrap;}
 .privacy-02  .tit-privacy-icons {display:flex; align-items:center; gap:0.1rem; flex-shrink:0;}
 .privacy-02  .tit-privacy-icon {display:block; width:1.8rem; height:1.8rem; object-fit:contain;}
+
+/* 둘러보기 갤러리 */
+.facility-panel { margin-top: 1rem; }
+.facility-gallery { display: grid; grid-template-columns: repeat(4, 1fr); gap: 1.5rem; padding: 0; margin: 1rem 0 0 0; }
+.facility-gallery .card { position: relative; display: block; border: 2px solid transparent; border-radius: 0.8rem; overflow: hidden; background: #f1f1f1; transition: border-color 0.2s; }
+.facility-gallery li.on .card,
+.facility-gallery .card:hover,
+.facility-gallery .card:focus-visible { border-color: var(--color-primary); background:#fff;}
+.facility-gallery .card:hover .btn-zoom,
+.facility-gallery .card:focus-visible .btn-zoom {background:var(--color-primary);}
+.facility-gallery .card:hover .name:after,
+.facility-gallery .card:focus-visible .name:after {display:inline-block;}
+.facility-gallery .thumb { display: block; width: 100%; aspect-ratio: 16 / 9; background: #d9d9d9; overflow: hidden; }
+.facility-gallery .thumb img { width: 100%; height: 100%; object-fit: cover; }
+.facility-gallery .btn-zoom { position: absolute; top: 0rem; right: 0rem; width: 3rem; height: 3rem; display: flex; align-items: center; justify-content: center; border: 0; border-radius: 0 0 0 1rem; background: rgba(0, 0, 0, 0.45); color: #fff; font-size: 1rem; }
+.facility-gallery .name { padding: 0.75rem 0.5rem; text-align: center; font-size: 0.9rem; color: #333; transition:all 0.2s;}
+.facility-gallery .name .dot { color: var(--color-primary); }
+.facility-gallery .name:after {content: ""; display: none; width: 4px; height: 4px; margin-left: 0.35rem; border-radius: 50%; background: var(--color-primary); vertical-align: middle;}
+
+#facilityViewer .btn-prev,
+#facilityViewer .btn-next { position: absolute; top: 50%; transform: translateY(-50%); width: 2.75rem; height: 2.75rem; display: flex; align-items: center; justify-content: center; border: 0; border-radius: 50%; color: #fff; font-size: 3rem; z-index: 1; }
+#facilityViewer .btn-prev { right: 100%; margin-right: 0.5rem; }
+#facilityViewer .btn-next { left: 100%; margin-left: 0.5rem; }
+
+
+/* 체험학습신청 */
+.temp_type01 .prosess-st.verti > li:not(.fin) > .tit {background: var(--color-tertiary); justify-content: flex-start; align-items: center; text-align: left;}
+.temp_type01 .prosess-st.verti > li:not(.fin) > .tit > h6 {width: auto; margin: 0 0 0 0.6rem;}
+.temp_type01 .prosess-st.verti > li.fin > .tit p {display: block;}
+.temp_type01 .prosess-st {margin-top: 0.5rem;}
+.temp_type01 > .box-st.info {border-radius: 4rem 4rem 0.5rem 0.5rem;}
+.temp_type01 > .box-st .btns {margin: 0;}
+/* box-st의 padding(--box-inr-padding)을 상쇄해 이미지가 박스 하단/좌우 끝까지 꽉 차게 */
+.temp_type01 .temp_type01-img-wrap {margin: 1rem -2rem -1rem; overflow: hidden; border-radius: 0 0 var(--box-radius) var(--box-radius);}
+.temp_type01 .temp_type01-img {display: block; width: 100%; height: 15rem; object-fit: cover;}
+
+@media screen and (max-width: 768px){
+	.temp_type01 .temp_type01-img-wrap {margin: 1rem -1rem -0.75rem;}
+}
+@media screen and (max-width: 480px){
+	.temp_type01 .temp_type01-img-wrap {margin: 1rem -0.75rem -0.5rem;}
+}
+.temp_type01 .btn-st.sec {background:#fff; font-size:0.8rem;}
+
+/* 체험학습 안내 : tbl-st(표) 대신 div 리스트 */
+.temp_type01 .temp_type01-info {display: flex; flex-direction: column;}
+.temp_type01 .temp_type01-info .row {display: flex; align-items: center; gap: 1.5rem; padding: 1.25rem 0; border-bottom: 1px solid var(--color-gray-line-light);}
+.temp_type01 .temp_type01-info .row:first-child {padding-top: 0;}
+.temp_type01 .temp_type01-info .row:last-child {border-bottom: 0; padding-bottom: 0;}
+.temp_type01 .temp_type01-info .label {flex: 0 0 10rem; display: flex; align-items: center; gap: 0.6rem; font-weight: 700; color: #222;}
+.temp_type01 .temp_type01-info .cont {flex: 1; min-width: 0;}
+
+/* 아이콘(.ico) : temp_type01-info의 라벨, 절차 타이틀(h3.tit-st.contents) 등 temp_type01 하위 어디서든 동일 스타일로 재사용 */
+.temp_type01 .ico {flex: 0 0 auto; display: flex; align-items: center; justify-content: center; width: 1.75rem; height: 1.75rem; border-radius: 0.4rem; background-repeat: no-repeat; background-position: center;}
+.temp_type01 .ico.icon_t_badge01 {background-color: #e2eaf9; background-image: url(../images/common/icon_t_badge01.png);}
+.temp_type01 .ico.icon_t_badge02 {background-color: #fdedd9; background-image: url(../images/common/icon_t_badge02.png);}
+.temp_type01 .ico.icon_t_badge03 {background-color: #fbf3ce; background-image: url(../images/common/icon_t_badge03.png);}
+.temp_type01 .ico.icon_t_badge04 {background-color: #e0f3e6; background-image: url(../images/common/icon_t_badge04.png);}
+.temp_type01 .ico.icon_t_badge05 {background-color: #fde3ec; background-image: url(../images/common/icon_t_badge05.png);}
+.temp_type01 .ico.icon_t_badge06 {background-color: #ffeef5; background-image: url(../images/common/icon_t_badge06.png);}
+
+.temp_type01 h3.tit-st.contents {display: flex; align-items: center; gap: 0.6rem;}
+
+@media screen and (max-width: 640px){
+	.temp_type01 .temp_type01-info .row {flex-direction: column; align-items: flex-start; gap: 0.6rem;}
+	.temp_type01 .temp_type01-info .label {flex: none;}
+}
+
+
 
 @media screen and (max-width: 1440px) {
 
@@ -1024,7 +1105,7 @@ html:has(body.scroll-lock) { overflow: hidden; }
 	/* 심볼 : A : list */
 	.symbol.tyA.list{ flex-direction: column;}
 	/* 심볼 : A : slide */
-	.symbol.tyA.slide .sybmbol-wrap{ flex-direction: column; margin-bottom: calc(var(--symbol-gap-lg) * 2);}
+	.symbol.tyA.slide .sybmbol-wrap{ flex-direction: column; margin-bottom: calc(var(--symbol-gap-lg) * 1);}
 	.symbol.tyA.slide .list-wrap .box{ width: 100%; }
 	.symbol.tyA.slide .h-scroll{ flex-wrap: wrap; }
 	.symbol.tyA.slide .list-wrap .box .img { width: 15rem; height: 15rem; }
@@ -1207,13 +1288,13 @@ html:has(body.scroll-lock) { overflow: hidden; }
 	/* 오시는길 : A */
 	.roadmap.tyA .map-list .address .adrsBox .btns a { padding: 0.35rem 1rem 0.35rem 0.6rem; }  
 	.roadmap.tyA .map-list .box > span { width: 15.5rem; }
-	.roadmap.tyA .map-wrap { height: 25rem; }  
 
 	/* 오시는길 : B */ 
 	.roadmap.tyB .info .btns a { padding: 0.35rem 1rem 0.35rem 0.6rem; }  
 	.roadmap.tyB .map-list .box > span { width: 12.5rem; }
 	.roadmap.tyB .map-wrap { padding: calc(var(--roadmap-gap) * 2) 0 }
 	.roadmap.tyB .map-wrap .map-box { width: 100%; min-height: auto; height: 20rem; }
+	.roadmap.tyB .root_daum_roughmap .wrap_map { height: 20rem !important; }
 	.roadmap.tyB .map-wrap .info { margin-bottom: var(--roadmap-gap); flex: none; width: 100%; }
 	.roadmap.tyB .map-wrap .info .title { margin: calc(var(--roadmap-gap) * 1.4) 0; }
 	.roadmap.tyB .info > p.number { margin: calc(var(--roadmap-gap) * 1.5) 0 calc(var(--roadmap-gap) * 1); }
@@ -1222,6 +1303,7 @@ html:has(body.scroll-lock) { overflow: hidden; }
 
 	/* 오시는길 : C */
 	.roadmap.tyC .map-wrap .map-box { height: 22.5rem; }
+	.roadmap.tyC .map-wrap .map-box .root_daum_roughmap .wrap_map { height: 22.5rem !important; }
 	.roadmap.tyC .map-list h3 { position: relative; top: auto; left: auto; word-break: keep-all; font-size: calc(var(--roadmap-font-size) * 1.75); }
 	.roadmap.tyC .map-list h3:Before { top: calc(var(--roadmap-font-size) * 1); }
 	.roadmap.tyC .map-list h3 br { display: none; }
@@ -1237,9 +1319,16 @@ html:has(body.scroll-lock) { overflow: hidden; }
 	/* 학급 목록 : C */
 	.class-list.tyC .list-wrap > ul > li { width: calc((100% - calc(var(--class-gap) * 3)) / 4); }
 	.class-list.tyC .list-wrap > ul > li .inr > ul li { padding: calc(var(--class-gap) * 0.25) calc(var(--class-gap) * 0.45); }
+	
+	
+	/* 둘러보기 */
+	.facility-gallery { grid-template-columns: repeat(3, 1fr); gap: 1rem; }
 }
 
 @media (max-width: 840px){
+	/* 빌더캔버스 */
+	.canvas-grid { flex-direction: column; }
+	.canvas-grid > section { width: 100% !important; margin-left: 0 !important; margin-right: 0 !important; }
 
 	/* 역대교장 : A : popup */
 	.pri-his.popup .btn-close { width: 2.75rem; height: 2.75rem; top: calc(2.75rem / -2); }
@@ -1456,6 +1545,7 @@ html:has(body.scroll-lock) { overflow: hidden; }
 	.roadmap.tyA .map-list .box > ul { flex: none; width: 100%; margin-top: calc(var(--roadmap-gap) * 1); }
 	.roadmap.tyA .info .info-list { flex: none; width: 100%; }
 	.roadmap.tyA .map-wrap { height: 22.5rem; }
+	.roadmap.tyA .root_daum_roughmap .wrap_map { height: 22.5rem !important; }
 	.roadmap.tyA .info .btn-search { height: 2rem; padding: 0 calc(var(--roadmap-gap) * 1.5); }  
 	.roadmap.tyA .map-list .box > ul > li { padding-left: 6.5rem; } 
 
@@ -1464,6 +1554,7 @@ html:has(body.scroll-lock) { overflow: hidden; }
 	.roadmap.tyB .map-list .box > span { width: 100%; }
 	.roadmap.tyB .map-list .box > ul { flex: none; width: 100%; margin-top: calc(var(--roadmap-gap) * 1); }
 	.roadmap.tyB .map-wrap .map-box { height: 18.5rem; }
+	.roadmap.tyB .root_daum_roughmap .wrap_map { height: 18.5rem !important; }
 	.roadmap.tyB .info .btns a { padding: 0.25rem 0.75rem 0.25rem 0.5rem; }
 	.roadmap.tyB .info .btns a img { max-width: 1.25rem; }
 
@@ -1479,6 +1570,7 @@ html:has(body.scroll-lock) { overflow: hidden; }
 	.roadmap.tyC .map-list .box > ul { margin-top: calc(var(--roadmap-gap) * 1); }
 	.roadmap.tyC .map-list .box .ico { width: 2rem; height: 2rem; font-size: 1rem; top: calc(var(--roadmap-gap) * 2); }
 	.roadmap.tyC .map-wrap .map-box { height: 20rem; }
+	.roadmap.tyC .map-wrap .map-box .root_daum_roughmap .wrap_map { height: 20rem !important; }
 
 	/* 학급 목록 */
 	.class-list {
@@ -1490,6 +1582,11 @@ html:has(body.scroll-lock) { overflow: hidden; }
 	.class-list.tyA .list-wrap > ul > li a span.grade { width: calc(var(--class-font-size) * 3.5); height: calc(var(--class-font-size) * 3.5); }   
 	.class-list.tyA .list-wrap > ul > li { width: calc((100% - calc(var(--class-gap) * 2)) / 2); }
 	
+	
+	/* 둘러보기 */
+	.facility-gallery { grid-template-columns: repeat(2, 1fr); }
+	#facilityViewer .btn-prev,
+	#facilityViewer .btn-next { width: 2.25rem; height: 2.25rem; font-size: 1.25rem; }
 }
 
 @media (max-width: 640px){
@@ -1653,6 +1750,7 @@ html:has(body.scroll-lock) { overflow: hidden; }
 	.symbol.tyB.tyB_2 .song-wrap .img { min-height: auto; padding: 1rem; }
 	
 	/* 오시는길 */
+	.mapBox,
 	.roadmap {
 		--roadmap-line : 1.3;
 		--roadmap-font-size : 0.85rem;
@@ -1661,10 +1759,12 @@ html:has(body.scroll-lock) { overflow: hidden; }
 
 	/* 오시는길 : A */
 	.roadmap.tyA .map-wrap { height: 20rem; }
+	.roadmap.tyA .root_daum_roughmap .wrap_map { height: 20rem !important; }
 
 	/* 오시는길 : B */
 	.roadmap.tyB .map-list { padding: calc(var(--roadmap-gap) * 1.5) 0 calc(var(--roadmap-gap) * 3.5); }
 	.roadmap.tyB .map-wrap .map-box { height: 15rem; border-radius: 1rem; }
+	.roadmap.tyB .root_daum_roughmap .wrap_map { height: 15rem !important; }
 	.roadmap.tyB .map-list .box > ul > li > span { position: relative; width: 100%; display: block; margin-bottom: calc(var(--roadmap-gap) * 0.75); }
 	.roadmap.tyB .map-list .box > ul > li { padding: 0; flex-wrap: wrap; }
 	.roadmap.tyB .map-list .box > ul > li > ul { margin-top: 0; }
@@ -1676,10 +1776,11 @@ html:has(body.scroll-lock) { overflow: hidden; }
 	/* 오시는길 : C */
 	.roadmap.tyC .map-box .btns { right: calc(var(--roadmap-gap) * 1); bottom: calc(var(--roadmap-gap) * 1); } 
 	.roadmap.tyC .map-wrap .map-box { height: 15rem; }
+	.roadmap.tyC .map-wrap .map-box .root_daum_roughmap .wrap_map { height: 15rem !important; }
 	.roadmap.tyC .info .info-list > li > img { max-width: 2.75rem; }
 	.roadmap.tyC .info .info-list > li { padding: calc(var(--roadmap-font-size) * 1); }
 	.roadmap.tyC .map-list .box > ul > li { font-size: calc(var(--roadmap-font-size) * 1); } 
-	.roadmap.tyC .map-wrap .map-box .btns a { padding: 0; text-indent: -9999px; width: 2rem; height: 2rem; justify-content: center; }
+	.roadmap.tyC .btns a { padding: 0; text-indent: -9999px; width: 2rem; height: 2rem; justify-content: center; }
 	.roadmap.tyC .map-list h3 { font-size: calc(var(--roadmap-font-size) * 1.7); padding-left: 1rem; }
 	.roadmap.tyC .map-list h3:Before { width: calc(var(--roadmap-font-size) * 0.6); height: calc(var(--roadmap-font-size) * 0.6); top: calc(var(--roadmap-font-size) * 1); }
 	.roadmap.tyC .map-list .box { padding-left: 2.5rem; padding-top: calc(var(--roadmap-gap) * 1.5); } 
@@ -1694,6 +1795,12 @@ html:has(body.scroll-lock) { overflow: hidden; }
 
 	/* 학급 목록 : A */
 	.class-list.tyA .list-wrap > ul > li { width: 100%; }
+	
+	/* 둘러보기 */
+	.facility-gallery { grid-template-columns: repeat(2, 1fr); gap: 0.6rem; }
+	.facility-gallery .name { font-size: 0.8rem; padding: 0.5rem 0.25rem; }
+	#facilityViewer .btn-prev { left: 0.25rem; }
+	#facilityViewer .btn-next { right: 0.25rem; }
 
 }
 
@@ -1881,16 +1988,15 @@ html:has(body.scroll-lock) { overflow: hidden; }
 	.roadmap.tyA .info { margin-top: calc(var(--roadmap-gap) * 1.25); }
 	.roadmap.tyA .info .info-list li { font-size: calc(var(--roadmap-font-size) * 1); }
 	.roadmap.tyA .map-wrap { height: 18rem; }
+	.roadmap.tyA .root_daum_roughmap .wrap_map { height: 18rem !important; }
 	.roadmap.tyA .map-list .box > ul > li { padding-left: 0; flex-wrap: wrap; }
 	.roadmap.tyA .map-list .box > ul > li > span { position: relative; width: 100%; margin-bottom: 0.75rem; }
 	.roadmap.tyA .map-list .box.bus > ul > li > ul,
 	.roadmap.tyA .map-list .box.bus > ul > li > ul.stop-list { gap: calc(var(--roadmap-gap) * 1); }
 
-	/* 오시는길 : B */
-	.roadmap.tyB .map-wrap .map-box { height: 15rem; }
-
 	/* 오시는길 : C */
 	.roadmap.tyC .map-wrap .map-box { height: 13rem; }
+	.roadmap.tyC .map-wrap .map-box .root_daum_roughmap .wrap_map { height: 13rem !important; }
 	.roadmap.tyC .map-list .box .ico { width: 1.75rem; height: 1.75rem; font-size: 0.95rem; }
 	.roadmap.tyC .map-list .box { padding-left: 2.25rem; }
 
@@ -1900,3 +2006,8 @@ html:has(body.scroll-lock) { overflow: hidden; }
 	/* 학급 목록 : C */
 	.class-list.tyC .list-wrap > ul > li { width: 100%; }
 }
+
+
+
+
+

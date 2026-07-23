@@ -2,7 +2,7 @@ import { useState, useRef, useEffect, useCallback } from 'react';
 import { formatHtml } from '../../utils/formatHtml';
 import { isImageOnlyContent, hasContentImage, getContentImageUrls } from '../../utils/ocrSymbol';
 import { cleanTableHtml } from '../../utils/tableTransform/cleanTableHtml';
-import { MARKER_TYPES } from '../../utils/tableTransform/constants';
+import { MARKER_TYPES, convertCircleToArabic } from '../../utils/tableTransform/constants';
 import greeting from '../../templates/greeting';
 import history from '../../templates/history';
 import symbol from '../../templates/symbol';
@@ -322,7 +322,7 @@ function promoteInlineFirstNestedListItems(container) {
     const firstItem = document.createElement('li');
     const markerSpan = document.createElement('span');
     markerSpan.className = 'mrk';
-    markerSpan.textContent = marker.match.replace(/[.\s()]/g, '');
+    markerSpan.textContent = convertCircleToArabic(marker.match.replace(/[.\s()]/g, ''));
     firstItem.appendChild(markerSpan);
     firstItem.appendChild(document.createTextNode(' '));
     while (holder.firstChild) firstItem.appendChild(holder.firstChild);
@@ -379,21 +379,25 @@ function applyTableProcessing(html) {
 
   const applyWideScrollClass = table => {
     const parent = table.parentElement;
-    if (parent && parent.tagName === 'DIV' && /\btbl-st\b/.test(parent.className || '')) {
-      parent.classList.remove('scroll-w');
-      if (!shouldUseWideScroll(table)) {
-        if (parent.parentElement?.classList.contains('scroll-wrap')) {
-          parent.parentElement.replaceWith(parent);
-        }
-        return;
+    // 이미 tbl-scroll-inner로 감싸져 있으면 그 바깥의 실제 tbl-st 래퍼(outer)를 찾는다.
+    const isInner = parent && parent.tagName === 'DIV' && /\btbl-scroll-inner\b/.test(parent.className || '');
+    const outer = isInner ? parent.parentElement : parent;
+    if (!(outer && outer.tagName === 'DIV' && /\btbl-st\b/.test(outer.className || ''))) return;
+
+    if (!shouldUseWideScroll(table)) {
+      outer.classList.remove('scroll-w');
+      if (isInner) {
+        outer.insertBefore(table, parent);
+        parent.remove();
       }
-      parent.classList.add('scroll-w');
-      if (!parent.parentElement?.classList.contains('scroll-wrap')) {
-        const scrollWrap = doc.createElement('div');
-        scrollWrap.className = 'scroll-wrap';
-        parent.parentNode.insertBefore(scrollWrap, parent);
-        scrollWrap.appendChild(parent);
-      }
+      return;
+    }
+    outer.classList.add('scroll-w');
+    if (!isInner) {
+      const inner = doc.createElement('div');
+      inner.className = 'tbl-scroll-inner';
+      outer.insertBefore(inner, table);
+      inner.appendChild(table);
     }
   };
 
@@ -515,8 +519,7 @@ function normalizeGeneratedMarkup(html) {
 
     const indentChildren = Array.from(next.children);
     const firstMeaningful = indentChildren.find(el => el.textContent.trim() || el.children.length > 0);
-    const hasTableBlock = firstMeaningful?.classList.contains('tbl-st') ||
-      (firstMeaningful?.classList.contains('scroll-wrap') && firstMeaningful.querySelector(':scope > .tbl-st'));
+    const hasTableBlock = firstMeaningful?.classList.contains('tbl-st');
     if (!hasTableBlock) return;
 
     while (next.firstChild) {
